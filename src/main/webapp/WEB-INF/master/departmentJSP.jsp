@@ -86,13 +86,11 @@
                        xhr.setRequestHeader("Content-Type", "application/json");
                    },
             	   success: function(data) { 
-                	  alert("success")
                       this.pqGrid("commit");
                       this.pqGrid("refreshDataAndView");
                    },
                    error: function () {
                        //debugger;
-                       alert("error")
                        this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
                        this.pqGrid("rollback");
                    }

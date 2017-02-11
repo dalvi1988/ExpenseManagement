@@ -78,6 +78,10 @@ public class BranchController {
 				toBeSentBranchDTO=receivedBranchDTO;
 				toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 			}
+			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
+				toBeSentBranchDTO=receivedBranchDTO;
+				toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
+			}
 		}
 		else{
 			toBeSentBranchDTO=receivedBranchDTO;

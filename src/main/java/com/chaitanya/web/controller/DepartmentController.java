@@ -71,6 +71,10 @@ public class DepartmentController {
 				toBeSentDepartmentDTO=receivedDepartmentDTO;
 				toBeSentDepartmentDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 			}
+			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
+				toBeSentDepartmentDTO=receivedDepartmentDTO;
+				toBeSentDepartmentDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
+			}
 		}
 		else{
 			toBeSentDepartmentDTO=receivedDepartmentDTO;

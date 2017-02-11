@@ -115,13 +115,11 @@
                        xhr.setRequestHeader("Content-Type", "application/json");
                    },
             	   success: function(data) { 
-                	  alert("success")
                       this.pqGrid("commit");
                       this.pqGrid("refreshDataAndView");
                    },
                    error: function () {
                        //debugger;
-                       alert("error")
                        this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
                        this.pqGrid("rollback");
                    }
@@ -181,8 +179,10 @@
               jsonToBeSend["branchId"] = rowData.branchId;
               jsonToBeSend["status"] = rowData.status;
               jsonToBeSend["reportingMgr"] = rowData.reportingMgr;
+              jsonToBeSend["gender"] = rowData.gender;
+              jsonToBeSend["emailId"] = rowData.emailId;
              
-              url = "/SpringMVCSecruityMavenApp/addEmployee";
+              url = "/ExpenseManagement/addEmployee";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record
@@ -213,10 +213,8 @@
 	          	    	$grid.pqGrid("commit");
           	    	}
           	    	else{
-          	    		
           	    		$grid.pqGrid("rollback");
           	    	}
-          	    	$grid.pqGrid("commit");
           	    	$(".customMessage").text(data.message);
           	    	
           	    },

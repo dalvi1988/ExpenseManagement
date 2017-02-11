@@ -12,13 +12,9 @@ import org.springframework.stereotype.Service;
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.ServiceStatus;
 import com.chaitanya.company.model.CompanyDTO;
-import com.chaitanya.department.convertor.DepartmentConvertor;
-import com.chaitanya.department.model.DepartmentDTO;
-import com.chaitanya.department.service.DepartmentService;
 import com.chaitanya.employee.convertor.EmployeeConvertor;
 import com.chaitanya.employee.dao.IEmployeeDAO;
 import com.chaitanya.employee.model.EmployeeDTO;
-import com.chaitanya.jpa.DepartmentJPA;
 import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.utility.Validation;
 

@@ -71,6 +71,10 @@ public class CompanyController {
 				toBeSentCompanyDTO=receivedCompanyDTO;
 				toBeSentCompanyDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 			}
+			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
+				toBeSentCompanyDTO=receivedCompanyDTO;
+				toBeSentCompanyDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
+			}
 		}
 		else{
 			toBeSentCompanyDTO=receivedCompanyDTO;

@@ -87,6 +87,10 @@ public class EmployeeController {
 				toBeSentEmployeeDTO=receivedEmployeeDTO;
 				toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 			}
+			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
+				toBeSentEmployeeDTO=receivedEmployeeDTO;
+				toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
+			}
 		}
 		else{
 			toBeSentEmployeeDTO=receivedEmployeeDTO;

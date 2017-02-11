@@ -2,6 +2,7 @@ package com.chaitanya.employee.convertor;
 
 import java.text.ParseException;
 
+import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.BranchJPA;
 import com.chaitanya.jpa.CompanyJPA;
@@ -70,17 +71,25 @@ public class EmployeeConvertor {
 			employee.setLastName(employeeDTO.getLastName());
 			employee.setEmailId(employeeDTO.getEmailId());
 			employee.setGender(employeeDTO.getGender());
-			if(Validation.validateForNullObject(employeeDTO.getBranchDTO())){
+			
+			EmployeeJPA reportingMgr= new EmployeeJPA();
+			reportingMgr.setEmployeeId(employeeDTO.getReportingMgr());
+			employee.setReportingMgr(reportingMgr);
+			
+			//if(Validation.validateForNullObject(employeeDTO.getBranchDTO())){
 				BranchJPA branchDetails=new BranchJPA();
-				branchDetails.setBranchId(employeeDTO.getBranchDTO().getBranchId());
-				if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO()))
+				//branchDetails.setBranchId(employeeDTO.getBranchDTO().getBranchId());
+				branchDetails.setBranchId(employeeDTO.getBranchId());// because grid does not support json heirarchy
+				/* No need to set company
+				 * if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO()))
 				{
 					CompanyJPA companyDetails=new CompanyJPA();
 					companyDetails.setCompanyId(employeeDTO.getBranchDTO().getCompanyDTO().getCompanyId());
 					branchDetails.setCompanyJPA(companyDetails);
-				}
+				}*/
 				employee.setBranchJPA(branchDetails);
-			}
+			//}
+			
 			if(Validation.validateForZero(employeeDTO.getModifiedBy())){
 				employee.setModifiedBy(employeeDTO.getModifiedBy());
 			}

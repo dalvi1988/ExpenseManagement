@@ -6,5 +6,7 @@ public class ApplicationConstant {
 	public static final String UPDATE_RECORD="RECORD UPDATED SUCCESSFULLY.";
 	
 	public static final String SYSTEM_FAILURE="ERROR!!! Please contact system administrator.";
+	
+	public static final String BUSSINESS_FAILURE="Data intgrity error!!! Please check records rules.";
 
 }

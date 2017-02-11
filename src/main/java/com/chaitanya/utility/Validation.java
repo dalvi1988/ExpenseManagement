@@ -61,4 +61,15 @@ public class Validation {
 		}
 		return result;
 	}
+	
+	public static boolean validateForBusinessFailureStatus(BaseDTO baseDTO){
+		Boolean result=false;
+		if(validateForNullObject(baseDTO)){
+			if(baseDTO.getServiceStatus().equals(ServiceStatus.BUSINESS_VALIDATION_FAILURE))
+			{
+				result=true;
+			}
+		}
+		return result;
+	}
 }
