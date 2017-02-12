@@ -16,6 +16,7 @@ public class EmployeeDTO extends BaseDTO {
 	private String emailId;
 	private Character gender;
 	private BranchDTO branchDTO;
+	private EmployeeDTO reportingMgrDTO;
 	private String branchName;
 	private Long branchId;
 	private Long reportingMgr;
@@ -62,6 +63,7 @@ public class EmployeeDTO extends BaseDTO {
 	}
 	public void setBranchDTO(BranchDTO branchDTO) {
 		this.branchDTO = branchDTO;
+		this.branchId=branchDTO.getBranchId();
 	}
 	public String getBranchName() {
 		return branchName;
@@ -69,17 +71,31 @@ public class EmployeeDTO extends BaseDTO {
 	public void setBranchName(String branchName) {
 		this.branchName = branchName;
 	}
+
+	public EmployeeDTO getReportingManager() {
+		return reportingMgrDTO;
+	}
+	public void setReportingMgrDTO(EmployeeDTO reportingMgrDTO) {
+		this.reportingMgrDTO = reportingMgrDTO;
+		this.reportingMgr=reportingMgrDTO.getEmployeeId();
+	}
+	
 	public Long getBranchId() {
 		return branchId;
 	}
 	public void setBranchId(Long branchId) {
 		this.branchId = branchId;
+		BranchDTO branchDTO=new BranchDTO();
+		branchDTO.setBranchId(branchId);
+		this.setBranchDTO(branchDTO);
 	}
 	public Long getReportingMgr() {
 		return reportingMgr;
 	}
 	public void setReportingMgr(Long reportingMgr) {
 		this.reportingMgr = reportingMgr;
+		EmployeeDTO employeeDTO = new EmployeeDTO();
+		employeeDTO.setEmployeeId(reportingMgr);
+		this.setReportingMgrDTO(employeeDTO);
 	}
-
 }

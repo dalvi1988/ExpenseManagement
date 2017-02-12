@@ -2,6 +2,7 @@
 <html lang="en">
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <head>
 
     <title>Employee Master</title>
@@ -17,6 +18,7 @@
     
    <script type="text/javascript">
    //var data = [{ "employeeId": 1, "employeeCode": "Exxon Mobil", "employeeName": "339938.0" }];
+   
    var employeeList= ${employeeList};
    var branchList= ${branchList};
    $(function () {
@@ -79,7 +81,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { employeeId:"", firstName: "", lastName:"", status:""}; //empty row template
+           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:1, status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -278,7 +280,7 @@
            title: "<h1><b>Employee Master</b></h1>",
 
            colModel: [
-                  { title: "Employee Id", dataType: "integer", dataIndx: "employeeId", editable: false, width: 80 },
+                  { title: "Id", dataType: "integer", dataIndx: "employeeId", editable: false, width: 30 },
                   { title: "First Name", width: 140, dataType: "string", align: "right", dataIndx: "firstName",
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
@@ -291,7 +293,7 @@
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
                   },
-                  { title: "Gender", width: 170, dataIndx: "gender",
+                  { title: "Gender", width: 50, dataIndx: "gender",
                       editor: {
                     	  options: ['M','F'], 
                     	  type: function (ui) {
@@ -314,12 +316,12 @@
                       }
                   },
                  
-                  { title: "Email ID", width: 165, dataType: "string", dataIndx: "emailId",
+                  { title: "Email ID", width: 200, dataType: "string", dataIndx: "emailId",
                       validations: [
                           { type: 'nonEmpty', msg: "Required" }
                       ]
                   },
-                  { title: "Branch", dataIndx: "branchId", width: 90,
+                  { title: "Branch", dataIndx: "branchId", width: 150,
                 	  editor: {                    
                           type: "select",
                           valueIndx: "branchId",
@@ -377,8 +379,8 @@
                       }
                   },
                  
-                  { title: "", width: 100, dataIndx: "createdBy", hidden:true },
-                  { title: "", width: 100, dataIndx: "createdDate", hidden:true },
+                  { title: "", width: 0, dataIndx: "createdBy", hidden:true },
+                  { title: "", width: 0, dataIndx: "createdDate", hidden:true },
                   { title: "", editable: false, minWidth: 165, sortable: false, render: function (ui) {
                       return "<button type='button' class='edit_btn'>Edit</button>\
                           <button type='button' class='delete_btn'>Delete</button>";
@@ -455,7 +457,7 @@
 </script>
 </head>
 <body>
-  <div id="grid_editing" style="margin: auto;">
+ <div id="grid_editing" style="margin: auto;">
 </div>
        
 </body>
