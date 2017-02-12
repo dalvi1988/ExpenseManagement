@@ -21,12 +21,8 @@ public class EmployeeJPA {
 	@Column(name="employee_id")
 	private Long employeeId;
 	
-	@OneToOne
-	@JoinColumn(name="branch_id")
-	private BranchJPA branchJPA;
-	
 	@Column(name="first_name",nullable=false)
-	private String  firstName;
+	private String firstName;
 	
 	@Column(name="middle_name",nullable=true)
 	private String middleName;
@@ -43,6 +39,14 @@ public class EmployeeJPA {
 	
 	@OneToMany(mappedBy="reportingMgr")
 	private Set<EmployeeJPA> subordinates = new HashSet<EmployeeJPA>();
+	
+	@OneToOne
+	@JoinColumn(name="branch_id")
+	private BranchJPA branchJPA;
+	
+	@OneToOne
+	@JoinColumn(name="department_id")
+	private DepartmentJPA departmentJPA;
 	
 	@Column(name="gender")
 	private Character gender;
@@ -174,5 +178,13 @@ public class EmployeeJPA {
 
 	public void setSubordinates(Set<EmployeeJPA> subordinates) {
 		this.subordinates = subordinates;
-	}	
+	}
+	
+	public DepartmentJPA getDepartmentJPA() {
+		return departmentJPA;
+	}
+
+	public void setDepartmentJPA(DepartmentJPA departmentJPA) {
+		this.departmentJPA = departmentJPA;
+	}
 }

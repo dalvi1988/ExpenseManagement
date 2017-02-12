@@ -29,7 +29,7 @@ public class EmployeeService implements IEmployeeService {
 		return baseDTO == null  || !(baseDTO instanceof EmployeeDTO);
 	}
 	
-	public List<EmployeeDTO> findEmpployeeOnCompany(BaseDTO baseDTO) {
+	public List<EmployeeDTO> findEmployeeOnCompany(BaseDTO baseDTO) {
 		logger.debug("EmployeeService: findEmpployeeOnCompany-Start");
 		if(validateEmployeeMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of EmployeeMasterDTO type.");

@@ -5,6 +5,7 @@ import java.text.ParseException;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.BranchJPA;
+import com.chaitanya.jpa.DepartmentJPA;
 import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
@@ -77,7 +78,7 @@ public class EmployeeConvertor {
 			employee.setEmailId(employeeDTO.getEmailId());
 			employee.setGender(employeeDTO.getGender());
 			
-			if(Validation.validateForNullObject(employeeDTO.getReportingManager())){
+			if(Validation.validateForNullObject(employeeDTO.getReportingMgrDTO())){
 				EmployeeJPA reportingMgr= new EmployeeJPA();
 				reportingMgr.setEmployeeId(employeeDTO.getReportingMgr());
 				employee.setReportingMgr(reportingMgr);
@@ -86,6 +87,11 @@ public class EmployeeConvertor {
 				BranchJPA branchDetails=new BranchJPA();
 				branchDetails.setBranchId(employeeDTO.getBranchDTO().getBranchId());
 				employee.setBranchJPA(branchDetails);
+			}
+			if(Validation.validateForNullObject(employeeDTO.getDepartmentDTO())){
+				DepartmentJPA departmentJPA=new DepartmentJPA();
+				departmentJPA.setDepartmentId(employeeDTO.getDepartmentDTO().getDepartmentId());
+				employee.setDepartmentJPA(departmentJPA);
 			}
 			
 			if(Validation.validateForZero(employeeDTO.getModifiedBy())){

@@ -2,6 +2,7 @@ package com.chaitanya.employee.model;
 
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.department.model.DepartmentDTO;
 
 public class EmployeeDTO extends BaseDTO {
 
@@ -16,11 +17,12 @@ public class EmployeeDTO extends BaseDTO {
 	private String emailId;
 	private Character gender;
 	private BranchDTO branchDTO;
+	private DepartmentDTO departmentDTO;
 	private EmployeeDTO reportingMgrDTO;
 	private String branchName;
 	private Long branchId;
 	private Long reportingMgr;
-
+	private Long departmentId;
 	
 	public Long getEmployeeId() {
 		return employeeId;
@@ -72,7 +74,7 @@ public class EmployeeDTO extends BaseDTO {
 		this.branchName = branchName;
 	}
 
-	public EmployeeDTO getReportingManager() {
+	public EmployeeDTO getReportingMgrDTO() {
 		return reportingMgrDTO;
 	}
 	public void setReportingMgrDTO(EmployeeDTO reportingMgrDTO) {
@@ -89,6 +91,7 @@ public class EmployeeDTO extends BaseDTO {
 		branchDTO.setBranchId(branchId);
 		this.setBranchDTO(branchDTO);
 	}
+	
 	public Long getReportingMgr() {
 		return reportingMgr;
 	}
@@ -97,5 +100,22 @@ public class EmployeeDTO extends BaseDTO {
 		EmployeeDTO employeeDTO = new EmployeeDTO();
 		employeeDTO.setEmployeeId(reportingMgr);
 		this.setReportingMgrDTO(employeeDTO);
+	}
+	
+	public DepartmentDTO getDepartmentDTO() {
+		return departmentDTO;
+	}
+	public void setDepartmentDTO(DepartmentDTO departmentDTO) {
+		this.departmentDTO = departmentDTO;
+		this.departmentId=departmentDTO.getDepartmentId();
+	}
+	public Long getDepartmentId() {
+		return departmentId;
+	}
+	public void setDepartmentId(Long departmentId) {
+		this.departmentId = departmentId;
+		DepartmentDTO departmentDTO= new DepartmentDTO();
+		departmentDTO.setDepartmentId(departmentId);
+		this.setDepartmentDTO(departmentDTO);
 	}
 }

@@ -7,7 +7,7 @@ import com.chaitanya.employee.model.EmployeeDTO;
 
 
 public interface IEmployeeService {
-	List<EmployeeDTO> findEmpployeeOnCompany(BaseDTO baseDTO);
+	List<EmployeeDTO> findEmployeeOnCompany(BaseDTO baseDTO);
 
 	BaseDTO addEmployee(BaseDTO baseDTO);
 }

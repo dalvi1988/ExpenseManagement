@@ -17,10 +17,10 @@
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
     
    <script type="text/javascript">
-   //var data = [{ "employeeId": 1, "employeeCode": "Exxon Mobil", "employeeName": "339938.0" }];
-   
+   var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;
    var employeeList= ${employeeList};
    var branchList= ${branchList};
+   var departmentList=${departmentList};
    $(function () {
 	   
 		//var branchList = [{ label:'Mumbai',value:'1'},{ label:'Mumbai2', value:'2'},{ label:'Mumbai3', value:'3'}]
@@ -81,7 +81,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:1, status:true}; //empty row template
+           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:logerBranchId, status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -316,7 +316,7 @@
                       }
                   },
                  
-                  { title: "Email ID", width: 200, dataType: "string", dataIndx: "emailId",
+                  { title: "Email ID", width: 300, dataType: "string", dataIndx: "emailId",
                       validations: [
                           { type: 'nonEmpty', msg: "Required" }
                       ]
@@ -346,6 +346,25 @@
 	       			           var option = options[i];
 	       			           if (option.branchId == ui.rowData.branchId) {
 	       			               return option.branchName;
+	       			           } 
+	       			       }
+        			   }   
+                  },
+                  { title: "Department", dataIndx: "departmentId", width: 150,
+                	  editor: {                    
+                          type: "select",
+                          valueIndx: "departmentId",
+                          labelIndx: "departmentName",
+                          options: departmentList,
+                          
+                      } ,
+                       render: function (ui) {
+        			       var options = ui.column.editor.options,
+        			           cellData = ui.cellData;
+	       			       for (var i = 0; i < options.length; i++) {
+	       			           var option = options[i];
+	       			           if (option.departmentId == ui.rowData.departmentId) {
+	       			               return option.departmentName;
 	       			           } 
 	       			       }
         			   }   
@@ -381,7 +400,7 @@
                  
                   { title: "", width: 0, dataIndx: "createdBy", hidden:true },
                   { title: "", width: 0, dataIndx: "createdDate", hidden:true },
-                  { title: "", editable: false, minWidth: 165, sortable: false, render: function (ui) {
+                  { title: "", editable: false, minWidth: 150, sortable: false, render: function (ui) {
                       return "<button type='button' class='edit_btn'>Edit</button>\
                           <button type='button' class='delete_btn'>Delete</button>";
                   }
@@ -457,6 +476,7 @@
 </script>
 </head>
 <body>
+	<b></b>
  <div id="grid_editing" style="margin: auto;">
 </div>
        

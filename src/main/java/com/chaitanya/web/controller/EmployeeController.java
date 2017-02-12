@@ -18,6 +18,8 @@ import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.Command;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.company.service.ICompanyService;
+import com.chaitanya.department.model.DepartmentDTO;
+import com.chaitanya.department.service.IDepartmentService;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.employee.service.IEmployeeService;
 import com.chaitanya.login.model.LoginUserDetails;
@@ -35,6 +37,8 @@ public class EmployeeController {
 	IEmployeeService employeeService;
 	@Autowired
 	ICompanyService companyService;
+	@Autowired
+	IDepartmentService departmentService;
 	
 	@RequestMapping(value="employee",method=RequestMethod.GET)
 	public ModelAndView getAllEmployee() throws JsonProcessingException{
@@ -42,17 +46,21 @@ public class EmployeeController {
 		ObjectMapper mapper = new ObjectMapper();
 		List<EmployeeDTO> employeeDTOList=null;
 		List<BranchDTO> branchDTOList=null;
+		List<DepartmentDTO> departmentDTOList=null;
 		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
 			employeeDTOList=new ArrayList<EmployeeDTO>();
 			EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
 			if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
-				employeeDTOList=employeeService.findEmpployeeOnCompany(employeeDTO);
+				employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
 				branchDTOList=companyService.findBranchOnCompany(employeeDTO.getBranchDTO().getCompanyDTO());
+				departmentDTOList=departmentService.findAll();
+				
 			}
 			
 			model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
 			model.addObject("branchList", mapper.writeValueAsString(branchDTOList));
+			model.addObject("departmentList", mapper.writeValueAsString(departmentDTOList));
 			
 		}
 		model.setViewName("master/employeeJSP");
