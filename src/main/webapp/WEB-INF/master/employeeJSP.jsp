@@ -373,8 +373,8 @@
                 	  editor: {                    
                           type: "select",
                           valueIndx: "employeeId",
-                          labelIndx: "firstName",
-                          groupIndx: "branchId",
+                          labelIndx: "fullName",
+                          groupIndx: "branchName",
                           //dataMap: ['name', 'deliverytime', 'unitprice'],
                           options: employeeList,
                       },

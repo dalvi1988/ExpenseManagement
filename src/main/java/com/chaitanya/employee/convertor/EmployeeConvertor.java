@@ -36,6 +36,7 @@ public class EmployeeConvertor {
 			if(Validation.validateForNullObject(employeeJPA.getBranchJPA())){
 				BranchDTO branchDTO= new BranchDTO();
 				branchDTO.setBranchId(employeeJPA.getBranchJPA().getBranchId());
+				branchDTO.setBranchName(employeeJPA.getBranchJPA().getBranchName());
 				employeeDTO.setBranchDTO(branchDTO);
 			}
 			

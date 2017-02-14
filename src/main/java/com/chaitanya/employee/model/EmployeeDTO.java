@@ -13,6 +13,7 @@ public class EmployeeDTO extends BaseDTO {
 	private Long employeeId;
 	private String  firstName;
 	private String middleName;
+	private String fullName;
 	private String lastName;
 	private String emailId;
 	private Character gender;
@@ -45,6 +46,9 @@ public class EmployeeDTO extends BaseDTO {
 	public String getLastName() {
 		return lastName;
 	}
+	public String getFullName(){
+		return firstName+" "+lastName;
+	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
@@ -66,6 +70,7 @@ public class EmployeeDTO extends BaseDTO {
 	public void setBranchDTO(BranchDTO branchDTO) {
 		this.branchDTO = branchDTO;
 		this.branchId=branchDTO.getBranchId();
+		this.branchName=branchDTO.getBranchName();
 	}
 	public String getBranchName() {
 		return branchName;
