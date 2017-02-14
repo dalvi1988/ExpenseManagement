@@ -19,6 +19,7 @@
    <script type="text/javascript">
    var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;
    var employeeList= ${employeeList};
+   var reportingMgrList=${employeeList};
    var branchList= ${branchList};
    var departmentList=${departmentList};
    $(function () {
@@ -108,7 +109,7 @@
             	   type: 'DELETE', 
                    context: $grid,
                    dataType: 'json', 
-                   url: "/SpringMVCSecruityMavenApp/delete",
+                   url: "/ExpenseManagement/delete",
                    //url: "/pro/products.php?pq_delete=1",//for PHP
                    data: JSON.stringify(jsonToBeSend),
                    async: true,
@@ -179,6 +180,7 @@
               jsonToBeSend["firstName"] = rowData.firstName;
               jsonToBeSend["lastName"] = rowData.lastName;
               jsonToBeSend["branchId"] = rowData.branchId;
+              jsonToBeSend["departmentId"] = rowData.departmentId;
               jsonToBeSend["status"] = rowData.status;
               jsonToBeSend["reportingMgr"] = rowData.reportingMgr;
               jsonToBeSend["gender"] = rowData.gender;
@@ -372,11 +374,11 @@
                   { title: "Reporting Manager", dataIndx: "reportingMgr", width: 90,
                 	  editor: {                    
                           type: "select",
-                          valueIndx: "employeeId",
-                          labelIndx: "fullName",
-                          groupIndx: "branchName",
+                          valueIndx: "reportingMgr",
+                          labelIndx: "firstName",
+                         // groupIndx: "branchName",
                           //dataMap: ['name', 'deliverytime', 'unitprice'],
-                          options: employeeList,
+                          options: reportingMgrList,
                       },
                       render: function (ui) {		            
       		            var options = ui.column.editor.options,
