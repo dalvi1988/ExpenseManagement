@@ -374,10 +374,9 @@
                   { title: "Reporting Manager", dataIndx: "reportingMgr", width: 90,
                 	  editor: {                    
                           type: "select",
-                          valueIndx: "reportingMgr",
-                          labelIndx: "firstName",
-                         // groupIndx: "branchName",
-                          //dataMap: ['name', 'deliverytime', 'unitprice'],
+                          valueIndx: "employeeId",
+                          labelIndx: "fullName",
+                          groupIndx: "branchName",
                           options: reportingMgrList,
                       },
                       render: function (ui) {		            
@@ -385,8 +384,8 @@
                               cellData = ui.cellData;
       		            for (var i = 0; i < options.length; i++) {
       		                var option = options[i];
-      		                if (option.reportingMgr == ui.rowData.reportingMgr) {
-      		                    return option.firstName;
+      		                if (option.employeeId == ui.rowData.reportingMgr) {
+      		                    return option.fullName;
       		                }
       		            }
       		        },
