@@ -45,7 +45,7 @@ public class EmployeeService implements IEmployeeService {
 				if (Validation.validateCollectionForNullSize(employeeList)) {
 					employeeDTOList = new ArrayList<EmployeeDTO>();
 					for (EmployeeJPA emp:employeeList) {
-						EmployeeDTO departmentDTO = EmployeeConvertor.setEmployeeToEmployeeDTO(emp);
+						EmployeeDTO departmentDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(emp);
 						employeeDTOList.add(departmentDTO);
 					}
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
@@ -74,7 +74,7 @@ public class EmployeeService implements IEmployeeService {
 			if (Validation.validateForNullObject(employeeJPA)) {
 				employeeJPA=employeeDAO.add(employeeJPA);
 				if(Validation.validateForNullObject(employeeJPA)){
-					baseDTO=EmployeeConvertor.setEmployeeToEmployeeDTO(employeeJPA);
+					baseDTO=EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
 			}

@@ -19,6 +19,7 @@
    <script type="text/javascript">
    var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;
    var employeeList= ${employeeList};
+   var reportingMgrList=${employeeList};
    var branchList= ${branchList};
    var departmentList=${departmentList};
    $(function () {
@@ -108,7 +109,7 @@
             	   type: 'DELETE', 
                    context: $grid,
                    dataType: 'json', 
-                   url: "/SpringMVCSecruityMavenApp/delete",
+                   url: "/ExpenseManagement/delete",
                    //url: "/pro/products.php?pq_delete=1",//for PHP
                    data: JSON.stringify(jsonToBeSend),
                    async: true,
@@ -179,6 +180,7 @@
               jsonToBeSend["firstName"] = rowData.firstName;
               jsonToBeSend["lastName"] = rowData.lastName;
               jsonToBeSend["branchId"] = rowData.branchId;
+              jsonToBeSend["departmentId"] = rowData.departmentId;
               jsonToBeSend["status"] = rowData.status;
               jsonToBeSend["reportingMgr"] = rowData.reportingMgr;
               jsonToBeSend["gender"] = rowData.gender;
@@ -373,18 +375,17 @@
                 	  editor: {                    
                           type: "select",
                           valueIndx: "employeeId",
-                          labelIndx: "firstName",
-                          groupIndx: "branchId",
-                          //dataMap: ['name', 'deliverytime', 'unitprice'],
-                          options: employeeList,
+                          labelIndx: "fullName",
+                          groupIndx: "branchName",
+                          options: reportingMgrList,
                       },
                       render: function (ui) {		            
       		            var options = ui.column.editor.options,
                               cellData = ui.cellData;
       		            for (var i = 0; i < options.length; i++) {
       		                var option = options[i];
-      		                if (option.reportingMgr == ui.rowData.reportingMgr) {
-      		                    return option.firstName;
+      		                if (option.employeeId == ui.rowData.reportingMgr) {
+      		                    return option.fullName;
       		                }
       		            }
       		        },

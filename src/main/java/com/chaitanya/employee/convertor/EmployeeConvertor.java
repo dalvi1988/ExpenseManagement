@@ -3,6 +3,7 @@ package com.chaitanya.employee.convertor;
 import java.text.ParseException;
 
 import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.BranchJPA;
 import com.chaitanya.jpa.DepartmentJPA;
@@ -12,7 +13,7 @@ import com.chaitanya.utility.Validation;
 
 public class EmployeeConvertor {
 	
-	public static EmployeeDTO setEmployeeToEmployeeDTO(EmployeeJPA employeeJPA) throws ParseException{
+	public static EmployeeDTO setEmployeeJPAToEmployeeDTO(EmployeeJPA employeeJPA) throws ParseException{
 		EmployeeDTO employeeDTO=null;
 		if(Validation.validateForNullObject(employeeJPA)){
 			employeeDTO=new EmployeeDTO(); 
@@ -36,7 +37,14 @@ public class EmployeeConvertor {
 			if(Validation.validateForNullObject(employeeJPA.getBranchJPA())){
 				BranchDTO branchDTO= new BranchDTO();
 				branchDTO.setBranchId(employeeJPA.getBranchJPA().getBranchId());
+				branchDTO.setBranchName(employeeJPA.getBranchJPA().getBranchName());
 				employeeDTO.setBranchDTO(branchDTO);
+			}
+			
+			if(Validation.validateForNullObject(employeeJPA.getDepartmentJPA())){
+				DepartmentDTO departmentDTO= new DepartmentDTO();
+				departmentDTO.setDepartmentId(employeeJPA.getDepartmentJPA().getDepartmentId());
+				employeeDTO.setDepartmentDTO(departmentDTO);
 			}
 			
 			if(Validation.validateForNullObject(employeeJPA.getReportingMgr())){
@@ -65,49 +73,49 @@ public class EmployeeConvertor {
 	
 	public static EmployeeJPA setEmployeeDTOToEmployee(EmployeeDTO employeeDTO) throws ParseException
 	{
-		EmployeeJPA employee=null;
+		EmployeeJPA employeeJPA=null;
 		if(Validation.validateForNullObject(employeeDTO)){
-			employee=new EmployeeJPA();
+			employeeJPA=new EmployeeJPA();
 			
 			if(Validation.validateForNullObject(employeeDTO.getEmployeeId())){
-				employee.setEmployeeId(employeeDTO.getEmployeeId());
+				employeeJPA.setEmployeeId(employeeDTO.getEmployeeId());
 			}
-			employee.setFirstName(employeeDTO.getFirstName());
-			employee.setMiddleName(employeeDTO.getMiddleName());
-			employee.setLastName(employeeDTO.getLastName());
-			employee.setEmailId(employeeDTO.getEmailId());
-			employee.setGender(employeeDTO.getGender());
+			employeeJPA.setFirstName(employeeDTO.getFirstName());
+			employeeJPA.setMiddleName(employeeDTO.getMiddleName());
+			employeeJPA.setLastName(employeeDTO.getLastName());
+			employeeJPA.setEmailId(employeeDTO.getEmailId());
+			employeeJPA.setGender(employeeDTO.getGender());
 			
 			if(Validation.validateForNullObject(employeeDTO.getReportingMgrDTO())){
 				EmployeeJPA reportingMgr= new EmployeeJPA();
 				reportingMgr.setEmployeeId(employeeDTO.getReportingMgr());
-				employee.setReportingMgr(reportingMgr);
+				employeeJPA.setReportingMgr(reportingMgr);
 			}
 			if(Validation.validateForNullObject(employeeDTO.getBranchDTO())){
 				BranchJPA branchDetails=new BranchJPA();
 				branchDetails.setBranchId(employeeDTO.getBranchDTO().getBranchId());
-				employee.setBranchJPA(branchDetails);
+				employeeJPA.setBranchJPA(branchDetails);
 			}
 			if(Validation.validateForNullObject(employeeDTO.getDepartmentDTO())){
 				DepartmentJPA departmentJPA=new DepartmentJPA();
 				departmentJPA.setDepartmentId(employeeDTO.getDepartmentDTO().getDepartmentId());
-				employee.setDepartmentJPA(departmentJPA);
+				employeeJPA.setDepartmentJPA(departmentJPA);
 			}
 			
 			if(Validation.validateForZero(employeeDTO.getModifiedBy())){
-				employee.setModifiedBy(employeeDTO.getModifiedBy());
+				employeeJPA.setModifiedBy(employeeDTO.getModifiedBy());
 			}
 			if(Validation.validateForZero(employeeDTO.getCreatedBy())){
-				employee.setModifiedBy(employeeDTO.getCreatedBy());
+				employeeJPA.setModifiedBy(employeeDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(employeeDTO.getCreatedDate())){
-				employee.setCreatedDate(Convertor.stringToCalendar(employeeDTO.getCreatedDate()));
+				employeeJPA.setCreatedDate(Convertor.stringToCalendar(employeeDTO.getCreatedDate()));
 			}
 			if(Validation.validateForNullObject(employeeDTO.getModifiedDate())){
-				employee.setModifiedDate(Convertor.stringToCalendar(employeeDTO.getModifiedDate()));
+				employeeJPA.setModifiedDate(Convertor.stringToCalendar(employeeDTO.getModifiedDate()));
 			}
-			employee.setStatus(Convertor.convertStatusToChar(employeeDTO.getStatus()));
+			employeeJPA.setStatus(Convertor.convertStatusToChar(employeeDTO.getStatus()));
 		}
-		return employee;
+		return employeeJPA;
 	}
 }
