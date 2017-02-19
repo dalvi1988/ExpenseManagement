@@ -17,10 +17,10 @@ public class DepartmentJPA {
 	private Long departmentId;
 	
 	@Column(name="dept_name",unique=true,nullable=false)
-	private String departmentName;
+	private String deptName;
 	
 	@Column(name="dept_code",unique=true,nullable=false)
-	private String departmentCode;
+	private String deptCode;
 	
 	@Column(name="created_by")
 	private Long createdBy;
@@ -36,20 +36,19 @@ public class DepartmentJPA {
 	
 	@Column(name="status",nullable=false)
     Character status;
-    
 	
-	public String getDepartmentName() {
-		return departmentName;
+	public String getDeptName() {
+		return deptName;
 	}
-	public void setDepartmentName(String departmentName) {
-		this.departmentName = departmentName;
+	public void setDeptName(String departmentName) {
+		this.deptName = departmentName;
 	}
 
-	public String getDepartmentCode() {
-		return departmentCode;
+	public String getDeptCode() {
+		return deptCode;
 	}
-	public void setDepartmentCode(String departmentCode) {
-		this.departmentCode = departmentCode;
+	public void setDeptCode(String departmentCode) {
+		this.deptCode = departmentCode;
 	}
 
 	public Calendar getCreatedDate() {

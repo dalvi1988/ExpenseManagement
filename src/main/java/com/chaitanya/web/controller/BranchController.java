@@ -18,7 +18,6 @@ import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.Command;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.branch.service.IBranchService;
-import com.chaitanya.company.model.CompanyDTO;
 import com.chaitanya.company.service.ICompanyService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
@@ -40,7 +39,7 @@ public class BranchController {
 	private ICompanyService companyService;
 	
 	@RequestMapping(value="/branch",method=RequestMethod.GET)
-	public ModelAndView getDepartment() throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView getBranch() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
 		List<BranchDTO> branchDTOList = branchService.findAll();
@@ -50,7 +49,7 @@ public class BranchController {
 	}
 	
 	@RequestMapping(value="/addBranch", method=RequestMethod.POST)
-	public @ResponseBody BranchDTO addDepartment(@RequestBody BranchDTO receivedBranchDTO){
+	public @ResponseBody BranchDTO addBranch(@RequestBody BranchDTO receivedBranchDTO){
 		BranchDTO toBeSentBranchDTO=null;
 		if(Validation.validateForNullObject(receivedBranchDTO)){
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();

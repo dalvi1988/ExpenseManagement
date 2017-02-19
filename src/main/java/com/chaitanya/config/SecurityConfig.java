@@ -32,8 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 			.antMatchers("/master/**").access("hasRole('ROLE_ADMIN')")
-			.antMatchers("/resources/**").permitAll()
-			.antMatchers("/grid/**").permitAll()
+			//.antMatchers("/approvalflow/**").access("hasRole('SUPER_ADMIN')")
 			.antMatchers("/pages/**").permitAll()
 			.anyRequest().authenticated()
 		.and()

@@ -16,6 +16,7 @@
    <script type="text/javascript">
    //var data = [{ "departmentId": 1, "departmentCode": "Exxon Mobil", "departmentName": "339938.0" }];
    var data= ${departmentList};
+   
    $(function () {
 		//var data = [{ "departmentId": 1, "departmentCode": "IT", "departmentName": "Information Tech" }]
        //define common ajax object for addition, update and delete.
@@ -148,7 +149,7 @@
               jsonToBeSend["departmentName"] = rowData.departmentName;
               jsonToBeSend["departmentCode"] = rowData.departmentCode;
               jsonToBeSend["status"] = rowData.status;
-              url = "/SpringMVCSecruityMavenApp/addDepartment";
+              url = "/ExpenseManagement/addDepartment";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record
@@ -258,7 +259,6 @@
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
                   },
-                  
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                       editor: { type: "checkbox", style: "margin:3px 5px;" },
                       render: function (ui) {

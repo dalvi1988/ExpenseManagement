@@ -33,11 +33,13 @@ public class DepartmentController {
 	@Qualifier("departmentService")
 	private IDepartmentService departmentService;
 	
+	
 	@RequestMapping(value="/department",method=RequestMethod.GET)
 	public ModelAndView getDepartment() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
-		List<DepartmentDTO> departmentDTOList=departmentService.findAll();
+		List<DepartmentDTO> departmentDTOList=null;
+		departmentDTOList=departmentService.findAll();
 		model.addObject("departmentList", mapper.writeValueAsString(departmentDTOList));
 		model.setViewName("master/departmentJSP");
 		return model;

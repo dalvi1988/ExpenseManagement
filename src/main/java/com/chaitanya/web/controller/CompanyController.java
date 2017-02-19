@@ -34,7 +34,7 @@ public class CompanyController {
 	private ICompanyService companyService;
 	
 	@RequestMapping(value="/company",method=RequestMethod.GET)
-	public ModelAndView getDepartment() throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView getCompanyDetails() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
 		List<CompanyDTO> companyDTOList=companyService.findAll();
@@ -44,7 +44,7 @@ public class CompanyController {
 	}
 	
 	@RequestMapping(value="/addCompany", method=RequestMethod.POST)
-	public @ResponseBody CompanyDTO addDepartment(@RequestBody CompanyDTO receivedCompanyDTO){
+	public @ResponseBody CompanyDTO addCompany(@RequestBody CompanyDTO receivedCompanyDTO){
 		CompanyDTO toBeSentCompanyDTO=null;
 		if(Validation.validateForNullObject(receivedCompanyDTO)){
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
