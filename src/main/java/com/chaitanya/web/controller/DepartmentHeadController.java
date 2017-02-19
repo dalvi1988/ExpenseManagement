@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.branch.service.IBranchService;
+import com.chaitanya.company.service.ICompanyService;
 import com.chaitanya.departmentHead.model.DepartmentHeadDTO;
 import com.chaitanya.departmentHead.service.IDepartmentHeadService;
 import com.chaitanya.login.model.LoginUserDetails;
@@ -24,20 +27,24 @@ public class DepartmentHeadController {
 	@Autowired 
 	private IDepartmentHeadService deptHeadSerrvice;
 	
+	@Autowired
+	private ICompanyService companyService;
+	
 	
 	@RequestMapping(value="/departmentHead",method=RequestMethod.GET)
 	public ModelAndView getDepartmentHead() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
 		List<DepartmentHeadDTO> departmentHeadDTOList = null;
+		List<BranchDTO> branchDTOList=null;
 		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
-			DepartmentHeadDTO departmentHeadDTO= new DepartmentHeadDTO();
-			departmentHeadDTO.setLoginDTO(user.getLoginDTO());
-					
-			 departmentHeadDTOList = deptHeadSerrvice.findDepartmentHeadUnderCompany(departmentHeadDTO);
+			/*DepartmentHeadDTO departmentHeadDTO= new DepartmentHeadDTO();
+			departmentHeadDTO.setLoginDTO(user.getLoginDTO());*/
+			 branchDTOList = companyService.findBranchOnCompany(user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO());
+			// departmentHeadDTOList = deptHeadSerrvice.findDepartmentHeadUnderCompany(departmentHeadDTO);
 		}
-		model.addObject("departmentHeadList", mapper.writeValueAsString(departmentHeadDTOList));
+		model.addObject("branchList", mapper.writeValueAsString(branchDTOList));
 		model.setViewName("master/departmentHeadJSP");
 		return model;
 	}

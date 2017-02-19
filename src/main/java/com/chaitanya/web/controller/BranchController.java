@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.Command;
+import com.chaitanya.ajax.AjaxResponse;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.branch.service.IBranchService;
 import com.chaitanya.company.service.ICompanyService;
@@ -48,6 +49,15 @@ public class BranchController {
 		return model;
 	}
 	
+	@RequestMapping(value="/branchTemp",method=RequestMethod.GET)
+	public @ResponseBody AjaxResponse getBranchTemp() throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		List<BranchDTO> branchDTOList = branchService.findAll();
+		AjaxResponse ajax= new AjaxResponse();
+		ajax.setMessage("heelow");
+		return ajax;
+	}
 	@RequestMapping(value="/addBranch", method=RequestMethod.POST)
 	public @ResponseBody BranchDTO addBranch(@RequestBody BranchDTO receivedBranchDTO){
 		BranchDTO toBeSentBranchDTO=null;
