@@ -10,16 +10,16 @@ public class DepartmentDTO extends BaseDTO {
 	
 	private static final long serialVersionUID = 1L;
 
-	Long departmentId;
+	private Long departmentId;
 
 	@NotNull
 	@Size(min=3,max=30,message="Department lenght should be between 3 to 30 character")
-	String departmentName;
+	private String departmentName;
 
 	@NotNull
 	@Size(min=3,max=30,message="Department lenght should be between 3 to 30 character")
-	String departmentCode;
-		
+	private String departmentCode;
+	
 
 	public String getDepartmentName() {
 		return departmentName;

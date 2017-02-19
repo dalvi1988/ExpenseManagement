@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +32,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class EmployeeController {
 
 	@Autowired
-	@Qualifier("employeeService")
 	IEmployeeService employeeService;
 	@Autowired
 	ICompanyService companyService;
@@ -68,7 +66,7 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/addEmployee", method=RequestMethod.POST)
-	public @ResponseBody EmployeeDTO addDepartment(@RequestBody EmployeeDTO receivedEmployeeDTO){
+	public @ResponseBody EmployeeDTO addEmployee(@RequestBody EmployeeDTO receivedEmployeeDTO){
 		EmployeeDTO toBeSentEmployeeDTO=null;
 		if(Validation.validateForNullObject(receivedEmployeeDTO)){
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();

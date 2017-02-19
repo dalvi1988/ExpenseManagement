@@ -7,11 +7,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.ServiceStatus;
+import com.chaitanya.company.service.ICompanyService;
 import com.chaitanya.department.convertor.DepartmentConvertor;
 import com.chaitanya.department.dao.IDepartmentDAO;
 import com.chaitanya.department.model.DepartmentDTO;
@@ -23,6 +25,7 @@ public class DepartmentService implements IDepartmentService {
 
 	@Autowired
 	private IDepartmentDAO departmentDAO;
+	
 	private Logger logger= LoggerFactory.getLogger(DepartmentService.class);
 
 	@Override
@@ -76,4 +79,6 @@ public class DepartmentService implements IDepartmentService {
 	private boolean validateDepartmentMasterDTO(BaseDTO baseDTO) {
 		return baseDTO == null  || !(baseDTO instanceof DepartmentDTO);
 	}
+	
+	
 }

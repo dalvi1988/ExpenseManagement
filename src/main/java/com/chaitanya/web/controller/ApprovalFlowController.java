@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-public class BranchController {
+public class ApprovalFlowController {
 
 	@Autowired 
 	@Qualifier("branchService")
@@ -38,18 +38,18 @@ public class BranchController {
 	@Qualifier("companyService")
 	private ICompanyService companyService;
 	
-	@RequestMapping(value="/branch",method=RequestMethod.GET)
-	public ModelAndView getBranch() throws JsonGenerationException, JsonMappingException, IOException{
+	@RequestMapping(value="/functionalFlow",method=RequestMethod.GET)
+	public ModelAndView getFunctionalFlow() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
 		List<BranchDTO> branchDTOList = branchService.findAll();
 		model.addObject("branchList", mapper.writeValueAsString(branchDTOList));
-		model.setViewName("master/branchJSP");
+		model.setViewName("approvalflow/functionalApprovalFlowJSP");
 		return model;
 	}
 	
-	@RequestMapping(value="/addBranch", method=RequestMethod.POST)
-	public @ResponseBody BranchDTO addBranch(@RequestBody BranchDTO receivedBranchDTO){
+	@RequestMapping(value="/addFuntionalFlow", method=RequestMethod.POST)
+	public @ResponseBody BranchDTO addDepartment(@RequestBody BranchDTO receivedBranchDTO){
 		BranchDTO toBeSentBranchDTO=null;
 		if(Validation.validateForNullObject(receivedBranchDTO)){
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -16,6 +16,7 @@ public class BaseDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	private Long createdBy;
 	private String createdDate;
 	private Long modifiedBy;

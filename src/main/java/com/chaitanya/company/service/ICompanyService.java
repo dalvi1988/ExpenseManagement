@@ -14,5 +14,4 @@ public interface ICompanyService {
 
 	List<BranchDTO> findBranchOnCompany(BaseDTO baseDTO);
 
-
 }
