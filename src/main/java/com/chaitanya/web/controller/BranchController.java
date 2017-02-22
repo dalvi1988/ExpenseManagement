@@ -1,6 +1,7 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import com.chaitanya.ajax.AjaxResponse;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.branch.service.IBranchService;
 import com.chaitanya.company.service.ICompanyService;
+import com.chaitanya.department.model.DepartmentDTO;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
@@ -27,6 +30,7 @@ import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 
 @RestController
 public class BranchController {
@@ -49,14 +53,17 @@ public class BranchController {
 		return model;
 	}
 	
-	@RequestMapping(value="/branchTemp",method=RequestMethod.GET)
-	public @ResponseBody AjaxResponse getBranchTemp() throws JsonGenerationException, JsonMappingException, IOException{
-		ModelAndView model=new ModelAndView();
-		ObjectMapper mapper = new ObjectMapper();
-		List<BranchDTO> branchDTOList = branchService.findAll();
-		AjaxResponse ajax= new AjaxResponse();
-		ajax.setMessage("heelow");
-		return ajax;
+	@RequestMapping(value="/branchList",method=RequestMethod.POST)
+	public @ResponseBody List<BranchDTO> getAllBranchUnderCompany() throws JsonGenerationException, JsonMappingException, IOException{
+		List<BranchDTO> branchDTOList=null;
+		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+			EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
+			if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
+				branchDTOList=companyService.findBranchOnCompany(employeeDTO.getBranchDTO().getCompanyDTO());
+			}
+		}
+		return branchDTOList;
 	}
 	@RequestMapping(value="/addBranch", method=RequestMethod.POST)
 	public @ResponseBody BranchDTO addBranch(@RequestBody BranchDTO receivedBranchDTO){

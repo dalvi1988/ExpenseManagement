@@ -39,9 +39,9 @@ public class BranchDAO implements IBranchDAO{
 	public List<BranchJPA> findAll() {
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
-		List<BranchJPA> companyList=(List<BranchJPA>)session.createCriteria(BranchJPA.class)
+		List<BranchJPA> branchList=(List<BranchJPA>)session.createCriteria(BranchJPA.class)
 				.list();
-		return companyList;
+		return branchList;
 	}
 
 }

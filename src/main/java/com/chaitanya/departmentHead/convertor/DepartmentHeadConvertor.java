@@ -21,7 +21,7 @@ public class DepartmentHeadConvertor {
 			
 			BranchDTO branchDTO= new BranchDTO();
 			branchDTO.setBranchId(departmentHeadJPA.getBranchJPA().getBranchId());
-			departmentHeadDTO.setBranchhDTO(branchDTO);
+			departmentHeadDTO.setBranchDTO(branchDTO);
 			
 			EmployeeDTO employeeDTO= new EmployeeDTO();
 			employeeDTO.setEmployeeId(departmentHeadJPA.getEmployeeJPA().getEmployeeId());
@@ -49,7 +49,7 @@ public class DepartmentHeadConvertor {
 			departmentHeadJPA.setDepartmentJPA(departmentJPA);
 			
 			BranchJPA branchJPA=new BranchJPA();
-			branchJPA.setBranchId(departmentHeadDTO.getBranchhDTO().getBranchId());
+			branchJPA.setBranchId(departmentHeadDTO.getBranchDTO().getBranchId());
 			departmentHeadJPA.setBranchJPA(branchJPA);
 			
 			EmployeeJPA employeeJPA=new EmployeeJPA();
