@@ -1,7 +1,6 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -17,11 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.Command;
-import com.chaitanya.ajax.AjaxResponse;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.branch.service.IBranchService;
 import com.chaitanya.company.service.ICompanyService;
-import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
@@ -30,7 +27,6 @@ import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 
 @RestController
 public class BranchController {

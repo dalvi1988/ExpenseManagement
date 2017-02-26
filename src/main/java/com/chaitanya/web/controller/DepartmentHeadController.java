@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.chaitanya.ajax.AjaxResponse;
 import com.chaitanya.departmentHead.model.DepartmentHeadDTO;
 import com.chaitanya.departmentHead.service.IDepartmentHeadService;
 import com.chaitanya.login.model.LoginUserDetails;
@@ -34,15 +35,16 @@ public class DepartmentHeadController {
 		return model;
 	}
 	
-	@RequestMapping(value="/departmentHead",method=RequestMethod.POST)
-	public @ResponseBody List<DepartmentHeadDTO> getDepartmentHead(@RequestBody DepartmentHeadDTO receivedDepartmentHeadDTO){
+	@RequestMapping(value="/departmentHead",method={RequestMethod.POST,RequestMethod.GET},produces="application/json; charset=UTF-8")
+	public @ResponseBody List<DepartmentHeadDTO> getDepartmentHead(DepartmentHeadDTO receivedDepartmentHeadDTO){
 		List<DepartmentHeadDTO> departmentHeadDTOList = null;
 		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+		if(Validation.validateForNullObject(receivedDepartmentHeadDTO.getBranchDTO())){
 
-			 departmentHeadDTOList = deptHeadSerrvice.findDepartmentHeadUnderCompany(receivedDepartmentHeadDTO);
+			 departmentHeadDTOList = deptHeadSerrvice.findDepartmentHeadUnderBranch(receivedDepartmentHeadDTO);
 		}
 
 		return departmentHeadDTOList;
 	}
+	
 }

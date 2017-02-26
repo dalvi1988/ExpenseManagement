@@ -71,33 +71,40 @@
         * @param $gridMain {jQuery object}: reference to parent grid
         * @param rowData {Plain Object}: row data of parent grid
         */
-        var jsonToBeSend={branchId:1,deptHeadId:1,departmentId:1,employeeId:1};
+         var jsonToBeSend=new Object();
+    	
+        jsonToBeSend["message"] = "hello";
+        jsonToBeSend["success"] = "true";
+        jsonToBeSend["id"] = "1"; 
         var gridDetailModel = function( $gridMain, rowData ){
             return {
                 height: 130,
-                pageModel: { type: "local", rPP: 5, strRpp: "" },
+                //pageModel: { type: "local", rPP: 5, strRpp: "" },
                 dataModel: {
-                    location: 'remote',
-                    sorting: 'local',
-                    dataType: 'json',
+                    location: "remote",
+                    dataType: "json",
                     url: "/ExpenseManagement/departmentHead", 
-                    method: "POST",
-                    contentType:'application/json',
-                    data: JSON.stringify(jsonToBeSend),
-                    async: true,
-               	    beforeSend: function(xhr) {                 
-                           xhr.setRequestHeader("Accept", "application/json");
-                           xhr.setRequestHeader("Content-Type", "application/json");
+                    method: "get",
+                    //postData: JSON.stringify(jsonToBeSend),
+                    mimeType : 'application/json',
+                    postData:{"branchId":rowData.branchId},
+                     async: true,
+               	    beforeSend: function(xhr) {   
+                           xhr.setRequestHeader("Accept", "application/json; charset=UTF-8");
+                           xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
                        },
-                    error: function () {
-                        //$gridMain.pqGrid( 'rowInvalidate', { rowData: rowData });
+                    error: function (data) {
+                    	alert("error"+data)
+                        $gridMain.pqGrid( 'rowInvalidate', { rowData: rowData });
+                    },
+                    success: function(data){
+                    	alert(data)
                     }
-                    
-                    
                     //url = "/pro/orderdetails.php?orderId=" + orderID //for PHP
                 },
                 colModel: [
-                    { title: "BranchName", width: 80, dataIndx: "branchId" }
+                    { title: "BranchName", width: 80, dataIndx: "branchId" },
+                    { title: "BranchName", width: 80, datatype:"integer", dataIndx: "branchId" }
 
 		        ],
                 editable: false,/* 

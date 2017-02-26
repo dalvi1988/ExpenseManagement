@@ -1,5 +1,6 @@
 package com.chaitanya.departmentHead.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -29,19 +30,21 @@ public class DepartmentHeadService implements IDepartmentHeadService {
 	
 	@SuppressWarnings("null")
 	@Override
-	public List<DepartmentHeadDTO> findDepartmentHeadUnderCompany(BaseDTO baseDTO) {
-		logger.debug("DepartmentHeadService: findDepartmentHeadUnderCompany-Start");
+	public List<DepartmentHeadDTO> findDepartmentHeadUnderBranch(BaseDTO baseDTO) {
+		logger.debug("DepartmentHeadService: findDepartmentHeadUnderBranch-Start");
 		if(validateDepartmentHeadMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of DepartmentHeadDTO type.");
 		}
 		List<DepartmentHeadDTO> departmentHeadDTOList= null;
 		try{
 			if (Validation.validateForNullObject(baseDTO)) {
-				List<DepartmentHeadJPA> departmentHeadJPAList =departmentHeadDAO.findDepartmentHeadUnderCompany(baseDTO.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO());
+				DepartmentHeadDTO departmentHeadDTO=(DepartmentHeadDTO) baseDTO;;
+				List<DepartmentHeadJPA> departmentHeadJPAList =departmentHeadDAO.findDepartmentHeadUnderBranch(departmentHeadDTO.getBranchDTO());
 				if(Validation.validateForNullObject(departmentHeadJPAList)){
+					departmentHeadDTOList= new ArrayList<DepartmentHeadDTO>();
 					for(DepartmentHeadJPA departmentHeadJPA: departmentHeadJPAList){
-						DepartmentHeadDTO departmentHeadDTO=DepartmentHeadConvertor.setDepartmentHeadJPAToDTO(departmentHeadJPA);
-						departmentHeadDTOList.add(departmentHeadDTO);
+						DepartmentHeadDTO deptHeadDTO=DepartmentHeadConvertor.setDepartmentHeadJPAToDTO(departmentHeadJPA);
+						departmentHeadDTOList.add(deptHeadDTO);
 					}
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
@@ -54,7 +57,7 @@ public class DepartmentHeadService implements IDepartmentHeadService {
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			logger.error("Department Service: Exception",e);
 		}
-		logger.debug("DepartmentHeadService: findDepartmentHeadUnderCompany-End");
+		logger.debug("DepartmentHeadService: findDepartmentHeadUnderBranch-End");
 		return  departmentHeadDTOList;
 	}
 	

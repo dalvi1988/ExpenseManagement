@@ -7,6 +7,6 @@ import com.chaitanya.departmentHead.model.DepartmentHeadDTO;
 
 public interface IDepartmentHeadService {
 
-	List<DepartmentHeadDTO> findDepartmentHeadUnderCompany(BaseDTO baseDTO);
+	List<DepartmentHeadDTO> findDepartmentHeadUnderBranch(BaseDTO baseDTO);
 
 }
