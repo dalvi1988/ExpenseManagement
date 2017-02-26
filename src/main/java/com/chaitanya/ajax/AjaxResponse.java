@@ -1,6 +1,8 @@
 package com.chaitanya.ajax;
 
-public class AjaxResponse {
+import java.io.Serializable;
+
+public class AjaxResponse implements Serializable {
 
 	private Long id;
 	private boolean success;

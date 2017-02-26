@@ -11,7 +11,6 @@ public class DepartmentHeadDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
 
 	private Long deptHeadId;
-	private String pq_datatype;
 	
 	private Long departmentId;
 	private DepartmentDTO departmentDTO;
@@ -93,12 +92,6 @@ public class DepartmentHeadDTO extends BaseDTO {
 		this.employeeDTO=empDTO;
 	}
 
-	public String getPq_datatype() {
-		return pq_datatype;
-	}
 
-	public void setPq_datatype(String pq_datatype) {
-		this.pq_datatype = pq_datatype;
-	}
 
 }
