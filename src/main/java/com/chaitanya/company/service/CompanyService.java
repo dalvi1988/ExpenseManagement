@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.ServiceStatus;
+import com.chaitanya.branch.convertor.BranchConvertor;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.company.convertor.CompanyConvertor;
 import com.chaitanya.company.dao.ICompanyDAO;
@@ -44,10 +45,7 @@ public class CompanyService implements ICompanyService{
 		if(Validation.validateCollectionForNullSize(branchList)){
 			branchKeyValueDTOList=new ArrayList<BranchDTO>();
 			for(BranchJPA branch:branchList){
-				BranchDTO branchDTO=new BranchDTO();
-				branchDTO.setBranchId(branch.getBranchId());
-				branchDTO.setBranchName(branch.getBranchName());
-				
+				BranchDTO branchDTO=BranchConvertor.setBranchJPAtoDTO(branch);
 				branchKeyValueDTOList.add(branchDTO);
 			}
 		}

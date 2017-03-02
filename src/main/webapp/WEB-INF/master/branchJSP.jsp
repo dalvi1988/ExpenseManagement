@@ -111,6 +111,7 @@
            //change edit button to update button and delete to cancel.
            var $tr = $grid.pqGrid("getRow", { rowIndx: rowIndx }),
                $btn = $tr.find("button.edit_btn");
+           debugger;
            $btn.button("option", { label: "Update", "icons": { primary: "ui-icon-check"} })
                .unbind("click")
                .click(function (evt) {
@@ -213,7 +214,7 @@
            flexHeight: true,
            toolbar: {
                items: [
-                   { type: 'button', icon: 'ui-icon-plus', label: 'Add Product', listeners: [
+                   { type: 'button', icon: 'ui-icon-plus', label: 'Add New Branch', listeners: [
                        { "click": function (evt, ui) {
                            var $grid = $(this).closest('.pq-grid');
                            addRow($grid);
