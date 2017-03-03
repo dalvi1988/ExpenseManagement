@@ -10,6 +10,7 @@ import com.chaitanya.jpa.BranchJPA;
 import com.chaitanya.jpa.DepartmentHeadJPA;
 import com.chaitanya.jpa.DepartmentJPA;
 import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 
 public class DepartmentHeadConvertor {
@@ -18,6 +19,8 @@ public class DepartmentHeadConvertor {
 		DepartmentHeadDTO departmentHeadDTO=null;
 		if(Validation.validateForNullObject(departmentHeadJPA)){
 			departmentHeadDTO=new DepartmentHeadDTO(); 
+			
+			departmentHeadDTO.setDeptHeadId(departmentHeadJPA.getDeptHeadId());
 			
 			BranchDTO branchDTO= new BranchDTO();
 			branchDTO.setBranchId(departmentHeadJPA.getBranchJPA().getBranchId());
@@ -30,6 +33,20 @@ public class DepartmentHeadConvertor {
 			DepartmentDTO departmentDTO= new DepartmentDTO();
 			departmentDTO.setDepartmentId(departmentHeadJPA.getDepartmentJPA().getDepartmentId());
 			departmentHeadDTO.setDepartmentDTO(departmentDTO);
+			
+			if(Validation.validateForNullObject(departmentHeadJPA.getCreatedBy())){
+				departmentHeadDTO.setCreatedBy(departmentHeadJPA.getCreatedBy());
+			}
+			if(Validation.validateForNullObject(departmentHeadJPA.getModifiedBy())){
+				departmentHeadDTO.setModifiedBy(departmentHeadJPA.getModifiedBy());
+			}
+			if(Validation.validateForNullObject(departmentHeadJPA.getCreatedDate())){
+				departmentHeadDTO.setCreatedDate(Convertor.calendartoString(departmentHeadJPA.getCreatedDate()));
+			}
+			if(Validation.validateForNullObject(departmentHeadJPA.getModifiedDate())){
+				departmentHeadDTO.setModifiedDate(Convertor.calendartoString(departmentHeadJPA.getModifiedDate()));
+			}
+			departmentHeadDTO.setStatus(Convertor.convetStatusToBool(departmentHeadJPA.getStatus()));
 			
 		}
 		return departmentHeadDTO;
@@ -55,6 +72,21 @@ public class DepartmentHeadConvertor {
 			EmployeeJPA employeeJPA=new EmployeeJPA();
 			employeeJPA.setEmployeeId(departmentHeadDTO.getEmployeeDTO().getEmployeeId());
 			departmentHeadJPA.setEmployeeJPA(employeeJPA);
+			
+			if(Validation.validateForZero(departmentHeadDTO.getModifiedBy())){
+				departmentHeadJPA.setModifiedBy(departmentHeadDTO.getModifiedBy());
+			}
+			if(Validation.validateForZero(departmentHeadDTO.getCreatedBy())){
+				departmentHeadJPA.setCreatedBy(departmentHeadDTO.getCreatedBy());
+			}
+			if(Validation.validateForNullObject(departmentHeadDTO.getCreatedDate())){
+				departmentHeadJPA.setCreatedDate(Convertor.stringToCalendar(departmentHeadDTO.getCreatedDate()));
+			}
+			if(Validation.validateForNullObject(departmentHeadDTO.getModifiedDate())){
+				departmentHeadJPA.setModifiedDate(Convertor.stringToCalendar(departmentHeadDTO.getModifiedDate()));
+			}
+			
+			departmentHeadJPA.setStatus(Convertor.convertStatusToChar(departmentHeadDTO.getStatus()));
 		}
 		return departmentHeadJPA;
 	}

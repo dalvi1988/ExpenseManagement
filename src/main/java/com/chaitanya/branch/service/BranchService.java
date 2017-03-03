@@ -27,25 +27,21 @@ public class BranchService implements IBranchService{
 	
 	@Override
 	public List<BranchDTO> findBranchOnCompany(BaseDTO baseDTO) {
+		logger.debug("BranchService: findBranchOnCompany-Start");
 		if(validateCompanyBrachMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of BranchDTO type.");
 		}
-		BranchDTO companyDTO=(BranchDTO) baseDTO;
 		BranchJPA company=new BranchJPA();
-		//company.setCompanyId(companyDTO.getCompanyId());
 		List<BranchJPA> branchList=branchDAO.findBrachOnCompany(company);
 		List<BranchDTO> branchDTOList=null;
 		if(Validation.validateCollectionForNullSize(branchList)){
 			branchDTOList=new ArrayList<BranchDTO>();
-			for(BranchJPA branch:branchList){
-				BranchDTO branchDTO=new BranchDTO();
-				branchDTO.setBranchId(branch.getBranchId());
-				branchDTO.setBranchName(branch.getBranchName());
-				branchDTO.setBranchCode(branch.getBranchCode());
+			for(BranchJPA branchJPA:branchList){
+				BranchDTO branchDTO=BranchConvertor.setBranchJPAtoDTO(branchJPA);
 				branchDTOList.add(branchDTO);
 			}
 		}
-		
+		logger.debug("BranchService: findBranchOnCompany-End");
 		return branchDTOList;
 	}
 	
@@ -53,7 +49,7 @@ public class BranchService implements IBranchService{
 
 	@Override
 	public BaseDTO addBranch(BaseDTO baseDTO) {
-		logger.debug("BranchService: addCompany-Start");
+		logger.debug("BranchService: addBranch-Start");
 		if(validateCompanyBrachMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of CompanyMasterDTO type.");
 		}
@@ -79,7 +75,7 @@ public class BranchService implements IBranchService{
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			logger.error("Branch Service: Exception",e);
 		}
-		logger.debug("BranchService: addCompany-End");
+		logger.debug("BranchService: addBranch-End");
 		return baseDTO;
 	}
 

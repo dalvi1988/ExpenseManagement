@@ -16,8 +16,24 @@
    <script type="text/javascript">
    
    var departmentList=${departmentList};
+   var employeeList=${employeeList};
    
    $(function () {
+	   
+	 //define common ajax object for addition, update and delete.
+       var ajaxObj = {
+           dataType: "JSON",
+           beforeSend: function(xhr) {                 
+               this.pqGrid("showLoading");
+           },
+           complete: function () {
+               this.pqGrid("hideLoading");
+           },
+           error: function () {
+               this.pqGrid("rollback");
+           }
+       };
+	 
         var colM = [
             { title: "", minWidth: 27, width: 27, type: "detail", resizable: false, editable:false },
             { title: "Branch Code", width: 100, dataIndx: "branchCode" },
@@ -69,7 +85,7 @@
                     var rowData = ui.rowData,                        
                         detailobj = gridDetailModel( $(this), rowData ), //get a copy of gridDetailModel                        
                         $grid = $("<div></div>").pqGrid( detailobj ); //init the detail grid.
-
+                        $grid.data( 'branchId' , rowData.branchId);
                     return $grid;
                 }
             }
@@ -81,8 +97,6 @@
         * @param $gridMain {jQuery object}: reference to parent grid
         * @param rowData {Plain Object}: row data of parent grid
         */
-         var jsonToBeSend=new Object();
-        jsonToBeSend["branchId"]="1";
     	
         var gridDetailModel = function( $gridMain, rowData ){
             return {
@@ -132,7 +146,8 @@
                 },
                 colModel: [
                     
-                    { title: "Branch Id", dataType: "integer", dataIndx: "branchId", hidden:true, width: 80 },
+                    { title: "Department Head Id", dataType: "integer", dataIndx: "deptHeadId", hidden:true, width: 80 },
+                    { title: "", width: 100, dataIndx: "branchId", hidden:true },
                     { title: "Department", dataIndx: "departmentId", width: 150,
                   	  editor: {                    
                             type: "select",
@@ -152,6 +167,36 @@
   	       			       }
           			   }   
                     },
+                    { title: "Department Head Name", dataIndx: "employeeId", width: 150,
+                  	  editor: {                    
+                            type: "select",
+                            valueIndx: "employeeId",
+                            labelIndx: "fullName",
+                            options: employeeList,
+                            
+                        } ,
+                         render: function (ui) {
+          			       var options = ui.column.editor.options,
+          			           cellData = ui.cellData;
+  	       			       for (var i = 0; i < options.length; i++) {
+  	       			           var option = options[i];
+  	       			           if (option.employeeId == ui.rowData.employeeId) {
+  	       			               return option.fullName;
+  	       			           } 
+  	       			       }
+          			   }   
+                    },
+                    { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
+                        editor: { type: "checkbox", style: "margin:3px 5px;" },
+                        render: function (ui) {
+                            if(ui.cellData == true) return "Active";
+                            else return "Inactive";
+                         	
+                        }
+                    },
+                    { title: "", width: 100, dataIndx: "status", hidden:true },
+                    { title: "", width: 100, dataIndx: "createdBy", hidden:true },
+                    { title: "", width: 100, dataIndx: "createdDate", hidden:true },
                     { title: "", editable: false, minWidth: 150, sortable: false, render: function (ui) {
                         return "<button type='button' class='edit_btn'>Edit</button>\
                             <button type='button' class='delete_btn'>Delete</button>";
@@ -185,7 +230,6 @@
                 pageModel: { type: "local" },
                 cellBeforeSave: function (evt, ui) {
                     var $grid = $(this);
-                    debugger;
                     var isValid = $grid.pqGrid("isValid", ui);
                     if (!isValid.valid) {
                         return false;
@@ -242,13 +286,14 @@
         
       //called by add button in toolbar.
         function addRow($grid) {
+        	var branchId = $grid.data( 'branchId' );
      	   $(".customMessage").text("");
      	   
             if (isEditing($grid)) {
                 return false;
             }
-            //append empty row in the first row.                            
-            var rowData = { }; //empty row template
+            //append empty row in the first row.
+            var rowData = {branchId:branchId }; //empty row template
             $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
             var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -271,8 +316,6 @@
       
         //called by edit button.
         function editRow(rowIndx, $grid) {
-        	
-        	debugger;
      	   $(".customMessage").text("");
      	   
             $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
@@ -281,7 +324,7 @@
             //change edit button to update button and delete to cancel.
             var $tr = $grid.pqGrid("getRow", { rowIndx: rowIndx }),
                 $btn = $tr.find("button.edit_btn");
-            debugger;
+            
             $btn.button("option", { label: "Update", "icons": { primary: "ui-icon-check"} })
                 .unbind("click")
                 .click(function (evt) {
@@ -299,8 +342,8 @@
         }
         
 
-      //called by update button.
-         function update(rowIndx, $grid) {
+        //called by update button.
+        function update(rowIndx, $grid) {
     	  
            if ($grid.pqGrid("saveEditCell") == false) {
                return false;
@@ -319,10 +362,13 @@
                    recIndx = $grid.pqGrid("option", "dataModel.recIndx");
                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
  	
-               jsonToBeSend["branchName"] = rowData.branchName;
-               jsonToBeSend["branchCode"] = rowData.branchCode;
+               jsonToBeSend["branchId"] = rowData.branchId;
+               debugger;
+               
+               jsonToBeSend["departmentId"] = rowData.departmentId;
+               jsonToBeSend["employeeId"] = rowData.employeeId;
                jsonToBeSend["status"] = rowData.status;
-               url = "/SpringMVCSecruityMavenApp/addBranch";
+               url = "/ExpenseManagement/addDepartmentHead";
                
                if (rowData[recIndx] == null || rowData[recIndx] == "") {
              	  //For new record
@@ -331,23 +377,22 @@
              	  // For update
              	  jsonToBeSend["createdBy"] = rowData.createdBy;
                	  jsonToBeSend["createdDate"] = rowData.createdDate;
-             	  jsonToBeSend["branchId"] = rowData.branchId;
+             	  jsonToBeSend["deptHeadId"] = rowData.deptHeadId;
                }
                $.ajax({ 
            	    url: url, 
            	    type: 'POST', 
-           	    dataType: 'json', 
            	    data: JSON.stringify(jsonToBeSend),
+           		beforeSend: function(xhr) {                 
+	                 xhr.setRequestHeader("Accept", "application/json");
+	                 xhr.setRequestHeader("Content-Type", "application/json");
+           		},
            	    async: true,
-           	    beforeSend: function(xhr) {                 
-                       xhr.setRequestHeader("Accept", "application/json");
-                       xhr.setRequestHeader("Content-Type", "application/json");
-                   },
            	    success: function(data) { 
            	    	if(data.serviceStatus=="SUCCESS"){
  	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
  	                    if (rowData[recIndx] == null || rowData[recIndx] == "") {
- 	                       rowData.branchId= data.branchId;
+ 	                       rowData.departmentHeadId= data.departmentHeadId;
  	                    } 
  	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
  	          	    	$grid.pqGrid("commit");

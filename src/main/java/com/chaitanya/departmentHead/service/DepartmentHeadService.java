@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.chaitanya.Base.BaseDTO;
@@ -28,7 +29,6 @@ public class DepartmentHeadService implements IDepartmentHeadService {
 		return baseDTO == null  || !(baseDTO instanceof DepartmentHeadDTO);
 	}
 	
-	@SuppressWarnings("null")
 	@Override
 	public List<DepartmentHeadDTO> findDepartmentHeadUnderBranch(BaseDTO baseDTO) {
 		logger.debug("DepartmentHeadService: findDepartmentHeadUnderBranch-Start");
@@ -59,6 +59,38 @@ public class DepartmentHeadService implements IDepartmentHeadService {
 		}
 		logger.debug("DepartmentHeadService: findDepartmentHeadUnderBranch-End");
 		return  departmentHeadDTOList;
+	}
+
+	@Override
+	public BaseDTO addDepartmentHead(BaseDTO baseDTO) {
+		logger.debug("DepartmentHeadService: addDepartmentHead-Start");
+		if(validateDepartmentHeadMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of DepartmentHeadDTO type.");
+		}
+		try{
+			DepartmentHeadJPA departmentHeadJPA=DepartmentHeadConvertor.setDepartmentHeadDTOToJPA((DepartmentHeadDTO)baseDTO);
+			if (Validation.validateForNullObject(departmentHeadJPA)) {
+				departmentHeadJPA=departmentHeadDAO.add(departmentHeadJPA);
+				if(Validation.validateForNullObject(departmentHeadJPA)){
+					baseDTO=DepartmentHeadConvertor.setDepartmentHeadJPAToDTO(departmentHeadJPA);
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(DataIntegrityViolationException e){
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			baseDTO.setMessage(new StringBuilder(e.getMessage()));
+			logger.error("DepartmentHeadService: Exception",e);
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("DepartmentHeadService: Exception",e);
+		}
+		logger.debug("DepartmentHeadService: addDepartmentHead-End");
+		return baseDTO;
 	}
 	
 	

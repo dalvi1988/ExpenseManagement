@@ -76,7 +76,7 @@
             	   type: 'DELETE', 
                    context: $grid,
                    dataType: 'json', 
-                   url: "/SpringMVCSecruityMavenApp/deleteBranch",
+                   url: "/ExpenseManagement/deleteBranch",
                    //url: "/pro/products.php?pq_delete=1",//for PHP
                    data: JSON.stringify(jsonToBeSend),
                    async: true,
@@ -150,7 +150,7 @@
               jsonToBeSend["branchName"] = rowData.branchName;
               jsonToBeSend["branchCode"] = rowData.branchCode;
               jsonToBeSend["status"] = rowData.status;
-              url = "/SpringMVCSecruityMavenApp/addBranch";
+              url = "/ExpenseManagement/addBranch";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record

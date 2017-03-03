@@ -9,4 +9,6 @@ public interface IDepartmentHeadService {
 
 	List<DepartmentHeadDTO> findDepartmentHeadUnderBranch(BaseDTO baseDTO);
 
+	BaseDTO addDepartmentHead(BaseDTO baseDTO);
+
 }

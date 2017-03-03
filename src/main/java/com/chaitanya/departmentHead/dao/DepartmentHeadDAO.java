@@ -19,10 +19,10 @@ public class DepartmentHeadDAO implements IDepartmentHeadDAO{
 	@Autowired
 	SessionFactory sessionFactory;
 	
-	public DepartmentHeadJPA add(DepartmentHeadJPA department){
+	public DepartmentHeadJPA add(DepartmentHeadJPA departmentHeadJPA){
 		Session session=sessionFactory.getCurrentSession();
-		session.saveOrUpdate(department);
-		return department;
+		session.saveOrUpdate(departmentHeadJPA);
+		return departmentHeadJPA;
 	}
 
 	public List<DepartmentHeadJPA> findDepartmentHeadUnderBranch(BranchDTO branchDTO) {

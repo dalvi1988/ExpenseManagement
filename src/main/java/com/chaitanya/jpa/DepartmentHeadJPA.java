@@ -1,5 +1,7 @@
 package com.chaitanya.jpa;
 
+import java.util.Calendar;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,6 +29,21 @@ public class DepartmentHeadJPA {
 	@OneToOne
 	@JoinColumn(name="employee_id",unique=true,nullable=false)
 	private EmployeeJPA employeeJPA;
+	
+	@Column(name="created_by")
+	private Long createdBy;
+	
+	@Column(name="modified_by")
+    private Long modifiedBy;
+	
+	@Column(name="created_date")
+	private Calendar createdDate;
+		
+	@Column(name="modified_date")
+	private Calendar modifiedDate;
+	
+	@Column(name="status",nullable=false)
+	private Character status;
 
 	public Long getDeptHeadId() {
 		return deptHeadId;
@@ -58,6 +75,46 @@ public class DepartmentHeadJPA {
 
 	public void setEmployeeJPA(EmployeeJPA employeeJPA) {
 		this.employeeJPA = employeeJPA;
+	}
+
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Long getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(Long modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+
+	public Calendar getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Calendar createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Calendar getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Calendar modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
+	public Character getStatus() {
+		return status;
+	}
+
+	public void setStatus(Character status) {
+		this.status = status;
 	}
 	
 	
