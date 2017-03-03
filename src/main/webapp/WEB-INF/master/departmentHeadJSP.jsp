@@ -114,6 +114,7 @@
                     location: "remote",
                     dataType: "json",
                     method: "POST",
+                    recIndx: "branchId",
                     getUrl: function() {
                         return { url: "/ExpenseManagement/departmentHead", data: "{\"branchId\":"+rowData.branchId+"}" };
                     },
@@ -130,8 +131,8 @@
                     //url = "/pro/orderdetails.php?orderId=" + orderID //for PHP
                 },
                 colModel: [
-                    { title: "BranchName",hidden:true, width: 80, dataIndx: "branchId" },
-                    { title: "Branch Id", dataType: "integer", dataIndx: "branchId", width: 80 },
+                    
+                    { title: "Branch Id", dataType: "integer", dataIndx: "branchId", hidden:true, width: 80 },
                     { title: "Department", dataIndx: "departmentId", width: 150,
                   	  editor: {                    
                             type: "select",
@@ -184,9 +185,45 @@
                 pageModel: { type: "local" },
                 cellBeforeSave: function (evt, ui) {
                     var $grid = $(this);
+                    debugger;
                     var isValid = $grid.pqGrid("isValid", ui);
                     if (!isValid.valid) {
                         return false;
+                    }
+                },
+                refresh: function () {
+                    //debugger;
+                    var $grid = $(this);
+
+                    //delete button
+                    $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
+                    .unbind("click")
+                    .bind("click", function (evt) {
+                        if (isEditing($grid)) {
+                            return false;
+                        }
+                        var $tr = $(this).closest("tr"),
+                            rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
+                        deleteRow(rowIndx, $grid);
+                    });
+                    //edit button
+                    $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+                    .unbind("click")
+                    .bind("click", function (evt) {
+                        if (isEditing($grid)) {
+                            return false;
+                        }
+                        var $tr = $(this).closest("tr"),
+                            rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
+                        editRow(rowIndx, $grid);
+                        return false;
+                    });
+
+                    //rows which were in edit mode before refresh, put them in edit mode again.
+                    var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
+                    if (rows.length > 0) {
+                        var rowIndx = rows[0].rowIndx;
+                        editRow(rowIndx, $grid);
                     }
                 },
                 //make rows editable selectively.
@@ -235,6 +272,7 @@
         //called by edit button.
         function editRow(rowIndx, $grid) {
         	
+        	debugger;
      	   $(".customMessage").text("");
      	   
             $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
@@ -260,42 +298,6 @@
                 });
         }
         
-        var $grid = $("#grid_md").pqGrid(gridDetailModel);
-        $grid.on('pqgridrefresh pqgridrefreshrow', function () {
-            //debugger;
-            var $grid = $(this);
-
-            //delete button
-            $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                deleteRow(rowIndx, $grid);
-            });
-            //edit button
-            $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                editRow(rowIndx, $grid);
-                return false;
-            });
-
-            //rows which were in edit mode before refresh, put them in edit mode again.
-            var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
-            if (rows.length > 0) {
-                var rowIndx = rows[0].rowIndx;
-                editRow(rowIndx, $grid);
-            }
-        }); 
 
       //called by update button.
          function update(rowIndx, $grid) {
