@@ -34,6 +34,13 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/mobiledemos/**").addResourceLocations("classpath:/mobiledemos/");
 		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/scripts/");
 		registry.addResourceHandler("/grid/**").addResourceLocations("classpath:/grid/");
+		registry.addResourceHandler("/build/**").addResourceLocations("classpath:/build/");
+		registry.addResourceHandler("/production/**").addResourceLocations("classpath:/production/");
+		registry.addResourceHandler("/src/**").addResourceLocations("classpath:/src/");
+		registry.addResourceHandler("/vendors/**").addResourceLocations("classpath:/vendors/");
+		
+		
+		
 	}	
 	
 	@Bean
@@ -61,7 +68,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    ds.setDriverClassName("com.mysql.jdbc.Driver");
 		ds.setUrl("jdbc:mysql://localhost:3306/test");
 		ds.setUsername("root");
-		ds.setPassword("Nexus@123");
+		ds.setPassword("");
 		return ds;
 	}
 	

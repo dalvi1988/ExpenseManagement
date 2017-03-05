@@ -11,9 +11,6 @@
  	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>    
  	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
  	 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
- 	<!--<link rel="stylesheet" href="https://paramquery.com/pqSelect/gpl/pqSelect.min.css" /> 
- 	 <script src="https://paramquery.com/pqSelect/gpl/pqSelect.min.js"></script> -->
-    <!-- <script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script> -->
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
     
