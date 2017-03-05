@@ -248,6 +248,7 @@
            numberCell: { show: true },
            track: true, //to turn on the track changes.
            flexHeight: true,
+           filterModel: { on: true, mode: "AND", header: true },
            toolbar: {
                items: [
                    { type: 'button', icon: 'ui-icon-plus', label: 'Add Product', listeners: [
@@ -283,20 +284,30 @@
            title: "<h1><b>Employee Master</b></h1>",
 
            colModel: [
-                  { title: "Id", dataType: "integer", dataIndx: "employeeId", editable: false, width: 30 },
+                  { title: "Id", dataType: "integer", dataIndx: "employeeId", editable: false, width: 30,
+                	  	filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+                  },
                   { title: "First Name", width: 140, dataType: "string", align: "right", dataIndx: "firstName",
-                      validations: [
+         	  			filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                	    validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
                           { type: 'maxLen', value: 20, msg: "length should be <= 20" }
-                      ]
+                        ]
                   },
                   { title: "Last Name", width: 165, dataType: "string", dataIndx: "lastName",
+                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
                   },
                   { title: "Gender", width: 50, dataIndx: "gender",
+                	  filter: { type: "select",
+          		        condition: 'equal',
+          		        prepend: { '': '--All--' },
+          		        listeners: ['change'],
+          		        options: ['M','F'],
+          		      },
                       editor: {
                     	  options: ['M','F'], 
                     	  type: function (ui) {
@@ -320,12 +331,22 @@
                   },
                  
                   { title: "Email ID", width: 300, dataType: "string", dataIndx: "emailId",
+                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'nonEmpty', msg: "Required" }
                       ]
                   },
                   { title: "Branch", dataIndx: "branchId", width: 150,
-                	  editor: {                    
+                	  filter: { type: "select",
+          		        condition: 'equal',
+          		        prepend: { '': '--All--' },
+          		        listeners: ['change'],
+          		        valueIndx: "branchId",
+          		        labelIndx: "branchName",
+          		        options: branchList,
+          		        
+          		      },
+          		      editor: {                    
                           type: "select",
                           valueIndx: "branchId",
                           labelIndx: "branchName",
@@ -354,6 +375,14 @@
         			   }   
                   },
                   { title: "Department", dataIndx: "departmentId", width: 150,
+                	  filter: { type: "select",
+            		        condition: 'equal',
+            		        prepend: { '': '--All--' },
+            		        valueIndx: "departmentId",
+            		        labelIndx: "departmentName",
+            		        listeners: ['change'],
+              		        options: departmentList
+            		      },
                 	  editor: {                    
                           type: "select",
                           valueIndx: "departmentId",
@@ -373,6 +402,14 @@
         			   }   
                   },
                   { title: "Reporting Manager", dataIndx: "reportingMgr", width: 90,
+                	  filter: { type: "select",
+          		        condition: 'equal',
+          		        prepend: { '': '--All--' },
+          		        valueIndx: "reportingMgr",
+          		        labelIndx: "fullName",
+          		        listeners: ['change'],
+          		      	options: reportingMgrList
+          		      },
                 	  editor: {                    
                           type: "select",
                           valueIndx: "employeeId",
@@ -392,6 +429,7 @@
       		        },
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
+                	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
                       editor: { type: "checkbox", style: "margin:3px 5px;" },
                       render: function (ui) {
                           if(ui.cellData == true) return "Active";
@@ -435,11 +473,17 @@
            }
        };
        var $grid = $("#grid_editing").pqGrid(obj);
+      
+       $grid.pqGrid( "filter", {
+ 		    oper: 'add', 
+ 		    data: [{dataIndx: 'branchId', value:logerBranchId}] 
+ 		});
+       
        //use refresh & refreshRow events to display jQueryUI buttons and bind events.
        $grid.on('pqgridrefresh pqgridrefreshrow', function () {
            //debugger;
            var $grid = $(this);
-
+		   
            //delete button
            $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
            .unbind("click")
@@ -471,7 +515,8 @@
                editRow(rowIndx, $grid);
            }
        }); 
-		$("#grid_editing").pqGrid("refresh")
+	   $("#grid_editing").pqGrid("refresh")
+	   
    });
 
 
