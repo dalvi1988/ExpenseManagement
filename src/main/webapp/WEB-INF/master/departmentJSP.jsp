@@ -6,10 +6,9 @@
 
     <title>Department Master</title>
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>    
  	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
  	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-    <!-- <script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script> -->
+ 	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
@@ -18,20 +17,6 @@
    var data= ${departmentList};
    
    $(function () {
-		//var data = [{ "departmentId": 1, "departmentCode": "IT", "departmentName": "Information Tech" }]
-       //define common ajax object for addition, update and delete.
-       var ajaxObj = {
-           dataType: "JSON",
-           beforeSend: function () {
-               this.pqGrid("showLoading");
-           },
-           complete: function () {
-               this.pqGrid("hideLoading");
-           },
-           error: function () {
-               this.pqGrid("rollback");
-           }
-       };
 
        //to check whether any row is currently being edited.
        function isEditing($grid) {
@@ -160,16 +145,11 @@
               	  jsonToBeSend["createdDate"] = rowData.createdDate;
             	  jsonToBeSend["departmentId"] = rowData.departmentId;
               }
-              $.ajax({ 
+              $.ajax($.extend({}, ajaxObj, { 
+              	context: $grid,
           	    url: url, 
           	    type: 'POST', 
-          	    dataType: 'json', 
           	    data: JSON.stringify(jsonToBeSend),
-          	    async: true,
-          	    beforeSend: function(xhr) {                 
-                      xhr.setRequestHeader("Accept", "application/json");
-                      xhr.setRequestHeader("Content-Type", "application/json");
-                  },
           	    success: function(data) { 
           	    	if(data.serviceStatus=="SUCCESS"){
 	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
@@ -190,8 +170,7 @@
           	    	$(".customMessage").text(data.message);
           	    }
           	    
-          	});
-              
+          	}));
               
           }
           else {

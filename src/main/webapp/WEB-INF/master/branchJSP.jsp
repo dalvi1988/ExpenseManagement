@@ -6,30 +6,15 @@
 
     <title>Company Master</title>
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>    
  	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
  	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-    <!-- <script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script> -->
+ 	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
    <script type="text/javascript">
    var data= ${branchList};
    $(function () {
-
-       //define common ajax object for addition, update and delete.
-       var ajaxObj = {
-           dataType: "JSON",
-           beforeSend: function () {
-               this.pqGrid("showLoading");
-           },
-           complete: function () {
-               this.pqGrid("hideLoading");
-           },
-           error: function () {
-               this.pqGrid("rollback");
-           }
-       };
 
        //to check whether any row is currently being edited.
        function isEditing($grid) {
@@ -161,7 +146,9 @@
               	  jsonToBeSend["createdDate"] = rowData.createdDate;
             	  jsonToBeSend["branchId"] = rowData.branchId;
               }
-              $.ajax({ 
+              
+              $.ajax($.extend({}, ajaxObj, { 
+              	context: $grid,
           	    url: url, 
           	    type: 'POST', 
           	    dataType: 'json', 

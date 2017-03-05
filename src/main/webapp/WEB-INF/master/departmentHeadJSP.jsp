@@ -6,10 +6,9 @@
 
     <title>Department Head Master</title>
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>    
  	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
  	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-    <!-- <script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script> -->
+ 	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
@@ -20,20 +19,6 @@
    
    $(function () {
 	   
-	 //define common ajax object for addition, update and delete.
-       var ajaxObj = {
-           dataType: "JSON",
-           beforeSend: function(xhr) {                 
-               this.pqGrid("showLoading");
-           },
-           complete: function () {
-               this.pqGrid("hideLoading");
-           },
-           error: function () {
-               this.pqGrid("rollback");
-           }
-       };
-	 
         var colM = [
             { title: "", minWidth: 27, width: 27, type: "detail", resizable: false, editable:false },
             { title: "Branch Code", width: 100, dataIndx: "branchCode" },
@@ -363,8 +348,6 @@
                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
  	
                jsonToBeSend["branchId"] = rowData.branchId;
-               debugger;
-               
                jsonToBeSend["departmentId"] = rowData.departmentId;
                jsonToBeSend["employeeId"] = rowData.employeeId;
                jsonToBeSend["status"] = rowData.status;
@@ -379,15 +362,12 @@
                	  jsonToBeSend["createdDate"] = rowData.createdDate;
              	  jsonToBeSend["deptHeadId"] = rowData.deptHeadId;
                }
-               $.ajax({ 
+               
+               $.ajax($.extend({}, ajaxObj, { 
+               	context: $grid, 
            	    url: url, 
            	    type: 'POST', 
            	    data: JSON.stringify(jsonToBeSend),
-           		beforeSend: function(xhr) {                 
-	                 xhr.setRequestHeader("Accept", "application/json");
-	                 xhr.setRequestHeader("Content-Type", "application/json");
-           		},
-           	    async: true,
            	    success: function(data) { 
            	    	if(data.serviceStatus=="SUCCESS"){
  	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
@@ -408,8 +388,7 @@
            	    	$(".customMessage").text(data.message);
            	    }
            	    
-           	});
-               
+           	}));
                
            }
            else {
