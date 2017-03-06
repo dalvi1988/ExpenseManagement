@@ -91,6 +91,7 @@
                 columnBorders: false,
                 sortable: false,
                 numberCell: { show: false },
+                filterModel: { on: true, mode: "AND", header: true },
                 track: true, //to turn on the track changes.
                 flexHeight: true,
                 toolbar: {
@@ -134,7 +135,8 @@
                     { title: "Department Head Id", dataType: "integer", dataIndx: "deptHeadId", hidden:true, width: 80 },
                     { title: "", width: 100, dataIndx: "branchId", hidden:true },
                     { title: "Department", dataIndx: "departmentId", width: 150,
-                  	  editor: {                    
+                    	 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                         editor: {                    
                             type: "select",
                             valueIndx: "departmentId",
                             labelIndx: "departmentName",
@@ -153,7 +155,8 @@
           			   }   
                     },
                     { title: "Department Head Name", dataIndx: "employeeId", width: 150,
-                  	  editor: {                    
+                    	 filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                         editor: {                    
                             type: "select",
                             valueIndx: "employeeId",
                             labelIndx: "fullName",
@@ -172,6 +175,7 @@
           			   }   
                     },
                     { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
+                    	filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
                         editor: { type: "checkbox", style: "margin:3px 5px;" },
                         render: function (ui) {
                             if(ui.cellData == true) return "Active";
