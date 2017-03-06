@@ -224,7 +224,7 @@
            filterModel: { on: true, mode: "AND", header: true },
            toolbar: {
                items: [
-                   { type: 'button', icon: 'ui-icon-plus', label: 'Add Product', listeners: [
+                   { type: 'button', icon: 'ui-icon-plus', label: 'Add New Employee', listeners: [
                        { "click": function (evt, ui) {
                            var $grid = $(this).closest('.pq-grid');
                            addRow($grid);

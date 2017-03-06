@@ -197,6 +197,7 @@
            columnBorders: false,
            sortable: false,
            numberCell: { show: false },
+           filterModel: { on: true, mode: "AND", header: true },
            track: true, //to turn on the track changes.
            flexHeight: true,
            toolbar: {
@@ -234,20 +235,24 @@
            title: "<h1><b>Branch Master</b></h1>",
 
            colModel: [
-                  { title: "Branch Id", dataType: "integer", dataIndx: "branchId", editable: false, width: 80 },
+                  { title: "Branch Id", dataType: "integer", dataIndx: "branchId",
+                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },editable: false, width: 80 },
                   { title: "Branch Code", width: 140, dataType: "string", align: "right", dataIndx: "branchCode",
+                      filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
                           { type: 'maxLen', value: 20, msg: "length should be <= 20" }
                       ]
                   },
                   { title: "Branch Name", width: 165, dataType: "string", dataIndx: "branchName",
+                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
+                	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
                       editor: { type: "checkbox", style: "margin:3px 5px;" },
                       render: function (ui) {
                           if(ui.cellData == true) return "Active";
