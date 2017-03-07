@@ -14,7 +14,7 @@
 
    <script type="text/javascript">
    //var data = [{ "companyId": 1, "companyCode": "Exxon Mobil", "companyName": "339938.0" }];
-   var data= ${companyList};
+   var companyList= ${companyList};
    $(function () {
 		
        //to check whether any row is currently being edited.
@@ -272,7 +272,7 @@
                dataType: "JSON",
                location: "local",
                recIndx: "companyId",
-               data: data
+               data: companyList
            },
            pageModel: { type: "local" },
            cellBeforeSave: function (evt, ui) {

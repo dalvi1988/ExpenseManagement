@@ -226,8 +226,7 @@
            title: "<h1><b>Department Master</b></h1>",
 
            colModel: [
-                  { title: "Department Id", dataType: "integer", dataIndx: "departmentId",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },editable: false, width: 80 },
+                  { title: "Department Id", dataType: "integer", dataIndx: "departmentId",hidden:true, editable: false, width: 80 },
                   { title: "Department Code", width: 140, dataType: "string", align: "right", dataIndx: "departmentCode",
                 	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },                      
                       validations: [

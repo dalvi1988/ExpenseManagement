@@ -13,7 +13,7 @@
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
    <script type="text/javascript">
-   var data= ${branchList};
+   var branchList= ${branchList};
    $(function () {
 
        //to check whether any row is currently being edited.
@@ -272,7 +272,7 @@
                dataType: "JSON",
                location: "local",
                recIndx: "branchId",
-               data: data
+               data: branchList
            },
            pageModel: { type: "local" },
            cellBeforeSave: function (evt, ui) {

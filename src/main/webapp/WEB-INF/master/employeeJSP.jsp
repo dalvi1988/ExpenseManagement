@@ -378,7 +378,7 @@
                 	  filter: { type: "select",
           		        condition: 'equal',
           		        prepend: { '': '--All--' },
-          		        valueIndx: "reportingMgr",
+          		        valueIndx: "employeeId",
           		        labelIndx: "fullName",
           		        listeners: ['change'],
           		      	options: reportingMgrList
