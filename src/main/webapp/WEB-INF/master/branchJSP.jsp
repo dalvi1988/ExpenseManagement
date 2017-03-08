@@ -151,13 +151,8 @@
               	context: $grid,
           	    url: url, 
           	    type: 'POST', 
-          	    dataType: 'json', 
           	    data: JSON.stringify(jsonToBeSend),
-          	    async: true,
-          	    beforeSend: function(xhr) {                 
-                      xhr.setRequestHeader("Accept", "application/json");
-                      xhr.setRequestHeader("Content-Type", "application/json");
-                  },
+          	 
           	    success: function(data) { 
           	    	if(data.serviceStatus=="SUCCESS"){
 	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");

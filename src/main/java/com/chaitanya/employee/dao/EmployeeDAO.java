@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.company.model.CompanyDTO;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.utility.Validation;
 
@@ -35,6 +36,20 @@ public class EmployeeDAO implements IEmployeeDAO {
 			employeeList=(List<EmployeeJPA>)session.createCriteria(EmployeeJPA.class)
 										.createAlias("branchJPA.companyJPA", "company",JoinType.LEFT_OUTER_JOIN)
 										.add(Restrictions.eq("company.companyId", companyDTO.getCompanyId()))
+										.list();
+		}
+		return employeeList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EmployeeJPA> findEmployeeOnUnderDeptBranch(EmployeeDTO employeeDTO) {
+		Session session=sessionFactory.getCurrentSession();
+		List<EmployeeJPA> employeeList=null;
+		if(Validation.validateForNullObject(employeeDTO)){
+			employeeList=(List<EmployeeJPA>)session.createCriteria(EmployeeJPA.class)
+										.add(Restrictions.eq("departmentJPA.departmentId", employeeDTO.getDepartmentDTO().getDepartmentId()))
+										.add(Restrictions.eq("branchJPA.branchId", employeeDTO.getBranchDTO().getBranchId()))
 										.list();
 		}
 		return employeeList;

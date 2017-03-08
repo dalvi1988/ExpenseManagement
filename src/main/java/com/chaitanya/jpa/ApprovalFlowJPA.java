@@ -11,24 +11,32 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="department_head")
-public class DepartmentHeadJPA {
+@Table(name="functional_flow")
+public class ApprovalFlowJPA {
 	
 	@Id @GeneratedValue
-	@Column(name="department_head_id")
-	private Long deptHeadId;
+	@Column(name="flow_id")
+	private Long flowId;
 	
 	@OneToOne
-	@JoinColumn(name="branch_id",nullable=false)
+	@JoinColumn(name="branch_id", nullable=false)
 	private BranchJPA branchJPA;
 	
 	@OneToOne
-	@JoinColumn(name="department_id",nullable=false)
+	@JoinColumn(name="department_id")
 	private DepartmentJPA departmentJPA;
 	
-	@OneToOne
-	@JoinColumn(name="employee_id",nullable=false)
-	private EmployeeJPA employeeJPA;
+	@Column(name="no_of_level", nullable=false)
+	private Integer noOfLevel;
+	
+	@Column(name="level1", nullable=false)
+	private Long level1;
+	
+	@Column(name="level2", nullable=false)
+	private Long level2;
+	
+	@Column(name="level3", nullable=false)
+	private Long level3;
 	
 	@Column(name="created_by")
 	private Long createdBy;
@@ -45,12 +53,12 @@ public class DepartmentHeadJPA {
 	@Column(name="status",nullable=false)
 	private Character status;
 
-	public Long getDeptHeadId() {
-		return deptHeadId;
+	public Long getFlowId() {
+		return flowId;
 	}
 
-	public void setDeptHeadId(Long deptHeadId) {
-		this.deptHeadId = deptHeadId;
+	public void setFlowId(Long flowId) {
+		this.flowId = flowId;
 	}
 
 	public BranchJPA getBranchJPA() {
@@ -69,12 +77,36 @@ public class DepartmentHeadJPA {
 		this.departmentJPA = departmentJPA;
 	}
 
-	public EmployeeJPA getEmployeeJPA() {
-		return employeeJPA;
+	public Integer getNoOfLevel() {
+		return noOfLevel;
 	}
 
-	public void setEmployeeJPA(EmployeeJPA employeeJPA) {
-		this.employeeJPA = employeeJPA;
+	public void setNoOfLevel(Integer noOfLevel) {
+		this.noOfLevel = noOfLevel;
+	}
+
+	public Long getLevel1() {
+		return level1;
+	}
+
+	public void setLevel1(Long level1) {
+		this.level1 = level1;
+	}
+
+	public Long getLevel2() {
+		return level2;
+	}
+
+	public void setLevel2(Long level2) {
+		this.level2 = level2;
+	}
+
+	public Long getLevel3() {
+		return level3;
+	}
+
+	public void setLevel3(Long level3) {
+		this.level3 = level3;
 	}
 
 	public Long getCreatedBy() {
@@ -116,6 +148,5 @@ public class DepartmentHeadJPA {
 	public void setStatus(Character status) {
 		this.status = status;
 	}
-	
 	
 }

@@ -11,5 +11,6 @@ var ajaxObj = {
     },
     error: function () {
         this.pqGrid("rollback");
+        this.pqGrid("hideLoading");
     }
 };

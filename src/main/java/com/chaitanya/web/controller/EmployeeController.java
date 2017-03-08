@@ -24,6 +24,7 @@ import com.chaitanya.employee.service.IEmployeeService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
+import com.chaitanya.utility.Utility;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,18 +43,21 @@ public class EmployeeController {
 	public ModelAndView getAllEmployee() throws JsonProcessingException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
+		
 		List<EmployeeDTO> employeeDTOList=null;
+		
 		List<BranchDTO> branchDTOList=null;
 		List<DepartmentDTO> departmentDTOList=null;
 		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
 		if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
 			employeeDTOList=new ArrayList<EmployeeDTO>();
+			
 			EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
 			if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
 				employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
 				branchDTOList=companyService.findBranchOnCompany(employeeDTO.getBranchDTO().getCompanyDTO());
 				departmentDTOList=departmentService.findAll();
-				
 			}
 			
 			model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
@@ -63,6 +67,21 @@ public class EmployeeController {
 		}
 		model.setViewName("master/employeeJSP");
 		return model;
+	}
+	
+	@RequestMapping(value="/empUnderDeptBranchWithLevel",method=RequestMethod.POST)
+	public @ResponseBody String getDepartmentHead(@RequestBody EmployeeDTO receivedEmployeeDTO) throws JsonProcessingException{
+		List<EmployeeDTO> empUnderDeptBranchDTOList=null;
+		ObjectMapper mapper=new ObjectMapper();
+		empUnderDeptBranchDTOList=new ArrayList<EmployeeDTO>();
+		
+		//LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(Validation.validateForNullObject(receivedEmployeeDTO)){
+			empUnderDeptBranchDTOList=employeeService.findEmployeeOnUnderDeptBranch(receivedEmployeeDTO);
+			Utility.addLevelsToEmployeeDTO(empUnderDeptBranchDTOList);
+		}
+
+		return "{\"data\":" +mapper.writeValueAsString(empUnderDeptBranchDTOList) + "}";
 	}
 	
 	@RequestMapping(value="/addEmployee", method=RequestMethod.POST)
@@ -105,4 +124,5 @@ public class EmployeeController {
 		
 		return toBeSentEmployeeDTO;
 	}
+	
 }

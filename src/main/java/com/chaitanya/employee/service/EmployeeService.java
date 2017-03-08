@@ -30,7 +30,7 @@ public class EmployeeService implements IEmployeeService {
 	}
 	
 	public List<EmployeeDTO> findEmployeeOnCompany(BaseDTO baseDTO) {
-		logger.debug("EmployeeService: findEmpployeeOnCompany-Start");
+		logger.debug("EmployeeService: findEmployeeOnCompany-Start");
 		if(validateEmployeeMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of EmployeeMasterDTO type.");
 		}
@@ -60,6 +60,41 @@ public class EmployeeService implements IEmployeeService {
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			logger.error("EmployeeService: Exception",e);
 		}
+		logger.debug("EmployeeService: findEmployeeOnCompany-End");
+		return employeeDTOList;
+	}
+	
+	public List<EmployeeDTO> findEmployeeOnUnderDeptBranch(BaseDTO baseDTO) {
+		logger.debug("EmployeeService: findEmployeeOnUnderDeptBranch-Start");
+		if(validateEmployeeMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of EmployeeMasterDTO type.");
+		}
+		
+		List<EmployeeDTO> employeeDTOList = null;
+		try{
+			EmployeeDTO employeeDTO=(EmployeeDTO)baseDTO;
+			if(Validation.validateForNullObject(employeeDTO)){
+				
+				List<EmployeeJPA> employeeList = employeeDAO.findEmployeeOnUnderDeptBranch(employeeDTO);
+				if (Validation.validateCollectionForNullSize(employeeList)) {
+					employeeDTOList = new ArrayList<EmployeeDTO>();
+					for (EmployeeJPA emp:employeeList) {
+						EmployeeDTO departmentDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(emp);
+						employeeDTOList.add(departmentDTO);
+					}
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+				else{
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS_WITH_NO_DATA);
+				}
+			}
+			
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("EmployeeService: Exception",e);
+		}
+		logger.debug("EmployeeService: findEmployeeOnUnderDeptBranch-End");
 		return employeeDTOList;
 	}
 
@@ -94,8 +129,4 @@ public class EmployeeService implements IEmployeeService {
 		logger.debug("EmployeeService: addEmployee-End");
 		return baseDTO;
 	}
-	
-
-
-	
 }
