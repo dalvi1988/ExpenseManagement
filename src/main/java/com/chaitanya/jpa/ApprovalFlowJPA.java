@@ -32,10 +32,10 @@ public class ApprovalFlowJPA {
 	@Column(name="level1", nullable=false)
 	private Long level1;
 	
-	@Column(name="level2", nullable=false)
+	@Column(name="level2", nullable=true)
 	private Long level2;
 	
-	@Column(name="level3", nullable=false)
+	@Column(name="level3", nullable=true)
 	private Long level3;
 	
 	@Column(name="created_by")

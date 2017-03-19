@@ -18,8 +18,6 @@ import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.Command;
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.approvalFlow.service.IApprovalFlowService;
-import com.chaitanya.branch.model.BranchDTO;
-import com.chaitanya.branch.service.IBranchService;
 import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.department.service.IDepartmentService;
 import com.chaitanya.employee.model.EmployeeDTO;
@@ -36,9 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 public class ApprovalFlowController {
-
-	@Autowired 
-	private IBranchService branchService;
 	
 	@Autowired
 	IDepartmentService departmentService;
@@ -73,6 +68,26 @@ public class ApprovalFlowController {
 		return model;
 	}
 	
+
+	@RequestMapping(value="/deactivateFlow",method={RequestMethod.POST})
+	public @ResponseBody String deactivateFunctionalFlow(@RequestBody ApprovalFlowDTO receivedApprovalFlowDTO) throws JsonProcessingException{
+		ObjectMapper mapper=new ObjectMapper();
+		ApprovalFlowDTO toBeSentApprovalFlowDTO=null;
+		if(Validation.validateForZero(receivedApprovalFlowDTO.getFlowId())){
+			BaseDTO baseDTO =  approvalService.deactivateFunctionalFlow(receivedApprovalFlowDTO);
+			if(Validation.validateForSuccessStatus(baseDTO)){
+				toBeSentApprovalFlowDTO=(ApprovalFlowDTO) baseDTO;
+				toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.WORKFLOW_DEACTIVATED));
+			}
+			else{
+				toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
+				toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+			}
+		}
+
+		return "{\"data\":"+mapper.writeValueAsString(toBeSentApprovalFlowDTO)+"}";
+	}
+
 	@RequestMapping(value="/fuctionalFlow",method={RequestMethod.POST})
 	public @ResponseBody String getFunctionalFlow(@RequestBody ApprovalFlowDTO receivedApprovalFlowDTO) throws JsonProcessingException{
 		List<ApprovalFlowDTO> approvalFlowList = null;
@@ -85,45 +100,46 @@ public class ApprovalFlowController {
 		return "{\"data\":"+mapper.writeValueAsString(approvalFlowList)+"}";
 	}
 
-	public @ResponseBody BranchDTO addDepartment(@RequestBody BranchDTO receivedBranchDTO){
-		BranchDTO toBeSentBranchDTO=null;
-		if(Validation.validateForNullObject(receivedBranchDTO)){
+	@RequestMapping(value="/addFunctionalFlow",method={RequestMethod.POST})
+	public @ResponseBody ApprovalFlowDTO addFunctionalFlow(@RequestBody ApprovalFlowDTO receivedApprovalFlowDTO){
+		ApprovalFlowDTO toBeSentApprovalFlowDTO=null;
+		if(Validation.validateForNullObject(receivedApprovalFlowDTO)){
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if(!Validation.validateForNullObject(receivedBranchDTO.getBranchId())){
-				receivedBranchDTO.setCommand(Command.ADD);
-				receivedBranchDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedBranchDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
+			if(!Validation.validateForNullObject(receivedApprovalFlowDTO.getFlowId())){
+				receivedApprovalFlowDTO.setCommand(Command.ADD);
+				receivedApprovalFlowDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedApprovalFlowDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
 			}
-			else{
-				receivedBranchDTO.setCommand(Command.UPDATE);
-				receivedBranchDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedBranchDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
-			}
-			receivedBranchDTO.setCompanyDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO());
-			BaseDTO baseDTO=branchService.addBranch(receivedBranchDTO);
+			/*else{
+				receivedApprovalFlowDTO.setCommand(Command.UPDATE);
+				receivedApprovalFlowDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedApprovalFlowDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
+			}*/
+			//receivedApprovalFlowDTO.setCompanyDTO(user.getLoginDTO().getEmployeeDTO().getApprovalFlowDTO().getCompanyDTO());
+			BaseDTO baseDTO=approvalService.addFunctionalFlow(receivedApprovalFlowDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){
-				toBeSentBranchDTO=(BranchDTO)baseDTO;
-				if(receivedBranchDTO.getCommand().equals(Command.ADD)){
-					toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
+				toBeSentApprovalFlowDTO=(ApprovalFlowDTO)baseDTO;
+				if(receivedApprovalFlowDTO.getCommand().equals(Command.ADD)){
+					toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
 				}
 				else
-					toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
+					toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
 			}
 			else if(Validation.validateForSystemFailureStatus(baseDTO)){
-				toBeSentBranchDTO=receivedBranchDTO;
-				toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+				toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
+				toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 			}
 			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
-				toBeSentBranchDTO=receivedBranchDTO;
-				toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
+				toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
+				toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
 			}
 		}
 		else{
-			toBeSentBranchDTO=receivedBranchDTO;
-			toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+			toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
+			toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 		
-		return toBeSentBranchDTO;
+		return toBeSentApprovalFlowDTO;
 	}
 	
 }

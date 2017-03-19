@@ -96,14 +96,4 @@ public class MainController {
 
 	}
 	
-	@RequestMapping(value = "/alert.html", method = RequestMethod.GET)
-	public ModelAndView alert() {
-
-		ModelAndView model = new ModelAndView();
-
-		model.setViewName("pages/alert");
-		return model;
-
-	}
-
 }

@@ -7,13 +7,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.ServiceStatus;
-import com.chaitanya.company.service.ICompanyService;
 import com.chaitanya.department.convertor.DepartmentConvertor;
 import com.chaitanya.department.dao.IDepartmentDAO;
 import com.chaitanya.department.model.DepartmentDTO;

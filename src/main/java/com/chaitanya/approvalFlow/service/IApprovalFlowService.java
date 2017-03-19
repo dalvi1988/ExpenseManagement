@@ -8,7 +8,8 @@ import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 public interface IApprovalFlowService {
 
 	List<ApprovalFlowDTO> findFunctionalFlowUnderBranch(BaseDTO baseDTO);
-/*
-	BaseDTO addDepartmentHead(BaseDTO baseDTO);
-*/
+
+	BaseDTO deactivateFunctionalFlow(BaseDTO baseDTO);
+
+	BaseDTO addFunctionalFlow(BaseDTO baseDTO);
 }

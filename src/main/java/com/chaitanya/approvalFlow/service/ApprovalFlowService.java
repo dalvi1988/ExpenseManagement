@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.chaitanya.Base.BaseDTO;
@@ -62,18 +63,50 @@ public class ApprovalFlowService implements IApprovalFlowService {
 		return  approvalFlowDTOList;
 	}
 
-	/*@Override
-	public BaseDTO addDepartmentHead(BaseDTO baseDTO) {
-		logger.debug("ApprovalFlowService: addDepartmentHead-Start");
-		if(validateDepartmentHeadMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of DepartmentHeadDTO type.");
+	@Override
+	public BaseDTO deactivateFunctionalFlow(BaseDTO baseDTO){
+		logger.debug("ApprovalFlowService: deactivateFunctionalFlow-Start");
+		
+		if(validateApprovalFlowDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
+		}
+		ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				Integer result =approvalFlowDAO.deactivateFunctionalFlow(approvalFlowDTO);
+				
+				if(result == 1){
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+				else{
+					baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("Department Service: Exception",e);
+		}
+		logger.debug("ApprovalFlowService: deactivateFunctionalFlow-End");
+		return  baseDTO;
+	}
+
+	@Override
+	public BaseDTO addFunctionalFlow(BaseDTO baseDTO) {
+		logger.debug("ApprovalFlowService: addFunctionalFlow-Start");
+		if(validateApprovalFlowDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
 		}
 		try{
-			DepartmentHeadJPA approvalFlowJPA=DepartmentHeadConvertor.setDepartmentHeadDTOToJPA((DepartmentHeadDTO)baseDTO);
+			ApprovalFlowJPA approvalFlowJPA=ApprovalFlowConvertor.setApprovalFlowDTOToJPA((ApprovalFlowDTO)baseDTO);
 			if (Validation.validateForNullObject(approvalFlowJPA)) {
+				
 				approvalFlowJPA=approvalFlowDAO.add(approvalFlowJPA);
 				if(Validation.validateForNullObject(approvalFlowJPA)){
-					baseDTO=DepartmentHeadConvertor.setDepartmentHeadJPAToDTO(approvalFlowJPA);
+					baseDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
 			}
@@ -90,9 +123,8 @@ public class ApprovalFlowService implements IApprovalFlowService {
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			logger.error("ApprovalFlowService: Exception",e);
 		}
-		logger.debug("ApprovalFlowService: addDepartmentHead-End");
+		logger.debug("ApprovalFlowService: addFunctionalFlow-End");
 		return baseDTO;
-	}*/
-	
+	}
 	
 }

@@ -132,7 +132,6 @@
                 colModel: [
                     
                     { title: "Department Head Id", dataType: "integer", dataIndx: "deptHeadId", hidden:true, width: 80 },
-                    { title: "", width: 100, dataIndx: "branchId", hidden:true },
                     { title: "Department", dataIndx: "departmentId", width: 150,
                          editor: {                    
                             type: "select",
@@ -271,6 +270,7 @@
         
       //called by add button in toolbar.
         function addRow($grid) {
+    	  debugger;
         	var branchId = $grid.data( 'branchId' );
      	   $(".customMessage").text("");
      	   

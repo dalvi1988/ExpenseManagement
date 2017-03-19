@@ -29,7 +29,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/jqwidgets/**").addResourceLocations("classpath:/jqwidgets/");
+		registry.addResourceHandler("/jquery/**").addResourceLocations("classpath:/jquery/");
 		registry.addResourceHandler("/demos/**").addResourceLocations("classpath:/demos/");
 		registry.addResourceHandler("/mobiledemos/**").addResourceLocations("classpath:/mobiledemos/");
 		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/scripts/");

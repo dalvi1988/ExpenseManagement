@@ -8,5 +8,7 @@ public class ApplicationConstant {
 	public static final String SYSTEM_FAILURE="ERROR!!! Please contact system administrator.";
 	
 	public static final String BUSSINESS_FAILURE="Data intgrity error!!! Please check records rules.";
+	
+	public static final String WORKFLOW_DEACTIVATED="Workflow deactivated successfully.";
 
 }

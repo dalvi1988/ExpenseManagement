@@ -2,18 +2,20 @@
 <html lang="en">
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <head>
 
     <title>Approval Cycle</title>
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 	
  	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
- 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+ 	<link rel="stylesheet" href=<spring:url value="/jquery/jquery-ui.css"/> />
+ 	<script type="text/javascript" src=<spring:url value="/jquery/jquery-ui.min.js"/> ></script>
+ 	
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
- 	<script type="text/javascript" src=<spring:url value="/scripts/dialog/dialog.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
-    <link rel="stylesheet" href=<spring:url value="/scripts/dialog/dialog.css"/> />
-
+    
    <script type="text/javascript">
    
    var departmentList=${departmentList};
@@ -39,7 +41,6 @@
                //create new detail place holder
                $detail = $("<div></div>");
 
-
            for (var key in rowData) {
                var cellData = (rowData[key] == null) ? "" : rowData[key];
                html = html.replace("<#=" + key + "#>", cellData);
@@ -49,8 +50,9 @@
            $detail.find(".pq-tabs").tabs().on("tabsactivate", onTabsActive);
 
            //append pqGrid in the 2nd tab.                
-           $("<div></div>").appendTo($("#tabs-2", $detail)).pqGrid( detailobj );
-
+           $("<div></div>").appendTo($("#tabs-2", $detail)).pqGrid( detailobj ).data("branchId",rowData.branchId);
+           
+           
            return $detail;
        };
 
@@ -103,13 +105,14 @@
        * returns a new copy of detailModel every time the function is called.*/
        var gridDetailModel = function( rowData ){
            return {
-           	wrap: false,
+           	   wrap: false,
                hwrap: false,
                resizable: true,
                columnBorders: false,
                sortable: false,
                numberCell: { show: false },
                track: true, //to turn on the track changes.
+               //flexWidth: true,
                flexHeight: true,
                toolbar: {
                    items: [
@@ -155,12 +158,14 @@
                            labelIndx: "departmentName",
                            options: departmentList,
                            init: function(ui){
-                        	   var jsonToBeSend=new Object();
                            	   var $grid=$(this);
                         	   
-                        	   jsonToBeSend["branchId"]=1;
-                        	   jsonToBeSend["departmentId"]=1;
                            	   ui.$cell.find("select").change(function( evt){
+                           		   
+                           		var jsonToBeSend=new Object();
+                         	    jsonToBeSend["branchId"]=ui.rowData.branchId;
+                         	    jsonToBeSend["departmentId"]=$(this).val();
+                         	   
 	                           	   $.ajax($.extend({}, ajaxObj, { 
 	                                   	context: $gridMain,
 	                               	    url: "/ExpenseManagement/empUnderDeptBranchWithLevel", 
@@ -210,11 +215,12 @@
 				                    else {
 				                        return true;
 				                    } */
+   		                     return true;
 	   		                    }
    		                    }
    		                ]
                    },
-                   { title: "No. Of Level", dataIndx: "noOfLevel", width: 100,
+                   { title: "No. Of Level", dataIndx: "noOfLevel", width: 50,
                   	  editor: {                    
                             type: "select",
                             prepend: { '': '--Select--' },
@@ -296,15 +302,6 @@
 	       			       }
         			   } 
                    },
-                    
-                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
-                       editor: { type: "checkbox", style: "margin:3px 5px;" },
-                       render: function (ui) {
-                           if(ui.cellData == true) return "Active";
-                           else return "Inactive";
-                        	
-                       }
-                   },
                    { title: "", width: 100, dataIndx: "status", hidden:true },
                    { title: "", width: 100, dataIndx: "createdBy", hidden:true },
                    { title: "", width: 100, dataIndx: "createdDate", hidden:true },
@@ -317,7 +314,7 @@
                 		    }
                 		    else{
                 		    	if(ui.cellData == true) return "<button type='button' class='edit_btn'>Deactivate</button>";
-                                else return "<button type='button' class='edit_btn' disabled>Deactivated</button>";
+                                else return "<button type='button' class='delete_btn' disabled>Deactivated</button>";
                 		    }
                    	   }
                    }
@@ -369,6 +366,7 @@
                            rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
                        deleteRow(rowIndx, $grid);
                    });
+                   
                    //edit button
                    $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
                    .unbind("click")
@@ -405,6 +403,7 @@
        
      //called by add button in toolbar.
        function addRow($grid) {
+    	 
        	   var branchId = $grid.data( 'branchId' );
     	   $(".customMessage").text("");
     	   
@@ -412,7 +411,7 @@
                return false;
            }
            //append empty row in the first row.
-           var rowData = {branchId:branchId, flowId:"" }; //empty row template
+           var rowData = {branchId:branchId,flowId:"",status:true }; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -464,8 +463,45 @@
 	               });
     	   }
     	   else{
-    		   $.dialog.alert("Hello World");
-    	   }
+    		   $( "#dialog-confirm" ).dialog({
+    			      resizable: false,
+    			      height: "auto",
+    			      width: 400,
+    			      modal: true,
+    			      text: "Are you sure to deactivate workflow?",
+    			      buttons: {
+    			        "Deactivate": function() {
+    			          $( this ).dialog( "close" );
+    			          
+    			          $.ajax($.extend({}, ajaxObj, { 
+    			            	context: $gridMain,
+    			          	    url: "/ExpenseManagement/deactivateFlow", 
+    			          	    type: 'POST', 
+    			          	    data: "{\"flowId\":"+rowData.flowId+"}",
+    			          	    success: function(response) {
+    			          	    	var data=response.data;
+    			          	    	if(data.serviceStatus=="SUCCESS"){
+    				          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
+    				                    rowData.status= data.status;
+    				          	    	$grid.pqGrid("commit");
+    			          	    	}
+    			          	    	else{
+    			          	    		$grid.pqGrid("rollback");
+    			          	    	}
+    			          	    	$(".customMessage").text(data.message);
+    			          	    	
+    			          	    },
+    			          	    error:function(data) { 
+    			          	    	$(".customMessage").text(data.message);
+    			          	    }
+    			          }));
+    			        },
+    			        Cancel: function() {
+    			          $( this ).dialog( "close" );
+    			        }
+    			      }
+    			});
+     	   }
        }
        
 
@@ -490,12 +526,14 @@
               $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	
               jsonToBeSend["branchId"] = rowData.branchId;
-              debugger;
               
               jsonToBeSend["departmentId"] = rowData.departmentId;
-              jsonToBeSend["employeeId"] = rowData.employeeId;
-              jsonToBeSend["status"] = rowData.status;
-              url = "/ExpenseManagement/addDepartmentHead";
+              jsonToBeSend["noOfLevel"] = rowData.noOfLevel;
+              jsonToBeSend["level1"] = rowData.level1;
+              jsonToBeSend["level2"] = rowData.level2;
+              jsonToBeSend["level3"] = rowData.level3;
+              jsonToBeSend["status"] =true;
+              url = "/ExpenseManagement/addFunctionalFlow";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record
@@ -506,22 +544,19 @@
               	  jsonToBeSend["createdDate"] = rowData.createdDate;
             	  jsonToBeSend["deptHeadId"] = rowData.deptHeadId;
               }
-              $.ajax({ 
+              $.ajax($.extend({}, ajaxObj, { 
+            	context: $gridMain,
           	    url: url, 
           	    type: 'POST', 
           	    data: JSON.stringify(jsonToBeSend),
-          		beforeSend: function(xhr) {                 
-	                 xhr.setRequestHeader("Accept", "application/json");
-	                 xhr.setRequestHeader("Content-Type", "application/json");
-          		},
-          	    async: true,
           	    success: function(data) { 
           	    	if(data.serviceStatus=="SUCCESS"){
+          	    		alert(data.flowId)
 	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
-	                    if (rowData[recIndx] == null || rowData[recIndx] == "") {
-	                       rowData.departmentHeadId= data.departmentHeadId;
-	                    } 
-	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+	                       rowData.flowId= data.flowId;
+	                       rowData.status=data.status;
+	                    //$grid.pqGrid( "refreshRow", { rowIndx: recIndx} );
+	          	    	//$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	          	    	$grid.pqGrid("commit");
           	    	}
           	    	else{
@@ -535,9 +570,7 @@
           	    	$(".customMessage").text(data.message);
           	    }
           	    
-          	});
-              
-              
+          	}));
           }
           else {
        	   
@@ -554,19 +587,17 @@
 <body>
   <div id="grid_md" style="margin:5px auto;"></div>
     <script type="text/pq-template" id="tmpl">
-    <div class="pq-tabs" style="width:700px;">
+    <div class="pq-tabs" style="width:100%;">
         <ul>
             <li><a href="#tabs-1">Functional Approval Cycle</a></li>
             <li><a href="#tabs-2">Finance Approval Cycle</a></li>            
             <li><a href="#tabs-3">Branch Level Approval Cycle</a></li>
         </ul>
-        <div id="tabs-2">
+        <div id="tabs-1">
+			
         </div>
-		<div id="tabs-1">
-            <p><b>Shipping Address:</b> <#=ShipAddress#></p>
-            <p><b>Shipping City:</b> <#=ShipCity#></p>
-            <p><b>Shipping Region:</b> <#=ShipRegion#></p>
-            <p><b>Shipping Postal Code:</b> <#=ShipPostalCode#></p>
+		<div id="tabs-2">
+            
         </div>
         <div id="tabs-3">
             <p><b>Order Date:</b> <#=OrderDate#></p>
@@ -574,6 +605,10 @@
             <p><b>Shipped Date:</b> <#=ShippedDate#></p>
         </div>
     </div>
+	
 </script>   
+	<div id="dialog-confirm" style="display: none" title="Are you sure to deactivate workflow.">
+  		<p><span class="ui-icon ui-icon-alert"  style="float:left; margin:12px 12px 20px 0;"></span>Once workflow deactivate, then you wont able to activate.\n</p>
+	</div>
 </body>
 </html>
