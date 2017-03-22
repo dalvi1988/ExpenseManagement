@@ -337,7 +337,7 @@ var getFinanceGrid = function( rowData ){
             getUrl: function() {
                 return { url: "/ExpenseManagement/financeFlow", data: "{\"branchId\":"+rowData.branchId+"}" };
             },
-            async: false,
+            async: true,
        	   beforeSend: function(xhr) {   
                 xhr.setRequestHeader("Accept", "application/json; charset=UTF-8");
                 xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
