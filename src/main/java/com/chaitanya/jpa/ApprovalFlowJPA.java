@@ -26,6 +26,9 @@ public class ApprovalFlowJPA {
 	@JoinColumn(name="department_id")
 	private DepartmentJPA departmentJPA;
 	
+	@Column(name="is_branch_flow",nullable=false)
+	private Character isBranchFlow;
+	
 	@Column(name="no_of_level", nullable=false)
 	private Integer noOfLevel;
 	
@@ -107,6 +110,14 @@ public class ApprovalFlowJPA {
 
 	public void setLevel3(Long level3) {
 		this.level3 = level3;
+	}
+
+	public Character getIsBranchFlow() {
+		return isBranchFlow;
+	}
+
+	public void setIsBranchFlow(Character isBranchFlow) {
+		this.isBranchFlow = isBranchFlow;
 	}
 
 	public Long getCreatedBy() {

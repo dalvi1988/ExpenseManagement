@@ -20,13 +20,17 @@ public class ApprovalFlowConvertor {
 			
 			approvalFlowDTO.setFlowId(approvalFlowJPA.getFlowId());
 			
+			approvalFlowDTO.setIsBranchFlow(Convertor.convetStatusToBool(approvalFlowJPA.getIsBranchFlow()));
+			
 			BranchDTO branchDTO= new BranchDTO();
 			branchDTO.setBranchId(approvalFlowJPA.getBranchJPA().getBranchId());
 			approvalFlowDTO.setBranchDTO(branchDTO);
 			
-			DepartmentDTO departmentDTO= new DepartmentDTO();
-			departmentDTO.setDepartmentId(approvalFlowJPA.getDepartmentJPA().getDepartmentId());
-			approvalFlowDTO.setDepartmentDTO(departmentDTO);
+			if(Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
+				DepartmentDTO departmentDTO= new DepartmentDTO();
+				departmentDTO.setDepartmentId(approvalFlowJPA.getDepartmentJPA().getDepartmentId());
+				approvalFlowDTO.setDepartmentDTO(departmentDTO);
+			}
 			
 			approvalFlowDTO.setNoOfLevel(approvalFlowJPA.getNoOfLevel());
 			
@@ -54,6 +58,7 @@ public class ApprovalFlowConvertor {
 			}
 			approvalFlowDTO.setStatus(Convertor.convetStatusToBool(approvalFlowJPA.getStatus()));
 			
+			
 		}
 		return approvalFlowDTO;
 	}
@@ -68,6 +73,8 @@ public class ApprovalFlowConvertor {
 			if(Validation.validateForNullObject(approvalFlowDTO.getFlowId())){
 				approvalFlowJPA.setFlowId(approvalFlowDTO.getFlowId());
 			}
+			
+			approvalFlowJPA.setIsBranchFlow(Convertor.convertStatusToChar(approvalFlowDTO.getIsBranchFlow()));
 			
 			BranchJPA branchJPA=new BranchJPA();
 			branchJPA.setBranchId(approvalFlowDTO.getBranchDTO().getBranchId());

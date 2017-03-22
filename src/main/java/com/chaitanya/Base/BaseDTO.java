@@ -3,6 +3,7 @@ package com.chaitanya.Base;
 import java.io.Serializable;
 
 import com.chaitanya.login.model.LoginDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class BaseDTO implements Serializable{
 	public enum Command{
@@ -19,7 +20,9 @@ public class BaseDTO implements Serializable{
 	
 	private Long createdBy;
 	private String createdDate;
+	@JsonIgnore
 	private Long modifiedBy;
+	@JsonIgnore
 	private String modifiedDate;
 	private Boolean status;
 	private Command command; 

@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chaitanya.Base.BaseDTO.ServiceStatus;
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.jpa.ApprovalFlowJPA;
@@ -32,9 +34,33 @@ public class ApprovalFlowDAO implements IApprovalFlowDAO{
 		List<ApprovalFlowJPA> departmentHeadList=(List<ApprovalFlowJPA>)session.createCriteria(ApprovalFlowJPA.class)
 			.add(Restrictions.eq("branchJPA.branchId",branchDTO.getBranchId() ))
 			.add(Restrictions.isNotNull("departmentJPA.departmentId"))
+			.add(Restrictions.eq("isBranchFlow",'N'))
 				.list();
 		return departmentHeadList;
 	}
+	
+	public List<ApprovalFlowJPA> findFinanceFlowUnderBranch(BranchDTO branchDTO) {
+		Session session=sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<ApprovalFlowJPA> departmentHeadList=(List<ApprovalFlowJPA>)session.createCriteria(ApprovalFlowJPA.class)
+			.add(Restrictions.eq("branchJPA.branchId",branchDTO.getBranchId() ))
+			.add(Restrictions.eq("isBranchFlow",'N'))
+			.add(Restrictions.isNull("departmentJPA.departmentId"))
+				.list();
+		return departmentHeadList;
+	}
+	
+	public List<ApprovalFlowJPA> findBranchFlowUnderBranch(BranchDTO branchDTO) {
+		Session session=sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<ApprovalFlowJPA> departmentHeadList=(List<ApprovalFlowJPA>)session.createCriteria(ApprovalFlowJPA.class)
+			.add(Restrictions.eq("branchJPA.branchId",branchDTO.getBranchId() ))
+			.add(Restrictions.eq("isBranchFlow",'Y'))
+			.add(Restrictions.isNull("departmentJPA.departmentId"))
+				.list();
+		return departmentHeadList;
+	}
+
 
 	@Override
 	public Integer deactivateFunctionalFlow(ApprovalFlowDTO approvalFlowDTO) {
@@ -45,6 +71,84 @@ public class ApprovalFlowDAO implements IApprovalFlowDAO{
 		        .executeUpdate();
 		
 		return updatedEntities;
+	}
+
+	@Override
+	public ApprovalFlowDTO validateFunctionalFlow(ApprovalFlowDTO approvalFlowDTO) {
+
+		Session session=sessionFactory.getCurrentSession();
+		try{
+			Long count =(Long)session.createCriteria(ApprovalFlowJPA.class)
+						.add(Restrictions.eq("branchJPA.branchId",approvalFlowDTO.getBranchDTO().getBranchId() ))
+						.add(Restrictions.eq("isBranchFlow",'N'))
+						.add(Restrictions.eq("departmentJPA.departmentId",approvalFlowDTO.getDepartmentDTO().getDepartmentId()))
+						.add(Restrictions.eq("status",'Y'))
+						.setProjection(Projections.rowCount())
+						.uniqueResult();
+			
+			if(count == 0){
+				approvalFlowDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+			else{
+				approvalFlowDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}catch(Exception e){
+			approvalFlowDTO.setServiceStatus(ServiceStatus.FAILURE);
+		}
+	
+		return approvalFlowDTO;
+	}
+
+	@Override
+	public ApprovalFlowDTO validateFinanceFlow(ApprovalFlowDTO approvalFlowDTO) {
+
+		Session session=sessionFactory.getCurrentSession();
+		try{
+			Long count =(Long)session.createCriteria(ApprovalFlowJPA.class)
+						.add(Restrictions.eq("branchJPA.branchId",approvalFlowDTO.getBranchDTO().getBranchId() ))
+						.add(Restrictions.eq("isBranchFlow",'N'))
+						.add(Restrictions.isNull("departmentJPA.departmentId"))
+						.add(Restrictions.eq("status",'Y'))
+						.setProjection(Projections.rowCount())
+						.uniqueResult();
+			
+			if(count == 0){
+				approvalFlowDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+			else{
+				approvalFlowDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}catch(Exception e){
+			approvalFlowDTO.setServiceStatus(ServiceStatus.FAILURE);
+		}
+	
+		return approvalFlowDTO;
+	}
+
+	@Override
+	public ApprovalFlowDTO validateBranchFlow(ApprovalFlowDTO approvalFlowDTO) {
+		Session session=sessionFactory.getCurrentSession();
+		try{
+			Long count =(Long)session.createCriteria(ApprovalFlowJPA.class)
+						.add(Restrictions.eq("branchJPA.branchId",approvalFlowDTO.getBranchDTO().getBranchId() ))
+						.add(Restrictions.eq("isBranchFlow",'Y'))
+						.add(Restrictions.isNull("departmentJPA.departmentId"))
+						.add(Restrictions.eq("status",'Y'))
+						.setProjection(Projections.rowCount())
+						.uniqueResult();
+			
+			if(count == 0){
+				approvalFlowDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+			else{
+				approvalFlowDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}catch(Exception e){
+			approvalFlowDTO.setServiceStatus(ServiceStatus.FAILURE);
+		}
+	
+		return approvalFlowDTO;
+		
 	}
 
 }

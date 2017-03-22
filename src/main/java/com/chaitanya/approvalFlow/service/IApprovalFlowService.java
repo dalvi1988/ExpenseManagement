@@ -12,4 +12,8 @@ public interface IApprovalFlowService {
 	BaseDTO deactivateFunctionalFlow(BaseDTO baseDTO);
 
 	BaseDTO addFunctionalFlow(BaseDTO baseDTO);
+
+	List<ApprovalFlowDTO> findFinanceFlowUnderBranch(BaseDTO baseDTO);
+
+	List<ApprovalFlowDTO> findBranchFlowUnderBranch(BaseDTO baseDTO);
 }

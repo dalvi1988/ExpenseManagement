@@ -99,6 +99,30 @@ public class ApprovalFlowController {
 
 		return "{\"data\":"+mapper.writeValueAsString(approvalFlowList)+"}";
 	}
+	
+	@RequestMapping(value="/financeFlow",method={RequestMethod.POST})
+	public @ResponseBody String getFinanceFlow(@RequestBody ApprovalFlowDTO receivedApprovalFlowDTO) throws JsonProcessingException{
+		List<ApprovalFlowDTO> approvalFlowList = null;
+		ObjectMapper mapper=new ObjectMapper();
+		
+		if(Validation.validateForNullObject(receivedApprovalFlowDTO.getBranchDTO())){
+			approvalFlowList = approvalService.findFinanceFlowUnderBranch(receivedApprovalFlowDTO);
+		}
+
+		return "{\"data\":"+mapper.writeValueAsString(approvalFlowList)+"}";
+	}
+	
+	@RequestMapping(value="/branchFlow",method={RequestMethod.POST})
+	public @ResponseBody String getBranchFlow(@RequestBody ApprovalFlowDTO receivedApprovalFlowDTO) throws JsonProcessingException{
+		List<ApprovalFlowDTO> approvalFlowList = null;
+		ObjectMapper mapper=new ObjectMapper();
+		
+		if(Validation.validateForNullObject(receivedApprovalFlowDTO.getBranchDTO())){
+			approvalFlowList = approvalService.findBranchFlowUnderBranch(receivedApprovalFlowDTO);
+		}
+
+		return "{\"data\":"+mapper.writeValueAsString(approvalFlowList)+"}";
+	}
 
 	@RequestMapping(value="/addFunctionalFlow",method={RequestMethod.POST})
 	public @ResponseBody ApprovalFlowDTO addFunctionalFlow(@RequestBody ApprovalFlowDTO receivedApprovalFlowDTO){
@@ -110,12 +134,7 @@ public class ApprovalFlowController {
 				receivedApprovalFlowDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
 				receivedApprovalFlowDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
 			}
-			/*else{
-				receivedApprovalFlowDTO.setCommand(Command.UPDATE);
-				receivedApprovalFlowDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedApprovalFlowDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
-			}*/
-			//receivedApprovalFlowDTO.setCompanyDTO(user.getLoginDTO().getEmployeeDTO().getApprovalFlowDTO().getCompanyDTO());
+			
 			BaseDTO baseDTO=approvalService.addFunctionalFlow(receivedApprovalFlowDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){
 				toBeSentApprovalFlowDTO=(ApprovalFlowDTO)baseDTO;

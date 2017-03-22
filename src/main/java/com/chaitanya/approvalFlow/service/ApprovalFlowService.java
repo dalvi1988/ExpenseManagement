@@ -15,6 +15,7 @@ import com.chaitanya.approvalFlow.convertor.ApprovalFlowConvertor;
 import com.chaitanya.approvalFlow.dao.IApprovalFlowDAO;
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.jpa.ApprovalFlowJPA;
+import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Validation;
 
 @Service("ApprovalFlowService")
@@ -53,7 +54,7 @@ public class ApprovalFlowService implements IApprovalFlowService {
 			}
 			else{
 				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			}
+			}  
 		}
 		catch(Exception e){
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
@@ -63,6 +64,74 @@ public class ApprovalFlowService implements IApprovalFlowService {
 		return  approvalFlowDTOList;
 	}
 
+	@Override
+	public List<ApprovalFlowDTO> findFinanceFlowUnderBranch(BaseDTO baseDTO) {
+		logger.debug("ApprovalFlowService: findFinanceFlowUnderBranch-Start");
+		
+		if(validateApprovalFlowDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
+		}
+		
+		List<ApprovalFlowDTO> approvalFlowDTOList= null;
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
+				List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findFinanceFlowUnderBranch(approvalFlowDTO.getBranchDTO());
+				if(Validation.validateForNullObject(approvalFlowJPAList)){
+					approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
+					for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
+						ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
+						approvalFlowDTOList.add(deptHeadDTO);
+					}
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("Department Service: Exception",e);
+		}
+		logger.debug("ApprovalFlowService: findFinanceFlowUnderBranch-End");
+		return  approvalFlowDTOList;
+	}
+
+	@Override
+	public List<ApprovalFlowDTO> findBranchFlowUnderBranch(BaseDTO baseDTO) {
+		logger.debug("ApprovalFlowService: findBranchFlowUnderBranch-Start");
+		
+		if(validateApprovalFlowDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
+		}
+		
+		List<ApprovalFlowDTO> approvalFlowDTOList= null;
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
+				List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findBranchFlowUnderBranch(approvalFlowDTO.getBranchDTO());
+				if(Validation.validateForNullObject(approvalFlowJPAList)){
+					approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
+					for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
+						ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
+						approvalFlowDTOList.add(deptHeadDTO);
+					}
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("Department Service: Exception",e);
+		}
+		logger.debug("ApprovalFlowService: findBranchFlowUnderBranch-End");
+		return  approvalFlowDTOList;
+	}
+	
 	@Override
 	public BaseDTO deactivateFunctionalFlow(BaseDTO baseDTO){
 		logger.debug("ApprovalFlowService: deactivateFunctionalFlow-Start");
@@ -100,9 +169,25 @@ public class ApprovalFlowService implements IApprovalFlowService {
 		if(validateApprovalFlowDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
 		}
+		
 		try{
-			ApprovalFlowJPA approvalFlowJPA=ApprovalFlowConvertor.setApprovalFlowDTOToJPA((ApprovalFlowDTO)baseDTO);
-			if (Validation.validateForNullObject(approvalFlowJPA)) {
+			ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO)baseDTO;
+			ApprovalFlowJPA approvalFlowJPA=ApprovalFlowConvertor.setApprovalFlowDTOToJPA(approvalFlowDTO);
+			
+			if(approvalFlowDTO.getFlowType().equalsIgnoreCase(ApplicationConstant.FINANCE_FLOW)){
+				approvalFlowDTO= approvalFlowDAO.validateFinanceFlow(approvalFlowDTO);
+			}
+			else if(approvalFlowDTO.getFlowType().equalsIgnoreCase(ApplicationConstant.FUNCTIONAL_FLOW)){
+				approvalFlowDTO= approvalFlowDAO.validateFunctionalFlow(approvalFlowDTO);
+			}
+			else if(approvalFlowDTO.getFlowType().equalsIgnoreCase(ApplicationConstant.BRANCH_FLOW)){
+				approvalFlowDTO= approvalFlowDAO.validateBranchFlow(approvalFlowDTO);
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			}
+			
+			if (Validation.validateForSuccessStatus(approvalFlowDTO) && Validation.validateForNullObject(approvalFlowJPA)) {
 				
 				approvalFlowJPA=approvalFlowDAO.add(approvalFlowJPA);
 				if(Validation.validateForNullObject(approvalFlowJPA)){

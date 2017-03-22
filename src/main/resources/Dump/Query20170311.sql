@@ -20,3 +20,8 @@ CREATE TABLE functional_flow (
   PRIMARY KEY (flow_id)
 );
 
+
+ALTER TABLE test.functional_flow 
+CHANGE COLUMN is_branch_flow is_branch_flow CHAR(1) NOT NULL AFTER flow_id;
+
+

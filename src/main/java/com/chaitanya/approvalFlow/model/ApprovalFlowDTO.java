@@ -3,6 +3,7 @@ package com.chaitanya.approvalFlow.model;
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.department.model.DepartmentDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class ApprovalFlowDTO extends BaseDTO {
@@ -11,10 +12,16 @@ public class ApprovalFlowDTO extends BaseDTO {
 
 	private Long flowId;
 	
+	private String flowType;
+	
+	private Boolean isBranchFlow;
+	
 	private Long departmentId;
+	@JsonIgnore
 	private DepartmentDTO departmentDTO;
 	
 	private Long branchId;
+	@JsonIgnore
 	private BranchDTO branchDTO;
 	
 	private Integer noOfLevel;
@@ -99,6 +106,22 @@ public class ApprovalFlowDTO extends BaseDTO {
 
 	public void setLevel3(Long level3) {
 		this.level3 = level3;
+	}
+
+	public Boolean getIsBranchFlow() {
+		return isBranchFlow;
+	}
+
+	public void setIsBranchFlow(Boolean isBranchhFlow) {
+		this.isBranchFlow = isBranchhFlow;
+	}
+
+	public String getFlowType() {
+		return flowType;
+	}
+
+	public void setFlowType(String flowType) {
+		this.flowType = flowType;
 	}
 
 }

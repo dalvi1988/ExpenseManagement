@@ -15,5 +15,15 @@ public interface IApprovalFlowDAO {
 	public List<ApprovalFlowJPA> findFunctionalFlowUnderBranch(BranchDTO branchDTO);
 
 	public Integer deactivateFunctionalFlow(ApprovalFlowDTO approvalFlowDTO);
+
+	public List<ApprovalFlowJPA> findFinanceFlowUnderBranch(BranchDTO branchDTO);
+
+	public List<ApprovalFlowJPA> findBranchFlowUnderBranch(BranchDTO branchDTO);
+
+	public ApprovalFlowDTO validateFunctionalFlow(ApprovalFlowDTO approvalFlowDTO);
+
+	public ApprovalFlowDTO validateFinanceFlow(ApprovalFlowDTO approvalFlowDTO);
+
+	public ApprovalFlowDTO validateBranchFlow(ApprovalFlowDTO approvalFlowDTO);
 	
 }
