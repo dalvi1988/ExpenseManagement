@@ -1,7 +1,6 @@
 package com.chaitanya.expense.service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,53 +11,44 @@ import org.springframework.stereotype.Service;
 
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.Base.BaseDTO.ServiceStatus;
-import com.chaitanya.branch.convertor.BranchConvertor;
-import com.chaitanya.branch.dao.IBranchDAO;
-import com.chaitanya.branch.model.BranchDTO;
-import com.chaitanya.jpa.BranchJPA;
+import com.chaitanya.expense.convertor.ExpenseConvertor;
+import com.chaitanya.expense.dao.IExpenseDAO;
+import com.chaitanya.expense.model.ExpenseDetailDTO;
+import com.chaitanya.expense.model.ExpenseHeaderDTO;
+import com.chaitanya.jpa.ExpenseDetailJPA;
+import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.utility.Validation;
 
 @Service("expenseService")
 public class ExpenseService implements IExpenseService{
 	@Autowired
-	private IBranchDAO branchDAO;
+	private IExpenseDAO expenseDAO;
 	
 	private Logger logger= LoggerFactory.getLogger(ExpenseService.class);
 	
-	@Override
-	public List<BranchDTO> findBranchOnCompany(BaseDTO baseDTO) {
-		logger.debug("BranchService: findBranchOnCompany-Start");
-		if(validateCompanyBrachMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of BranchDTO type.");
-		}
-		BranchJPA company=new BranchJPA();
-		List<BranchJPA> branchList=branchDAO.findBrachOnCompany(company);
-		List<BranchDTO> branchDTOList=null;
-		if(Validation.validateCollectionForNullSize(branchList)){
-			branchDTOList=new ArrayList<BranchDTO>();
-			for(BranchJPA branchJPA:branchList){
-				BranchDTO branchDTO=BranchConvertor.setBranchJPAtoDTO(branchJPA);
-				branchDTOList.add(branchDTO);
-			}
-		}
-		logger.debug("BranchService: findBranchOnCompany-End");
-		return branchDTOList;
-	}
 	
-	
-
 	@Override
-	public BaseDTO addBranch(BaseDTO baseDTO) {
-		logger.debug("BranchService: addBranch-Start");
-		if(validateCompanyBrachMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of CompanyMasterDTO type.");
+	public BaseDTO addExpense(BaseDTO baseDTO) {
+		logger.debug("ExpenseService: addExpense-Start");
+		if(validateExpenseMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
 		}
 		try{
-			BranchJPA branchJPA=BranchConvertor.setBranchDTOToJPA((BranchDTO)baseDTO);
-			if (Validation.validateForNullObject(branchJPA)) {
-				branchJPA=branchDAO.add(branchJPA);
-				if(Validation.validateForNullObject(branchJPA)){
-					baseDTO=BranchConvertor.setBranchJPAtoDTO(branchJPA);
+			ExpenseHeaderDTO expenseHeaderDTO = (ExpenseHeaderDTO)baseDTO;
+			ExpenseHeaderJPA expenseHeaderJPA = ExpenseConvertor.setExpenseHeaderDTOToJPA(expenseHeaderDTO);
+			List<ExpenseDetailJPA> expenseDetailJPAList=new ArrayList<>();
+			
+			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
+				ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
+				expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+				expenseDetailJPAList.add(expenseDetailJPA);
+			}
+			expenseHeaderJPA.setExpenseDetailJPA(expenseDetailJPAList);
+			
+			if (Validation.validateForNullObject(expenseHeaderJPA)) {
+				expenseHeaderJPA = expenseDAO.add(expenseHeaderJPA);
+				if(Validation.validateForNullObject(expenseHeaderJPA)){
+					//baseDTO=ExpenseConvertor.setBranchJPAtoDTO(branchJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
 			}
@@ -69,34 +59,17 @@ public class ExpenseService implements IExpenseService{
 		catch(DataIntegrityViolationException e){
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("Branch Service: Exception",e);
+			logger.error("ExpenseService: Exception",e);
 		}
 		catch(Exception e){
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("Branch Service: Exception",e);
+			logger.error("ExpenseService: Exception",e);
 		}
-		logger.debug("BranchService: addBranch-End");
+		logger.debug("ExpenseService: addExpense-End");
 		return baseDTO;
 	}
 
-	@Override
-	public List<BranchDTO> findAll() {
-		List<BranchDTO> companyDTOList = null;
-		List<BranchJPA> companyJPAList = branchDAO.findAll();
-		if (Validation.validateCollectionForNullSize(companyJPAList)) {
-			companyDTOList = new ArrayList<BranchDTO>();
-			for (Iterator<BranchJPA> iterator = companyJPAList.iterator(); iterator
-					.hasNext();) {
-				BranchJPA branchJPA = iterator.next();
-				BranchDTO brachDTO = BranchConvertor
-						.setBranchJPAtoDTO(branchJPA);
-				companyDTOList.add(brachDTO);
-			}
-		}
-		return companyDTOList;
-	}
-	
-	private boolean validateCompanyBrachMasterDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof BranchDTO);
+	private boolean validateExpenseMasterDTO(BaseDTO baseDTO) {
+		return baseDTO == null  || !(baseDTO instanceof ExpenseHeaderDTO);
 	}
 }

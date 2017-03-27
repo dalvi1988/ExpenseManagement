@@ -2,67 +2,71 @@ package com.chaitanya.expense.convertor;
 
 import java.text.ParseException;
 
-import com.chaitanya.branch.model.BranchDTO;
-import com.chaitanya.jpa.BranchJPA;
-import com.chaitanya.jpa.CompanyJPA;
+import com.chaitanya.expense.model.ExpenseDetailDTO;
+import com.chaitanya.expense.model.ExpenseHeaderDTO;
+import com.chaitanya.jpa.ExpenseDetailJPA;
+import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 
 public class ExpenseConvertor {
 	
-	public static BranchDTO setBranchJPAtoDTO(BranchJPA branchJPA){
-		BranchDTO branchDTO=null;
-		if(Validation.validateForNullObject(branchJPA)){
-			branchDTO=new BranchDTO(); 
-			branchDTO.setBranchId(branchJPA.getBranchId());
-			branchDTO.setBranchName(branchJPA.getBranchName());
-			branchDTO.setBranchCode(branchJPA.getBranchCode());
-			if(Validation.validateForNullObject(branchJPA.getCreatedBy())){
-				branchDTO.setCreatedBy(branchJPA.getCreatedBy());
-			}
-			if(Validation.validateForNullObject(branchJPA.getModifiedBy())){
-				branchDTO.setModifiedBy(branchJPA.getModifiedBy());
-			}
-			if(Validation.validateForNullObject(branchJPA.getCreatedDate())){
-				branchDTO.setCreatedDate(Convertor.calendartoString(branchJPA.getCreatedDate()));
-			}
-			if(Validation.validateForNullObject(branchJPA.getModifiedDate())){
-				branchDTO.setModifiedDate(Convertor.calendartoString(branchJPA.getModifiedDate()));
-			}
-			branchDTO.setStatus(Convertor.convetStatusToBool(branchJPA.getStatus()));
+	public static ExpenseHeaderDTO setExpenseHeaderJPAtoDTO(ExpenseHeaderJPA expenseHeaderJPA){
+		ExpenseHeaderDTO expenseHeaderDTO=null;
+		
+		if(Validation.validateForNullObject(expenseHeaderJPA)){
+			expenseHeaderDTO=new ExpenseHeaderDTO(); 
+			expenseHeaderDTO.setExpenseHeaderId(expenseHeaderJPA.getExpenseHeaderId());
+			expenseHeaderDTO.setStartDate(Convertor.calendartoString(expenseHeaderJPA.getStartDate()));
+			expenseHeaderDTO.setEndDate(Convertor.calendartoString(expenseHeaderJPA.getEndDate()));
+			expenseHeaderDTO.setTitle(expenseHeaderJPA.getTitle());
+			expenseHeaderDTO.setPurpose(expenseHeaderJPA.getPurpose());
+			
 		}
-		return branchDTO;
+		return expenseHeaderDTO;
+	}
+	
+	public static ExpenseDetailDTO setExpenseDetailJPAtoDTO(ExpenseDetailJPA expenseDetailJPA){
+		ExpenseDetailDTO expenseDetailDTO=null;
+		
+		if(Validation.validateForNullObject(expenseDetailJPA)){
+			expenseDetailDTO=new ExpenseDetailDTO(); 
+			expenseDetailDTO.setExpenseDetailId(expenseDetailJPA.getExpenseDetailId());
+			expenseDetailDTO.setDate(Convertor.calendartoString(expenseDetailJPA.getDate()));
+			expenseDetailDTO.setFromLocation(expenseDetailJPA.getFromLocation());
+			expenseDetailDTO.setToLocation(expenseDetailJPA.getToLocation());
+			expenseDetailDTO.setAmount(expenseDetailJPA.getAmount());
+		}
+		return expenseDetailDTO;
 	}
 	
 	
-	public static BranchJPA setBranchDTOToJPA(BranchDTO branchDTO) throws ParseException
+	public static ExpenseHeaderJPA setExpenseHeaderDTOToJPA(ExpenseHeaderDTO expenseHeaderDTO) throws ParseException
 	{
-		BranchJPA branchJPA=null;
-		if(Validation.validateForNullObject(branchDTO)){
-			branchJPA=new BranchJPA();
-			if(Validation.validateForZero(branchDTO.getBranchId())){
-				branchJPA.setBranchId(branchDTO.getBranchId());
-			}
-			if(Validation.validateForZero(branchDTO.getModifiedBy())){
-				branchJPA.setModifiedBy(branchDTO.getModifiedBy());
-			}
-			if(Validation.validateForZero(branchDTO.getCreatedBy())){
-				branchJPA.setCreatedBy(branchDTO.getCreatedBy());
-			}
-			if(Validation.validateForNullObject(branchDTO.getCreatedDate())){
-				branchJPA.setCreatedDate(Convertor.stringToCalendar(branchDTO.getCreatedDate()));
-			}
-			if(Validation.validateForNullObject(branchDTO.getModifiedDate())){
-				branchJPA.setModifiedDate(Convertor.stringToCalendar(branchDTO.getModifiedDate()));
-			}
-			CompanyJPA companyJPA=new CompanyJPA();
-			companyJPA.setCompanyId(branchDTO.getCompanyDTO().getCompanyId());
-			branchJPA.setCompanyJPA(companyJPA);
-			
-			branchJPA.setBranchCode(branchDTO.getBranchCode());
-			branchJPA.setBranchName(branchDTO.getBranchName());
-			branchJPA.setStatus(Convertor.convertStatusToChar(branchDTO.getStatus()));
+		ExpenseHeaderJPA expenseHeaderJPA=null;
+		if(Validation.validateForNullObject(expenseHeaderDTO)){
+			expenseHeaderJPA=new ExpenseHeaderJPA();
+			expenseHeaderJPA.setExpenseHeaderId(expenseHeaderDTO.getExpenseHeaderId());
+			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate()));
+			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate()));
+			expenseHeaderJPA.setPurpose(expenseHeaderDTO.getPurpose());
+			expenseHeaderJPA.setTitle(expenseHeaderDTO.getTitle());
 		}
-		return branchJPA;
+		return expenseHeaderJPA;
+	}
+	
+	public static ExpenseDetailJPA setExpenseDetailDTOToJPA(ExpenseDetailDTO expenseDetailDTO) throws ParseException
+	{
+		ExpenseDetailJPA expenseDetailJPA=null;
+		if(Validation.validateForNullObject(expenseDetailDTO)){
+			expenseDetailJPA=new ExpenseDetailJPA();
+			expenseDetailJPA.setExpenseDetailId(expenseDetailDTO.getExpenseDetailId());
+			expenseDetailJPA.setDate(Convertor.stringToCalendar(expenseDetailDTO.getDate()));
+			expenseDetailJPA.setFromLocation(expenseDetailDTO.getFromLocation());
+			expenseDetailJPA.setToLocation(expenseDetailDTO.getToLocation());
+			expenseDetailJPA.setAmount(expenseDetailDTO.getAmount());
+			//expenseDetailJPA.setFileName(expenseDetailDTO.getFil());
+		}
+		return expenseDetailJPA;
 	}
 }

@@ -10,7 +10,6 @@
  	<script type="text/javascript" src=<spring:url value="/jquery/jquery-ui.min.js"/> ></script>
  	
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
- 	<script type="text/javascript" src=<spring:url value="/scripts/approvalFlowGridJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
     
@@ -317,28 +316,29 @@ $(function () {
 </script>
 </head>
 <body>
- 	<form id="form" action="saveExpense" method="POST" enctype="multipart/form-data">
- 	    <div id="headerToolbar" style="display: none">
+ 	<form:form id="form" action="saveExpense" method="POST" enctype="multipart/form-data" modelAttribute="ExpenseHeaderDTO">
+ 	    <div id="headerToolbar" >
  	    	<table style="width: 600px;">
 			<tbody>
 			<tr>
-			<td style="width: 75px;">Start Date:</td>
-			<td style="width: 181px;"><input id="startDate" name="startDate" type="text" /></td>
-			<td style="width: 75px;">End Date:</td>
-			<td style="width: 262px;"><input id="endDate" disabled="disabled" name="endDate" type="text" /></td>
+			<td style="width: 75px;"><form:label path="startDate">Start Date:</form:label></td>
+			<td style="width: 181px;"> <form:input path="startDate" /> </td>
+			<td style="width: 75px;"><form:label path="endDate">End Date:</form:label></td>
+			<td style="width: 262px;"><form:input path="endDate" /> </td>
 			</tr>
 			<tr>
-			<td style="width: 75px;">Title:</td>
-			<td style="width: 181px;"><input type="text" name="title" ></td>
-			<td style="width: 75px;">Purpose:</td>
-			<td style="width: 262px;"><textarea style="margin-left: 0px; margin-right: 0px; width: 165px;" cols="" name="purpose" id="purpose" rows=""></textarea></td>
+			<td style="width: 75px;"><form:label path="title">Title:</form:label></td>
+			<td style="width: 181px;"><form:input path="title"/></td>
+			<td style="width: 75px;"><form:label path="purpose">Purpose:</form:label></td>
+			<td style="width: 262px;"><form:textarea style="margin-left: 0px; margin-right: 0px; width: 165px;" cols="" path="purpose" id="purpose" rows=""></form:textarea></td>
 			
 			</tr>
 			</tbody>
 			</table>
  	    </div>
-         <div id="grid_editing" style="margin: auto;"></div>
- 		<input type="hidden" id="data" name="data">   
-    </form> 
+          <div id="grid_editing" style="margin: auto;"></div>
+ 		<input type="hidden" id="data" name="data">  
+    </form:form>
+     
 </body>
 </html>

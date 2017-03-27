@@ -1,6 +1,5 @@
 package com.chaitanya.config;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -32,8 +31,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/jquery/**").addResourceLocations("classpath:/jquery/");
-		//registry.addResourceHandler("/demos/**").addResourceLocations("classpath:/demos/");
-		//registry.addResourceHandler("/mobiledemos/**").addResourceLocations("classpath:/mobiledemos/");
 		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/scripts/");
 		registry.addResourceHandler("/grid/**").addResourceLocations("classpath:/grid/");
 	}	
