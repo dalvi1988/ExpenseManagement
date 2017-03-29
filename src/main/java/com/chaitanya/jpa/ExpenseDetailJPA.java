@@ -1,5 +1,7 @@
 package com.chaitanya.jpa;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Calendar;
 
 import javax.persistence.Column;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="expense_details")
@@ -39,6 +42,9 @@ public class ExpenseDetailJPA {
 	
 	@Column(name="file_name")
 	private String fileName;
+	
+	@Transient
+	private File receipt;
 
 	public Long getExpenseDetailId() {
 		return expenseDetailId;
@@ -102,6 +108,14 @@ public class ExpenseDetailJPA {
 
 	public void setExpenseHeaderJPA(ExpenseHeaderJPA expenseHeaderJPA) {
 		this.expenseHeaderJPA = expenseHeaderJPA;
+	}
+
+	public File getReceipt() {
+		return receipt;
+	}
+
+	public void setReceipt(File receipt) {
+		this.receipt = receipt;
 	}
 
 }

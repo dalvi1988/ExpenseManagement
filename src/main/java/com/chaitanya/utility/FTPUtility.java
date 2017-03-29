@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 public class FTPUtility {
 	
 	static String ftpServerAddress = "10.90.19.28";
-    static String userName = "CDalvi";
-    static String password = "MStar300";
+    static String userName = "anonymous";
+    static String password = "";
     static FTPClient ftpclient;
     private static Logger logger= LoggerFactory.getLogger(FTPUtility.class);
     
@@ -33,30 +33,39 @@ public class FTPUtility {
         return result;
     }
     
-    public static Boolean uploadFile(String filePath) throws IOException{
+    public static void main(String[] arg) throws SocketException, IOException{
+    	connect();
+    }
+    public static Boolean uploadFile(File file) throws IOException{
     	logger.debug("FTPUtility: uploadFile-Start");
-    	ftpclient.setFileType(FTP.BINARY_FILE_TYPE);
-
-        ftpclient.changeWorkingDirectory("/");
-
-        File file = new File(filePath);
-        String testName = file.getName();
-        FileInputStream fileInputStream = new FileInputStream(file);
-
-        // Upload file to the ftp server
-        boolean result = ftpclient.storeFile(testName, fileInputStream);
-
-        if (result == true) {
-            logger.debug("File is uploaded successfully");
-        } else {
-            logger.debug("File uploading failed");
-        }
-        ftpclient.logout();
+    	if(connect()){
+	    	ftpclient.setFileType(FTP.BINARY_FILE_TYPE);
+	
+	        ftpclient.changeWorkingDirectory("/");
+	
+	        FileInputStream fileInputStream = new FileInputStream(file);
+	
+	        // Upload file to the ftp server
+	        boolean result = ftpclient.storeFile(file.getName(), fileInputStream);
+	
+	        if (result == true) {
+	            logger.debug("File is uploaded successfully");
+	        } else {
+	            logger.debug("File uploading failed");
+	        }
+	        ftpclient.logout();
+    	}
+    	else{
+    		logger.error("FTP connection not available");
+    		throw new IOException("FTP connection not available");
+    	}
         logger.debug("FTPUtility: upload-Start");
-    	return result;
+    	return true;
     }
 
     public static Boolean uploadFile(String fileName, FileInputStream fileInputStream) throws IOException{
+    	logger.debug("FTPUtility: uploadFile-Start");
+    	connect();
     	ftpclient.setFileType(FTP.BINARY_FILE_TYPE);
 
         ftpclient.changeWorkingDirectory("/");
@@ -70,6 +79,7 @@ public class FTPUtility {
             logger.debug("File uploading failed");
         }
         ftpclient.logout();
+        logger.debug("FTPUtility: upload-Start");
     	return result;
     }
 }

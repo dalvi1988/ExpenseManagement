@@ -249,13 +249,21 @@ $(function () {
                 }
             },
             { title: "Receipt/Document",editable:false, dataIndx: "file", minWidth: 200, sortable: false, 
-            	render: 
-            	function (ui) {
-            		 return "<input type='file' name='file'/>";
-	            }
+            	 editor:{
+            		type: function (ui){
+            			ui.$cell.append("<div id='hiddenFileDiv'><input type='file' name='file' class='file'/></div>");
+            		}
+            	}, 
+            	 render:function (ui) {
+            		 debugger;
+            		 var $tr = $(this).closest("tr");
+                     var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+                     var rowIndx = obj.rowIndx;
+            		 return "<input type='file' name='file' class='file'/>";
+	            } 
             },
             { title: "", editable: false, minWidth: 83, dataIndx: "delButton", sortable: false, render: function (ui) {
-                	return "<button type='button' class='delete_btn'>Delete</button>";
+                	return "<button type='button' class='delete_btn' >Delete</button>";
             }
             }
         ],
@@ -276,6 +284,17 @@ $(function () {
             }
         },
         refresh: function () {
+
+        	 /* $("#grid_editing").find("input.file").button().bind("change", function (evt){
+        		 alert("here")
+        		debugger;
+        		 var $tr = $(this).closest("tr");
+                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+                 var rowIndx = obj.rowIndx;
+        		var clone = $(this).clone();
+        	      clone.attr('id', 'field2');
+        	      $('#hiddenFileDiv').html(clone);
+        	});  */
             $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
             .unbind("click")
             .bind("click", function (evt) {

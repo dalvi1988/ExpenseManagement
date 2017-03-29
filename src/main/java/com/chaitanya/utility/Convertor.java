@@ -31,11 +31,23 @@ public class Convertor {
 	public static Calendar stringToCalendar(String date){
 		Calendar foramttedDate= Calendar.getInstance();
 		try {
-			SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-YYYY HH:mm:ss");
+			SimpleDateFormat sdf=new SimpleDateFormat("dd-MMM-YYYY HH:mm:ss");
 			sdf.parse(date);
 			foramttedDate = (Calendar)sdf.getCalendar().clone();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return foramttedDate;
+		
+	}
+	
+	public static Calendar stringToCalendar(String date, String format){
+		Calendar foramttedDate= Calendar.getInstance();
+		try {
+			SimpleDateFormat sdf=new SimpleDateFormat(format);
+			sdf.parse(date);
+			foramttedDate = (Calendar)sdf.getCalendar().clone();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return foramttedDate;

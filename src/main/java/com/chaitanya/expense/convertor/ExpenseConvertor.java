@@ -1,6 +1,10 @@
 package com.chaitanya.expense.convertor;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
@@ -47,25 +51,31 @@ public class ExpenseConvertor {
 		if(Validation.validateForNullObject(expenseHeaderDTO)){
 			expenseHeaderJPA=new ExpenseHeaderJPA();
 			expenseHeaderJPA.setExpenseHeaderId(expenseHeaderDTO.getExpenseHeaderId());
-			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate()));
-			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate()));
+			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate(),"dd-MMM-yyyy"));
+			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),"dd-MMM-yyyy"));
 			expenseHeaderJPA.setPurpose(expenseHeaderDTO.getPurpose());
 			expenseHeaderJPA.setTitle(expenseHeaderDTO.getTitle());
 		}
 		return expenseHeaderJPA;
 	}
 	
-	public static ExpenseDetailJPA setExpenseDetailDTOToJPA(ExpenseDetailDTO expenseDetailDTO) throws ParseException
+	public static ExpenseDetailJPA setExpenseDetailDTOToJPA(ExpenseDetailDTO expenseDetailDTO) throws ParseException, IOException
 	{
 		ExpenseDetailJPA expenseDetailJPA=null;
 		if(Validation.validateForNullObject(expenseDetailDTO)){
 			expenseDetailJPA=new ExpenseDetailJPA();
 			expenseDetailJPA.setExpenseDetailId(expenseDetailDTO.getExpenseDetailId());
-			expenseDetailJPA.setDate(Convertor.stringToCalendar(expenseDetailDTO.getDate()));
+			expenseDetailJPA.setDate(Convertor.stringToCalendar(expenseDetailDTO.getDate(),"dd-MMM-yyyy"));
 			expenseDetailJPA.setFromLocation(expenseDetailDTO.getFromLocation());
 			expenseDetailJPA.setToLocation(expenseDetailDTO.getToLocation());
 			expenseDetailJPA.setAmount(expenseDetailDTO.getAmount());
-			//expenseDetailJPA.setFileName(expenseDetailDTO.getFil());
+			if(!expenseDetailDTO.getReceipt().isEmpty()){
+				MultipartFile receipt= expenseDetailDTO.getReceipt();
+				File convFile = new File( receipt.getOriginalFilename());
+				receipt.transferTo(convFile);
+				expenseDetailJPA.setReceipt(convFile);
+				expenseDetailJPA.setFileName(receipt.getOriginalFilename());
+			}
 		}
 		return expenseDetailJPA;
 	}
