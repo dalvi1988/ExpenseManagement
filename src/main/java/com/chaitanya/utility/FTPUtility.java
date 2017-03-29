@@ -12,17 +12,17 @@ import org.slf4j.LoggerFactory;
 
 public class FTPUtility {
 	
-	String ftpServerAddress = "192.168.43.188";
-    String userName = "dalvi1988@yahoo.com";
-    String password = "Pramila21";
+	static String ftpServerAddress = "10.90.19.28";
+    static String userName = "CDalvi";
+    static String password = "MStar300";
     static FTPClient ftpclient;
     private static Logger logger= LoggerFactory.getLogger(FTPUtility.class);
     
     public static Boolean connect() throws SocketException, IOException{
     	logger.debug("FTPUtility: connect-Start");
     	ftpclient = new FTPClient();
-    	ftpclient.connect("192.168.43.188");
-        boolean result = ftpclient.login("dalvi1988@yahoo.com", "Pramila21");
+    	ftpclient.connect(ftpServerAddress);
+        boolean result = ftpclient.login(userName, password);
         
         if (result == true) {
             logger.debug("Logged in Successfully !");
