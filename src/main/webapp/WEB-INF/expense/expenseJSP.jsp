@@ -86,7 +86,8 @@ $(function () {
 	function addNewRow(){
 	
 		var rowData = { }; //empty row
-        var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
+       var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
+//        $grid.pqGrid("addRow", { rowData: rowData });
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
         //$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
 	}
@@ -249,17 +250,29 @@ $(function () {
                 }
             },
             { title: "Receipt/Document",editable:false, dataIndx: "file", minWidth: 200, sortable: false, 
-            	 editor:{
+            	/*   editor:{
             		type: function (ui){
             			ui.$cell.append("<div id='hiddenFileDiv'><input type='file' name='file' class='file'/></div>");
             		}
-            	}, 
+            	}, */
+            	
             	 render:function (ui) {
+            		 //ui.$cell.html("<div style='color:red' id='fileDiv'><input type='file' class='file' id='field2'/></div>")
             		 debugger;
-            		 var $tr = $(this).closest("tr");
-                     var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
-                     var rowIndx = obj.rowIndx;
-            		 return "<input type='file' name='file' class='file'/>";
+            		//$(this).closest("tr")
+            		 
+            		 if(typeof ui.cellData == "undefined"){
+            		   return "<input type='file' name='file' class='file'/>";
+            		 }
+            		 else{
+            			 $div=$("<div style='color:red' id='hiddenFileDiv'><input type='file' class='file' id='field'/></div>")
+            			 //$div.html(ui.cellData)
+            			  $('#field').html(ui.cellData);
+            			 
+            			 $('#hiddenFileDiv').html(ui.cellData)
+            			 //$('#headerToolbar').html(ui.cellData);
+            			 return  $div.html();
+            		 } 
 	            } 
             },
             { title: "", editable: false, minWidth: 83, dataIndx: "delButton", sortable: false, render: function (ui) {
@@ -285,16 +298,17 @@ $(function () {
         },
         refresh: function () {
 
-        	 /* $("#grid_editing").find("input.file").button().bind("change", function (evt){
-        		 alert("here")
-        		debugger;
+        	 $("#grid_editing").find("input.file").button().bind("change", function (evt){
+        		 //debugger;
         		 var $tr = $(this).closest("tr");
                  var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
                  var rowIndx = obj.rowIndx;
-        		var clone = $(this).clone();
-        	      clone.attr('id', 'field2');
-        	      $('#hiddenFileDiv').html(clone);
-        	});  */
+                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
+        		 var clone = $(this).clone();
+        	     
+        	      rowData.file=  clone.attr('id', 'field2');
+        	      //$('#hiddenFileDiv').html(clone);
+        	});  
             $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
             .unbind("click")
             .bind("click", function (evt) {
