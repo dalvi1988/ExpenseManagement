@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -21,12 +24,13 @@ public class ExpenseHeaderJPA {
 	@Column(name="expense_header_id")
 	private Long expenseHeaderId;
 	
-	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA") 
+	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
 	@Cascade({CascadeType.ALL})
 	private List<ExpenseDetailJPA> expenseDetailJPA; 
 	
-	@Column(name="employee_id")
-	private Long employeeId;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "employee_id")
+	private EmployeeJPA employeeJPA;
 	
 	@Column(name="start_date")
 	private Calendar startDate;
@@ -46,14 +50,6 @@ public class ExpenseHeaderJPA {
 
 	public void setExpenseHeaderId(Long expenseHeaderId) {
 		this.expenseHeaderId = expenseHeaderId;
-	}
-
-	public Long getEmployeeId() {
-		return employeeId;
-	}
-
-	public void setEmployeeId(Long employeeId) {
-		this.employeeId = employeeId;
 	}
 
 	public Calendar getStartDate() {
@@ -94,6 +90,14 @@ public class ExpenseHeaderJPA {
 
 	public void setExpenseDetailJPA(List<ExpenseDetailJPA> expenseDetailJPA) {
 		this.expenseDetailJPA = expenseDetailJPA;
+	}
+
+	public EmployeeJPA getEmployeeJPA() {
+		return employeeJPA;
+	}
+
+	public void setEmployeeJPA(EmployeeJPA employeeJPA) {
+		this.employeeJPA = employeeJPA;
 	}
 
 }

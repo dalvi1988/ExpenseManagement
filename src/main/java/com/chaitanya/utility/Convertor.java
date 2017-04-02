@@ -25,13 +25,13 @@ public class Convertor {
 		return result;
 	}
 	public static String calendartoString(Calendar date){
-		SimpleDateFormat format=new SimpleDateFormat("dd-MM-YYYY HH:mm:ss");
+		SimpleDateFormat format=new SimpleDateFormat("dd-MMMM-YYYY");
 		return format.format(date.getTime());
 	}
 	public static Calendar stringToCalendar(String date){
 		Calendar foramttedDate= Calendar.getInstance();
 		try {
-			SimpleDateFormat sdf=new SimpleDateFormat("dd-MMM-YYYY HH:mm:ss");
+			SimpleDateFormat sdf=new SimpleDateFormat("dd-MMMM-YYYY HH:mm:ss");
 			sdf.parse(date);
 			foramttedDate = (Calendar)sdf.getCalendar().clone();
 		} catch (ParseException e) {

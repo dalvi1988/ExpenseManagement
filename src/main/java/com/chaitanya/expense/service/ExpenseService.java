@@ -26,6 +26,11 @@ public class ExpenseService implements IExpenseService{
 	
 	private Logger logger= LoggerFactory.getLogger(ExpenseService.class);
 	
+
+	private boolean validateExpenseMasterDTO(BaseDTO baseDTO) {
+		return baseDTO == null  || !(baseDTO instanceof ExpenseHeaderDTO);
+	}
+
 	
 	@Override
 	public BaseDTO addExpense(BaseDTO baseDTO) {
@@ -69,7 +74,70 @@ public class ExpenseService implements IExpenseService{
 		return baseDTO;
 	}
 
-	private boolean validateExpenseMasterDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof ExpenseHeaderDTO);
+	@Override
+	public List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) {
+		logger.debug("ExpenseService: getDraftExpense-Start");
+		if(validateExpenseMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
+		}
+		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+				List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getDraftExpenseList(expenseHeaderDTO);
+				if(Validation.validateForNullObject(expenseHeaderJPAList)){
+					expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+					for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+						ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+						expenseHeaderDTOList.add(expHeaderDTO);
+					}
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("ExpenseService: Exception",e);
+		}
+		logger.debug("ExpenseService: getDraftExpense-End");
+		return  expenseHeaderDTOList;
+	}
+
+
+	@Override
+	public BaseDTO getExpense(BaseDTO baseDTO) {
+		logger.debug("ExpenseService: getExpense-Start");
+		if(validateExpenseMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
+		}
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+				ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.getExpense(expenseHeaderDTO);
+				if(Validation.validateForNullObject(expenseHeaderJPA)){
+					expenseHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					List<ExpenseDetailDTO> expenseDetailDTOList= new ArrayList<ExpenseDetailDTO>();
+					for(ExpenseDetailJPA expenseDetailJPA: expenseHeaderJPA.getExpenseDetailJPA()){
+						ExpenseDetailDTO expenseDetailDTO=ExpenseConvertor.setExpenseDetailJPAtoDTO(expenseDetailJPA);
+						expenseDetailDTOList.add(expenseDetailDTO);
+					}
+					expenseHeaderDTO.setAddedExpenseDetailsDTOList(expenseDetailDTOList);
+					baseDTO=expenseHeaderDTO;
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("ExpenseService: Exception",e);
+		}
+		logger.debug("ExpenseService: getExpense-End");
+		return  baseDTO;
 	}
 }

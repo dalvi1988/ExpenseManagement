@@ -1,7 +1,6 @@
 package com.chaitanya.jpa;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Calendar;
 
 import javax.persistence.Column;

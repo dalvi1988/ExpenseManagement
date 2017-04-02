@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
+import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.utility.Convertor;
@@ -51,8 +52,11 @@ public class ExpenseConvertor {
 		if(Validation.validateForNullObject(expenseHeaderDTO)){
 			expenseHeaderJPA=new ExpenseHeaderJPA();
 			expenseHeaderJPA.setExpenseHeaderId(expenseHeaderDTO.getExpenseHeaderId());
-			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate(),"dd-MMM-yyyy"));
-			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),"dd-MMM-yyyy"));
+			EmployeeJPA employeeJPA=new EmployeeJPA();
+			employeeJPA.setEmployeeId(expenseHeaderDTO.getEmployeeDTO().getEmployeeId());
+			expenseHeaderJPA.setEmployeeJPA(employeeJPA);
+			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate(),"dd-MMMM-yyyy"));
+			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),"dd-MMMM-yyyy"));
 			expenseHeaderJPA.setPurpose(expenseHeaderDTO.getPurpose());
 			expenseHeaderJPA.setTitle(expenseHeaderDTO.getTitle());
 		}
@@ -65,7 +69,7 @@ public class ExpenseConvertor {
 		if(Validation.validateForNullObject(expenseDetailDTO)){
 			expenseDetailJPA=new ExpenseDetailJPA();
 			expenseDetailJPA.setExpenseDetailId(expenseDetailDTO.getExpenseDetailId());
-			expenseDetailJPA.setDate(Convertor.stringToCalendar(expenseDetailDTO.getDate(),"dd-MMM-yyyy"));
+			expenseDetailJPA.setDate(Convertor.stringToCalendar(expenseDetailDTO.getDate(),"dd-MMMM-yyyy"));
 			expenseDetailJPA.setFromLocation(expenseDetailDTO.getFromLocation());
 			expenseDetailJPA.setToLocation(expenseDetailDTO.getToLocation());
 			expenseDetailJPA.setAmount(expenseDetailDTO.getAmount());

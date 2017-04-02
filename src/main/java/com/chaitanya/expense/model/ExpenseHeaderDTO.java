@@ -3,6 +3,8 @@ package com.chaitanya.expense.model;
 import java.util.List;
 
 import com.chaitanya.Base.BaseDTO;
+import com.chaitanya.employee.model.EmployeeDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ExpenseHeaderDTO extends BaseDTO{
 
@@ -17,6 +19,9 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private String title;
 	
 	private String purpose;
+	
+	@JsonIgnore
+	private EmployeeDTO employeeDTO;
 	
 	private List<ExpenseDetailDTO> addedExpenseDetailsDTOList;
 	
@@ -86,6 +91,14 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setDeletedExpenseDetailsDTOList(List<ExpenseDetailDTO> deletedExpenseDetailsDTOList) {
 		this.deletedExpenseDetailsDTOList = deletedExpenseDetailsDTOList;
+	}
+
+	public EmployeeDTO getEmployeeDTO() {
+		return employeeDTO;
+	}
+
+	public void setEmployeeDTO(EmployeeDTO employeeDTO) {
+		this.employeeDTO = employeeDTO;
 	}
 	
 }

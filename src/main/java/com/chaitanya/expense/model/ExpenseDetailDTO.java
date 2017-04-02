@@ -3,6 +3,7 @@ package com.chaitanya.expense.model;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chaitanya.Base.BaseDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ExpenseDetailDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
@@ -13,6 +14,7 @@ public class ExpenseDetailDTO extends BaseDTO {
 	private String toLocation;
 	private String description;
 	private Double amount;
+	@JsonIgnore
 	private MultipartFile receipt;
 
 	

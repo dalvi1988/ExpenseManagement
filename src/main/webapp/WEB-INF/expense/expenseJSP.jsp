@@ -17,7 +17,8 @@
 <script type="text/javascript">
 
 
-var arrayData="";
+var expenseDetailList=${expenseDetailList};
+
 $(function () {
     
 	$( "#startDate" ).datepicker({
@@ -40,11 +41,6 @@ $(function () {
 		changeMonth: true,
 		changeYear: true,
 		onClose: function (dateText,inst) {
-			/* debugger;
-			var rowData = $grid.pqGrid( "getRowData", {rowIndx: 0} );
-			if(row == 'NaN'){
-				addNewRow();
-			} */
 			$( "#purpose" ).focus();
 		}
 	});
@@ -84,12 +80,9 @@ $(function () {
 	}
 	
 	function addNewRow(){
-	
 		var rowData = { }; //empty row
-       var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
-//        $grid.pqGrid("addRow", { rowData: rowData });
+        var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
-        //$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
 	}
 	
     //called when accept changes button is clicked.
@@ -105,7 +98,14 @@ $(function () {
             //validate the new added rows.                
             var addList = grid.getChanges().addList;
             for (var i = 0; i < addList.length; i++) {
+            	debugger;
                 var rowData = addList[i];
+                 if(typeof rowData.file =="undefined" || rowData.file == ""){
+                	$("#filesDiv").append("<input type='file'name='addedFiles'/>");
+                }
+                else{ 
+                	$("#filesDiv").append(rowData.file);
+                }
                 var isValid = grid.isValid({ "rowData": rowData }).valid;
                 if (!isValid) {
                     return;
@@ -116,37 +116,7 @@ $(function () {
             $("#data").val(JSON.stringify(changes));
             
             $("#form").submit();
-            /* 
-            var fd = new FormData();
-            fd.append( "file", $("input[name=file]"));
-            
-            //alert(JSON.stringify(changes))
-            //post changes to server 
-            $.ajax({
-              //  dataType: "json",
-                type: "POST",
-                async: true,
-                beforeSend: function (jqXHR, settings) {
-                    grid.showLoading();
-                },
-                contentType: false,
-                processData: false,
-                cache: false,
-                url: "/ExpenseManagement/saveExpense", //for ASP.NET, java                                                
-                //data: fd,
-                data: fd,
-                success: function (changes) {
-                    //debugger;
-                    grid.commit({ type: 'add', rows: changes.addList });
-                    grid.commit({ type: 'update', rows: changes.updateList });
-                    grid.commit({ type: 'delete', rows: changes.deleteList });
-
-                },
-                complete: function () {
-                    grid.hideLoading();
-                }
-            });
- */        }
+          }
     }
     var obj = {
         width: 700,
@@ -214,14 +184,13 @@ $(function () {
         title: "<b>Expense Voucher</b>",
 
         colModel: [
-            { title: "Expense ID", dataType: "integer", dataIndx: "expenseId", editable: false },
+            { title: "Expense ID", dataType: "integer", dataIndx: "expenseDetailId", editable: false },
             { title: "Date", width: "150", dataIndx: "date",
 		        editor: {
 		            type: 'textbox',
 		            init: dateEditor
 		        },
 		        render: function (ui) {
-		            //return "hello";
 		            var cellData = ui.cellData;
 		            if (cellData) {
 		                return $.datepicker.formatDate('dd-MM-yy', new Date(cellData));
@@ -250,45 +219,33 @@ $(function () {
                 }
             },
             { title: "Receipt/Document",editable:false, dataIndx: "file", minWidth: 200, sortable: false, 
-            	/*   editor:{
-            		type: function (ui){
-            			ui.$cell.append("<div id='hiddenFileDiv'><input type='file' name='file' class='file'/></div>");
-            		}
-            	}, */
-            	
-            	 render:function (ui) {
-            		 //ui.$cell.html("<div style='color:red' id='fileDiv'><input type='file' class='file' id='field2'/></div>")
-            		 debugger;
-            		//$(this).closest("tr")
+
+            	  render:function (ui) {
             		 
             		 if(typeof ui.cellData == "undefined"){
             		   return "<input type='file' name='file' class='file'/>";
-            		 }
+            		  }
             		 else{
-            			 $div=$("<div style='color:red' id='hiddenFileDiv'><input type='file' class='file' id='field'/></div>")
-            			 //$div.html(ui.cellData)
-            			  $('#field').html(ui.cellData);
-            			 
-            			 $('#hiddenFileDiv').html(ui.cellData)
-            			 //$('#headerToolbar').html(ui.cellData);
-            			 return  $div.html();
-            		 } 
-	            } 
+            			 var fullPath=ui.cellData.val();
+           			     var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+           			     var filename = fullPath.substring(startIndex);
+           			     if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+           			        filename = filename.substring(1);
+           			     } 
+            			 return "<a href="+fullPath+">"+ filename+"</a>";
+            		 }  
+	            }  
             },
             { title: "", editable: false, minWidth: 83, dataIndx: "delButton", sortable: false, render: function (ui) {
-                	return "<button type='button' class='delete_btn' >Delete</button>";
+                return "<button type='button' class='delete_btn' >Delete</button>";
             }
             }
         ],
         dataModel: {                
             dataType: "JSON",
-            location: "remote",
-            recIndx: "ProductID",
-            url: "/pro/products/get", //for ASP.NET
-            //url: "/pro/products.php", //for PHP
-            getData: function (response) {
-                return { data: response.data };
-            }
+            location: "local",
+            recIndx: "expenseDetailId",
+            data: expenseDetailList
         },
         //save the cell when cell loses focus.
         quitEditMode: function (evt, ui) {                
@@ -305,9 +262,8 @@ $(function () {
                  var rowIndx = obj.rowIndx;
                  var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
         		 var clone = $(this).clone();
-        	     
-        	      rowData.file=  clone.attr('id', 'field2');
-        	      //$('#hiddenFileDiv').html(clone);
+        	     rowData.file = clone.attr('name', 'addedFiles');
+				 $grid.pqGrid("refreshColumn",{dataIndx:"file"})
         	});  
             $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
             .unbind("click")
@@ -355,9 +311,9 @@ $(function () {
 			<tbody>
 			<tr>
 			<td style="width: 75px;"><form:label path="startDate">Start Date:</form:label></td>
-			<td style="width: 181px;"> <form:input path="startDate" /> </td>
+			<td style="width: 181px;"> <form:input path="startDate" readonly="true"/> </td>
 			<td style="width: 75px;"><form:label path="endDate">End Date:</form:label></td>
-			<td style="width: 262px;"><form:input path="endDate" /> </td>
+			<td style="width: 262px;"><form:input path="endDate" readonly="true"/> </td>
 			</tr>
 			<tr>
 			<td style="width: 75px;"><form:label path="title">Title:</form:label></td>
@@ -369,9 +325,12 @@ $(function () {
 			</tbody>
 			</table>
  	    </div>
-          <div id="grid_editing" style="margin: auto;"></div>
- 		<input type="hidden" id="data" name="data">  
+        <div id="grid_editing" style="margin: auto;"></div>
+ 		<input type="hidden" id="data" name="data"/>
+ 		<div id="filesDiv" style="border: medium; display: none;"></div>
+ 		<form:hidden path="expenseHeaderId"/>  
     </form:form>
+    
      
 </body>
 </html>
