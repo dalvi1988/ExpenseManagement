@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,7 +25,7 @@ public class BranchJPA {
 	@Column(name="branch_name",unique=true,nullable=false)
 	private String branchName;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "company_id")
 	private CompanyJPA companyJPA;
 	

@@ -24,11 +24,11 @@ public class ExpenseHeaderJPA {
 	@Column(name="expense_header_id")
 	private Long expenseHeaderId;
 	
-	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
+	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.LAZY) 
 	@Cascade({CascadeType.ALL})
 	private List<ExpenseDetailJPA> expenseDetailJPA; 
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "employee_id")
 	private EmployeeJPA employeeJPA;
 	

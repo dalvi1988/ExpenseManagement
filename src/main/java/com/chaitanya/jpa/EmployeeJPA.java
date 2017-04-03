@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -33,11 +34,11 @@ public class EmployeeJPA {
 	@Column(name="email_id",nullable=false)
 	private String emailId;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="reporting_mgr")
 	private EmployeeJPA reportingMgr;
 	
-	@OneToMany(mappedBy="reportingMgr")
+	@OneToMany(mappedBy="reportingMgr",fetch=FetchType.LAZY)
 	private Set<EmployeeJPA> subordinates = new HashSet<EmployeeJPA>();
 	
 	@OneToOne
