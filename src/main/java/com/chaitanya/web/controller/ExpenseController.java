@@ -3,10 +3,13 @@ package com.chaitanya.web.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,8 +35,9 @@ public class ExpenseController {
 	@Qualifier("expenseService")
 	private IExpenseService expenseService;
 	
+	
 	@RequestMapping(value="/expense",method={RequestMethod.GET,RequestMethod.POST})
-	public ModelAndView createExpense(@RequestParam("expenseHeaderId") Long expenseHeaderId) throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView createExpense(@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper= new ObjectMapper();
 		ExpenseHeaderDTO expenseHeaderDTO =new ExpenseHeaderDTO();
@@ -42,9 +46,9 @@ public class ExpenseController {
 			BaseDTO baseDTO= expenseService.getExpense(expenseHeaderDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){
 				expenseHeaderDTO = (ExpenseHeaderDTO) baseDTO;
-				model.addObject("expenseDetailList", mapper.writeValueAsString(expenseHeaderDTO.getAddedExpenseDetailsDTOList()));
 			}
 		}
+		model.addObject("expenseDetailList", mapper.writeValueAsString(expenseHeaderDTO.getAddedExpenseDetailsDTOList()));
 		model.addObject("ExpenseHeaderDTO", expenseHeaderDTO);
 		model.setViewName("expense/expenseJSP");
 		return model;
@@ -52,9 +56,14 @@ public class ExpenseController {
 	
 	
 	@RequestMapping(value="/saveExpense",method=RequestMethod.POST)
-	public ModelAndView saveExpense(@ModelAttribute("ExpenseHeaderDTO") ExpenseHeaderDTO expenseHeaderDTO,@RequestParam("addedFiles") List<MultipartFile> addedFiles,@RequestParam("updatedFiles") List<MultipartFile> updatedFiles, String data) throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView saveExpense(@Valid @ModelAttribute("ExpenseHeaderDTO") ExpenseHeaderDTO expenseHeaderDTO,BindingResult result, @RequestParam("addedFiles") List<MultipartFile> addedFiles,@RequestParam("updatedFiles") List<MultipartFile> updatedFiles, String data) throws JsonGenerationException, JsonMappingException, IOException{
 		ObjectMapper mapper= new ObjectMapper();
 		ModelAndView model=new ModelAndView();
+		if(result.hasErrors()){
+			model.addObject("ExpenseHeaderDTO", expenseHeaderDTO);
+			model.setViewName("expense/expenseJSP");
+			return model;
+		}
 		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
 		

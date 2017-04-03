@@ -15,6 +15,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name="expense_header")
@@ -24,8 +26,9 @@ public class ExpenseHeaderJPA {
 	@Column(name="expense_header_id")
 	private Long expenseHeaderId;
 	
-	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.LAZY) 
+	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
 	@Cascade({CascadeType.ALL})
+	@Fetch (FetchMode.SELECT)
 	private List<ExpenseDetailJPA> expenseDetailJPA; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)

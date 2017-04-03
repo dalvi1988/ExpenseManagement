@@ -2,6 +2,9 @@ package com.chaitanya.expense.model;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,10 +15,16 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	
 	private Long expenseHeaderId;
 	
+	@NotNull
+	@Size(min=8)
 	private String startDate;
 	
+	@NotNull
+	@Size(min=8)
 	private String endDate;
 	
+	@NotNull
+	@Size(min=5)
 	private String title;
 	
 	private String purpose;
