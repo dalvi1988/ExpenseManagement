@@ -307,6 +307,7 @@ $(function () {
 <body>
  	<form:form id="form" action="saveExpense" method="POST" enctype="multipart/form-data" modelAttribute="ExpenseHeaderDTO">
  	    <div id="headerToolbar" >
+			<div><form:errors path="*" cssStyle="color: #ff0000;"/></div>
  	    	<table style="width: 600px;">
 			<tbody>
 			<tr>

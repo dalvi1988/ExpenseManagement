@@ -4,7 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.chaitanya.Base.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExpenseDetailDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
 	private Long expenseDetailId;
