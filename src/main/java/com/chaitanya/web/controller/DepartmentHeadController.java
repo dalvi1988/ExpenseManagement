@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.chaitanya.Base.BaseDTO;
-import com.chaitanya.Base.BaseDTO.Command;
+import com.chaitanya.base.BaseDTO;
+import com.chaitanya.base.BaseDTO.Command;
 import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.department.service.IDepartmentService;
 import com.chaitanya.departmentHead.model.DepartmentHeadDTO;

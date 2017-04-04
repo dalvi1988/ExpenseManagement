@@ -2,8 +2,8 @@ package com.chaitanya.utility;
 
 import java.util.Collection;
 
-import com.chaitanya.Base.BaseDTO;
-import com.chaitanya.Base.BaseDTO.ServiceStatus;
+import com.chaitanya.base.BaseDTO;
+import com.chaitanya.base.BaseDTO.ServiceStatus;
 
 public class Validation {
 

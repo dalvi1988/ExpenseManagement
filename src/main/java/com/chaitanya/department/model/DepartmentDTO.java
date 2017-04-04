@@ -3,7 +3,7 @@ package com.chaitanya.department.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.chaitanya.Base.BaseDTO;
+import com.chaitanya.base.BaseDTO;
 
 
 public class DepartmentDTO extends BaseDTO {

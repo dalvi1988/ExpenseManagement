@@ -2,8 +2,8 @@ package com.chaitanya.approvalFlow.service;
 
 import java.util.List;
 
-import com.chaitanya.Base.BaseDTO;
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
+import com.chaitanya.base.BaseDTO;
 
 public interface IApprovalFlowService {
 

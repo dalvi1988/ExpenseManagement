@@ -1,4 +1,4 @@
-package com.chaitanya.Base;
+package com.chaitanya.base;
 
 import java.io.Serializable;
 

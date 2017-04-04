@@ -2,7 +2,7 @@ package com.chaitanya.expense.model;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.chaitanya.Base.BaseDTO;
+import com.chaitanya.base.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

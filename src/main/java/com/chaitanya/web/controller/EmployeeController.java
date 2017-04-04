@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.chaitanya.Base.BaseDTO;
-import com.chaitanya.Base.BaseDTO.Command;
+import com.chaitanya.base.BaseDTO;
+import com.chaitanya.base.BaseDTO.Command;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.company.service.ICompanyService;
 import com.chaitanya.department.model.DepartmentDTO;

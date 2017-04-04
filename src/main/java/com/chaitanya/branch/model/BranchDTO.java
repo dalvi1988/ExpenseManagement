@@ -1,6 +1,6 @@
 package com.chaitanya.branch.model;
 
-import com.chaitanya.Base.BaseDTO;
+import com.chaitanya.base.BaseDTO;
 import com.chaitanya.company.model.CompanyDTO;
 
 public class BranchDTO extends BaseDTO {

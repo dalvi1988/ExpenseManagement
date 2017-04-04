@@ -1,6 +1,6 @@
 package com.chaitanya.employee.model;
 
-import com.chaitanya.Base.BaseDTO;
+import com.chaitanya.base.BaseDTO;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.department.model.DepartmentDTO;
 

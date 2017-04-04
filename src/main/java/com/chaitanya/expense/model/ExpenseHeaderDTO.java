@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.chaitanya.Base.BaseDTO;
+import com.chaitanya.base.BaseDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

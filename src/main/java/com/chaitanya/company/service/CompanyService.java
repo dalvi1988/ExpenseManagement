@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.chaitanya.Base.BaseDTO;
-import com.chaitanya.Base.BaseDTO.ServiceStatus;
+import com.chaitanya.base.BaseDTO;
+import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.branch.convertor.BranchConvertor;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.company.convertor.CompanyConvertor;
