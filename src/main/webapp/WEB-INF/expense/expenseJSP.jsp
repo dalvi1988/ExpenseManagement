@@ -6,8 +6,8 @@
 
     <title>Expense Request</title>
     <script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
- 	<link rel="stylesheet" href=<spring:url value="/jquery/jquery-ui.css"/> />
- 	<script type="text/javascript" src=<spring:url value="/jquery/jquery-ui.min.js"/> ></script>
+ 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
+ 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
  	
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
@@ -119,17 +119,33 @@ $(function () {
           }
     }
     var obj = {
-        width: 700,
+        width: 900,
         height: 400,
         wrap: false,
         hwrap: false,
-        resizable: true,
+       // resizable: true,
         rowBorders: false,
         numberCell: { show: false },
         track: true, //to turn on the track changes.
         flexHeight: true,
         toolbar: {
             items: [
+				{ type: 'separator',style: 'margin:0px 0px 0px 65%' },
+				{ type: 'button', icon: 'ui-icon-disk', label: 'Save as Draft', style: 'margin:0px 0px 0px 0px', listeners: [
+                    { "click": function (evt, ui) {
+                        acceptChanges();
+                    }
+                    }
+                ]
+                },
+                { type: 'separator' },
+                { type: 'button', icon: 'ui-icon-disk', label: 'Send for Approval', style: 'margin:0px 0px 0px 0px;', listeners: [
+                    { "click": function (evt, ui) {
+                        acceptChanges();
+                    }
+                    }
+                ]
+                },
 				{
 				    type:function (){
 				    	 $('.pq-toolbar').append($('#headerToolbar').show());
@@ -142,33 +158,14 @@ $(function () {
                     }
                 ]
                 },
-                { type: 'button', icon: 'ui-icon-disk', label: 'Accept Changes', style: 'margin:0px 5px;', listeners: [
-                    { "click": function (evt, ui) {
-                        acceptChanges();
-                    }
-                    }
-                ]
-                },
                 { type: 'button', icon: 'ui-icon-cancel', label: 'Reject Changes', listeners: [
                     { "click": function (evt, ui) {
                         $grid.pqGrid("rollback");
                     }
                     }
                 ]
-                },
-                { type: 'separator' },
-                { type: 'button', icon: 'ui-icon-cart', label: 'Get Changes', style: 'margin:0px 5px;', listeners: [
-                    { "click": function (evt, ui) {
-                        var changes = $grid.pqGrid("getChanges");
-                        try {
-                            console.log(changes);
-                        }
-                        catch (ex) { }
-                        alert("Please see the log of changes in your browser console.");
-                    }
-                    }
-                ]
                 }
+                
             ]
         },
         scrollModel: {
@@ -184,8 +181,8 @@ $(function () {
         title: "<b>Expense Voucher</b>",
 
         colModel: [
-            { title: "Expense ID", dataType: "integer", dataIndx: "expenseDetailId", editable: false },
-            { title: "Date", width: "150", dataIndx: "date",
+            { title: "Expense ID", dataType: "integer", dataIndx: "expenseDetailId", hidden: true },
+            { title: "Date", width: "120", dataIndx: "date",
 		        editor: {
 		            type: 'textbox',
 		            init: dateEditor
@@ -203,9 +200,10 @@ $(function () {
                     { type: 'regexp', value: '^[0-9]{2}-[A-Za-z]{3,10}-[0-9]{4}$', msg: 'Not in dd-MMM-yyy format' }
                 ]
 		    }, 
+		    { title: "Expense Category", width: 140, dataType: "string", align: "right", dataIndx: "expenseCategory"},
             { title: "Location From", width: 140, dataType: "string", align: "right", dataIndx: "fromLocation"},
-            { title: "Location To", width: 100, dataType: "String", align: "right", dataIndx: "toLocation"},
-            { title: "Description", width: 100, dataType: "String", align: "right", dataIndx: "description"},
+            { title: "Location To", width: 140, dataType: "String", align: "right", dataIndx: "toLocation"},
+            { title: "Description", width: 200, dataType: "String", align: "right", dataIndx: "description"},
              { title: "Amount", width: 100, dataType: "float", align: "right", dataIndx: "amount",
                 validations: [{ type: 'gt', value: 0.5, msg: "should be > 0.5"}],
                 render: function (ui) {                        
@@ -223,7 +221,7 @@ $(function () {
             	  render:function (ui) {
             		 
             		 if(typeof ui.cellData == "undefined"){
-            		   return "<input type='file' name='file' class='file'/>";
+            		   	return "<input type='file' id='1' class='btn_file'/>";
             		  }
             		 else{
             			 var fullPath=ui.cellData.val();
@@ -232,7 +230,7 @@ $(function () {
            			     if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
            			        filename = filename.substring(1);
            			     } 
-            			 return "<a href="+fullPath+">"+ filename+"</a>";
+            			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close'></button></div><input type='file' id='2' class='btn_file'/>";
             		 }  
 	            }  
             },
@@ -255,15 +253,16 @@ $(function () {
         },
         refresh: function () {
 
-        	 $("#grid_editing").find("input.file").button().bind("change", function (evt){
-        		 //debugger;
+        	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
+        		 debugger;
         		 var $tr = $(this).closest("tr");
                  var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
                  var rowIndx = obj.rowIndx;
                  var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
+                 rowData.file=null;
         		 var clone = $(this).clone();
         	     rowData.file = clone.attr('name', 'addedFiles');
-				 $grid.pqGrid("refreshColumn",{dataIndx:"file"})
+				 $grid.pqGrid("refresh")
         	});  
             $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
             .unbind("click")
@@ -329,7 +328,7 @@ $(function () {
         <div id="grid_editing" style="margin: auto;"></div>
  		<input type="hidden" id="data" name="data"/>
  		<div id="filesDiv" style="border: medium; display: none;"></div>
- 		<form:hidden path="expenseHeaderId"/>  
+ 		<form:hidden path="expenseHeaderId"></form:hidden>  
     </form:form>
     
      
