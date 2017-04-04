@@ -130,7 +130,7 @@ $(function () {
         flexHeight: true,
         toolbar: {
             items: [
-				{ type: 'separator',style: 'margin:0px 0px 0px 60%' },
+				{ type: 'separator',style: 'margin:0px 0px 0px 65%' },
 				{ type: 'button', icon: 'ui-icon-disk', label: 'Save as Draft', style: 'margin:0px 0px 0px 0px', listeners: [
                     { "click": function (evt, ui) {
                         acceptChanges();
@@ -221,7 +221,7 @@ $(function () {
             	  render:function (ui) {
             		 
             		 if(typeof ui.cellData == "undefined"){
-            		   	return "<input type='file' class='btn_file'/>";
+            		   	return "<input type='file' id='1' class='btn_file'/>";
             		  }
             		 else{
             			 var fullPath=ui.cellData.val();
@@ -230,7 +230,7 @@ $(function () {
            			     if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
            			        filename = filename.substring(1);
            			     } 
-            			 return "<a href="+fullPath+">"+ filename+"</a></br><input type='file' class='btn_file'/>";
+            			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close'></button></div><input type='file' id='2' class='btn_file'/>";
             		 }  
 	            }  
             },
@@ -262,7 +262,7 @@ $(function () {
                  rowData.file=null;
         		 var clone = $(this).clone();
         	     rowData.file = clone.attr('name', 'addedFiles');
-				 $grid.pqGrid("refreshColumn",{dataIndx:"file"})
+				 $grid.pqGrid("refresh")
         	});  
             $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
             .unbind("click")
