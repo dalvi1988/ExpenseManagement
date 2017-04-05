@@ -29,7 +29,7 @@ public class ExpenseCategoryService implements IExpenseCategoryService{
 	@Override
 	public BaseDTO addExpenseCategory(BaseDTO baseDTO) {
 		logger.debug("ExpenseCategoryService: addExpenseCategory-Start");
-		if(validateExpenseCAtegoryMasterDTO(baseDTO)){
+		if(validateExpenseCategoryMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of CompanyMasterDTO type.");
 		}
 		try{
@@ -60,24 +60,22 @@ public class ExpenseCategoryService implements IExpenseCategoryService{
 
 	@Override
 	public List<ExpenseCategoryDTO> findAll() {
-		logger.debug("ExpenseCategoryService: addBranch-Start");
-		List<ExpenseCategoryDTO> companyDTOList = null;
-		List<ExpenseCategoryJPA> companyJPAList = expenseCategoryDAO.findAll();
-		if (Validation.validateCollectionForNullSize(companyJPAList)) {
-			companyDTOList = new ArrayList<ExpenseCategoryDTO>();
-			for (Iterator<ExpenseCategoryJPA> iterator = companyJPAList.iterator(); iterator
-					.hasNext();) {
-				ExpenseCategoryJPA expenseCategoryJPA = iterator.next();
-				ExpenseCategoryDTO brachDTO = ExpenseCategoryConvertor
-						.setExpenseCategoryJPAtoDTO(expenseCategoryJPA);
-				companyDTOList.add(brachDTO);
+		logger.debug("ExpenseCategoryService: findAll-Start");
+		List<ExpenseCategoryDTO> expenseCategoryDTOList = null;
+		List<ExpenseCategoryJPA> expenseCategoryJPAList = expenseCategoryDAO.findAll();
+		
+		if (Validation.validateCollectionForNullSize(expenseCategoryJPAList)) {
+			expenseCategoryDTOList = new ArrayList<ExpenseCategoryDTO>();
+			for (ExpenseCategoryJPA iterator : expenseCategoryJPAList) {
+				ExpenseCategoryDTO expenseCategoryDTO = ExpenseCategoryConvertor.setExpenseCategoryJPAtoDTO(iterator);
+				expenseCategoryDTOList.add(expenseCategoryDTO);
 			}
 		}
-		logger.debug("ExpenseCategoryService: addBranch-End");
-		return companyDTOList;
+		logger.debug("ExpenseCategoryService: findAll-End");
+		return expenseCategoryDTOList;
 	}
 	
-	private boolean validateExpenseCAtegoryMasterDTO(BaseDTO baseDTO) {
+	private boolean validateExpenseCategoryMasterDTO(BaseDTO baseDTO) {
 		return baseDTO == null  || !(baseDTO instanceof ExpenseCategoryDTO);
 	}
 }

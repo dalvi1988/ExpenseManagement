@@ -40,6 +40,25 @@ public class Validation {
 		}
 		return result;
 	}
+	public static boolean validateForZero(Integer value){
+		Boolean result=false;
+		if(value!=null){
+			if (value != 0 ) {
+				result= true;
+			}
+		}
+		return result;
+	}
+	
+	public static boolean validateForZero(Double value){
+		Boolean result=false;
+		if(value!=null){
+			if (value != 0 ) {
+				result= true;
+			}
+		}
+		return result;
+	}
 	public static boolean validateForSuccessStatus(BaseDTO baseDTO){
 		Boolean result=false;
 		if(validateForNullObject(baseDTO)){
@@ -50,6 +69,8 @@ public class Validation {
 		}
 		return result;
 	}
+	
+	
 	
 	public static boolean validateForSystemFailureStatus(BaseDTO baseDTO){
 		Boolean result=false;

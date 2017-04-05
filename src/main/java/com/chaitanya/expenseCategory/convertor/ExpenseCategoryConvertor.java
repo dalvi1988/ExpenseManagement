@@ -4,7 +4,6 @@ import java.text.ParseException;
 
 import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
 import com.chaitanya.jpa.ExpenseCategoryJPA;
-import com.chaitanya.jpa.CompanyJPA;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 
@@ -12,11 +11,20 @@ public class ExpenseCategoryConvertor {
 	
 	public static ExpenseCategoryDTO setExpenseCategoryJPAtoDTO(ExpenseCategoryJPA expenseCategoryJPA){
 		ExpenseCategoryDTO expenseCategoryDTO=null;
+		
 		if(Validation.validateForNullObject(expenseCategoryJPA)){
+			
 			expenseCategoryDTO=new ExpenseCategoryDTO(); 
-			expenseCategoryDTO.setBranchId(expenseCategoryJPA.getBranchId());
-			expenseCategoryDTO.setBranchName(expenseCategoryJPA.getBranchName());
-			expenseCategoryDTO.setBranchCode(expenseCategoryJPA.getBranchCode());
+			expenseCategoryDTO.setExpCategoryId(expenseCategoryJPA.getExpCategoryId());
+			expenseCategoryDTO.setExpenseName(expenseCategoryJPA.getExpenseName());
+			expenseCategoryDTO.setGlCode(expenseCategoryJPA.getGlCode());
+			expenseCategoryDTO.setLocationRequired(Convertor.convetStatusToBool(expenseCategoryJPA.getLocationRequired()));
+			expenseCategoryDTO.setUnitRequired(Convertor.convetStatusToBool(expenseCategoryJPA.getUnitRequired()));
+			
+			if(Validation.validateForZero(expenseCategoryJPA.getAmount())){
+				expenseCategoryDTO.setAmount(expenseCategoryJPA.getAmount());
+			}
+			
 			if(Validation.validateForNullObject(expenseCategoryJPA.getCreatedBy())){
 				expenseCategoryDTO.setCreatedBy(expenseCategoryJPA.getCreatedBy());
 			}
@@ -34,14 +42,24 @@ public class ExpenseCategoryConvertor {
 		return expenseCategoryDTO;
 	}
 	
-	
 	public static ExpenseCategoryJPA setExpenseCategoryDTOToJPA(ExpenseCategoryDTO expenseCategoryDTO) throws ParseException
 	{
 		ExpenseCategoryJPA expenseCategoryJPA=null;
 		if(Validation.validateForNullObject(expenseCategoryDTO)){
 			expenseCategoryJPA=new ExpenseCategoryJPA();
-			if(Validation.validateForZero(expenseCategoryDTO.getBranchId())){
-				expenseCategoryJPA.setBranchId(expenseCategoryDTO.getBranchId());
+			
+			expenseCategoryJPA.setExpenseName(expenseCategoryDTO.getExpenseName());
+			expenseCategoryJPA.setGlCode(expenseCategoryDTO.getGlCode());
+			expenseCategoryJPA.setLocationRequired(Convertor.convertStatusToChar(expenseCategoryDTO.getLocationRequired()));
+			expenseCategoryJPA.setUnitRequired(Convertor.convertStatusToChar(expenseCategoryDTO.getUnitRequired()));
+			expenseCategoryJPA.setStatus(Convertor.convertStatusToChar(expenseCategoryDTO.getStatus()));
+			
+			if(Validation.validateForZero(expenseCategoryDTO.getAmount())){
+				expenseCategoryJPA.setAmount(expenseCategoryDTO.getAmount());
+			}
+			
+			if(Validation.validateForZero(expenseCategoryDTO.getExpCategoryId())){
+				expenseCategoryJPA.setExpCategoryId(expenseCategoryDTO.getExpCategoryId());
 			}
 			if(Validation.validateForZero(expenseCategoryDTO.getModifiedBy())){
 				expenseCategoryJPA.setModifiedBy(expenseCategoryDTO.getModifiedBy());
@@ -55,13 +73,7 @@ public class ExpenseCategoryConvertor {
 			if(Validation.validateForNullObject(expenseCategoryDTO.getModifiedDate())){
 				expenseCategoryJPA.setModifiedDate(Convertor.stringToCalendar(expenseCategoryDTO.getModifiedDate()));
 			}
-			CompanyJPA companyJPA=new CompanyJPA();
-			companyJPA.setCompanyId(expenseCategoryDTO.getCompanyDTO().getCompanyId());
-			expenseCategoryJPA.setCompanyJPA(companyJPA);
 			
-			expenseCategoryJPA.setBranchCode(expenseCategoryDTO.getBranchCode());
-			expenseCategoryJPA.setBranchName(expenseCategoryDTO.getBranchName());
-			expenseCategoryJPA.setStatus(Convertor.convertStatusToChar(expenseCategoryDTO.getStatus()));
 		}
 		return expenseCategoryJPA;
 	}
