@@ -23,10 +23,10 @@ public class CompanyConvertor {
 				companyDTO.setModifiedBy(companyJPA.getModifiedBy());
 			}
 			if(Validation.validateForNullObject(companyJPA.getCreatedDate())){
-				companyDTO.setCreatedDate(Convertor.calendartoString(companyJPA.getCreatedDate()));
+				companyDTO.setCreatedDate(Convertor.calendartoString(companyJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(companyJPA.getModifiedDate())){
-				companyDTO.setModifiedDate(Convertor.calendartoString(companyJPA.getModifiedDate()));
+				companyDTO.setModifiedDate(Convertor.calendartoString(companyJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			companyDTO.setStatus(Convertor.convetStatusToBool(companyJPA.getStatus()));
 		}
@@ -49,10 +49,10 @@ public class CompanyConvertor {
 				companyJPA.setCreatedBy(companyDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(companyDTO.getCreatedDate())){
-				companyJPA.setCreatedDate(Convertor.stringToCalendar(companyDTO.getCreatedDate()));
+				companyJPA.setCreatedDate(Convertor.stringToCalendar(companyDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(companyDTO.getModifiedDate())){
-				companyJPA.setModifiedDate(Convertor.stringToCalendar(companyDTO.getModifiedDate()));
+				companyJPA.setModifiedDate(Convertor.stringToCalendar(companyDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			companyJPA.setCompanyCode(companyDTO.getCompanyCode());
 			companyJPA.setCompanyName(companyDTO.getCompanyCode());

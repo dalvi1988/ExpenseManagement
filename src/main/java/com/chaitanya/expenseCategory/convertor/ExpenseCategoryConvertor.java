@@ -15,7 +15,7 @@ public class ExpenseCategoryConvertor {
 		if(Validation.validateForNullObject(expenseCategoryJPA)){
 			
 			expenseCategoryDTO=new ExpenseCategoryDTO(); 
-			expenseCategoryDTO.setExpCategoryId(expenseCategoryJPA.getExpCategoryId());
+			expenseCategoryDTO.setExpenseCategoryId(expenseCategoryJPA.getExpCategoryId());
 			expenseCategoryDTO.setExpenseName(expenseCategoryJPA.getExpenseName());
 			expenseCategoryDTO.setGlCode(expenseCategoryJPA.getGlCode());
 			expenseCategoryDTO.setLocationRequired(Convertor.convetStatusToBool(expenseCategoryJPA.getLocationRequired()));
@@ -32,10 +32,10 @@ public class ExpenseCategoryConvertor {
 				expenseCategoryDTO.setModifiedBy(expenseCategoryJPA.getModifiedBy());
 			}
 			if(Validation.validateForNullObject(expenseCategoryJPA.getCreatedDate())){
-				expenseCategoryDTO.setCreatedDate(Convertor.calendartoString(expenseCategoryJPA.getCreatedDate()));
+				expenseCategoryDTO.setCreatedDate(Convertor.calendartoString(expenseCategoryJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(expenseCategoryJPA.getModifiedDate())){
-				expenseCategoryDTO.setModifiedDate(Convertor.calendartoString(expenseCategoryJPA.getModifiedDate()));
+				expenseCategoryDTO.setModifiedDate(Convertor.calendartoString(expenseCategoryJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			expenseCategoryDTO.setStatus(Convertor.convetStatusToBool(expenseCategoryJPA.getStatus()));
 		}
@@ -58,8 +58,8 @@ public class ExpenseCategoryConvertor {
 				expenseCategoryJPA.setAmount(expenseCategoryDTO.getAmount());
 			}
 			
-			if(Validation.validateForZero(expenseCategoryDTO.getExpCategoryId())){
-				expenseCategoryJPA.setExpCategoryId(expenseCategoryDTO.getExpCategoryId());
+			if(Validation.validateForZero(expenseCategoryDTO.getExpenseCategoryId())){
+				expenseCategoryJPA.setExpCategoryId(expenseCategoryDTO.getExpenseCategoryId());
 			}
 			if(Validation.validateForZero(expenseCategoryDTO.getModifiedBy())){
 				expenseCategoryJPA.setModifiedBy(expenseCategoryDTO.getModifiedBy());
@@ -68,10 +68,10 @@ public class ExpenseCategoryConvertor {
 				expenseCategoryJPA.setCreatedBy(expenseCategoryDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(expenseCategoryDTO.getCreatedDate())){
-				expenseCategoryJPA.setCreatedDate(Convertor.stringToCalendar(expenseCategoryDTO.getCreatedDate()));
+				expenseCategoryJPA.setCreatedDate(Convertor.stringToCalendar(expenseCategoryDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(expenseCategoryDTO.getModifiedDate())){
-				expenseCategoryJPA.setModifiedDate(Convertor.stringToCalendar(expenseCategoryDTO.getModifiedDate()));
+				expenseCategoryJPA.setModifiedDate(Convertor.stringToCalendar(expenseCategoryDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			
 		}

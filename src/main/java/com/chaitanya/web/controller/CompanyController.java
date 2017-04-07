@@ -51,12 +51,12 @@ public class CompanyController {
 			if(!Validation.validateForNullObject(receivedCompanyDTO.getCompanyId())){
 				receivedCompanyDTO.setCommand(Command.ADD);
 				receivedCompanyDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedCompanyDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedCompanyDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
 				receivedCompanyDTO.setCommand(Command.UPDATE);
 				receivedCompanyDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedCompanyDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedCompanyDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			BaseDTO baseDTO=companyService.addCompany(receivedCompanyDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){

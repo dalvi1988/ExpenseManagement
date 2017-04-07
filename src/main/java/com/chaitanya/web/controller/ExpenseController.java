@@ -21,6 +21,8 @@ import com.chaitanya.base.BaseDTO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.expense.service.IExpenseService;
+import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
+import com.chaitanya.expenseCategory.service.IExpenseCategoryService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -35,20 +37,29 @@ public class ExpenseController {
 	@Qualifier("expenseService")
 	private IExpenseService expenseService;
 	
+	@Autowired 
+	@Qualifier("expenseCategoryService")
+	private IExpenseCategoryService expenseCategoryService;
 	
 	@RequestMapping(value="/expense",method={RequestMethod.GET,RequestMethod.POST})
-	public ModelAndView createExpense(@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView createExpense(@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) throws Exception{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper= new ObjectMapper();
 		ExpenseHeaderDTO expenseHeaderDTO =new ExpenseHeaderDTO();
+		List<ExpenseCategoryDTO> expenseCategoryDTOList= null;
 		if(Validation.validateForZero(expenseHeaderId)){
 			expenseHeaderDTO.setExpenseHeaderId(expenseHeaderId);
 			BaseDTO baseDTO= expenseService.getExpense(expenseHeaderDTO);
+			
 			if(Validation.validateForSuccessStatus(baseDTO)){
 				expenseHeaderDTO = (ExpenseHeaderDTO) baseDTO;
+			}else{
+				throw new Exception("");
 			}
 		}
+		expenseCategoryDTOList = expenseCategoryService.findAll();
 		model.addObject("expenseDetailList", mapper.writeValueAsString(expenseHeaderDTO.getAddedExpenseDetailsDTOList()));
+		model.addObject("expenseCategoryList", mapper.writeValueAsString(expenseCategoryDTOList));
 		model.addObject("ExpenseHeaderDTO", expenseHeaderDTO);
 		model.setViewName("expense/expenseJSP");
 		return model;
@@ -67,6 +78,7 @@ public class ExpenseController {
 		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
 		
+		// added List
 		String addList=mapper.readTree(data).get("addList").toString();
 		List<ExpenseDetailDTO> addedExpenseDetailDTOList =
 			    mapper.readValue(addList, new TypeReference<List<ExpenseDetailDTO>>(){});
@@ -75,9 +87,26 @@ public class ExpenseController {
 			MultipartFile receipt=addedFiles.get(i);
 			expenseDetailDTO.setReceipt(receipt);
 		}
-		expenseHeaderDTO.setAddedExpenseDetailsDTOList(addedExpenseDetailDTOList);
 		
-		expenseService.addExpense(expenseHeaderDTO);
+		//updated list
+		String updateList=mapper.readTree(data).get("updateList").toString();
+		List<ExpenseDetailDTO> updatedExpenseDetailDTOList =
+			    mapper.readValue(updateList, new TypeReference<List<ExpenseDetailDTO>>(){});
+		for(int i=0; i< updatedExpenseDetailDTOList.size(); i++){
+			ExpenseDetailDTO expenseDetailDTO=updatedExpenseDetailDTOList.get(i);
+			MultipartFile receipt=addedFiles.get(i);
+			expenseDetailDTO.setReceipt(receipt);
+		}
+		
+		String deletedList=mapper.readTree(data).get("deleteList").toString();
+		List<ExpenseDetailDTO> deletedExpenseDetailDTOList =
+			    mapper.readValue(deletedList, new TypeReference<List<ExpenseDetailDTO>>(){});
+		
+		expenseHeaderDTO.setAddedExpenseDetailsDTOList(addedExpenseDetailDTOList);
+		expenseHeaderDTO.setUpdatedExpenseDetailsDTOList(updatedExpenseDetailDTOList);
+		expenseHeaderDTO.setDeletedExpenseDetailsDTOList(deletedExpenseDetailDTOList);
+		
+		expenseService.saveUpdateExpense(expenseHeaderDTO);
 		model.setViewName("redirect:/viewDraftExpense");
 		return model;
 	}

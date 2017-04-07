@@ -5,7 +5,7 @@ import com.chaitanya.base.BaseDTO;
 public class ExpenseCategoryDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
 
-	private Long expCategoryId;
+	private Long expenseCategoryId;
 	
 	private String expenseName;
 		
@@ -19,12 +19,12 @@ public class ExpenseCategoryDTO extends BaseDTO {
 	
 	private Boolean status;
 
-	public Long getExpCategoryId() {
-		return expCategoryId;
+	public Long getExpenseCategoryId() {
+		return expenseCategoryId;
 	}
 
-	public void setExpCategoryId(Long expCategoryId) {
-		this.expCategoryId = expCategoryId;
+	public void setExpenseCategoryId(Long expenseCategoryId) {
+		this.expenseCategoryId = expenseCategoryId;
 	}
 
 	public String getExpenseName() {

@@ -8,7 +8,7 @@ import com.chaitanya.jpa.ExpenseHeaderJPA;
 
 public interface IExpenseDAO {
 
-	public ExpenseHeaderJPA add(ExpenseHeaderJPA department) throws IOException;
+	public ExpenseHeaderJPA saveUpdateExpense(ExpenseHeaderJPA department) throws IOException;
 
 	public List<ExpenseHeaderJPA> getDraftExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
 

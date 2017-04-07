@@ -53,12 +53,12 @@ public class DepartmentController {
 			if(!Validation.validateForNullObject(receivedDepartmentDTO.getDepartmentId())){
 				receivedDepartmentDTO.setCommand(Command.ADD);
 				receivedDepartmentDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedDepartmentDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedDepartmentDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
 				receivedDepartmentDTO.setCommand(Command.UPDATE);
 				receivedDepartmentDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedDepartmentDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedDepartmentDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			BaseDTO baseDTO=departmentService.addDepartment(receivedDepartmentDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){

@@ -60,10 +60,10 @@ public class EmployeeConvertor {
 				employeeDTO.setModifiedBy(employeeJPA.getEmployeeId());
 			}
 			if(Validation.validateForNullObject(employeeJPA.getCreatedDate())){
-				employeeDTO.setCreatedDate(Convertor.calendartoString(employeeJPA.getCreatedDate()));
+				employeeDTO.setCreatedDate(Convertor.calendartoString(employeeJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(employeeJPA.getModifiedDate())){
-				employeeDTO.setModifiedDate(Convertor.calendartoString(employeeJPA.getModifiedDate()));
+				employeeDTO.setModifiedDate(Convertor.calendartoString(employeeJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			employeeDTO.setStatus(Convertor.convetStatusToBool(employeeJPA.getStatus()));
 		}
@@ -109,10 +109,10 @@ public class EmployeeConvertor {
 				employeeJPA.setModifiedBy(employeeDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(employeeDTO.getCreatedDate())){
-				employeeJPA.setCreatedDate(Convertor.stringToCalendar(employeeDTO.getCreatedDate()));
+				employeeJPA.setCreatedDate(Convertor.stringToCalendar(employeeDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(employeeDTO.getModifiedDate())){
-				employeeJPA.setModifiedDate(Convertor.stringToCalendar(employeeDTO.getModifiedDate()));
+				employeeJPA.setModifiedDate(Convertor.stringToCalendar(employeeDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			employeeJPA.setStatus(Convertor.convertStatusToChar(employeeDTO.getStatus()));
 		}

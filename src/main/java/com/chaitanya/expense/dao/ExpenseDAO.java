@@ -25,7 +25,7 @@ public class ExpenseDAO implements IExpenseDAO{
 	SessionFactory sessionFactory;
 	
 	@Override
-	public ExpenseHeaderJPA add(ExpenseHeaderJPA expenseHeaderJPA) throws IOException{
+	public ExpenseHeaderJPA saveUpdateExpense(ExpenseHeaderJPA expenseHeaderJPA) throws IOException{
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(expenseHeaderJPA);
 		for(ExpenseDetailJPA expenseDetailJPA : expenseHeaderJPA.getExpenseDetailJPA()){

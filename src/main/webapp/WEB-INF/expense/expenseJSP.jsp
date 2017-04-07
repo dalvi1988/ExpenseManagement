@@ -18,9 +18,70 @@
 
 
 var expenseDetailList=${expenseDetailList};
+var expenseCategoryList =${expenseCategoryList};
 
 $(function () {
     
+	function jsonParseForAutoComplete(data,value,id) {
+	    var rows = [];
+	    var rowData = null;
+	    var dataLength = data.length;
+	    for (var i = 0; i < dataLength; i++) {
+	        rowData = data[i];
+	        rows[i] = {
+	            label: rowData[value],
+	            value: rowData[id],
+	        	row : rowData
+	        };
+	    }
+	    return rows;
+	}
+	
+	var autoCompleteEditor = function (ui) {
+        var $inp = ui.$cell.find("input"),
+        asignCategoryDetails = function (that,data) {
+        	var rowData = $grid.pqGrid("getRowData", { rowIndx: ui.rowIndx });
+            rowData.locationRequired = data.row.locationRequired;
+            if(data.row.locationRequired == false){
+            	rowData.fromLocation="";
+            	rowData.toLocation="";
+            	
+            }
+            rowData.unitRequired = data.row.unitRequired;
+            if(data.row.unitRequired == false){
+            	rowData.unit="";
+            }
+            rowData.amountPerUnit= data.row.amount; 
+            
+            debugger;
+            rowData.expenseCategoryId =data.value;
+            $grid.pqGrid("refresh");
+        };
+        //initialize the editor
+        $inp.autocomplete({
+            source: function(request, response) {
+                var rows = jsonParseForAutoComplete(expenseCategoryList,"expenseName","expenseCategoryId");
+                return response(rows);
+            },
+            selectItem: { on: true }, //custom option
+            highlightText: { on: true }, //custom option
+            minLength: 0,
+            select: function(event, ui) {
+				event.preventDefault();
+				$(this).val(ui.item.label);
+				
+				asignCategoryDetails(this,ui.item);
+			},
+            focus: function(event,ui){
+            	event.preventDefault();
+				$(this).val(ui.item.label);
+            }
+        }).focus(function () {
+            //open the autocomplete upon focus                
+            $(this).autocomplete("search", "");
+        });
+    }
+	
 	$( "#startDate" ).datepicker({
 	    maxDate: "Now",
 	    dateFormat: "dd-MM-yy",
@@ -80,7 +141,7 @@ $(function () {
 	}
 	
 	function addNewRow(){
-		var rowData = { }; //empty row
+		var rowData = {locationRequired:false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
 	}
@@ -98,13 +159,28 @@ $(function () {
             //validate the new added rows.                
             var addList = grid.getChanges().addList;
             for (var i = 0; i < addList.length; i++) {
-            	debugger;
                 var rowData = addList[i];
-                 if(typeof rowData.file =="undefined" || rowData.file == ""){
+                 if(typeof rowData.receipt =="undefined" || rowData.receipt == ""){
                 	$("#filesDiv").append("<input type='file'name='addedFiles'/>");
                 }
                 else{ 
-                	$("#filesDiv").append(rowData.file);
+                	$("#filesDiv").append(rowData.receipt);
+                }
+                var isValid = grid.isValid({ "rowData": rowData }).valid;
+                if (!isValid) {
+                    return;
+                }
+            }
+            
+          //validate the new added rows.                
+            var updateList = grid.getChanges().updateList;
+            for (var i = 0; i < updateList.length; i++) {
+                var rowData = updateList[i];
+                 if(typeof rowData.receipt =="undefined" || rowData.receipt == ""){
+                	$("#filesDiv").append("<input type='file'name='updatedFiles'/>");
+                }
+                else{ 
+                	$("#filesDiv").append(rowData.receipt);
                 }
                 var isValid = grid.isValid({ "rowData": rowData }).valid;
                 if (!isValid) {
@@ -124,9 +200,10 @@ $(function () {
         wrap: false,
         hwrap: false,
        // resizable: true,
-        rowBorders: false,
+        rowBorders: true,
         numberCell: { show: false },
-        track: true, //to turn on the track changes.
+        track : true, //to turn on the track changes.
+        trackModel: { on: true },
         flexHeight: true,
         toolbar: {
             items: [
@@ -168,13 +245,13 @@ $(function () {
                 
             ]
         },
-        scrollModel: {
+         scrollModel: {
             autoFit: true
         },
-        selectionModel: {
+        /*selectionModel: {
             type: ''
         },
-        hoverMode: 'cell',
+        hoverMode: 'cell', */
         editModel: {
             saveKey: $.ui.keyCode.ENTER
         },
@@ -182,7 +259,7 @@ $(function () {
 
         colModel: [
             { title: "Expense ID", dataType: "integer", dataIndx: "expenseDetailId", hidden: true },
-            { title: "Date", width: "120", dataIndx: "date",
+            { title: "Date", width: "160", dataIndx: "date",
 		        editor: {
 		            type: 'textbox',
 		            init: dateEditor
@@ -200,11 +277,64 @@ $(function () {
                     { type: 'regexp', value: '^[0-9]{2}-[A-Za-z]{3,10}-[0-9]{4}$', msg: 'Not in dd-MMM-yyy format' }
                 ]
 		    }, 
-		    { title: "Expense Category", width: 140, dataType: "string", align: "right", dataIndx: "expenseCategory"},
-            { title: "Location From", width: 140, dataType: "string", align: "right", dataIndx: "fromLocation"},
-            { title: "Location To", width: 140, dataType: "String", align: "right", dataIndx: "toLocation"},
-            { title: "Description", width: 200, dataType: "String", align: "right", dataIndx: "description"},
-             { title: "Amount", width: 100, dataType: "float", align: "right", dataIndx: "amount",
+		    { title: "Expense Category Id", width: 140, dataType: "string", align: "right", dataIndx: "expenseCategoryId",hidden:true},
+		    { title: "Expense Category", dataIndx: "expenseCategoryName", width: 200,
+                editor: {
+                    type: "textbox",
+                    init: autoCompleteEditor
+                    //type: function (ui) { return dropdowneditor(this, ui); }
+                },
+                validations: [
+                    { type: 'minLen', value: 1, msg: "Required" },
+                    { type: function (ui) {
+                        var value = ui.value;
+                        var expCatName= $.grep(expenseCategoryList, function(item){
+                            return item.expenseName == value;
+                        }).length;
+                        
+                        if (expCatName != 1) {
+                            ui.msg = value + " not found in list";
+                            return false;
+                        } 
+                    }, icon: 'ui-icon-info'
+                    }
+                ],
+                render:function(ui){
+                	for (var i = 0; i < expenseCategoryList.length; i++) {
+             	        if(expenseCategoryList[i].expenseCategoryId == ui.rowData.expenseCategoryId){
+                        	ui.rowData.expenseCategoryName=expenseCategoryList[i].expenseName;
+                         	return ""+expenseCategoryList[i].expenseName;
+                        }
+             	    }
+                }
+                
+            },
+            { title: "Location From", width: 140, dataType: "string", align: "left", dataIndx: "fromLocation",
+            	editable: function(ui){
+					if(ui.rowData['locationRequired'] == true)  
+						return true;
+					else 
+						return false;
+                }
+            },
+            { title: "Location To", width: 140, dataType: "String", align: "left", dataIndx: "toLocation",
+            	editable: function(ui){
+					if(ui.rowData['locationRequired'] == true)  
+						return true;
+					else 
+						return false;
+                }
+            },
+            { title: "Description", width: 200, dataType: "String", align: "left", dataIndx: "description"},
+            { title: "Unit", width: 50, dataType: "integer", align: "right", dataIndx: "unit",
+            	editable: function(ui){
+					if(ui.rowData['unitRequired'] == true)  
+						return true;
+					else 
+						return false;
+                }
+            },
+            { title: "Amount", width: 100, dataType: "float", align: "right", dataIndx: "amount",
                 validations: [{ type: 'gt', value: 0.5, msg: "should be > 0.5"}],
                 render: function (ui) {                        
                     var cellData = ui.cellData;
@@ -216,28 +346,32 @@ $(function () {
                     }
                 }
             },
-            { title: "Receipt/Document",editable:false, dataIndx: "file", minWidth: 200, sortable: false, 
+            { title: "Receipt/Document",editable:false, dataIndx: "receipt", minWidth: 200, sortable: false, 
 
             	  render:function (ui) {
             		 
             		 if(typeof ui.cellData == "undefined"){
-            		   	return "<input type='file' id='1' class='btn_file'/>";
+            		   	return "<input type='file' class='btn_file'/>";
             		  }
             		 else{
+            			 ui.rowData.fileName=ui.cellData.val();
             			 var fullPath=ui.cellData.val();
            			     var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
            			     var filename = fullPath.substring(startIndex);
            			     if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
            			        filename = filename.substring(1);
            			     } 
-            			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close'></button></div><input type='file' id='2' class='btn_file'/>";
+            			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close'></button></div><input type='file' class='btn_file'/>";
             		 }  
 	            }  
             },
             { title: "", editable: false, minWidth: 83, dataIndx: "delButton", sortable: false, render: function (ui) {
                 return "<button type='button' class='delete_btn' >Delete</button>";
-            }
-            }
+            	},
+            },
+            { title: "Location Required", dataType: "integer", dataIndx: "locationRequired", hidden: true },
+            { title: "Unit Required", dataType: "integer", dataIndx: "unitRequired", hidden: true },
+            { title: "Amount Per Unit", dataType: "integer", dataIndx: "amountPerUnit", hidden: true },
         ],
         dataModel: {                
             dataType: "JSON",
@@ -251,18 +385,19 @@ $(function () {
                 $grid.pqGrid("saveEditCell");
             }
         },
-        refresh: function () {
 
+        refresh: function () {
         	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
-        		 debugger;
         		 var $tr = $(this).closest("tr");
                  var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
                  var rowIndx = obj.rowIndx;
                  var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
-                 rowData.file=null;
+                 rowData.receipt=null;
         		 var clone = $(this).clone();
-        	     rowData.file = clone.attr('name', 'addedFiles');
-				 $grid.pqGrid("refresh")
+        		 $grid.pqGrid( "updateRow", {rowIndx: rowIndx, row: { 'receipt': clone.attr('name', 'addedFiles') }} );
+        	     /* rowData.receipt = clone.attr('name', 'addedFiles');*/
+				 $grid.pqGrid("refresh"); 
+				 
         	});  
             $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
             .unbind("click")

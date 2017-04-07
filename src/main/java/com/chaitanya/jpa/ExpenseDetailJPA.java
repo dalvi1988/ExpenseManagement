@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -20,14 +21,15 @@ public class ExpenseDetailJPA {
 	@Column(name="expense_detail_id")
 	private Long expenseDetailId;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="expense_header_id")
 	private ExpenseHeaderJPA expenseHeaderJPA;
 		
-	@Column(name="expense_name_id")
-	private Long expenseNameId;
+	@ManyToOne
+	@JoinColumn(name="expense_category_id")
+	private ExpenseCategoryJPA expenseCategoryJPA;
 	
-	@Column(name="date")
+	@Column(name="date",nullable=false)
 	private Calendar date;
 	
 	@Column(name="from_location")
@@ -35,6 +37,13 @@ public class ExpenseDetailJPA {
 	
 	@Column(name="to_location")
 	private String toLocation;
+	
+	@Column(name="description",nullable=false)
+	private String description;
+
+	@Column(name="unit")
+	private Integer unit;
+
 	
 	@Column(name="amount")
 	private Double amount;
@@ -51,14 +60,6 @@ public class ExpenseDetailJPA {
 
 	public void setExpenseDetailId(Long expenseDetailId) {
 		this.expenseDetailId = expenseDetailId;
-	}
-
-	public Long getExpenseNameId() {
-		return expenseNameId;
-	}
-
-	public void setExpenseNameId(Long expenseNameId) {
-		this.expenseNameId = expenseNameId;
 	}
 
 	public Calendar getDate() {
@@ -115,6 +116,30 @@ public class ExpenseDetailJPA {
 
 	public void setReceipt(File receipt) {
 		this.receipt = receipt;
+	}
+
+	public ExpenseCategoryJPA getExpenseCategoryJPA() {
+		return expenseCategoryJPA;
+	}
+
+	public void setExpenseCategoryJPA(ExpenseCategoryJPA expenseCategoryJPA) {
+		this.expenseCategoryJPA = expenseCategoryJPA;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Integer unit) {
+		this.unit = unit;
 	}
 
 }

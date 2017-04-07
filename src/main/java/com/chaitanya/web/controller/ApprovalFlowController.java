@@ -132,7 +132,7 @@ public class ApprovalFlowController {
 			if(!Validation.validateForNullObject(receivedApprovalFlowDTO.getFlowId())){
 				receivedApprovalFlowDTO.setCommand(Command.ADD);
 				receivedApprovalFlowDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedApprovalFlowDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedApprovalFlowDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			
 			BaseDTO baseDTO=approvalService.addFunctionalFlow(receivedApprovalFlowDTO);

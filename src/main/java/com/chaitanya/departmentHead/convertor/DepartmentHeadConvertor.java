@@ -41,10 +41,10 @@ public class DepartmentHeadConvertor {
 				departmentHeadDTO.setModifiedBy(departmentHeadJPA.getModifiedBy());
 			}
 			if(Validation.validateForNullObject(departmentHeadJPA.getCreatedDate())){
-				departmentHeadDTO.setCreatedDate(Convertor.calendartoString(departmentHeadJPA.getCreatedDate()));
+				departmentHeadDTO.setCreatedDate(Convertor.calendartoString(departmentHeadJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(departmentHeadJPA.getModifiedDate())){
-				departmentHeadDTO.setModifiedDate(Convertor.calendartoString(departmentHeadJPA.getModifiedDate()));
+				departmentHeadDTO.setModifiedDate(Convertor.calendartoString(departmentHeadJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			departmentHeadDTO.setStatus(Convertor.convetStatusToBool(departmentHeadJPA.getStatus()));
 			
@@ -80,10 +80,10 @@ public class DepartmentHeadConvertor {
 				departmentHeadJPA.setCreatedBy(departmentHeadDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(departmentHeadDTO.getCreatedDate())){
-				departmentHeadJPA.setCreatedDate(Convertor.stringToCalendar(departmentHeadDTO.getCreatedDate()));
+				departmentHeadJPA.setCreatedDate(Convertor.stringToCalendar(departmentHeadDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(departmentHeadDTO.getModifiedDate())){
-				departmentHeadJPA.setModifiedDate(Convertor.stringToCalendar(departmentHeadDTO.getModifiedDate()));
+				departmentHeadJPA.setModifiedDate(Convertor.stringToCalendar(departmentHeadDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			
 			departmentHeadJPA.setStatus(Convertor.convertStatusToChar(departmentHeadDTO.getStatus()));

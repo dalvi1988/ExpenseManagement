@@ -7,7 +7,7 @@ import com.chaitanya.expense.model.ExpenseHeaderDTO;
 
 public interface IExpenseService {
 
-	BaseDTO addExpense(BaseDTO baseDTO);
+	BaseDTO saveUpdateExpense(BaseDTO baseDTO);
 
 	List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO);
 

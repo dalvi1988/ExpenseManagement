@@ -92,12 +92,12 @@ public class EmployeeController {
 			if(!Validation.validateForNullObject(receivedEmployeeDTO.getEmployeeId())){
 				receivedEmployeeDTO.setCommand(Command.ADD);
 				receivedEmployeeDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedEmployeeDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedEmployeeDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
 				receivedEmployeeDTO.setCommand(Command.UPDATE);
 				receivedEmployeeDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedEmployeeDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedEmployeeDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			BaseDTO baseDTO=employeeService.addEmployee(receivedEmployeeDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){

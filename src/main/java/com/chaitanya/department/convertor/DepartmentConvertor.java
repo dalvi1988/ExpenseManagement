@@ -24,10 +24,10 @@ public class DepartmentConvertor {
 				departmentDTO.setModifiedBy(departmentJPA.getModifiedBy());
 			}
 			if(Validation.validateForNullObject(departmentJPA.getCreatedDate())){
-				departmentDTO.setCreatedDate(Convertor.calendartoString(departmentJPA.getCreatedDate()));
+				departmentDTO.setCreatedDate(Convertor.calendartoString(departmentJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(departmentJPA.getModifiedDate())){
-				departmentDTO.setModifiedDate(Convertor.calendartoString(departmentJPA.getModifiedDate()));
+				departmentDTO.setModifiedDate(Convertor.calendartoString(departmentJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			
 			departmentDTO.setStatus(Convertor.convetStatusToBool(departmentJPA.getStatus()));
@@ -51,10 +51,10 @@ public class DepartmentConvertor {
 				department.setCreatedBy(departmentDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(departmentDTO.getCreatedDate())){
-				department.setCreatedDate(Convertor.stringToCalendar(departmentDTO.getCreatedDate()));
+				department.setCreatedDate(Convertor.stringToCalendar(departmentDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(departmentDTO.getModifiedDate())){
-				department.setModifiedDate(Convertor.stringToCalendar(departmentDTO.getModifiedDate()));
+				department.setModifiedDate(Convertor.stringToCalendar(departmentDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			department.setDeptCode(departmentDTO.getDepartmentCode());
 			department.setDeptName(departmentDTO.getDepartmentName());

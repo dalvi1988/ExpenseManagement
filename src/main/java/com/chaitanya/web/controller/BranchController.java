@@ -69,12 +69,12 @@ public class BranchController {
 			if(!Validation.validateForNullObject(receivedBranchDTO.getBranchId())){
 				receivedBranchDTO.setCommand(Command.ADD);
 				receivedBranchDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedBranchDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedBranchDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
 				receivedBranchDTO.setCommand(Command.UPDATE);
 				receivedBranchDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedBranchDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedBranchDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			receivedBranchDTO.setCompanyDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO());
 			BaseDTO baseDTO=branchService.addBranch(receivedBranchDTO);

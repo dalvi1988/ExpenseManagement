@@ -3,6 +3,7 @@ package com.chaitanya.expense.model;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -10,11 +11,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ExpenseDetailDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
 	private Long expenseDetailId;
-	private Long expenseNameId;
+	private Long expenseCategoryId;
+	@JsonIgnore
+	private ExpenseCategoryDTO expenseCategoryDTO;
 	private String date;
 	private String fromLocation;
 	private String toLocation;
 	private String description;
+	private Integer unit;
 	private Double amount;
 	@JsonIgnore
 	private MultipartFile receipt;
@@ -25,12 +29,6 @@ public class ExpenseDetailDTO extends BaseDTO {
 	}
 	public void setExpenseDetailId(Long expenseDetailId) {
 		this.expenseDetailId = expenseDetailId;
-	}
-	public Long getExpenseNameId() {
-		return expenseNameId;
-	}
-	public void setExpenseNameId(Long expenseNameId) {
-		this.expenseNameId = expenseNameId;
 	}
 	public String getDate() {
 		return date;
@@ -67,6 +65,27 @@ public class ExpenseDetailDTO extends BaseDTO {
 	}
 	public void setReceipt(MultipartFile receipt) {
 		this.receipt = receipt;
+	}
+	public Long getExpenseCategoryId() {
+		return expenseCategoryId;
+	}
+	public void setExpenseCategoryId(Long expenseCategoryId) {
+		this.expenseCategoryId = expenseCategoryId;
+		ExpenseCategoryDTO expenseCategoryDTO=new ExpenseCategoryDTO();
+		expenseCategoryDTO.setExpenseCategoryId(this.expenseCategoryId);
+	}
+	public ExpenseCategoryDTO getExpenseCategoryDTO() {
+		return expenseCategoryDTO;
+	}
+	public void setExpenseCategoryDTO(ExpenseCategoryDTO expenseCategoryDTO) {
+		this.expenseCategoryDTO = expenseCategoryDTO;
+		this.expenseCategoryId=expenseCategoryDTO.getExpenseCategoryId();
+	}
+	public Integer getUnit() {
+		return unit;
+	}
+	public void setUnit(Integer unit) {
+		this.unit = unit;
 	}
 	
 }

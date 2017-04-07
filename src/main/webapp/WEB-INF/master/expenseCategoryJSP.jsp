@@ -34,7 +34,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { expCategoryId:"", status:true}; //empty row template
+           var rowData = { expenseCategoryId:"", status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -94,7 +94,6 @@
            //change edit button to update button and delete to cancel.
            var $tr = $grid.pqGrid("getRow", { rowIndx: rowIndx }),
                $btn = $tr.find("button.edit_btn");
-           debugger;
            $btn.button("option", { label: "Update", "icons": { primary: "ui-icon-check"} })
                .unbind("click")
                .click(function (evt) {
@@ -130,10 +129,13 @@
                   recIndx = $grid.pqGrid("option", "dataModel.recIndx");
               $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	
-              jsonToBeSend["branchName"] = rowData.branchName;
-              jsonToBeSend["branchCode"] = rowData.branchCode;
+              jsonToBeSend["expenseName"] = rowData.expenseName;
+              jsonToBeSend["glCode"] = rowData.glCode;
               jsonToBeSend["status"] = rowData.status;
-              url = "/ExpenseManagement/addBranch";
+              jsonToBeSend["locationRequired"] = rowData.locationRequired;
+              jsonToBeSend["unitRequired"] = rowData.unitRequired;
+              jsonToBeSend["amount"] = rowData.amount;
+              url = "/ExpenseManagement/addExpenseCategory";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record
@@ -142,7 +144,7 @@
             	  // For update
             	  jsonToBeSend["createdBy"] = rowData.createdBy;
               	  jsonToBeSend["createdDate"] = rowData.createdDate;
-            	  jsonToBeSend["branchId"] = rowData.branchId;
+            	  jsonToBeSend["expenseCategoryId"] = rowData.expenseCategoryId;
               }
               
               $.ajax($.extend({}, ajaxObj, { 
@@ -155,7 +157,7 @@
           	    	if(data.serviceStatus=="SUCCESS"){
 	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
 	                    if (rowData[recIndx] == null || rowData[recIndx] == "") {
-	                       rowData.branchId= data.branchId;
+	                       rowData.expenseCategoryId= data.expenseCategoryId;
 	                    } 
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	          	    	$grid.pqGrid("commit");
@@ -195,14 +197,15 @@
            flexHeight: true,
            toolbar: {
                items: [
-                   { type: 'button', icon: 'ui-icon-plus', label: 'Add New Category', listeners: [
-                       { "click": function (evt, ui) {
-                           var $grid = $(this).closest('.pq-grid');
-                           addRow($grid);
-                           //debugger;
-                       }
-                       }
-                   ]
+                   { type: 'button', icon: 'ui-icon-plus', label: 'Add New Category',
+                	   listeners: [
+	                       { "click": function (evt, ui) {
+	                           var $grid = $(this).closest('.pq-grid');
+	                           addRow($grid);
+	                           //debugger;
+	                       }
+	                       }
+	                   ]
                    },
                    {
                        type: '</br><span style="color:red;font-weight:bold;font-size:20px" class="customMessage"></span>'
@@ -228,7 +231,7 @@
            title: "<h1><b>Expense Category Master</b></h1>",
 
            colModel: [
-                  { title: "Expense Category ID", dataType: "integer", dataIndx: "expCategoryId",hidden:true},
+                  { title: "Expense Category ID", dataType: "integer", dataIndx: "expenseCategoryId",hidden:true},
                   { title: "Expense Name", width: 140, dataType: "string", align: "right", dataIndx: "expenseName",
                       filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
@@ -243,18 +246,24 @@
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
                   },
-                  { title: "Location Required", width: 100, dataType: "bool", align: "center", dataIndx: "locRequired",
+                  { title: "Location Required", width: 100, dataType: "bool", align: "center", dataIndx: "locationRequired",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
                       editor: { type: "checkbox", style: "margin:3px 5px;" },
                       render: function (ui) {
                           if(ui.cellData == true) return "Yes";
                           else return "No";
-                       	
                       }
                   },
                   { title: "Unit Required", width: 100, dataType: "bool", align: "center", dataIndx: "unitRequired",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
-                      editor: { type: "checkbox", style: "margin:3px 5px;" },
+                      editor: { type: "checkbox", style: "margin:3px 5px;",
+                    	  init: function(ui){
+                        	   ui.$cell.change(function(){
+                        		   ui.rowData['amount']="";
+                        		   $grid.pqGrid( "refreshCell", { rowIndx: ui.rowIndx, dataIndx: 'amount' } );
+                        	   });
+                          }
+                      },
                       render: function (ui) {
                           if(ui.cellData == true) return "Yes";
                           else return "No";
@@ -263,15 +272,33 @@
                   },
                   { title: "Amount Per Unit", width: 100, dataType: "float", align: "right", dataIndx: "amount",
                       validations: [
-                          { type: 'gt', value: 0.5, msg: "should be > 0.5" }
+                          //{ type: 'gt', value: 0, msg: "should be > 0" },
+                          { type: function(ui){
+                        	  	if(ui.rowData['unitRequired'] == true){
+                        	  		if(ui.value<=0 || ui.value== "NaN" ||ui.value ==""){
+                        	  		    ui.msg= "should be > 0";
+                        	  			return false;
+                        	  		}
+                        	  	}
+                        	  	else{
+                        	  		return true;
+                        	  	}
+                          	 }
+                          }
                       ],
+	               	  editable: function(ui){
+							if(ui.rowData['unitRequired'] == true)  
+								return true;
+							else 
+								return false;
+	                  },
                       render: function (ui) {
                           return ""+parseFloat(ui.cellData).toFixed(2);
                       }
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
-                      editor: { type: "checkbox", style: "margin:3px 5px;" },
+                      editor: { type: "checkbox", style: "margin:3px 5px;"},
                       render: function (ui) {
                           if(ui.cellData == true) return "Active";
                           else return "Inactive";
@@ -280,16 +307,17 @@
                   },
                   { title: "", width: 100, dataIndx: "createdBy", hidden:true },
                   { title: "", width: 100, dataIndx: "createdDate", hidden:true },
-                  { title: "", editable: false, minWidth: 165, sortable: false, render: function (ui) {
-                      return "<button type='button' class='edit_btn'>Edit</button>\
-                          <button type='button' class='delete_btn'>Delete</button>";
-                  }
+                  { title: "", editable: false, minWidth: 165, sortable: false, 
+                	  render: function (ui) {
+                      		return "<button type='button' class='edit_btn'>Edit</button>\
+                          		<button type='button' class='delete_btn'>Delete</button>";
+                  	  }
                   }
           ],
            dataModel: {
                dataType: "JSON",
                location: "local",
-               recIndx: "expCategoryId",
+               recIndx: "expenseCategoryId",
                data: expenseCategoryList
            },
            pageModel: { type: "local" },

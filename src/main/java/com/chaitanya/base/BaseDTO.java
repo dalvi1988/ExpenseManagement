@@ -26,6 +26,7 @@ public class BaseDTO implements Serializable{
 	private String modifiedDate;
 	private Boolean status;
 	private Command command; 
+	@JsonIgnore
 	private LoginDTO loginDTO;
 	private ServiceStatus serviceStatus;
 	private StringBuilder message;

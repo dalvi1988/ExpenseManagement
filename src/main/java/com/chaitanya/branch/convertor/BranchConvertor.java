@@ -24,10 +24,10 @@ public class BranchConvertor {
 				branchDTO.setModifiedBy(branchJPA.getModifiedBy());
 			}
 			if(Validation.validateForNullObject(branchJPA.getCreatedDate())){
-				branchDTO.setCreatedDate(Convertor.calendartoString(branchJPA.getCreatedDate()));
+				branchDTO.setCreatedDate(Convertor.calendartoString(branchJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(branchJPA.getModifiedDate())){
-				branchDTO.setModifiedDate(Convertor.calendartoString(branchJPA.getModifiedDate()));
+				branchDTO.setModifiedDate(Convertor.calendartoString(branchJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			branchDTO.setStatus(Convertor.convetStatusToBool(branchJPA.getStatus()));
 		}
@@ -50,10 +50,10 @@ public class BranchConvertor {
 				branchJPA.setCreatedBy(branchDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(branchDTO.getCreatedDate())){
-				branchJPA.setCreatedDate(Convertor.stringToCalendar(branchDTO.getCreatedDate()));
+				branchJPA.setCreatedDate(Convertor.stringToCalendar(branchDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(branchDTO.getModifiedDate())){
-				branchJPA.setModifiedDate(Convertor.stringToCalendar(branchDTO.getModifiedDate()));
+				branchJPA.setModifiedDate(Convertor.stringToCalendar(branchDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			CompanyJPA companyJPA=new CompanyJPA();
 			companyJPA.setCompanyId(branchDTO.getCompanyDTO().getCompanyId());

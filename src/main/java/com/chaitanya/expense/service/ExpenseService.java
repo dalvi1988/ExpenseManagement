@@ -33,7 +33,7 @@ public class ExpenseService implements IExpenseService{
 
 	
 	@Override
-	public BaseDTO addExpense(BaseDTO baseDTO) {
+	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) {
 		logger.debug("ExpenseService: addExpense-Start");
 		if(validateExpenseMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
@@ -48,10 +48,16 @@ public class ExpenseService implements IExpenseService{
 				expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 				expenseDetailJPAList.add(expenseDetailJPA);
 			}
+			
+			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
+				ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
+				expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+				expenseDetailJPAList.add(expenseDetailJPA);
+			}
 			expenseHeaderJPA.setExpenseDetailJPA(expenseDetailJPAList);
 			
 			if (Validation.validateForNullObject(expenseHeaderJPA)) {
-				expenseHeaderJPA = expenseDAO.add(expenseHeaderJPA);
+				expenseHeaderJPA = expenseDAO.saveUpdateExpense(expenseHeaderJPA);
 				if(Validation.validateForNullObject(expenseHeaderJPA)){
 					//baseDTO=ExpenseConvertor.setBranchJPAtoDTO(branchJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);

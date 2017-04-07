@@ -46,19 +46,19 @@ public class ExpenseCategoryController {
 		return model;
 	}
 	@RequestMapping(value="/addExpenseCategory", method=RequestMethod.POST)
-	public @ResponseBody ExpenseCategoryDTO addBranch(@RequestBody ExpenseCategoryDTO receivedBranchDTO){
+	public @ResponseBody ExpenseCategoryDTO addExpenseCategory(@RequestBody ExpenseCategoryDTO receivedBranchDTO){
 		ExpenseCategoryDTO toBeSentBranchDTO=null;
 		if(Validation.validateForNullObject(receivedBranchDTO)){
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if(!Validation.validateForNullObject(receivedBranchDTO.getExpCategoryId())){
+			if(!Validation.validateForNullObject(receivedBranchDTO.getExpenseCategoryId())){
 				receivedBranchDTO.setCommand(Command.ADD);
 				receivedBranchDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedBranchDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedBranchDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
 				receivedBranchDTO.setCommand(Command.UPDATE);
 				receivedBranchDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedBranchDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance()));
+				receivedBranchDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			BaseDTO baseDTO=expenseCategoryService.addExpenseCategory(receivedBranchDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){
