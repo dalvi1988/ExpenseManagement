@@ -1,11 +1,14 @@
 package com.chaitanya.config;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +25,20 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.ConstantMaster;
+import com.chaitanya.utility.dao.ICommonDAO;
+import com.chaitanya.utility.model.VoucherStatusDTO;
+
 @EnableWebMvc
 @Configuration
 @ComponentScan({ "com.chaitanya.*" })
 @Import({ SecurityConfig.class })
 public class AppConfig extends WebMvcConfigurerAdapter {
 
+	@Autowired
+	private ICommonDAO commonDao;
+	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/jquery/**").addResourceLocations("classpath:/jquery/");
@@ -101,6 +112,24 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    resolver.setDefaultEncoding("utf-8");
 	    resolver.setMaxUploadSize(5242880);//5MB
 	    return resolver;
+	}
+	
+	@Bean
+	public ConstantMaster getConstantMaster(){
+		
+		ConstantMaster constantMasters= new ConstantMaster();
+		List<VoucherStatusJPA> voucherStatusJPAList=commonDao.getVoucherStatus();
+		Map<Integer,VoucherStatusDTO> voucherStatusMap= new LinkedHashMap<>();
+		for(VoucherStatusJPA voucherStatusJPA:voucherStatusJPAList){
+			VoucherStatusDTO voucherStatusDTO =new VoucherStatusDTO();
+			voucherStatusDTO.setVoucherStatusId(voucherStatusJPA.getVoucherStatusId());
+			voucherStatusDTO.setVoucherStatus(voucherStatusJPA.getVoucherStatus());
+			voucherStatusDTO.setTextToDisplay(voucherStatusJPA.getTextToDisplay());
+			voucherStatusMap.put(voucherStatusJPA.getVoucherStatusId(), voucherStatusDTO);
+		}
+		constantMasters.setVoucherStatusMap(voucherStatusMap);
+		
+		return constantMasters;
 	}
 	
 }

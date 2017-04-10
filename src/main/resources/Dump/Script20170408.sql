@@ -36,3 +36,8 @@ CREATE TABLE `process_instance` (
   `modified_date` datetime DEFAULT NULL,
   PRIMARY KEY (`process_instance_id`)
 ) ;
+
+CREATE TABLE `test`.`voucher_status` (
+  `voucher_status_id` INT NOT NULL,
+  `voucher_status` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`voucher_status_id`));

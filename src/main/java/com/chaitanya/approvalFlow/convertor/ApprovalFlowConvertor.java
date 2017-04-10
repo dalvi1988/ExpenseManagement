@@ -51,10 +51,10 @@ public class ApprovalFlowConvertor {
 				approvalFlowDTO.setModifiedBy(approvalFlowJPA.getModifiedBy());
 			}
 			if(Validation.validateForNullObject(approvalFlowJPA.getCreatedDate())){
-				approvalFlowDTO.setCreatedDate(Convertor.calendartoString(approvalFlowJPA.getCreatedDate()));
+				approvalFlowDTO.setCreatedDate(Convertor.calendartoString(approvalFlowJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(approvalFlowJPA.getModifiedDate())){
-				approvalFlowDTO.setModifiedDate(Convertor.calendartoString(approvalFlowJPA.getModifiedDate()));
+				approvalFlowDTO.setModifiedDate(Convertor.calendartoString(approvalFlowJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			approvalFlowDTO.setStatus(Convertor.convetStatusToBool(approvalFlowJPA.getStatus()));
 			
@@ -105,10 +105,10 @@ public class ApprovalFlowConvertor {
 				approvalFlowJPA.setCreatedBy(approvalFlowDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(approvalFlowDTO.getCreatedDate())){
-				approvalFlowJPA.setCreatedDate(Convertor.stringToCalendar(approvalFlowDTO.getCreatedDate()));
+				approvalFlowJPA.setCreatedDate(Convertor.stringToCalendar(approvalFlowDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(approvalFlowDTO.getModifiedDate())){
-				approvalFlowJPA.setModifiedDate(Convertor.stringToCalendar(approvalFlowDTO.getModifiedDate()));
+				approvalFlowJPA.setModifiedDate(Convertor.stringToCalendar(approvalFlowDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
 			
 			approvalFlowJPA.setStatus(Convertor.convertStatusToChar(approvalFlowDTO.getStatus()));
