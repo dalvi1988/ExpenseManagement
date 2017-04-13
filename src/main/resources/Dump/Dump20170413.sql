@@ -1,8 +1,10 @@
--- MySQL dump 10.13  Distrib 5.6.19, for Win32 (x86)
+CREATE DATABASE  IF NOT EXISTS `test` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `test`;
+-- MySQL dump 10.13  Distrib 5.7.9, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: test
 -- ------------------------------------------------------
--- Server version	5.6.22-enterprise-commercial-advanced-log
+-- Server version	5.6.28
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -86,7 +88,7 @@ CREATE TABLE `company_details` (
 
 LOCK TABLES `company_details` WRITE;
 /*!40000 ALTER TABLE `company_details` DISABLE KEYS */;
-INSERT INTO `company_details` VALUES (1,'CJ','C&J company',NULL,NULL,NULL,NULL,'Y'),(2,'India','India',NULL,NULL,1,'2017-01-01 19:12:49','N'),(3,'Oil Pvt Ldt','OlL',NULL,NULL,NULL,NULL,'');
+INSERT INTO `company_details` VALUES (1,'CJ','C&J company',NULL,NULL,NULL,NULL,'Y'),(2,'India','India',NULL,NULL,1,'2017-01-01 19:12:49','N'),(3,'Oil Pvt Ldt','OlL',NULL,NULL,NULL,NULL,'N');
 /*!40000 ALTER TABLE `company_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -214,6 +216,44 @@ INSERT INTO `employee_details` VALUES (1,1,1,1,'Chaitanya',NULL,'Dalvi','chaitan
 UNLOCK TABLES;
 
 --
+-- Table structure for table `expense_category`
+--
+
+DROP TABLE IF EXISTS `expense_category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `expense_category` (
+  `expense_category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `expense_name` varchar(45) NOT NULL,
+  `gl_code` varchar(45) DEFAULT NULL,
+  `location_required` char(1) NOT NULL,
+  `unit_required` char(1) DEFAULT NULL,
+  `amount` double DEFAULT NULL,
+  `created_by` bigint(11) DEFAULT NULL,
+  `created_date` varchar(45) DEFAULT NULL,
+  `modified_by` bigint(11) DEFAULT NULL,
+  `modified_date` varchar(45) DEFAULT NULL,
+  `status` char(1) NOT NULL,
+  PRIMARY KEY (`expense_category_id`),
+  UNIQUE KEY `category_name_UNIQUE` (`expense_name`),
+  KEY `created_by_exp_cat_idx` (`created_by`),
+  KEY `modified_by_exp_cat_idx` (`modified_by`),
+  CONSTRAINT `created_by_exp_cat` FOREIGN KEY (`created_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `modified_by_exp_cat` FOREIGN KEY (`modified_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `expense_category`
+--
+
+LOCK TABLES `expense_category` WRITE;
+/*!40000 ALTER TABLE `expense_category` DISABLE KEYS */;
+INSERT INTO `expense_category` VALUES (1,'Meal','A54545','N','Y',50,1,'2017-04-08 10:42:59',1,'2017-04-08 19:46:24','Y'),(2,'Bus','A5673','Y','N',NULL,1,'2017-04-08 10:48:36',NULL,NULL,'Y'),(3,'Railways','A5446','Y','N',NULL,1,'2017-04-08 10:50:41',1,'2017-04-08 11:02:30','Y');
+/*!40000 ALTER TABLE `expense_category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `expense_details`
 --
 
@@ -223,15 +263,20 @@ DROP TABLE IF EXISTS `expense_details`;
 CREATE TABLE `expense_details` (
   `expense_detail_id` bigint(10) NOT NULL AUTO_INCREMENT,
   `expense_header_id` bigint(10) DEFAULT NULL,
-  `expense_name_id` int(10) DEFAULT NULL,
+  `expense_category_id` int(11) NOT NULL,
   `date` date DEFAULT NULL,
   `from_location` varchar(45) DEFAULT NULL,
   `to_location` varchar(45) DEFAULT NULL,
+  `description` varchar(45) NOT NULL,
+  `unit` int(5) DEFAULT NULL,
   `amount` double DEFAULT NULL,
   `file_Name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`expense_detail_id`),
-  KEY `exp_header_exp_details_idx` (`expense_header_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `exp_category_exp_detail_idx` (`expense_category_id`),
+  KEY `exp_header_exp_detail_idx` (`expense_header_id`),
+  CONSTRAINT `exp_category_exp_detail` FOREIGN KEY (`expense_category_id`) REFERENCES `expense_category` (`expense_category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `exp_header_exp_detail` FOREIGN KEY (`expense_header_id`) REFERENCES `expense_header` (`expense_header_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -240,6 +285,7 @@ CREATE TABLE `expense_details` (
 
 LOCK TABLES `expense_details` WRITE;
 /*!40000 ALTER TABLE `expense_details` DISABLE KEYS */;
+INSERT INTO `expense_details` VALUES (6,5,1,'2017-04-02','dsf','df','',NULL,20,NULL),(7,6,1,'2017-04-02','asdf','sdf','',NULL,33,NULL),(8,7,1,'2017-04-02','sdfjl','sdfj','',NULL,60,NULL),(9,8,1,'2017-04-02','dsaf','sdf','',NULL,30,NULL),(10,5,1,'2017-04-02','kjl','sf','',NULL,201,NULL),(11,6,1,'2017-04-02','ppapsdf','ppp','',NULL,90,NULL),(12,9,2,'2017-04-06','office','Andheri','meeting',NULL,50,NULL),(13,9,3,'2017-04-05','virarajdsfl','borivali','kasjdfj',NULL,33,NULL),(14,9,1,'2017-04-06','','','kjasdfj',NULL,20,NULL),(15,9,1,'2017-04-05','','','Meal',5,30,NULL);
 /*!40000 ALTER TABLE `expense_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -258,7 +304,7 @@ CREATE TABLE `expense_header` (
   `title` varchar(45) DEFAULT NULL,
   `purpose` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`expense_header_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -267,6 +313,7 @@ CREATE TABLE `expense_header` (
 
 LOCK TABLES `expense_header` WRITE;
 /*!40000 ALTER TABLE `expense_header` DISABLE KEYS */;
+INSERT INTO `expense_header` VALUES (5,1,'2017-04-02','2017-04-02','sdfa','asdf'),(6,1,'2017-04-02','2017-04-02','addsf','dsf'),(7,1,'2017-04-02','2017-04-02','sdfa','asdf'),(8,1,'2017-04-02','2017-04-02','sdfa','asdf'),(9,1,'2017-04-05','2017-04-06','Monthy Expense','Monthly Expense');
 /*!40000 ALTER TABLE `expense_header` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -358,6 +405,64 @@ INSERT INTO `login_details` VALUES (1,'chaitanya','$2a$10$04TVADrR6/SPLBjsK0N30.
 UNLOCK TABLES;
 
 --
+-- Table structure for table `process_history`
+--
+
+DROP TABLE IF EXISTS `process_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `process_history` (
+  `process_history_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `process_jnstance_id` bigint(10) DEFAULT NULL,
+  `voucher_status_id` int(11) DEFAULT NULL,
+  `processed_by` bigint(10) DEFAULT NULL COMMENT 'Approved/rejected by ',
+  `processed_date` datetime DEFAULT NULL,
+  `comments` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`process_history_id`),
+  KEY `process_inst_id_process_hist_idx` (`process_jnstance_id`),
+  CONSTRAINT `process_inst_id_process_hist` FOREIGN KEY (`process_jnstance_id`) REFERENCES `process_instance` (`process_instance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `process_history`
+--
+
+LOCK TABLES `process_history` WRITE;
+/*!40000 ALTER TABLE `process_history` DISABLE KEYS */;
+/*!40000 ALTER TABLE `process_history` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `process_instance`
+--
+
+DROP TABLE IF EXISTS `process_instance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `process_instance` (
+  `process_instance_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `expense_header_id` bigint(10) DEFAULT NULL,
+  `current_status` int(5) NOT NULL,
+  `currently_pending_at` bigint(10) DEFAULT NULL,
+  `created_by` bigint(10) DEFAULT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `modified_by` bigint(10) DEFAULT NULL,
+  `modified_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`process_instance_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `process_instance`
+--
+
+LOCK TABLES `process_instance` WRITE;
+/*!40000 ALTER TABLE `process_instance` DISABLE KEYS */;
+/*!40000 ALTER TABLE `process_instance` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user_roles`
 --
 
@@ -383,6 +488,31 @@ LOCK TABLES `user_roles` WRITE;
 INSERT INTO `user_roles` VALUES (1,'ROLE_ADMIN',1);
 /*!40000 ALTER TABLE `user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `voucher_status`
+--
+
+DROP TABLE IF EXISTS `voucher_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `voucher_status` (
+  `voucher_status_id` int(11) NOT NULL,
+  `voucher_status` varchar(45) NOT NULL,
+  `text_to_display` varchar(45) NOT NULL,
+  PRIMARY KEY (`voucher_status_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `voucher_status`
+--
+
+LOCK TABLES `voucher_status` WRITE;
+/*!40000 ALTER TABLE `voucher_status` DISABLE KEYS */;
+INSERT INTO `voucher_status` VALUES (1,'Save As Draft','Send For Approval'),(2,'Send For Approval','Send For Approval'),(3,'Completely Approved','Completely Approved'),(11,'Pending At 1st Level','Pending At 1st Level'),(12,'Rejected At 1st Level','Rejected At 1st Level'),(13,'Approved At 1st Level','Approved At 1st Level'),(21,'Pending At 2nd Level','Pending At 2nd Level'),(22,'Rejected At 2nd Level','Rejected At 2nd Level'),(23,'Approved At 2nd Level','Approved At 2nd Level'),(31,'Pending At 3rd Level','Pending At 3rd Level'),(32,'Rejected At 3rd Level','Rejected At 3rd Level'),(33,'Approved At 3rd Level','Approved At 3rd Level'),(101,'Fin Pending At 1st Level','Fin Pending At 1st Level'),(102,'Fin Rejected At 1st Level','Fin Rejected At 1st Level'),(103,'Fin Appoved At 1st Level','Fin Appoved At 1st Level'),(201,'Fin Pending At 2nd Level','Fin Pending At 2nd Level'),(202,'Fin Rejected At 2nd Level','Fin Rejected At 2nd Level'),(203,'Fin Appoved At 2nd Level','Fin Appoved At 2nd Level'),(301,'Fin Pending At 3rd Level','Fin Pending At 3rd Level'),(302,'Fin Rejected At 3rd Level','Fin Rejected At 3rd Level'),(303,'Fin Appoved At 3rd Level','Fin Appoved At 3rd Level');
+/*!40000 ALTER TABLE `voucher_status` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -393,4 +523,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-28 19:50:18
+-- Dump completed on 2017-04-13 19:31:04
