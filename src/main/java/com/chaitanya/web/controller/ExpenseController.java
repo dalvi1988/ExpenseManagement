@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -65,6 +66,25 @@ public class ExpenseController {
 		return model;
 	}
 	
+	@RequestMapping(value="/toBeApproveExpense",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getExppenseAprrovalPage() throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+		model.setViewName("expense/toBeApproveExpenseJSP");
+		return model;
+	}
+	
+	@RequestMapping(value="/toBeApproveExpenseList",method=RequestMethod.POST)
+	public @ResponseBody String getAllExpenseCategory() throws JsonGenerationException, JsonMappingException, IOException{
+		ObjectMapper mapper= new ObjectMapper();
+		
+		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+		ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+		expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+		expenseHeaderDTOList=expenseService.getExpenseToBeApprove(expenseHeaderDTO);
+
+		return "{\"data\":"+mapper.writeValueAsString(expenseHeaderDTOList)+"}";
+	}
 	
 	@RequestMapping(value="/saveExpense",method=RequestMethod.POST)
 	public ModelAndView saveExpense(@Valid @ModelAttribute("ExpenseHeaderDTO") ExpenseHeaderDTO expenseHeaderDTO,BindingResult result, @RequestParam("addedFiles") List<MultipartFile> addedFiles,@RequestParam("updatedFiles") List<MultipartFile> updatedFiles, String data) throws JsonGenerationException, JsonMappingException, IOException{
@@ -128,4 +148,5 @@ public class ExpenseController {
 		model.setViewName("expense/viewExpensesJSP");
 		return model;
 	}
+	
 }

@@ -141,31 +141,34 @@ $(function () {
 	}
 	
 	function addNewRow(){
+		
 		var rowData = {locationRequired:false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
 	}
 	
     //called when accept changes button is clicked.
-    function acceptChanges() {
+    function acceptChanges(command) {
         //attempt to save editing cell.
         //debugger;
         if (grid.saveEditCell() === false) {
             return false;
         }
 
-        var isDirty = grid.isDirty();
-        if (isDirty) {
+       /*  var isDirty = grid.isDirty();
+        if (isDirty) { */
             //validate the new added rows.                
             var addList = grid.getChanges().addList;
-            for (var i = 0; i < addList.length; i++) {
+            for( var i = 0; i < addList.length; i++) {
                 var rowData = addList[i];
-                 if(typeof rowData.receipt =="undefined" || rowData.receipt == ""){
+                
+                if(typeof rowData.receipt =="undefined" || rowData.receipt == ""){
                 	$("#filesDiv").append("<input type='file'name='addedFiles'/>");
                 }
                 else{ 
                 	$("#filesDiv").append(rowData.receipt);
                 }
+                
                 var isValid = grid.isValid({ "rowData": rowData }).valid;
                 if (!isValid) {
                     return;
@@ -190,9 +193,10 @@ $(function () {
             var changes = grid.getChanges({ format: "byVal" });
             
             $("#data").val(JSON.stringify(changes));
+            $("#voucherStatusId").val(command);
             
             $("#form").submit();
-          }
+          //}
     }
     var obj = {
         width: 900,
@@ -208,17 +212,17 @@ $(function () {
         toolbar: {
             items: [
 				{ type: 'separator',style: 'margin:0px 0px 0px 65%' },
-				{ type: 'button', icon: 'ui-icon-disk', label: 'Save as Draft', style: 'margin:0px 0px 0px 0px', listeners: [
+				{ type: 'button', icon: 'ui-icon-disk', attr:"value='1'", label: 'Save as Draft', style: 'margin:0px 0px 0px 0px', listeners: [
                     { "click": function (evt, ui) {
-                        acceptChanges();
+                        acceptChanges(this.value);
                     }
                     }
                 ]
                 },
                 { type: 'separator' },
-                { type: 'button', icon: 'ui-icon-disk', label: 'Send for Approval', style: 'margin:0px 0px 0px 0px;', listeners: [
+                { type: 'button', icon: 'ui-icon-disk',attr:"value='2'", label: 'Send for Approval', style: 'margin:0px 0px 0px 0px;', listeners: [
                     { "click": function (evt, ui) {
-                        acceptChanges();
+                        acceptChanges(this.value);
                     }
                     }
                 ]
@@ -248,10 +252,6 @@ $(function () {
          scrollModel: {
             autoFit: true
         },
-        /*selectionModel: {
-            type: ''
-        },
-        hoverMode: 'cell', */
         editModel: {
             saveKey: $.ui.keyCode.ENTER
         },
@@ -463,7 +463,8 @@ $(function () {
         <div id="grid_editing" style="margin: auto;"></div>
  		<input type="hidden" id="data" name="data"/>
  		<div id="filesDiv" style="border: medium; display: none;"></div>
- 		<form:hidden path="expenseHeaderId"></form:hidden>  
+ 		<form:hidden path="expenseHeaderId"></form:hidden>
+ 		<form:hidden id="voucherStatusId" path="voucherStatusId"/>  
     </form:form>
     
      

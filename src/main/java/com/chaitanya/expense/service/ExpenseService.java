@@ -17,10 +17,12 @@ import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
+import com.chaitanya.jpa.ProcessHistoryJPA;
 import com.chaitanya.utility.Validation;
 
 @Service("expenseService")
 public class ExpenseService implements IExpenseService{
+	
 	@Autowired
 	private IExpenseDAO expenseDAO;
 	
@@ -56,10 +58,15 @@ public class ExpenseService implements IExpenseService{
 			}
 			expenseHeaderJPA.setExpenseDetailJPA(expenseDetailJPAList);
 			
+			ProcessHistoryJPA processHistoryJPA = ExpenseConvertor.setExpenseHeaderJPAtoProcessHistoryJPA(expenseHeaderJPA);
+			processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+			List<ProcessHistoryJPA> processHistoryJPAList= new ArrayList<ProcessHistoryJPA>();
+			processHistoryJPAList.add(processHistoryJPA);
+			expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
+			
 			if (Validation.validateForNullObject(expenseHeaderJPA)) {
 				expenseHeaderJPA = expenseDAO.saveUpdateExpense(expenseHeaderJPA);
 				if(Validation.validateForNullObject(expenseHeaderJPA)){
-					//baseDTO=ExpenseConvertor.setBranchJPAtoDTO(branchJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
 			}
@@ -111,7 +118,39 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: getDraftExpense-End");
 		return  expenseHeaderDTOList;
 	}
+	
+	@Override
+	public List<ExpenseHeaderDTO> getExpenseToBeApprove(BaseDTO baseDTO) {
 
+		logger.debug("ExpenseService: getExpenseToBeApprove-Start");
+		if(validateExpenseMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
+		}
+		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+				List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getExpenseToBeApprove(expenseHeaderDTO);
+				if(Validation.validateForNullObject(expenseHeaderJPAList)){
+					expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+					for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+						ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+						expenseHeaderDTOList.add(expHeaderDTO);
+					}
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("ExpenseService: Exception",e);
+		}
+		logger.debug("ExpenseService: getExpenseToBeApprove-End");
+		return  expenseHeaderDTOList;
+	}
 
 	@Override
 	public BaseDTO getExpense(BaseDTO baseDTO) {
@@ -146,4 +185,5 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: getExpense-End");
 		return  baseDTO;
 	}
+	
 }

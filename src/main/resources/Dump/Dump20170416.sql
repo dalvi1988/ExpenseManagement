@@ -165,7 +165,7 @@ CREATE TABLE `department_head` (
 
 LOCK TABLES `department_head` WRITE;
 /*!40000 ALTER TABLE `department_head` DISABLE KEYS */;
-INSERT INTO `department_head` VALUES (1,48,1,1,NULL,NULL,1,'2017-01-01 19:29:12','Y'),(2,43,1,1,1,'2017-01-01 10:17:34',NULL,NULL,'Y'),(3,47,3,4,1,'2017-01-01 10:18:13',NULL,NULL,'Y'),(4,48,1,3,1,'2017-01-01 10:18:41',NULL,NULL,'Y'),(5,44,1,4,1,'2017-01-01 10:19:01',NULL,NULL,'Y'),(6,48,1,4,1,'2017-01-01 10:23:43',NULL,NULL,'Y'),(7,55,1,3,1,'2017-01-01 23:10:24',1,'2017-01-01 11:48:44','Y'),(8,43,1,4,1,'2017-01-01 09:09:49',NULL,NULL,'Y'),(9,48,3,2,1,'2017-01-01 10:17:28',NULL,NULL,'Y'),(10,43,4,1,1,'2017-01-01 11:49:07',NULL,NULL,'Y');
+INSERT INTO `department_head` VALUES (1,48,1,1,NULL,NULL,1,'2017-01-01 19:29:12','Y'),(2,43,1,1,1,'2017-01-01 10:17:34',NULL,NULL,'Y'),(3,47,3,4,1,'2017-01-01 10:18:13',NULL,NULL,'Y'),(4,48,1,3,1,'2017-01-01 10:18:41',NULL,NULL,'Y'),(5,1,1,4,1,'2017-01-01 10:19:01',NULL,NULL,'Y'),(6,48,1,4,1,'2017-01-01 10:23:43',NULL,NULL,'Y'),(7,55,1,3,1,'2017-01-01 23:10:24',1,'2017-01-01 11:48:44','Y'),(8,43,1,4,1,'2017-01-01 09:09:49',NULL,NULL,'Y'),(9,48,3,2,1,'2017-01-01 10:17:28',NULL,NULL,'Y'),(10,43,4,1,1,'2017-01-01 11:49:07',NULL,NULL,'Y');
 /*!40000 ALTER TABLE `department_head` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -276,7 +276,7 @@ CREATE TABLE `expense_details` (
   KEY `exp_header_exp_detail_idx` (`expense_header_id`),
   CONSTRAINT `exp_category_exp_detail` FOREIGN KEY (`expense_category_id`) REFERENCES `expense_category` (`expense_category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `exp_header_exp_detail` FOREIGN KEY (`expense_header_id`) REFERENCES `expense_header` (`expense_header_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -285,7 +285,7 @@ CREATE TABLE `expense_details` (
 
 LOCK TABLES `expense_details` WRITE;
 /*!40000 ALTER TABLE `expense_details` DISABLE KEYS */;
-INSERT INTO `expense_details` VALUES (6,5,1,'2017-04-02','dsf','df','',NULL,20,NULL),(7,6,1,'2017-04-02','asdf','sdf','',NULL,33,NULL),(8,7,1,'2017-04-02','sdfjl','sdfj','',NULL,60,NULL),(9,8,1,'2017-04-02','dsaf','sdf','',NULL,30,NULL),(10,5,1,'2017-04-02','kjl','sf','',NULL,201,NULL),(11,6,1,'2017-04-02','ppapsdf','ppp','',NULL,90,NULL),(12,9,2,'2017-04-06','office','Andheri','meeting',NULL,50,NULL),(13,9,3,'2017-04-05','virarajdsfl','borivali','kasjdfj',NULL,33,NULL),(14,9,1,'2017-04-06','','','kjasdfj',NULL,20,NULL),(15,9,1,'2017-04-05','','','Meal',5,30,NULL);
+INSERT INTO `expense_details` VALUES (6,5,1,'2017-04-02','dsf','df','',NULL,20,NULL),(7,6,1,'2017-04-02','asdf','sdf','',NULL,33,NULL),(8,7,1,'2017-04-02','sdfjl','sdfj','',NULL,60,NULL),(9,8,1,'2017-04-02','dsaf','sdf','',NULL,30,NULL),(10,5,1,'2017-04-02','kjl','sf','',NULL,201,NULL),(11,6,1,'2017-04-02','ppapsdf','ppp','',NULL,90,NULL),(12,9,2,'2017-04-06','office','Andheri','meeting',NULL,50,NULL),(13,9,3,'2017-04-05','virarajdsfl','borivali','kasjdfj',NULL,33,NULL),(14,9,1,'2017-04-06','','','kjasdfj',NULL,20,NULL),(15,9,1,'2017-04-05','','','Meal',5,30,NULL),(16,10,1,'2017-04-06','','','meal',20,45,NULL),(17,7,2,'2017-04-02','Khargharr','mira','skdfjls',NULL,34,NULL);
 /*!40000 ALTER TABLE `expense_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -299,12 +299,17 @@ DROP TABLE IF EXISTS `expense_header`;
 CREATE TABLE `expense_header` (
   `expense_header_id` bigint(10) NOT NULL AUTO_INCREMENT,
   `employee_id` bigint(10) DEFAULT NULL,
+  `voucher_status` int(11) DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `title` varchar(45) DEFAULT NULL,
   `purpose` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`expense_header_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`expense_header_id`),
+  KEY `emp_id_expe_header_idx` (`employee_id`),
+  KEY `voucher_status_exp_header_idx` (`voucher_status`),
+  CONSTRAINT `emp_id_expe_header` FOREIGN KEY (`employee_id`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `voucher_status_exp_header` FOREIGN KEY (`voucher_status`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -313,7 +318,7 @@ CREATE TABLE `expense_header` (
 
 LOCK TABLES `expense_header` WRITE;
 /*!40000 ALTER TABLE `expense_header` DISABLE KEYS */;
-INSERT INTO `expense_header` VALUES (5,1,'2017-04-02','2017-04-02','sdfa','asdf'),(6,1,'2017-04-02','2017-04-02','addsf','dsf'),(7,1,'2017-04-02','2017-04-02','sdfa','asdf'),(8,1,'2017-04-02','2017-04-02','sdfa','asdf'),(9,1,'2017-04-05','2017-04-06','Monthy Expense','Monthly Expense');
+INSERT INTO `expense_header` VALUES (5,1,1,'2017-04-02','2017-04-02','sdfa','asdf'),(6,1,1,'2017-04-02','2017-04-02','addsf','dsfasfads'),(7,1,2,'2017-04-02','2017-04-02','14April','14Apriil'),(8,1,2,'2017-04-02','2017-04-02','sdfas','aasdf'),(9,1,2,'2017-04-05','2017-04-06','Monthy Expense','Monthly Expense'),(10,1,2,'2017-04-06','2017-04-06','Weekly','afdask');
 /*!40000 ALTER TABLE `expense_header` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,7 +344,7 @@ CREATE TABLE `functional_flow` (
   `modified_date` datetime DEFAULT NULL,
   `status` char(1) NOT NULL,
   PRIMARY KEY (`flow_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -348,7 +353,7 @@ CREATE TABLE `functional_flow` (
 
 LOCK TABLES `functional_flow` WRITE;
 /*!40000 ALTER TABLE `functional_flow` DISABLE KEYS */;
-INSERT INTO `functional_flow` VALUES (1,'N',1,1,2,-10,-1,NULL,NULL,NULL,NULL,NULL,'N'),(2,'N',1,43,2,-10,4,NULL,1,'2017-01-01 22:19:19',NULL,NULL,'N'),(3,'N',1,48,2,-10,-11,NULL,1,'2017-01-01 20:58:45',NULL,NULL,'N'),(4,'N',1,50,2,-10,-11,NULL,1,'2017-01-01 21:00:59',NULL,NULL,'Y'),(5,'N',1,54,3,-10,-11,-1,1,'2017-01-01 21:02:20',NULL,NULL,'Y'),(6,'N',1,58,1,-10,NULL,NULL,1,'2017-01-01 21:27:37',NULL,NULL,'Y'),(7,'N',1,44,1,-11,NULL,NULL,1,'2017-01-01 21:28:19',NULL,NULL,'Y'),(8,'N',1,50,1,-10,NULL,NULL,1,'2017-01-01 21:30:49',NULL,NULL,'Y'),(9,'N',1,55,1,-11,NULL,NULL,1,'2017-01-01 21:31:55',NULL,NULL,'Y'),(10,'N',1,56,1,-10,NULL,NULL,1,'2017-01-01 21:34:00',NULL,NULL,'Y'),(11,'N',1,53,1,-10,NULL,NULL,1,'2017-01-01 21:35:25',NULL,NULL,'Y'),(12,'N',1,52,1,-10,NULL,NULL,1,'2017-01-01 21:37:41',NULL,NULL,'Y'),(13,'N',1,50,1,-10,NULL,NULL,1,'2017-01-01 21:39:17',NULL,NULL,'Y'),(14,'N',1,52,1,-10,NULL,NULL,1,'2017-01-01 21:41:38',NULL,NULL,'Y'),(15,'N',3,43,1,-10,NULL,NULL,1,'2017-01-01 21:42:43',NULL,NULL,'Y'),(16,'N',4,1,1,-10,NULL,NULL,1,'2017-01-01 21:43:27',NULL,NULL,'Y'),(17,'Y',1,NULL,2,-11,-10,NULL,1,'2017-01-01 17:22:42',NULL,NULL,'N'),(18,'N',1,NULL,1,-10,NULL,NULL,1,'2017-01-01 17:35:06',NULL,NULL,'N'),(19,'N',1,NULL,1,-10,NULL,NULL,1,'2017-01-01 18:22:01',NULL,NULL,'Y'),(20,'N',1,NULL,1,-10,NULL,NULL,1,'2017-01-01 18:23:22',NULL,NULL,'Y'),(21,'N',1,NULL,1,-10,NULL,NULL,1,'2017-01-01 18:25:16',NULL,NULL,'Y'),(22,'Y',1,NULL,1,-10,NULL,NULL,1,'2017-01-01 18:29:00',NULL,NULL,'Y'),(23,'N',1,1,1,-10,NULL,NULL,1,'2017-01-01 19:41:29',NULL,NULL,'Y');
+INSERT INTO `functional_flow` VALUES (1,'N',1,1,2,-10,-1,NULL,NULL,NULL,NULL,NULL,'Y'),(2,'N',1,43,2,-10,4,NULL,1,'2017-01-01 22:19:19',NULL,NULL,'N'),(3,'N',1,48,2,-10,-11,NULL,1,'2017-01-01 20:58:45',NULL,NULL,'N'),(4,'N',1,50,2,-10,-11,NULL,1,'2017-01-01 21:00:59',NULL,NULL,'Y'),(5,'N',1,54,3,-10,-11,-1,1,'2017-01-01 21:02:20',NULL,NULL,'Y'),(6,'N',1,58,1,-10,NULL,NULL,1,'2017-01-01 21:27:37',NULL,NULL,'Y'),(7,'N',1,44,1,-11,NULL,NULL,1,'2017-01-01 21:28:19',NULL,NULL,'Y'),(8,'N',1,50,1,-10,NULL,NULL,1,'2017-01-01 21:30:49',NULL,NULL,'Y'),(9,'N',1,55,1,-11,NULL,NULL,1,'2017-01-01 21:31:55',NULL,NULL,'Y'),(10,'N',1,56,1,-10,NULL,NULL,1,'2017-01-01 21:34:00',NULL,NULL,'Y'),(11,'N',1,53,1,-10,NULL,NULL,1,'2017-01-01 21:35:25',NULL,NULL,'Y'),(12,'N',1,52,1,-10,NULL,NULL,1,'2017-01-01 21:37:41',NULL,NULL,'Y'),(13,'N',1,50,1,-10,NULL,NULL,1,'2017-01-01 21:39:17',NULL,NULL,'Y'),(14,'N',1,52,1,-10,NULL,NULL,1,'2017-01-01 21:41:38',NULL,NULL,'Y'),(15,'N',3,43,1,-10,NULL,NULL,1,'2017-01-01 21:42:43',NULL,NULL,'Y'),(16,'N',4,1,1,-10,NULL,NULL,1,'2017-01-01 21:43:27',NULL,NULL,'Y'),(17,'Y',1,NULL,2,-11,-10,NULL,1,'2017-01-01 17:22:42',NULL,NULL,'Y'),(24,'N',1,NULL,2,-10,-1,NULL,1,'2017-04-15 10:04:12',NULL,NULL,'Y');
 /*!40000 ALTER TABLE `functional_flow` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,7 +377,7 @@ CREATE TABLE `levels` (
 
 LOCK TABLES `levels` WRITE;
 /*!40000 ALTER TABLE `levels` DISABLE KEYS */;
-INSERT INTO `levels` VALUES (-12,'Reporting Manager\'s RM'),(-11,'Reporting Manager'),(-1,'Department Head');
+INSERT INTO `levels` VALUES (-11,'Reporting Manager\'s RM'),(-10,'Reporting Manager'),(-1,'Department Head');
 /*!40000 ALTER TABLE `levels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -413,15 +418,15 @@ DROP TABLE IF EXISTS `process_history`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `process_history` (
   `process_history_id` bigint(10) NOT NULL AUTO_INCREMENT,
-  `process_jnstance_id` bigint(10) DEFAULT NULL,
+  `expense_header_id` bigint(10) NOT NULL,
   `voucher_status_id` int(11) DEFAULT NULL,
   `processed_by` bigint(10) DEFAULT NULL COMMENT 'Approved/rejected by ',
   `processed_date` datetime DEFAULT NULL,
   `comments` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`process_history_id`),
-  KEY `process_inst_id_process_hist_idx` (`process_jnstance_id`),
-  CONSTRAINT `process_inst_id_process_hist` FOREIGN KEY (`process_jnstance_id`) REFERENCES `process_instance` (`process_instance_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `process_inst_id_process_hist_idx` (`expense_header_id`),
+  CONSTRAINT `expense_header_process_hist` FOREIGN KEY (`expense_header_id`) REFERENCES `expense_header` (`expense_header_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -430,6 +435,7 @@ CREATE TABLE `process_history` (
 
 LOCK TABLES `process_history` WRITE;
 /*!40000 ALTER TABLE `process_history` DISABLE KEYS */;
+INSERT INTO `process_history` VALUES (22,9,2,1,NULL,NULL),(23,9,NULL,NULL,NULL,'Skipping level -10 because voucher creator and approval are same'),(25,7,2,1,NULL,NULL),(26,7,NULL,NULL,NULL,'Skipping level 1 because voucher creator and approval are same'),(27,10,2,1,NULL,NULL),(28,10,NULL,NULL,NULL,'Skipping level 1 because voucher creator and approval are same'),(29,8,2,1,NULL,NULL),(30,8,NULL,NULL,NULL,'Skipping level 1 because voucher creator and approval are same');
 /*!40000 ALTER TABLE `process_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -442,15 +448,15 @@ DROP TABLE IF EXISTS `process_instance`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `process_instance` (
   `process_instance_id` bigint(10) NOT NULL AUTO_INCREMENT,
-  `expense_header_id` bigint(10) DEFAULT NULL,
-  `current_status` int(5) NOT NULL,
-  `currently_pending_at` bigint(10) DEFAULT NULL,
-  `created_by` bigint(10) DEFAULT NULL,
-  `created_date` datetime DEFAULT NULL,
-  `modified_by` bigint(10) DEFAULT NULL,
-  `modified_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`process_instance_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `expense_header_id` bigint(10) NOT NULL,
+  `voucher_status_id` int(5) NOT NULL,
+  `pending_at` bigint(10) NOT NULL,
+  PRIMARY KEY (`process_instance_id`),
+  KEY `pending_at_process_inst_idx` (`pending_at`),
+  KEY `voucher_status_process_inst_idx` (`voucher_status_id`),
+  CONSTRAINT `pending_at_process_inst` FOREIGN KEY (`pending_at`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `voucher_status_process_inst` FOREIGN KEY (`voucher_status_id`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -459,6 +465,7 @@ CREATE TABLE `process_instance` (
 
 LOCK TABLES `process_instance` WRITE;
 /*!40000 ALTER TABLE `process_instance` DISABLE KEYS */;
+INSERT INTO `process_instance` VALUES (1,10,11,4),(2,8,11,4);
 /*!40000 ALTER TABLE `process_instance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -499,6 +506,8 @@ DROP TABLE IF EXISTS `voucher_status`;
 CREATE TABLE `voucher_status` (
   `voucher_status_id` int(11) NOT NULL,
   `voucher_status` varchar(45) NOT NULL,
+  `text_to_display` varchar(45) NOT NULL,
+  `next_status_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`voucher_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -509,7 +518,7 @@ CREATE TABLE `voucher_status` (
 
 LOCK TABLES `voucher_status` WRITE;
 /*!40000 ALTER TABLE `voucher_status` DISABLE KEYS */;
-INSERT INTO `voucher_status` VALUES (1,'Save As Draft'),(2,'Send For Approval'),(3,'Completely Approved'),(11,'Pending At 1st Level'),(12,'Rejected At 1st Level'),(13,'Approved At 1st Level'),(21,'Pending At 2nd Level'),(22,'Rejected At 2nd Level'),(23,'Approved At 2nd Level'),(31,'Pending At 3rd Level'),(32,'Rejected At 3rd Level'),(33,'Approved At 3rd Level'),(101,'Fin Pending At 1st Level'),(102,'Fin Rejected At 1st Level'),(103,'Fin Appoved At 1st Level'),(201,'Fin Pending At 2nd Level'),(202,'Fin Rejected At 2nd Level'),(203,'Fin Appoved At 2nd Level'),(301,'Fin Pending At 3rd Level'),(302,'Fin Rejected At 3rd Level'),(303,'Fin Appoved At 3rd Level');
+INSERT INTO `voucher_status` VALUES (1,'Save As Draft','Send For Approval',NULL),(2,'Send For Approval','Send For Approval',NULL),(3,'Completely Approved','Completely Approved',NULL),(11,'Pending At 1st Level','Pending At 1st Level',NULL),(12,'Rejected At 1st Level','Rejected At 1st Level',NULL),(13,'Approved At 1st Level','Approved At 1st Level',NULL),(21,'Pending At 2nd Level','Pending At 2nd Level',NULL),(22,'Rejected At 2nd Level','Rejected At 2nd Level',NULL),(23,'Approved At 2nd Level','Approved At 2nd Level',NULL),(31,'Pending At 3rd Level','Pending At 3rd Level',NULL),(32,'Rejected At 3rd Level','Rejected At 3rd Level',NULL),(33,'Approved At 3rd Level','Approved At 3rd Level',NULL),(101,'Fin Pending At 1st Level','Fin Pending At 1st Level',NULL),(102,'Fin Rejected At 1st Level','Fin Rejected At 1st Level',NULL),(103,'Fin Appoved At 1st Level','Fin Appoved At 1st Level',NULL),(201,'Fin Pending At 2nd Level','Fin Pending At 2nd Level',NULL),(202,'Fin Rejected At 2nd Level','Fin Rejected At 2nd Level',NULL),(203,'Fin Appoved At 2nd Level','Fin Appoved At 2nd Level',NULL),(301,'Fin Pending At 3rd Level','Fin Pending At 3rd Level',NULL),(302,'Fin Rejected At 3rd Level','Fin Rejected At 3rd Level',NULL),(303,'Fin Appoved At 3rd Level','Fin Appoved At 3rd Level',NULL);
 /*!40000 ALTER TABLE `voucher_status` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -522,4 +531,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-10 10:07:47
+-- Dump completed on 2017-04-16 22:02:29

@@ -13,6 +13,8 @@ import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.ExpenseCategoryJPA;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
+import com.chaitanya.jpa.ProcessHistoryJPA;
+import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 
@@ -33,6 +35,21 @@ public class ExpenseConvertor {
 		return expenseHeaderDTO;
 	}
 	
+	public static ProcessHistoryJPA setExpenseHeaderJPAtoProcessHistoryJPA(ExpenseHeaderJPA expenseHeaderJPA){
+		ProcessHistoryJPA processHistoryJPA=null;
+		
+		if(Validation.validateForNullObject(expenseHeaderJPA)){
+			processHistoryJPA=new ProcessHistoryJPA(); 
+			//expenseHeaderDTO.setExpenseHeaderId(expenseHeaderJPA.getExpenseHeaderId());
+			processHistoryJPA.setVoucherStatusJPA(expenseHeaderJPA.getVoucherStatusJPA());
+			//processInstanceJPA.set
+			processHistoryJPA.setProcessedBy(expenseHeaderJPA.getEmployeeJPA());
+			//processHistoryJPA.setProcessDate(expenseHeaderJPA.getPurpose());
+			
+		}
+		return processHistoryJPA;
+	}
+	
 	public static ExpenseHeaderJPA setExpenseHeaderDTOToJPA(ExpenseHeaderDTO expenseHeaderDTO) throws ParseException
 	{
 		ExpenseHeaderJPA expenseHeaderJPA=null;
@@ -43,6 +60,10 @@ public class ExpenseConvertor {
 			EmployeeJPA employeeJPA=new EmployeeJPA();
 			employeeJPA.setEmployeeId(expenseHeaderDTO.getEmployeeDTO().getEmployeeId());
 			expenseHeaderJPA.setEmployeeJPA(employeeJPA);
+			
+			VoucherStatusJPA voucherStatusJPA=new VoucherStatusJPA();
+			voucherStatusJPA.setVoucherStatusId(expenseHeaderDTO.getVoucherStatusDTO().getVoucherStatusId());
+			expenseHeaderJPA.setVoucherStatusJPA(voucherStatusJPA);
 			
 			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate(),"dd-MMMM-yyyy"));
 			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),"dd-MMMM-yyyy"));
@@ -98,7 +119,7 @@ public class ExpenseConvertor {
 			expenseDetailDTO.setFromLocation(expenseDetailJPA.getFromLocation());
 			expenseDetailDTO.setDescription(expenseDetailJPA.getDescription());
 			
-			if(Validation.validateForZero(expenseDetailDTO.getUnit())){
+			if(Validation.validateForZero(expenseDetailJPA.getUnit())){
 				expenseDetailDTO.setUnit(expenseDetailJPA.getUnit());
 			}
 			expenseDetailDTO.setToLocation(expenseDetailJPA.getToLocation());

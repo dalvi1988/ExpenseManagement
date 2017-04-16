@@ -1,14 +1,11 @@
 package com.chaitanya.config;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -25,20 +22,12 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import com.chaitanya.jpa.VoucherStatusJPA;
-import com.chaitanya.utility.ConstantMaster;
-import com.chaitanya.utility.dao.ICommonDAO;
-import com.chaitanya.utility.model.VoucherStatusDTO;
-
 @EnableWebMvc
 @Configuration
 @ComponentScan({ "com.chaitanya.*" })
 @Import({ SecurityConfig.class })
 public class AppConfig extends WebMvcConfigurerAdapter {
 
-	@Autowired
-	private ICommonDAO commonDao;
-	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/jquery/**").addResourceLocations("classpath:/jquery/");
@@ -70,8 +59,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		BasicDataSource ds = new BasicDataSource();
 	    ds.setDriverClassName("com.mysql.jdbc.Driver");
 		ds.setUrl("jdbc:mysql://localhost:3306/test");
-/*		ds.setUsername("root");
-		ds.setPassword("Nexus@123");*/
+		ds.setUsername("root");
+		ds.setPassword("Nexus@123");
 		return ds;
 	}
 	
@@ -114,7 +103,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    return resolver;
 	}
 	
-	@Bean
+	/*@Bean
 	public ConstantMaster getConstantMaster(){
 		
 		ConstantMaster constantMasters= new ConstantMaster();
@@ -130,6 +119,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		constantMasters.setVoucherStatusMap(voucherStatusMap);
 		
 		return constantMasters;
-	}
+	}*/
 	
 }

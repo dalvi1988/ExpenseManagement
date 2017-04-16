@@ -13,4 +13,6 @@ public interface IExpenseService {
 
 	BaseDTO getExpense(BaseDTO baseDTO);
 
+	List<ExpenseHeaderDTO> getExpenseToBeApprove(BaseDTO baseDTO);
+
 }

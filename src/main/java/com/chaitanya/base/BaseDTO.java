@@ -6,6 +6,7 @@ import com.chaitanya.login.model.LoginDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class BaseDTO implements Serializable{
+	
 	public enum Command{
 		ADD,UPDATE,DELETE
 	}

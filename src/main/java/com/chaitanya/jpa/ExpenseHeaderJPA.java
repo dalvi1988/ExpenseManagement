@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
@@ -31,9 +32,23 @@ public class ExpenseHeaderJPA {
 	@Fetch (FetchMode.SELECT)
 	private List<ExpenseDetailJPA> expenseDetailJPA; 
 	
+	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
+	@Cascade({CascadeType.ALL})
+	@Fetch (FetchMode.SELECT)
+	private List<ProcessHistoryJPA> processHistoryJPA;
+	
+	@OneToOne(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
+	@Cascade({CascadeType.ALL})
+	@Fetch (FetchMode.SELECT)
+	private ProcessInstanceJPA processInstanceJPA;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "employee_id")
 	private EmployeeJPA employeeJPA;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "voucher_status")
+	private VoucherStatusJPA voucherStatusJPA;
 	
 	@Column(name="start_date")
 	private Calendar startDate;
@@ -101,6 +116,30 @@ public class ExpenseHeaderJPA {
 
 	public void setEmployeeJPA(EmployeeJPA employeeJPA) {
 		this.employeeJPA = employeeJPA;
+	}
+
+	public VoucherStatusJPA getVoucherStatusJPA() {
+		return voucherStatusJPA;
+	}
+
+	public List<ProcessHistoryJPA> getProcessHistoryJPA() {
+		return processHistoryJPA;
+	}
+
+	public void setProcessHistoryJPA(List<ProcessHistoryJPA> processHistoryJPA) {
+		this.processHistoryJPA = processHistoryJPA;
+	}
+
+	public void setVoucherStatusJPA(VoucherStatusJPA voucherStatusJPA) {
+		this.voucherStatusJPA = voucherStatusJPA;
+	}
+
+	public ProcessInstanceJPA getProcessInstanceJPA() {
+		return processInstanceJPA;
+	}
+
+	public void setProcessInstanceJPA(ProcessInstanceJPA processInstanceJPA) {
+		this.processInstanceJPA = processInstanceJPA;
 	}
 
 }

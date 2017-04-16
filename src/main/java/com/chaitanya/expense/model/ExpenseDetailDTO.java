@@ -2,14 +2,12 @@ package com.chaitanya.expense.model;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.chaitanya.base.BaseDTO;
 import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExpenseDetailDTO extends BaseDTO {
-	private static final long serialVersionUID = 1L;
+public class ExpenseDetailDTO {
 	private Long expenseDetailId;
 	private Long expenseCategoryId;
 	@JsonIgnore
