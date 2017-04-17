@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.departmentHead.model.DepartmentHeadDTO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.expense.service.IExpenseService;
@@ -74,7 +76,7 @@ public class ExpenseController {
 	}
 	
 	@RequestMapping(value="/toBeApproveExpenseList",method=RequestMethod.POST)
-	public @ResponseBody String getAllExpenseCategory() throws JsonGenerationException, JsonMappingException, IOException{
+	public @ResponseBody String getExpenseHeaderListForApproval() throws JsonGenerationException, JsonMappingException, IOException{
 		ObjectMapper mapper= new ObjectMapper();
 		
 		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -84,6 +86,17 @@ public class ExpenseController {
 		expenseHeaderDTOList=expenseService.getExpenseToBeApprove(expenseHeaderDTO);
 
 		return "{\"data\":"+mapper.writeValueAsString(expenseHeaderDTOList)+"}";
+	}
+	
+	@RequestMapping(value="/expenseDetail",method=RequestMethod.POST)
+	public @ResponseBody String getExpenseDetailListByHeaderId(@RequestBody ExpenseHeaderDTO receivedExpenseHeaderDTO) throws JsonGenerationException, JsonMappingException, IOException{
+		ObjectMapper mapper= new ObjectMapper();
+		
+		List<ExpenseDetailDTO> expenseDetailsDTOList=null;
+
+		expenseDetailsDTOList=expenseService.getExpenseDetailsByHeaderId(receivedExpenseHeaderDTO);
+
+		return "{\"data\":"+mapper.writeValueAsString(expenseDetailsDTOList)+"}";
 	}
 	
 	@RequestMapping(value="/saveExpense",method=RequestMethod.POST)

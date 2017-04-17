@@ -8,7 +8,10 @@ import javax.validation.constraints.Size;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.utility.model.VoucherStatusDTO;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 public class ExpenseHeaderDTO extends BaseDTO{
 
@@ -34,7 +37,8 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	
 	private String purpose;
 	
-	@JsonIgnore
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
+	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO employeeDTO;
 	
 	private List<ExpenseDetailDTO> addedExpenseDetailsDTOList;

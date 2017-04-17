@@ -25,7 +25,7 @@ public class ExpenseDetailJPA {
 	@JoinColumn(name="expense_header_id")
 	private ExpenseHeaderJPA expenseHeaderJPA;
 		
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="expense_category_id")
 	private ExpenseCategoryJPA expenseCategoryJPA;
 	

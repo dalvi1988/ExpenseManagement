@@ -3,14 +3,18 @@ package com.chaitanya.expense.model;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExpenseDetailDTO {
 	private Long expenseDetailId;
 	private Long expenseCategoryId;
-	@JsonIgnore
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="expenseName")
+	@JsonIdentityReference(alwaysAsId=true)
 	private ExpenseCategoryDTO expenseCategoryDTO;
 	private String date;
 	private String fromLocation;

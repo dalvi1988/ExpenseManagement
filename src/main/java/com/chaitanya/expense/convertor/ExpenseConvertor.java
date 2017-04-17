@@ -65,8 +65,8 @@ public class ExpenseConvertor {
 			voucherStatusJPA.setVoucherStatusId(expenseHeaderDTO.getVoucherStatusDTO().getVoucherStatusId());
 			expenseHeaderJPA.setVoucherStatusJPA(voucherStatusJPA);
 			
-			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate(),"dd-MMMM-yyyy"));
-			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),"dd-MMMM-yyyy"));
+			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate(),Convertor.dateFormat));
+			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),Convertor.dateFormat));
 			expenseHeaderJPA.setPurpose(expenseHeaderDTO.getPurpose());
 			expenseHeaderJPA.setTitle(expenseHeaderDTO.getTitle());
 		}

@@ -4,11 +4,14 @@ package com.chaitanya.expense.dao;
 import java.io.IOException;
 import java.util.List;
 
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -179,15 +182,35 @@ public class ExpenseDAO implements IExpenseDAO{
 		return expsensHeaderJPA;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExpenseHeaderJPA> getExpenseToBeApprove(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		@SuppressWarnings("unchecked")
+		
+		DetachedCriteria subquery = DetachedCriteria.forClass(ProcessInstanceJPA.class)
+									.add(Restrictions.eq("pendingAt.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+									.setProjection(Projections.property("expenseHeaderJPA.expenseHeaderId"));
+		
 		List<ExpenseHeaderJPA> expsensHeaderList= session.createCriteria(ExpenseHeaderJPA.class)
-				.add(Restrictions.eq("processInstanceJPA.pendingAt.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
-				.list();
+												.setFetchMode("employeeJPA",FetchMode.JOIN)
+												.add(Subqueries.propertyIn("expenseHeaderId", subquery))
+												.list();
+														
 
 		return expsensHeaderList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ExpenseDetailJPA> getExpenseDetailsByHeaderId(ExpenseHeaderDTO expenseHeaderDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		List<ExpenseDetailJPA> expsensDetailList= session.createCriteria(ExpenseDetailJPA.class)
+												.add(Restrictions.eq("expenseHeaderJPA.expenseHeaderId", expenseHeaderDTO.getExpenseHeaderId()))
+												.setFetchMode("expenseCategoryJPA",FetchMode.JOIN)
+												.list();
+														
+		return expsensDetailList;
 	}
 
 }

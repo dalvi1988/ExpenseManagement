@@ -37,7 +37,7 @@ public class ExpenseHeaderJPA {
 	@Fetch (FetchMode.SELECT)
 	private List<ProcessHistoryJPA> processHistoryJPA;
 	
-	@OneToOne(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
+	@OneToOne(orphanRemoval=true,mappedBy="expenseHeaderJPA") 
 	@Cascade({CascadeType.ALL})
 	@Fetch (FetchMode.SELECT)
 	private ProcessInstanceJPA processInstanceJPA;

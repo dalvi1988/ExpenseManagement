@@ -11,10 +11,13 @@ import org.springframework.stereotype.Service;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
+import com.chaitanya.employee.convertor.EmployeeConvertor;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.convertor.ExpenseConvertor;
 import com.chaitanya.expense.dao.IExpenseDAO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
+import com.chaitanya.expenseCategory.convertor.ExpenseCategoryConvertor;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
@@ -135,6 +138,9 @@ public class ExpenseService implements IExpenseService{
 					expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 					for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
 						ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+						if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+							expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+						}
 						expenseHeaderDTOList.add(expHeaderDTO);
 					}
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
@@ -150,6 +156,43 @@ public class ExpenseService implements IExpenseService{
 		}
 		logger.debug("ExpenseService: getExpenseToBeApprove-End");
 		return  expenseHeaderDTOList;
+	}
+	
+	@Override
+	public List<ExpenseDetailDTO> getExpenseDetailsByHeaderId(BaseDTO baseDTO) {
+
+		logger.debug("ExpenseService: getExpenseDetailsByHeaderId-Start");
+		if(validateExpenseMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
+		}
+		List<ExpenseDetailDTO> expenseDetailDTOList= null;
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+				List<ExpenseDetailJPA> expenseDetailsJPAList =expenseDAO.getExpenseDetailsByHeaderId(expenseHeaderDTO);
+				if(Validation.validateForNullObject(expenseDetailsJPAList)){
+					expenseDetailDTOList= new ArrayList<ExpenseDetailDTO>();
+					for(ExpenseDetailJPA expenseDetailsJPA: expenseDetailsJPAList){
+						ExpenseDetailDTO expDetailDTO=ExpenseConvertor.setExpenseDetailJPAtoDTO(expenseDetailsJPA);
+						if(Validation.validateForNullObject(expenseDetailsJPA.getExpenseCategoryJPA()))
+						{
+							expDetailDTO.setExpenseCategoryDTO(ExpenseCategoryConvertor.setExpenseCategoryJPAtoDTO(expenseDetailsJPA.getExpenseCategoryJPA()));
+						}
+						expenseDetailDTOList.add(expDetailDTO);
+					}
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("ExpenseService: Exception",e);
+		}
+		logger.debug("ExpenseService: getExpenseDetailsByHeaderId-End");
+		return  expenseDetailDTOList;
 	}
 
 	@Override

@@ -4,7 +4,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <head>
 
-    <title>Department Head Master</title>
+    <title>Expense Management System</title>
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
  	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
  	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
@@ -19,9 +19,10 @@
 		   { title: "", dataIndx: "state", width: 30, minWidth:30, align: "center", type:'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable:false },
            { title: "", minWidth: 27, width: 27, type: "detail", resizable: false },
            { title: "Voucher Number", width: 100, dataIndx: "voucherNumber" },
+           { title: "Employee Name", width: 100, dataIndx: "employeeDTO" },
            { title: "Title", width: 120, dataIndx: "title" },
-           { title: "Start Date", width: 100, dataIndx: "Start Date" },
-		   { title: "End Date", width: "100", dataIndx: "End Date"},
+           { title: "Start Date", width: 100, dataIndx: "startDate" },
+		   { title: "End Date", width: 100, dataIndx: "endDate"},
            { title: "Amount", width: 100, align: "right", dataType: "float", dataIndx: "totalAmount" },
        ];
 
@@ -30,14 +31,14 @@
            sorting: "local",            
            dataType: "JSON",
            method: "post",
-           recIndx: "expenseHeaderId",
+           recIndx: "expenseDetailId",
            rPPOptions: [1, 10, 20, 30, 40, 50, 100, 500, 1000],
            url: "/ExpenseManagement/toBeApproveExpenseList",
            //url: "/pro/orders.php",//for PHP
            getData: function (dataJSON) {
                var data = dataJSON.data;
                //expand the first row.
-               data[0]['pq_detail'] = { 'show': true };
+               data[0]['pq_detail'] = { 'show': false };
                return { curPage: dataJSON.curPage, totalRecords: dataJSON.totalRecords, data: data };
            }
        }
@@ -49,12 +50,49 @@
            editable: false,
            colModel: colM,
            wrap: false,
-           hwrap: false,            
+           hwrap: false,  
+           toolbar: {
+               items: [
+                   { type: 'button', icon: 'ui-icon-check', label: 'Approve selected', listeners: [
+                       { "click": function (evt, ui) {
+                           var $grid = $(this).closest('.pq-grid'),
+                           selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
+							ids = [];
+	                       for (var i = 0, len = selarray.length; i < len; i++) {
+	                           var rowData = selarray[i].rowData;
+	
+	                           ids.push(rowData.expenseHeaderId);
+	                       }
+	                                                                       
+	                       alert(ids);
+                           //debugger;
+                       }
+                       }
+                   	 ]
+                   },
+                   { type: 'button', icon: 'ui-icon-closethick', label: 'Reject selected', listeners: [
+                         { "click": function (evt, ui) {
+                        	 var $grid = $(this).closest('.pq-grid'),
+                             selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
+  							 ids = [];
+  	                         for (var i = 0, len = selarray.length; i < len; i++) {
+  	                           var rowData = selarray[i].rowData;
+  	
+  	                           ids.push(rowData.expenseHeaderId);
+  	                         }
+  	                                                                       
+  	                         alert(ids);
+                            }
+                         }
+                      ]
+                   }
+               ]
+           },
            numberCell: { show: false },
            title: "<b>Vouchers For Approval</b>",                        
            resizable: true,
-           freezeCols: 1,            
-           selectionModel: { type: 'cell' },
+           freezeCols: 1,   
+           selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},  
            detailModel: {
                cache: true,
                collapseIcon: "ui-icon-plus",
@@ -83,44 +121,37 @@
                dataModel: {
                    location: "remote",
                    sorting: "local",
-                   dataType: "jsonp",
-                   method: "GET",
-                   sortIndx: "ProductName",
-                   error: function () {
-                       $gridMain.pqGrid( 'rowInvalidate', { rowData: rowData });
+                   dataType: "json",
+                   method: "POST",
+                   sortIndx: "expenseDetailId",
+                   getUrl: function() {
+                       return { url: "/ExpenseManagement/expenseDetail", data: "{\"expenseHeaderId\":"+rowData.expenseHeaderId+"}" };
                    },
-                   url: "/pro/orderdetails/get?orderId=" + rowData.OrderID
-                   //url = "/pro/orderdetails.php?orderId=" + orderID //for PHP
+                  
+                   mimeType : 'application/json',
+                    async: true,
+              	    beforeSend: function(xhr) {   
+                          xhr.setRequestHeader("Accept", "application/json; charset=UTF-8");
+                          xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+                      },
+                   error: function (data) {
+                       //$gridMain.pqGrid( 'rowInvalidate', { rowData: rowData });
+                   }
                },
                colModel: [
-                   { title: "Order ID", width: 80, dataIndx: "OrderID" },
-                   { title: "Product ID", width: 80, dataType: "integer", dataIndx: "ProductID" },
-                   { title: "Product Name", width: 200, dataIndx: "ProductName" },
-		            { title: "Unit Price", width: "80", align: "center", dataIndx: "UnitPrice", dataType: "float",
-		                summary: {
-		                    type: ["sum"],
-		                    title: ["<b style='font-weight:bold;'>Total Price:</b> ${0}"]
-		                }
-		            },
-		            { title: "Quantity", align: "center", width: 85, dataIndx: "Quantity", dataType: "integer",
-		                summary: {
-		                    type: ["sum"],
-		                    title: ["<b style='font-weight:bold;'>Total Qty:</b> {0}"]
-		                }
-		            },
-		            { title: "Discount", width: 80, align: "center", dataIndx: "Discount", dataType: "float" }
+                   { title: "Expense Detail Id", width: 80, dataIndx: "expenseDetailId", hidden:true},
+                   { title: "Expense Name", width: 80, dataIndx: "expenseCategoryDTO" },
+                   { title: "To Location", width: 200, dataIndx: "toLocation" },
+                   { title: "From Location", width: 200, dataIndx: "fromLocation" },
+		            { title: "Unit Price", width: "80", align: "center", dataIndx: "unit", dataType: "float"},
+		            { title: "Amount", align: "center", width: 85, dataIndx: "amount", dataType: "float"},
+		            { title: "Receipt", width: 200, dataIndx: "receipt" }
 		        ],
-               editable: false,
-               groupModel: {
-                   dataIndx: ["OrderID"],
-                   dir: ["up"],
-                   title: ["{0} - {1} product(s)"],
-                   icon: [["ui-icon-triangle-1-se", "ui-icon-triangle-1-e"]]
-               },                
+               editable: false,              
                flexHeight: true,
                flexWidth: true,
                numberCell: { show: false },
-               title: "Order Details",
+               title: "Expense Details",
                showTop: false,
                showBottom: false
            };

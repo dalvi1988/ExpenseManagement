@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
+import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 
 public interface IExpenseDAO {
@@ -16,5 +17,7 @@ public interface IExpenseDAO {
 
 	public List<ExpenseHeaderJPA> getExpenseToBeApprove(
 			ExpenseHeaderDTO expenseHeaderDTO);
+
+	public List<ExpenseDetailJPA> getExpenseDetailsByHeaderId(ExpenseHeaderDTO expenseHeaderDTO);
 
 }
