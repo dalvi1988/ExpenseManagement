@@ -20,4 +20,6 @@ public interface IExpenseDAO {
 
 	public List<ExpenseDetailJPA> getExpenseDetailsByHeaderId(ExpenseHeaderDTO expenseHeaderDTO);
 
+	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO);
+
 }

@@ -18,4 +18,6 @@ public interface IExpenseService {
 
 	List<ExpenseDetailDTO> getExpenseDetailsByHeaderId(BaseDTO baseDTO);
 
+	BaseDTO approveRejectExpenses(BaseDTO baseDTO);
+
 }

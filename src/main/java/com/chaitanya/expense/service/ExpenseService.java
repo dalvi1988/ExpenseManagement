@@ -229,4 +229,32 @@ public class ExpenseService implements IExpenseService{
 		return  baseDTO;
 	}
 	
+	@Override
+	public BaseDTO approveRejectExpenses(BaseDTO baseDTO) {
+		logger.debug("ExpenseService: approveRejectExpenses-Start");
+		if(validateExpenseMasterDTO(baseDTO)){
+			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
+		}
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+				ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.approveRejectExpenses(expenseHeaderDTO);
+				if(Validation.validateForNullObject(expenseHeaderJPA)){
+					
+					baseDTO=expenseHeaderDTO;
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("ExpenseService: Exception",e);
+		}
+		logger.debug("ExpenseService: approveRejectExpenses-End");
+		return  baseDTO;
+	}
+	
 }

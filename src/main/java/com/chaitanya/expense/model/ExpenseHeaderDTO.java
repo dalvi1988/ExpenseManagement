@@ -20,6 +20,7 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private Long expenseHeaderId;
 	
 	private Integer voucherStatusId;
+	
 	@JsonIgnore
 	private VoucherStatusDTO voucherStatusDTO;
 	

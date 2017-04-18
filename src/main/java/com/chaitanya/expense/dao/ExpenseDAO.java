@@ -212,5 +212,18 @@ public class ExpenseDAO implements IExpenseDAO{
 														
 		return expsensDetailList;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		List<ExpenseDetailJPA> expsensDetailList= session.createCriteria(ExpenseDetailJPA.class)
+												.add(Restrictions.eq("expenseHeaderJPA.expenseHeaderId", expenseHeaderDTO.getExpenseHeaderId()))
+												.setFetchMode("expenseCategoryJPA",FetchMode.JOIN)
+												.list();
+														
+		return null;
+	}
 
 }

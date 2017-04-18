@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.base.BaseDTO;
-import com.chaitanya.departmentHead.model.DepartmentHeadDTO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.expense.service.IExpenseService;
@@ -95,6 +94,17 @@ public class ExpenseController {
 		List<ExpenseDetailDTO> expenseDetailsDTOList=null;
 
 		expenseDetailsDTOList=expenseService.getExpenseDetailsByHeaderId(receivedExpenseHeaderDTO);
+
+		return "{\"data\":"+mapper.writeValueAsString(expenseDetailsDTOList)+"}";
+	}
+	
+	@RequestMapping(value="/approveRejectExpense",method=RequestMethod.POST)
+	public @ResponseBody String approveRejectExpenses(@RequestBody List<ExpenseHeaderDTO> expenseDetailsDTOList) throws JsonGenerationException, JsonMappingException, IOException{
+		ObjectMapper mapper= new ObjectMapper();
+
+		for(ExpenseHeaderDTO expenseHeaderDTO:expenseDetailsDTOList){
+			BaseDTO baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
+		}
 
 		return "{\"data\":"+mapper.writeValueAsString(expenseDetailsDTOList)+"}";
 	}
