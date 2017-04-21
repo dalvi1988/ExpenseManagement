@@ -33,6 +33,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/jquery/**").addResourceLocations("classpath:/jquery/");
 		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/scripts/");
 		registry.addResourceHandler("/grid/**").addResourceLocations("classpath:/grid/");
+		registry.addResourceHandler("/theme/**").addResourceLocations("classpath:/theme/");
 	}	
 	
 	@Bean
