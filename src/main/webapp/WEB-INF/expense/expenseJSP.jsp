@@ -4,14 +4,9 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <head>
 
-    <title>Expense Request</title>
-    <script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
- 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
- 	
- 	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
+ <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
+ <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
+ <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
     
 
 <script type="text/javascript">
@@ -53,7 +48,6 @@ $(function () {
             }
             rowData.amountPerUnit= data.row.amount; 
             
-            debugger;
             rowData.expenseCategoryId =data.value;
             $grid.pqGrid("refresh");
         };
@@ -141,8 +135,8 @@ $(function () {
 	}
 	
 	function addNewRow(){
-		
-		var rowData = {locationRequired:false,unitRequired:false }; //empty row
+		debugger;
+		var rowData = {locationRequired :false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
 	}
@@ -195,7 +189,31 @@ $(function () {
             $("#data").val(JSON.stringify(changes));
             $("#voucherStatusId").val(command);
             
-            $("#form").submit();
+            $.ajax( { 
+              	//context: $grid,
+          	    url: "/ExpenseManagement/saveExpense", 
+          	    type: 'POST', 
+          	    data:new FormData($('#form')[0]),
+          	  cache: false,
+              contentType: false,
+              processData: false,
+          	 
+          	    success: function(data) { 
+          	    	if(data.serviceStatus=="SUCCESS"){
+          	    		$('.draftExpense').click();
+          	    		$(".alert").addClass("alert-success").text(data.message).show();
+          	    	}
+          	    	else{
+          	    		$('.draftExpense').click();
+          	    		$(".alert").addClass("alert-danger").text(data.message).show();
+          	    		$grid.pqGrid("rollback");
+          	    	}
+          	    },
+          	    error:function(data) { 
+          	    	$(".alert").addClass("alert-danger").text(data.message).show();
+          	    }
+          	    
+          	});
           //}
     }
     var obj = {
@@ -259,6 +277,9 @@ $(function () {
 
         colModel: [
             { title: "Expense ID", dataType: "integer", dataIndx: "expenseDetailId", hidden: true },
+            { title: "Location Required", dataType: "boolean", dataIndx: "locationRequired",hidden: true },
+            { title: "Unit Required", dataType: "boolean", dataIndx: "unitRequired", hidden: true },
+            { title: "Amount Per Unit", dataType: "integer", dataIndx: "amountPerUnit", hidden: true },
             { title: "Date", width: "160", dataIndx: "date",
 		        editor: {
 		            type: 'textbox',
@@ -267,14 +288,14 @@ $(function () {
 		        render: function (ui) {
 		            var cellData = ui.cellData;
 		            if (cellData) {
-		                return $.datepicker.formatDate('dd-MM-yy', new Date(cellData));
+		                return $.datepicker.formatDate('dd-MM-yyyy', new Date(cellData));
 		            }
 		            else {
 		                return "";
 		            }
 		        },
 		        validations: [
-                    { type: 'regexp', value: '^[0-9]{2}-[A-Za-z]{3,10}-[0-9]{4}$', msg: 'Not in dd-MMM-yyy format' }
+                    { type: 'regexp', value: '^[0-9]{2}-[A-Za-z]{3,10}-[0-9]{4}$', msg: 'Not in dd-MMM-yyyy format' }
                 ]
 		    }, 
 		    { title: "Expense Category Id", width: 140, dataType: "string", align: "right", dataIndx: "expenseCategoryId",hidden:true},
@@ -311,27 +332,42 @@ $(function () {
             },
             { title: "Location From", width: 140, dataType: "string", align: "left", dataIndx: "fromLocation",
             	editable: function(ui){
-					if(ui.rowData['locationRequired'] == true)  
-						return true;
-					else 
-						return false;
+            		if(typeof ui.rowData != "undefined" ){
+						if(ui.rowData['locationRequired'] == true)  
+							return true;
+						else 
+							return false;
+            		}
+            		else{
+            			return false;
+            		}
                 }
             },
             { title: "Location To", width: 140, dataType: "String", align: "left", dataIndx: "toLocation",
             	editable: function(ui){
-					if(ui.rowData['locationRequired'] == true)  
-						return true;
-					else 
-						return false;
+            		if(typeof ui.rowData != "undefined" ){
+						if(ui.rowData['locationRequired'] == true)  
+							return true;
+						else 
+							return false;
+            		}
+            		else{
+            			return false;
+            		}
                 }
             },
             { title: "Description", width: 200, dataType: "String", align: "left", dataIndx: "description"},
             { title: "Unit", width: 50, dataType: "integer", align: "right", dataIndx: "unit",
             	editable: function(ui){
-					if(ui.rowData['unitRequired'] == true)  
-						return true;
-					else 
-						return false;
+            		if(typeof ui.rowData != "undefined" ){
+						if(ui.rowData['unitRequired'] == true)  
+							return true;
+						else 
+							return false;
+            		}
+            		else{
+            			return false;
+            		}
                 }
             },
             { title: "Amount", width: 100, dataType: "float", align: "right", dataIndx: "amount",
@@ -369,9 +405,7 @@ $(function () {
                 return "<button type='button' class='delete_btn' >Delete</button>";
             	},
             },
-            { title: "Location Required", dataType: "integer", dataIndx: "locationRequired", hidden: true },
-            { title: "Unit Required", dataType: "integer", dataIndx: "unitRequired", hidden: true },
-            { title: "Amount Per Unit", dataType: "integer", dataIndx: "amountPerUnit", hidden: true },
+           
         ],
         dataModel: {                
             dataType: "JSON",

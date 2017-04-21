@@ -22,7 +22,7 @@ public class MainController {
 		ModelAndView model = new ModelAndView();
 		model.addObject("title", "Spring Security + Hibernate Example");
 		model.addObject("message", "This is default page!");
-		model.setViewName("pages/admin");
+		model.setViewName("pages/index");
 		
 		return model;
 
@@ -40,6 +40,7 @@ public class MainController {
 
 	}
 
+	
 	@RequestMapping(value ={"/login"}, method = RequestMethod.GET)
 	public ModelAndView login(@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout, HttpServletRequest request) {

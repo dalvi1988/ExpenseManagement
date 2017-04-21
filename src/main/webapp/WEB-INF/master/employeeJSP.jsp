@@ -6,10 +6,7 @@
 <head>
 
     <title>Employee Master</title>
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- 	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
- 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
- 	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
+    <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
     
@@ -60,7 +57,7 @@
        }
        //called by add button in toolbar.
        function addRow($grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            if (isEditing($grid)) {
                return false;
@@ -77,7 +74,7 @@
        }
        //called by delete button.
        function deleteRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
@@ -112,7 +109,7 @@
        }
        //called by edit button.
        function editRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
            $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
@@ -187,16 +184,18 @@
 	                       rowData.employeeId= data.employeeId;
 	                    } 
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
 	          	    	$grid.pqGrid("commit");
+	          	    	$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
           	    	else{
           	    		$grid.pqGrid("rollback");
+          	    		$(".alert").addClass("alert-danger").text(data.message).show();
           	    	}
-          	    	$(".customMessage").text(data.message);
           	    	
           	    },
           	    error:function(data) { 
-          	    	$(".customMessage").text(data.message);
+          	    	$(".alert").addClass("alert-danger").text(data.message).show();
           	    }
           	    
           	}));
@@ -231,9 +230,6 @@
                        }
                        }
                    ]
-                   },
-                   {
-                       type: '</br><span style="color:red;font-weight:bold;font-size:20px" class="customMessage"></span>'
                    }
                ]
            },

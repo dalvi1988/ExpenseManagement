@@ -43,7 +43,7 @@ public class DepartmentHeadController {
 	@Autowired
 	IEmployeeService employeeService;
 	
-	@RequestMapping(value="/departmentHeadMaster",method=RequestMethod.GET)
+	@RequestMapping(value="/departmentHead",method=RequestMethod.GET)
 	public ModelAndView getDepartmentHeadJSP() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
@@ -66,7 +66,7 @@ public class DepartmentHeadController {
 		return model;
 	}
 	
-	@RequestMapping(value="/departmentHead",method={RequestMethod.POST,RequestMethod.GET},produces="application/json; charset=UTF-8")
+	@RequestMapping(value="/departmentHeadList",method={RequestMethod.POST,RequestMethod.GET},produces="application/json; charset=UTF-8")
 	public @ResponseBody String getDepartmentHead(@RequestBody DepartmentHeadDTO receivedDepartmentHeadDTO) throws JsonProcessingException{
 		List<DepartmentHeadDTO> departmentHeadDTOList = null;
 		ObjectMapper mapper=new ObjectMapper();

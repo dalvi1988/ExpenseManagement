@@ -8,7 +8,7 @@ var getFunctionalGrid = function( rowData ){
            columnBorders: false,
            sortable: false,
            numberCell: { show: false },
-           title: "<b>Fuunctional Approval Cycle</b>",
+           title: "<b>Functional Approval Cycle</b>",
            track: true, //to turn on the track changes.
            //flexWidth: true,
            flexHeight: true,
@@ -205,7 +205,7 @@ var getFunctionalGrid = function( rowData ){
                { title: "", editable: false,dataIndx: "status", minWidth: 150, sortable: false, 
             	   render: function (ui) {
             		   
-            		    if(ui.rowData['flowId'] == ""){
+            		    if(ui.rowData['flowId'] == "" || ui.rowData['flowId'] == null){
                        		return "<button type='button' class='edit_btn'>Edit</button>\
                            			<button type='button' class='delete_btn'>Delete</button>";
             		    }
@@ -217,8 +217,8 @@ var getFunctionalGrid = function( rowData ){
                }
 
 	        ],
-           /*editable: true, 
-           groupModel: {
+           editable: true, 
+          /* groupModel: {
                dataIndx: ["branchId"],
                dir: ["up"],
                title: ["{0} - {1} product(s)"],
@@ -286,6 +286,7 @@ var getFunctionalGrid = function( rowData ){
            },
            //make rows editable selectively.
            editable: function (ui) {
+        	   alert("editable")
                var $grid = $(this);
                var rowIndx = ui.rowIndx;
                if ($grid.pqGrid("hasClass", { rowIndx: rowIndx, cls: 'pq-row-edit' }) == true) {
@@ -436,7 +437,7 @@ var getFinanceGrid = function( rowData ){
             { title: "", width: 100, dataIndx: "createdDate", hidden:true },
             { title: "", editable: false,dataIndx: "status", minWidth: 150, sortable: false, 
          	   render: function (ui) {
-         		    if(ui.rowData['flowId'] == ""){
+         		  if(ui.rowData['flowId'] == "" || ui.rowData['flowId'] == null){
                 		return "<button type='button' class='fin_edit_btn'>Edit</button>\
                     			<button type='button' class='fin_delete_btn'>Delete</button>";
          		    }
@@ -448,8 +449,8 @@ var getFinanceGrid = function( rowData ){
             }
 
 	        ],
-        /*editable: true, 
-        groupModel: {
+        editable: true, 
+       /* groupModel: {
             dataIndx: ["branchId"],
             dir: ["up"],
             title: ["{0} - {1} product(s)"],
@@ -665,7 +666,7 @@ var getBranchGrid = function( rowData ){
             { title: "", width: 100, dataIndx: "createdDate", hidden:true },
             { title: "", editable: false,dataIndx: "status", minWidth: 150, sortable: false, 
          	   render: function (ui) {
-         		    if(ui.rowData['flowId'] == ""){
+         		  if(ui.rowData['flowId'] == "" || ui.rowData['flowId'] == null){
                 		return "<button type='button' class='branch_edit_btn'>Edit</button>\
                     			<button type='button' class='branch_delete_btn'>Delete</button>";
          		    }
@@ -760,27 +761,11 @@ var getBranchGrid = function( rowData ){
 
 
 
-//called by add button in toolbar.
-function addRow($grid) {
-	var branchId = $grid.data( 'branchId' );
-	$(".customMessage").text("");
-	   
-    if (isEditing($grid)) {
-        return false;
-    }
-    //append empty row in the first row.
-    var rowData = {branchId:branchId,flowId:"",status:true }; //empty row template
-    $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
-    var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
-    if ($tr) {
-        //simulate click on edit button.
-        $tr.find("button.edit_btn").click();
-    }
-}
 
 //called by add button in toolbar.
 function addRow($grid, gridName) {
+
     var branchId = $grid.data( 'branchId' );
     $(".customMessage").text("");
 	   
@@ -799,6 +784,7 @@ function addRow($grid, gridName) {
             $tr.find("button.fin_edit_btn").click();
         }
         else if(gridName == "FunctionalFlow"){
+        	alert("here")
         	//simulate click on edit button.
             $tr.find("button.edit_btn").click();
         }
@@ -828,7 +814,7 @@ function editRow(rowIndx, $grid, gridName) {
 	   
 	   var rowData= $grid.pqGrid( "getRowData",{ rowIndx: rowIndx } );
 
-	   if(rowData.flowId == ""){
+	   if(rowData.flowId == "" || rowData.flowId == null){
 		   
         $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
         $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
@@ -857,7 +843,7 @@ function editRow(rowIndx, $grid, gridName) {
         $btn.next().button("option", { label: "Cancel", "icons": { primary: "ui-icon-cancel"} })
             .unbind("click")
             .click(function (evt) {
-                $grid.pqGrid("quitEditMode");
+                //$grid.pqGrid("quitEditMode");
                 $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
                 $grid.pqGrid("refreshRow", { rowIndx: rowIndx });
                 $grid.pqGrid("rollback");
@@ -988,7 +974,7 @@ function update(rowIndx, $grid, gridName) {
    }
    else {
 	   
-       $grid.pqGrid("quitEditMode");
+       //$grid.pqGrid("quitEditMode");
        $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
        $grid.pqGrid("refreshRow", { rowIndx: rowIndx });
    }

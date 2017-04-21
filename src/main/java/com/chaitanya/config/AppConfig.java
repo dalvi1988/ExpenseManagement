@@ -17,6 +17,7 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -33,7 +34,10 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/jquery/**").addResourceLocations("classpath:/jquery/");
 		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/scripts/");
 		registry.addResourceHandler("/grid/**").addResourceLocations("classpath:/grid/");
-	}	
+		registry.addResourceHandler("/theme/**").addResourceLocations("classpath:/theme/");
+		registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/resources/");
+	}
+	
 	
 	@Bean
     public SessionFactory sessionFactory() {

@@ -5,9 +5,7 @@
 <head>
 
     <title>Department Head Master</title>
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- 	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
- 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
@@ -115,7 +113,7 @@
                     method: "POST",
                     recIndx: "branchId",
                     getUrl: function() {
-                        return { url: "/ExpenseManagement/departmentHead", data: "{\"branchId\":"+rowData.branchId+"}" };
+                        return { url: "/ExpenseManagement/departmentHeadList", data: "{\"branchId\":"+rowData.branchId+"}" };
                     },
                    
                     mimeType : 'application/json',

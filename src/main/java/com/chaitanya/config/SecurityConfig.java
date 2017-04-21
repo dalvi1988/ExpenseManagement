@@ -27,13 +27,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(loginDetailsService).passwordEncoder(passwordEncoder());
 	}
 
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.authorizeRequests()
 			.antMatchers("/master/**").access("hasRole('ROLE_ADMIN')")
 			//.antMatchers("/approvalflow/**").access("hasRole('SUPER_ADMIN')")
-			.antMatchers("/pages/**").permitAll()
+			//.antMatchers("/pages/**").permitAll()
 			.anyRequest().authenticated()
 		.and()
 			.formLogin()
