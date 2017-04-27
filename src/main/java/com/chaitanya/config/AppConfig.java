@@ -12,12 +12,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -63,8 +64,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		BasicDataSource ds = new BasicDataSource();
 	    ds.setDriverClassName("com.mysql.jdbc.Driver");
 		ds.setUrl("jdbc:mysql://localhost:3306/test");
-		ds.setUsername("root");
-		ds.setPassword("Nexus@123");
+		/*ds.setUsername("root");
+		ds.setPassword("Nexus@123");*/
 		return ds;
 	}
 	
@@ -107,22 +108,24 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    return resolver;
 	}
 	
-	/*@Bean
-	public ConstantMaster getConstantMaster(){
-		
-		ConstantMaster constantMasters= new ConstantMaster();
-		List<VoucherStatusJPA> voucherStatusJPAList=commonDao.getVoucherStatus();
-		Map<Integer,VoucherStatusDTO> voucherStatusMap= new LinkedHashMap<>();
-		for(VoucherStatusJPA voucherStatusJPA:voucherStatusJPAList){
-			VoucherStatusDTO voucherStatusDTO =new VoucherStatusDTO();
-			voucherStatusDTO.setVoucherStatusId(voucherStatusJPA.getVoucherStatusId());
-			voucherStatusDTO.setVoucherStatus(voucherStatusJPA.getVoucherStatus());
-			voucherStatusDTO.setTextToDisplay(voucherStatusJPA.getTextToDisplay());
-			voucherStatusMap.put(voucherStatusJPA.getVoucherStatusId(), voucherStatusDTO);
-		}
-		constantMasters.setVoucherStatusMap(voucherStatusMap);
-		
-		return constantMasters;
-	}*/
+	 @Bean
+    public JavaMailSender getMailSender(){
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+         
+        //Using gmail
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+        mailSender.setUsername("dalvi21288@gmail.com");
+        mailSender.setPassword("Pramila21");
+         
+        Properties javaMailProperties = new Properties();
+        javaMailProperties.put("mail.smtp.starttls.enable", "true");
+        javaMailProperties.put("mail.smtp.auth", "true");
+        javaMailProperties.put("mail.transport.protocol", "smtp");
+        javaMailProperties.put("mail.debug", "true");//Prints out everything on screen
+         
+        mailSender.setJavaMailProperties(javaMailProperties);
+        return mailSender;
+    }
 	
 }

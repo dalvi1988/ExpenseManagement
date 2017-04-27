@@ -16,6 +16,7 @@ import com.chaitanya.employee.convertor.EmployeeConvertor;
 import com.chaitanya.employee.dao.IEmployeeDAO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.utility.MailServiceImpl;
 import com.chaitanya.utility.Validation;
 
 @Service("employeeService")
@@ -23,6 +24,10 @@ public class EmployeeService implements IEmployeeService {
 	
 	@Autowired
 	IEmployeeDAO employeeDAO;
+	
+	@Autowired
+	MailServiceImpl mailService;
+	
 	private Logger logger= LoggerFactory.getLogger(EmployeeService.class);
 	
 	private boolean validateEmployeeMasterDTO(BaseDTO baseDTO) {
@@ -104,11 +109,19 @@ public class EmployeeService implements IEmployeeService {
 		if(validateEmployeeMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of EmployeeMasterDTO type.");
 		}
+		EmployeeDTO employeeDTO= (EmployeeDTO)baseDTO;
 		try{
-			EmployeeJPA employeeJPA=EmployeeConvertor.setEmployeeDTOToEmployee((EmployeeDTO)baseDTO);
+			EmployeeJPA employeeJPA=EmployeeConvertor.setEmployeeDTOToEmployee(employeeDTO);
 			if (Validation.validateForNullObject(employeeJPA)) {
 				employeeJPA=employeeDAO.add(employeeJPA);
 				if(Validation.validateForNullObject(employeeJPA)){
+					if(Validation.validateForZero(employeeDTO.getEmployeeId())){
+						
+					}
+					else{
+						
+					}
+					mailService.sendAutoGeneratePassword(employeeDTO);
 					baseDTO=EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}

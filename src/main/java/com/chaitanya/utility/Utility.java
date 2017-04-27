@@ -1,5 +1,7 @@
 package com.chaitanya.utility;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.List;
 
 import com.chaitanya.employee.model.EmployeeDTO;
@@ -25,4 +27,13 @@ public class Utility {
 		emp3.setLastName("");
 		employeeDTOList.add(2, emp3);
 	}
+	
+	public static class SessionIdentifierGenerator {
+		  private static SecureRandom random = new SecureRandom();
+
+		  public static String nextSessionId() {
+		     return new BigInteger(130, random).toString(32);
+		  }
+	}
+	  
 }
