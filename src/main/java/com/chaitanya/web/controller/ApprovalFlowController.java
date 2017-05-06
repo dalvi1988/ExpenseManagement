@@ -1,6 +1,7 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ApprovalFlowController {
 	IApprovalFlowService approvalService;
 	
 	@RequestMapping(value="/approvalFlow",method=RequestMethod.GET)
-	public ModelAndView getFunctionalFlow() throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView getFunctionalFlow() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
 		List<EmployeeDTO> employeeDTOList=null;

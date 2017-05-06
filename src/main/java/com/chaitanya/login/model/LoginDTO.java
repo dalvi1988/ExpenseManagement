@@ -6,7 +6,10 @@ import com.chaitanya.employee.model.EmployeeDTO;
 public class LoginDTO extends BaseDTO{
 	
 	private static final long serialVersionUID = 1L;
+	
+	
 	private EmployeeDTO employeeDTO;
+	
 	public EmployeeDTO getEmployeeDTO() {
 		return employeeDTO;
 	}

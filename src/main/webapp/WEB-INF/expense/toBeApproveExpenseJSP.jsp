@@ -5,9 +5,6 @@
 <head>
 
     <title>Expense Management System</title>
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- 	<script type="text/javascript" src=<spring:url value="/scripts/jquery-1.11.1.min.js"/> ></script>
- 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
@@ -16,8 +13,7 @@
    
    $(function () {
 	   
-	   function submitDetails(voucherIds){
-		   alert(voucherIds)
+	   function submitDetails(voucherIds,command){
 		   $.ajax($.extend({}, ajaxObj, { 
              	context: $gridMain,
          	    url: "/ExpenseManagement/approveRejectExpense", 
@@ -47,15 +43,15 @@
 	   }
 	   
        var colM = [
-		   { title: "", dataIndx: "state", width: 30, minWidth:30, align: "center", type:'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable:false },
+		   { title: "", dataIndx: "state", width: 20, minWidth:20, align: "center", type:'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable:false },
            { title: "", minWidth: 27, width: 27, type: "detail", resizable: false },
-           { title: "Voucher Number", width: 100, dataIndx: "voucherNumber" },
-           { title: "Employee Name", width: 100, dataIndx: "employeeDTO" },
+           { title: "Voucher Number",minWidth:250, dataIndx: "voucherNumber" },
+           { title: "Employee Name", minWidth: 100, dataIndx: "employeeDTO" },
            { title: "Title", width: 120, dataIndx: "title" },
            { title: "Start Date", width: 100, dataIndx: "startDate" },
 		   { title: "End Date", width: 100, dataIndx: "endDate"},
            { title: "Amount", width: 100, align: "right", dataType: "float", dataIndx: "amount" },
-           { title: "", editable: false, minWidth: 165, sortable: false, render: function (ui) {
+           { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
                return "<button type='button' class='approve_btn'>Approve</button>\
                    <button type='button' class='reject_btn'>Reject</button>";
                }
@@ -80,7 +76,6 @@
        }
 
        var $gridMain = $("div#grid_md").pqGrid({ 
-           width: 860, height: 500,
            dataModel: dataModel,
            virtualX: true, virtualY: true,
            editable: false,
@@ -88,15 +83,20 @@
            wrap: false,
            hwrap: false,  
            rowBorders: true,
+           scrollModel: {
+               autoFit: true
+           },
            toolbar: {
                items: [
                    { type: 'button', attr:"id='approveSelected'", icon: 'ui-icon-check', label: 'Approve selected', listeners: [
                        { "click": function (evt, ui) {
+                    	   debugger;
                            var $grid = $(this).closest('.pq-grid'),
                            selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
 							ids = [];
 	                       for (var i = 0, len = selarray.length; i < len; i++) {
 	                           var rowData = selarray[i].rowData;
+	                           rowData.voucherStatusId = 3;
 	                           ids.push(rowData);
 	                       }
 	                                                                       
@@ -108,12 +108,13 @@
                    },
                    { type: 'button', attr:"id='rejectSelected'", icon: 'ui-icon-closethick', label: 'Reject selected', listeners: [
                          { "click": function (evt, ui) {
+                        	 debugger;
                         	 var $grid = $(this).closest('.pq-grid'),
                              selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
   							 ids = [];
   	                         for (var i = 0, len = selarray.length; i < len; i++) {
   	                           var rowData = selarray[i].rowData;
-  	
+  								rowData.voucherStatusId = 4;
   	                           ids.push(rowData);
   	                         }
   	                                                                       
@@ -165,6 +166,7 @@
                    var $tr = $(this).closest("tr"),
                        rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
                    rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
+                   rowData.voucherStatusId = 4;
                    id= [];
                    id.push(rowData);
                    submitDetails(id);
@@ -177,6 +179,7 @@
                    var $tr = $(this).closest("tr"),
                        rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
                        rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
+                   rowData.voucherStatusId = 3;
                    id= [];
                    id.push(rowData);
                    submitDetails(id);

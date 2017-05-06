@@ -8,7 +8,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.company.model.CompanyDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
@@ -16,7 +15,6 @@ import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.utility.Validation;
 
 @Repository
-@Transactional
 public class EmployeeDAO implements IEmployeeDAO {
 
 	@Autowired
@@ -55,5 +53,16 @@ public class EmployeeDAO implements IEmployeeDAO {
 		return employeeList;
 	}
 
+	@Override
+	public EmployeeJPA findEmployeeByEmailId(EmployeeDTO employeeDTO) {
+		Session session=sessionFactory.getCurrentSession();
+		EmployeeJPA employeeJPA=null;
+		if(Validation.validateForNullObject(employeeDTO)){
+			employeeJPA = (EmployeeJPA) session.createCriteria(EmployeeJPA.class)
+										.add(Restrictions.eq("emailId", employeeDTO.getEmailId()))
+										.uniqueResult();
+		}
+		return employeeJPA;
+	}
 	
 }

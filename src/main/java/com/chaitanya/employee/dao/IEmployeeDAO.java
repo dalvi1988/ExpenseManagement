@@ -14,5 +14,7 @@ public interface IEmployeeDAO {
 
 	List<EmployeeJPA> findEmployeeOnUnderDeptBranch(EmployeeDTO employeeDTO);
 
+	EmployeeJPA findEmployeeByEmailId(EmployeeDTO employeeDTO);
+
 	
 }

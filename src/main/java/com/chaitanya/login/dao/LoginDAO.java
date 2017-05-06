@@ -3,11 +3,14 @@ package com.chaitanya.login.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.LoginJPA;
 
 @Repository
@@ -31,6 +34,23 @@ public class LoginDAO implements ILoginDAO {
 		}
 		
 
+	}
+	
+	public LoginJPA saveLoginDetail(LoginJPA loginJPA){
+		Session session=sessionFactory.getCurrentSession();
+		session.saveOrUpdate(loginJPA);
+		return loginJPA;
+	}
+
+	@Override
+	public int updatePassword(EmployeeDTO employeeDTO, String password) {
+		Session session=sessionFactory.getCurrentSession();
+	    Query qry = (Query) session.createQuery("update LoginJPA set password=:password where employeeJPA.employeeId=:employeeId");
+			  	        qry.setParameter("employeeId",employeeDTO.getEmployeeId());
+			  	      qry.setParameter("password",password);
+	    int res = qry.executeUpdate();
+		return res;
+		
 	}
 
 }

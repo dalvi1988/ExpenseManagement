@@ -2,6 +2,7 @@ package com.chaitanya.jpa;
 
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,6 +15,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name="employee_details")
@@ -40,14 +46,15 @@ public class EmployeeJPA {
 	
 	@OneToMany(mappedBy="reportingMgr",fetch=FetchType.LAZY)
 	private Set<EmployeeJPA> subordinates = new HashSet<EmployeeJPA>();
+
+		
+	@OneToOne
+	@JoinColumn(name="department_id")
+	private DepartmentJPA departmentJPA;
 	
 	@OneToOne
 	@JoinColumn(name="branch_id")
 	private BranchJPA branchJPA;
-	
-	@OneToOne
-	@JoinColumn(name="department_id")
-	private DepartmentJPA departmentJPA;
 	
 	@Column(name="gender")
 	private Character gender;
@@ -188,4 +195,5 @@ public class EmployeeJPA {
 	public void setDepartmentJPA(DepartmentJPA departmentJPA) {
 		this.departmentJPA = departmentJPA;
 	}
+
 }

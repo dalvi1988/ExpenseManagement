@@ -216,7 +216,7 @@
            resizable: true,
            columnBorders: false,
            sortable: false,
-           numberCell: { show: true },
+           numberCell: { show: false },
            track: true, //to turn on the track changes.
            flexHeight: true,
            filterModel: { on: true, mode: "AND", header: true },
@@ -252,21 +252,19 @@
            title: "<h1><b>Employee Master</b></h1>",
 
            colModel: [
-                  { title: "Id", dataType: "integer", dataIndx: "employeeId", editable: false, width: 30,
-                	  	filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
-                  },
-                  { title: "First Name", width: 140, dataType: "string", align: "right", dataIndx: "firstName",
+                  { title: "Id", dataType: "integer", dataIndx: "employeeId", editable: false, hidden: true},
+                  { title: "First Name", width: 130, dataType: "string", dataIndx: "firstName",
          	  			filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                 	    validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
                           { type: 'maxLen', value: 20, msg: "length should be <= 20" }
                         ]
                   },
-                  { title: "Last Name", width: 165, dataType: "string", dataIndx: "lastName",
+                  { title: "Last Name", width: 130, dataType: "string", dataIndx: "lastName",
                 	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
-                          { type: 'maxLen', value: 40, msg: "length should be <= 40" }
+                          { type: 'maxLen', value: 40, msg: "length should be <= 20" }
                       ]
                   },
                   { title: "Gender", width: 50, dataIndx: "gender",
@@ -298,7 +296,7 @@
                       }
                   },
                  
-                  { title: "Email ID", width: 300, dataType: "string", dataIndx: "emailId",
+                  { title: "Email ID", width: 200, dataType: "string", dataIndx: "emailId",
                 	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'nonEmpty', msg: "Required" }
@@ -369,7 +367,7 @@
 	       			       }
         			   }   
                   },
-                  { title: "Reporting Manager", dataIndx: "reportingMgr", width: 90,
+                  { title: "Reporting Manager", dataIndx: "reportingMgr", minWidth: 150,
                 	  filter: { type: "select",
           		        condition: 'equal',
           		        prepend: { '': '--All--' },

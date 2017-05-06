@@ -1,6 +1,5 @@
 package com.chaitanya.expense.convertor;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -30,7 +29,9 @@ public class ExpenseConvertor {
 			expenseHeaderDTO.setEndDate(Convertor.calendartoString(expenseHeaderJPA.getEndDate(),Convertor.dateFormat));
 			expenseHeaderDTO.setTitle(expenseHeaderJPA.getTitle());
 			expenseHeaderDTO.setPurpose(expenseHeaderJPA.getPurpose());
-			
+			if(Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
+				expenseHeaderDTO.setVoucherNumber(expenseHeaderJPA.getVoucherNumber());
+			}
 		}
 		return expenseHeaderDTO;
 	}
@@ -84,7 +85,7 @@ public class ExpenseConvertor {
 			expenseCategoryJPA.setExpCategoryId(expenseDetailDTO.getExpenseCategoryId());
 			expenseDetailJPA.setExpenseCategoryJPA(expenseCategoryJPA);
 			
-			expenseDetailJPA.setDate(Convertor.stringToCalendar(expenseDetailDTO.getDate(),"dd-MMMM-yyyy"));
+			expenseDetailJPA.setDate(Convertor.stringToCalendar(expenseDetailDTO.getDate(),Convertor.dateFormat));
 			expenseDetailJPA.setFromLocation(expenseDetailDTO.getFromLocation());
 			expenseDetailJPA.setToLocation(expenseDetailDTO.getToLocation());
 			expenseDetailJPA.setDescription(expenseDetailDTO.getDescription());
@@ -94,9 +95,6 @@ public class ExpenseConvertor {
 			expenseDetailJPA.setAmount(expenseDetailDTO.getAmount());
 			if(!expenseDetailDTO.getReceipt().isEmpty()){
 				MultipartFile receipt= expenseDetailDTO.getReceipt();
-				File convFile = new File( receipt.getOriginalFilename());
-				receipt.transferTo(convFile);
-				expenseDetailJPA.setReceipt(convFile);
 				expenseDetailJPA.setFileName(receipt.getOriginalFilename());
 			}
 		}
@@ -124,6 +122,7 @@ public class ExpenseConvertor {
 			}
 			expenseDetailDTO.setToLocation(expenseDetailJPA.getToLocation());
 			expenseDetailDTO.setAmount(expenseDetailJPA.getAmount());
+			expenseDetailDTO.setFileName(expenseDetailJPA.getFileName());
 		}
 		return expenseDetailDTO;
 	}

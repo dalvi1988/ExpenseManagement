@@ -24,6 +24,7 @@ public class ExpenseDetailDTO {
 	private Double amount;
 	@JsonIgnore
 	private MultipartFile receipt;
+	private String fileName;
 
 	
 	public Long getExpenseDetailId() {
@@ -76,6 +77,7 @@ public class ExpenseDetailDTO {
 		ExpenseCategoryDTO expenseCategoryDTO=new ExpenseCategoryDTO();
 		expenseCategoryDTO.setExpenseCategoryId(this.expenseCategoryId);
 	}
+	@JsonIgnore
 	public ExpenseCategoryDTO getExpenseCategoryDTO() {
 		return expenseCategoryDTO;
 	}
@@ -88,6 +90,12 @@ public class ExpenseDetailDTO {
 	}
 	public void setUnit(Integer unit) {
 		this.unit = unit;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 	
 }

@@ -9,7 +9,9 @@ import com.chaitanya.jpa.ExpenseHeaderJPA;
 
 public interface IExpenseDAO {
 
-	public ExpenseHeaderJPA saveUpdateExpense(ExpenseHeaderJPA department) throws IOException;
+	public ExpenseHeaderJPA saveUpdateExpense(ExpenseHeaderJPA expenseHeader) throws IOException;
+	
+	public ExpenseHeaderJPA persistExpense(ExpenseHeaderJPA expenseHeader) throws IOException;
 
 	public List<ExpenseHeaderJPA> getDraftExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
 
@@ -21,5 +23,9 @@ public interface IExpenseDAO {
 	public List<ExpenseDetailJPA> getExpenseDetailsByHeaderId(ExpenseHeaderDTO expenseHeaderDTO);
 
 	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO);
+
+	public void updateProcessInstance(ExpenseHeaderJPA expenseHeaderJPA, int currentVoucherStatus);
+
+	public String generateVoucherNumber(ExpenseHeaderDTO expenseHeaderDTO);
 
 }

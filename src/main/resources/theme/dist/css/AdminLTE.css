@@ -3251,7 +3251,7 @@ table.text-center th {
   }
 }
 .login-box-body,
-.register-box-body {
+.register-box-body,.reset-box-body {
   background: #fff;
   padding: 20px;
   border-top: 0;

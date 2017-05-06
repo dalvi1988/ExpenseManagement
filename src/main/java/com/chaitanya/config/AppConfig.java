@@ -16,6 +16,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -36,7 +38,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/scripts/");
 		registry.addResourceHandler("/grid/**").addResourceLocations("classpath:/grid/");
 		registry.addResourceHandler("/theme/**").addResourceLocations("classpath:/theme/");
-		registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/resources/");
 	}
 	
 	
@@ -64,8 +65,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		BasicDataSource ds = new BasicDataSource();
 	    ds.setDriverClassName("com.mysql.jdbc.Driver");
 		ds.setUrl("jdbc:mysql://localhost:3306/test");
-		/*ds.setUsername("root");
-		ds.setPassword("Nexus@123");*/
+		ds.setUsername("root");
+		ds.setPassword("Nexus@123");
 		return ds;
 	}
 	
@@ -127,5 +128,10 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         mailSender.setJavaMailProperties(javaMailProperties);
         return mailSender;
     }
-	
+	 
+	 @Bean
+	 public PasswordEncoder passwordEncoder() {
+	     return new BCryptPasswordEncoder();
+	 }
+
 }

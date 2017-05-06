@@ -1,5 +1,7 @@
 package com.chaitanya.expense.service;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import com.chaitanya.base.BaseDTO;
@@ -8,7 +10,7 @@ import com.chaitanya.expense.model.ExpenseHeaderDTO;
 
 public interface IExpenseService {
 
-	BaseDTO saveUpdateExpense(BaseDTO baseDTO);
+	BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException;
 
 	List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO);
 
@@ -18,6 +20,6 @@ public interface IExpenseService {
 
 	List<ExpenseDetailDTO> getExpenseDetailsByHeaderId(BaseDTO baseDTO);
 
-	BaseDTO approveRejectExpenses(BaseDTO baseDTO);
+	BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException;
 
 }

@@ -71,6 +71,11 @@
 	        $('.content').load('/ExpenseManagement/approvalFlow');
 	     });
 	    
+	    $('.voucherForApproval').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('/ExpenseManagement/toBeApproveExpense');
+	     });
+	    
 	    $('.createExpense').click(function(){
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('/ExpenseManagement/expense');
@@ -157,7 +162,7 @@
           </ul>
         </li>
         
-        
+        <sec:authorize access="hasAnyRole('ADMIN_ROLE','SUPER_ADMIN')" var="isAuthorizeAny">
         <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i>
@@ -175,13 +180,19 @@
             
           </ul>
         </li>
-        
-         <li>
+        <li>
           <a href="#" class="approvalFlowMaster">
             <i class="fa fa-calendar"></i> <span>Approval Flow Master</span>
           </a>
         </li>
+        </sec:authorize>
+         <li>
+          <a href="#" class="voucherForApproval">
+            <i class="fa fa-calendar"></i> <span>Voucher For Approval</span>
+          </a>
+        </li>
         
+        <sec:authorize access="hasAnyRole('SUPER_ADMIN')" var="isAuthorizeAny">
          <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i>
@@ -194,6 +205,7 @@
             <li><a href="#" class="companyMaster"><i class="fa fa-circle-o"></i> Country Master</a></li>
           </ul>
         </li>
+        </sec:authorize>
         
         <li class="treeview">
           <a href="#">

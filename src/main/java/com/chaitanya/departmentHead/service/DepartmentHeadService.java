@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
@@ -30,6 +31,7 @@ public class DepartmentHeadService implements IDepartmentHeadService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public List<DepartmentHeadDTO> findDepartmentHeadUnderBranch(BaseDTO baseDTO) {
 		logger.debug("DepartmentHeadService: findDepartmentHeadUnderBranch-Start");
 		if(validateDepartmentHeadMasterDTO(baseDTO)){

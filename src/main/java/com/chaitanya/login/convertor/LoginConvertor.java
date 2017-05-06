@@ -9,28 +9,28 @@ import com.chaitanya.utility.Validation;
 
 public class LoginConvertor {
 	
-	public static LoginDTO setLoginToLoginDTO(LoginJPA login){
+	public static LoginDTO setLoginJPAToDTO(LoginJPA login){
 		LoginDTO loginDTO=null;
 		if(Validation.validateForNullObject(login)){
 			loginDTO=new LoginDTO();
-			if(Validation.validateForNullObject(login.getEmployeeDetails())){
+			if(Validation.validateForNullObject(login.getEmployeeJPA())){
 				EmployeeDTO employeeDTO=new EmployeeDTO();
-				if(Validation.validateForZero(login.getEmployeeDetails().getEmployeeId()))
-					employeeDTO.setEmployeeId(login.getEmployeeDetails().getEmployeeId());
+				if(Validation.validateForZero(login.getEmployeeJPA().getEmployeeId()))
+					employeeDTO.setEmployeeId(login.getEmployeeJPA().getEmployeeId());
 				
-				if(Validation.validateForEmptyString(login.getEmployeeDetails().getFirstName()))
-					employeeDTO.setFirstName(login.getEmployeeDetails().getFirstName());
+				if(Validation.validateForEmptyString(login.getEmployeeJPA().getFirstName()))
+					employeeDTO.setFirstName(login.getEmployeeJPA().getFirstName());
 				
-				if(Validation.validateForEmptyString(login.getEmployeeDetails().getLastName()))
-					employeeDTO.setLastName(login.getEmployeeDetails().getLastName());
+				if(Validation.validateForEmptyString(login.getEmployeeJPA().getLastName()))
+					employeeDTO.setLastName(login.getEmployeeJPA().getLastName());
 				
-				if(Validation.validateForNullObject(login.getEmployeeDetails().getBranchJPA())){
+				if(Validation.validateForNullObject(login.getEmployeeJPA().getBranchJPA())){
 					BranchDTO branchDTO=new BranchDTO();
-					branchDTO.setBranchId(login.getEmployeeDetails().getBranchJPA().getBranchId());
-					if(Validation.validateForNullObject(login.getEmployeeDetails().getBranchJPA().getCompanyJPA()))
+					branchDTO.setBranchId(login.getEmployeeJPA().getBranchJPA().getBranchId());
+					if(Validation.validateForNullObject(login.getEmployeeJPA().getBranchJPA().getCompanyJPA()))
 					{
 						CompanyDTO companyDTO=new CompanyDTO();
-						companyDTO.setCompanyId(login.getEmployeeDetails().getBranchJPA().getCompanyJPA().getCompanyId());
+						companyDTO.setCompanyId(login.getEmployeeJPA().getBranchJPA().getCompanyJPA().getCompanyId());
 						branchDTO.setCompanyDTO(companyDTO);
 					}
 					employeeDTO.setBranchDTO(branchDTO);
@@ -40,5 +40,6 @@ public class LoginConvertor {
 		}
 		return loginDTO;	
 	}
+	
 
 }

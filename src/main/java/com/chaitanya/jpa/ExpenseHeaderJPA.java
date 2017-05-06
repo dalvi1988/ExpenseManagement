@@ -27,17 +27,20 @@ public class ExpenseHeaderJPA {
 	@Column(name="expense_header_id")
 	private Long expenseHeaderId;
 	
-	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
+	@Column(name="voucher_number")
+	private String voucherNumber;
+	
+	@OneToMany(mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
 	@Cascade({CascadeType.ALL})
 	@Fetch (FetchMode.SELECT)
 	private List<ExpenseDetailJPA> expenseDetailJPA; 
 	
-	@OneToMany(orphanRemoval=true,mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
+	@OneToMany(mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
 	@Cascade({CascadeType.ALL})
 	@Fetch (FetchMode.SELECT)
 	private List<ProcessHistoryJPA> processHistoryJPA;
 	
-	@OneToOne(orphanRemoval=true,mappedBy="expenseHeaderJPA") 
+	@OneToOne(mappedBy="expenseHeaderJPA") 
 	@Cascade({CascadeType.ALL})
 	@Fetch (FetchMode.SELECT)
 	private ProcessInstanceJPA processInstanceJPA;
@@ -140,6 +143,14 @@ public class ExpenseHeaderJPA {
 
 	public void setProcessInstanceJPA(ProcessInstanceJPA processInstanceJPA) {
 		this.processInstanceJPA = processInstanceJPA;
+	}
+
+	public String getVoucherNumber() {
+		return voucherNumber;
+	}
+
+	public void setVoucherNumber(String voucherNumber) {
+		this.voucherNumber = voucherNumber;
 	}
 
 }

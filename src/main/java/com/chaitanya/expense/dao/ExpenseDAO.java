@@ -4,6 +4,8 @@ package com.chaitanya.expense.dao;
 import java.io.IOException;
 import java.util.List;
 
+import javax.persistence.ParameterMode;
+
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,9 +14,10 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.procedure.ProcedureCall;
+import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.ApprovalFlowJPA;
@@ -25,11 +28,9 @@ import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
 import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
-import com.chaitanya.utility.FTPUtility;
 import com.chaitanya.utility.Validation;
 
 @Repository
-@Transactional(rollbackFor=IOException.class)
 public class ExpenseDAO implements IExpenseDAO{
 
 	@Autowired
@@ -40,20 +41,13 @@ public class ExpenseDAO implements IExpenseDAO{
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(expenseHeaderJPA);
 		
-		//Create process instance if voucher not saved as draft.
-		if(expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId() != 1)
-			updateProcessInstance(expenseHeaderJPA,session);
-		
-		//Update attachment
-		for(ExpenseDetailJPA expenseDetailJPA : expenseHeaderJPA.getExpenseDetailJPA()){
-			if(Validation.validateForNullObject(expenseDetailJPA.getReceipt()))
-				FTPUtility.uploadFile(expenseDetailJPA.getReceipt());
-		}
 		return expenseHeaderJPA;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void updateProcessInstance(ExpenseHeaderJPA expenseHeaderJPA,Session session) {
+	public void updateProcessInstance(ExpenseHeaderJPA expenseHeaderJPA, int currentVoucherStatus) {
+		Session session = sessionFactory.getCurrentSession();
+		
 		// Get Employee details by id
 		
 		EmployeeJPA employeeJPA= (EmployeeJPA) session.get(EmployeeJPA.class,expenseHeaderJPA.getEmployeeJPA().getEmployeeId());
@@ -63,7 +57,7 @@ public class ExpenseDAO implements IExpenseDAO{
 								 Restrictions.isNull("departmentJPA.departmentId")
 								 );
 		
-		List<ApprovalFlowJPA> approvalFlowList= session.createCriteria(ApprovalFlowJPA.class)
+		List<ApprovalFlowJPA> approvalFlowList = (List<ApprovalFlowJPA>) session.createCriteria(ApprovalFlowJPA.class)
 												.add(Restrictions.eq("branchJPA.branchId", employeeJPA.getBranchJPA().getBranchId()))
 												.add(deptCriterion)
 												.add(Restrictions.eq("status", 'Y'))
@@ -71,6 +65,7 @@ public class ExpenseDAO implements IExpenseDAO{
 		
 		ApprovalFlowJPA functionalFlowJPA=null;
 		ApprovalFlowJPA branchFlowJPA=null;
+		ApprovalFlowJPA financeFlowJPA=null;
 		
 		boolean functionFlowFlag=false,branchFlowFlag=false,financeFlowFlag=false;
 		
@@ -86,6 +81,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				}
 				else if(financeFlowFlag==false && approvalFlowJPA.getIsBranchFlow()=='N' && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && !Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
 					financeFlowFlag = true;
+					financeFlowJPA = approvalFlowJPA;
 				}
 			}
 		}
@@ -98,28 +94,58 @@ public class ExpenseDAO implements IExpenseDAO{
 		}
 		else if(functionFlowFlag == true){
 			System.out.println("Executing function flow.");
-		    getApprovalOfLevel(expenseHeaderJPA,functionalFlowJPA, employeeJPA, session);
+	    	getApprovalOfLevel(currentVoucherStatus,expenseHeaderJPA,functionalFlowJPA,financeFlowJPA, employeeJPA, session);
 		}
 		else if(branchFlowFlag == true){
-			System.out.println("Executin branch flow.");
-			getApprovalOfLevel(expenseHeaderJPA, branchFlowJPA, employeeJPA, session);
+			System.out.println("Executing branch flow.");
+	    	getApprovalOfLevel(currentVoucherStatus,expenseHeaderJPA,branchFlowJPA, financeFlowJPA, employeeJPA, session);
 		}
 		
 		
 	}
 	
-	private void getApprovalOfLevel(ExpenseHeaderJPA expenseHeaderJPA, ApprovalFlowJPA aprrovalFlowJPA, EmployeeJPA employeeJPA, Session session){
+	private void getApprovalOfLevel(int currentVoucerStatus, ExpenseHeaderJPA expenseHeaderJPA, ApprovalFlowJPA functionalApprovalFlow, ApprovalFlowJPA financeApprovalFlow, EmployeeJPA employeeJPA, Session session){
 		Long approvalId = null;
+		int statusId=0;
+		Long level = null;
+		String levelInfo = null;
 		
-		for(int i=1; i<=3; i++){
-			Long level = null;
-			if(i == 1)
-				level=aprrovalFlowJPA.getLevel1();
-			else if(i == 2)
-				level=aprrovalFlowJPA.getLevel2();
-			else if(i == 3)
-				level=aprrovalFlowJPA.getLevel3();
+		if(currentVoucerStatus == 2){
+			statusId=11;
+			level = functionalApprovalFlow.getLevel1();
+			levelInfo = "Functional Level1";
+
+		}
+		else if(currentVoucerStatus == 11){
+			statusId=21;
+			level = functionalApprovalFlow.getLevel2();
+			levelInfo = "Functional Level2";
+		}
+		else if(currentVoucerStatus == 21){
+			statusId=31;
+			level = functionalApprovalFlow.getLevel3();
+			levelInfo = "Functional Level3";
+		}
+		else if(currentVoucerStatus == 31){
+			statusId=111;
+			level = financeApprovalFlow.getLevel1();
+			levelInfo = "Finance Level1";
+		}
+		else if(currentVoucerStatus == 111){
+			statusId=121;
+			level = financeApprovalFlow.getLevel2();
+			levelInfo = "Finance Level2";
+		}
+		else if(currentVoucerStatus == 121){
+			statusId=131;
+			level = financeApprovalFlow.getLevel3();
+			levelInfo = "Finance Level3";
+		}
+		else if(currentVoucerStatus == 131){
+			statusId=3;
+		}
 			
+		if(Validation.validateForNullObject(level)){
 			if(level == -10){
 				 approvalId= employeeJPA.getReportingMgr().getEmployeeId();
 			}
@@ -134,31 +160,37 @@ public class ExpenseDAO implements IExpenseDAO{
 							.uniqueResult();
 			}
 			else{
-				approvalId=aprrovalFlowJPA.getLevel1();
+				approvalId=level;
 			}
-			
+		
 			if(employeeJPA.getEmployeeId()== approvalId){
 				ProcessHistoryJPA processHistoryJPA = new ProcessHistoryJPA();
-				processHistoryJPA.setComment("Skipping level "+i+ " because voucher creator and approval are same");
+				processHistoryJPA.setComment("Skipping "+levelInfo+" because voucher creator and approval are same");
 				processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 				expenseHeaderJPA.getProcessHistoryJPA().add(processHistoryJPA);
-				continue;
+				getApprovalOfLevel(statusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA, session);
 			}
 			else{
-				ProcessInstanceJPA processInstanceJPA = new ProcessInstanceJPA();
+				ProcessInstanceJPA processInstanceJPA = expenseHeaderJPA.getProcessInstanceJPA();
+				if(! Validation.validateForNullObject(processInstanceJPA)){
+					processInstanceJPA= new ProcessInstanceJPA();
+				}
 				
 				EmployeeJPA pendingAt = new EmployeeJPA();
 				pendingAt.setEmployeeId(approvalId);
 				processInstanceJPA.setPendingAt(pendingAt);
 				
 				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
-				voucherStatusJPA.setVoucherStatusId(Integer.parseInt(i+"1"));
+				voucherStatusJPA.setVoucherStatusId(statusId);
 				processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 				
 				processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 				expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
-				break;
 			}
+		}
+		else{
+			System.out.println(levelInfo +" not available.");
+			getApprovalOfLevel(statusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA, session);
 		}
 	}
 
@@ -213,17 +245,38 @@ public class ExpenseDAO implements IExpenseDAO{
 		return expsensDetailList;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		
-		List<ExpenseDetailJPA> expsensDetailList= session.createCriteria(ExpenseDetailJPA.class)
-												.add(Restrictions.eq("expenseHeaderJPA.expenseHeaderId", expenseHeaderDTO.getExpenseHeaderId()))
-												.setFetchMode("expenseCategoryJPA",FetchMode.JOIN)
-												.list();
+		ExpenseHeaderJPA expenseHeaderJPA = (ExpenseHeaderJPA) session.get(ExpenseHeaderJPA.class, expenseHeaderDTO.getExpenseHeaderId());
 														
-		return null;
+		return expenseHeaderJPA;
+	}
+
+	@Override
+	public String generateVoucherNumber(ExpenseHeaderDTO expenseHeaderDTO) {
+	
+		Session session = sessionFactory.getCurrentSession();
+		ProcedureCall query =  session.createStoredProcedureCall("voucher_number");
+				query.registerParameter(
+			        "module", String.class, ParameterMode.IN).bindValue("EMPLOYEE_EXPENSE");
+				query.registerParameter(
+			        "voucherNumber", String.class, ParameterMode.OUT);
+
+		ProcedureOutputs procedureResult=query.getOutputs();
+		String voucherNumber= (String) procedureResult.getOutputParameterValue("voucherNumber");
+		voucherNumber="Voucher/"+expenseHeaderDTO.getStartDate()+"-"+expenseHeaderDTO.getEndDate()+"/"+voucherNumber;
+		return voucherNumber;
+	}
+
+	@Override
+	public ExpenseHeaderJPA persistExpense(ExpenseHeaderJPA expenseHeaderJPA)
+			throws IOException {
+		Session session = sessionFactory.getCurrentSession();
+		session.merge(expenseHeaderJPA);
+		
+		return expenseHeaderJPA;
 	}
 
 }

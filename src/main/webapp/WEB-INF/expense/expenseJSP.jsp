@@ -135,14 +135,45 @@ $(function () {
 	}
 	
 	function addNewRow(){
-		debugger;
+		if(validateComponent() == false){
+			return false;
+		}
+		
 		var rowData = {locationRequired :false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
 	}
 	
+	function validateComponent(){
+		if($("#startDate").val() ==""){
+			$("#dialog").text("Start Date can not be empty.");
+			$("#dialog").dialog();
+			return false;
+		}else if($("#endDate").val() ==""){
+			$("#dialog").text("End Date can not be empty.");
+			$("#dialog").dialog();
+			return false;
+		}
+		else if($("#title").val().length <= 4){
+			$("#dialog").text("Title should be more than 4 character");
+			$("#dialog").dialog();
+			return false;
+		}
+		else if($("#purpose").val().length <= 4){
+			$("#dialog").text("Purpose should be more than 4 character");
+			$("#dialog").dialog();
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
     //called when accept changes button is clicked.
     function acceptChanges(command) {
+    	if(validateComponent() ==false){
+			return false;
+		} 
+    	 
         //attempt to save editing cell.
         //debugger;
         if (grid.saveEditCell() === false) {
@@ -194,9 +225,9 @@ $(function () {
           	    url: "/ExpenseManagement/saveExpense", 
           	    type: 'POST', 
           	    data:new FormData($('#form')[0]),
-          	  cache: false,
-              contentType: false,
-              processData: false,
+          	    cache: false,
+                contentType: false,
+                processData: false,
           	 
           	    success: function(data) { 
           	    	if(data.serviceStatus=="SUCCESS"){
@@ -217,8 +248,6 @@ $(function () {
           //}
     }
     var obj = {
-        width: 900,
-        height: 400,
         wrap: false,
         hwrap: false,
        // resizable: true,
@@ -276,6 +305,7 @@ $(function () {
         title: "<b>Expense Voucher</b>",
 
         colModel: [
+			{ title: "Modified", dataType: "boolean", dataIndx: "modified", hidden: true },
             { title: "Expense ID", dataType: "integer", dataIndx: "expenseDetailId", hidden: true },
             { title: "Location Required", dataType: "boolean", dataIndx: "locationRequired",hidden: true },
             { title: "Unit Required", dataType: "boolean", dataIndx: "unitRequired", hidden: true },
@@ -288,7 +318,7 @@ $(function () {
 		        render: function (ui) {
 		            var cellData = ui.cellData;
 		            if (cellData) {
-		                return $.datepicker.formatDate('dd-MM-yyyy', new Date(cellData));
+		                return $.datepicker.formatDate('dd-MM-yy', new Date(cellData));
 		            }
 		            else {
 		                return "";
@@ -385,18 +415,24 @@ $(function () {
             { title: "Receipt/Document",editable:false, dataIndx: "receipt", minWidth: 200, sortable: false, 
 
             	  render:function (ui) {
-            		 
-            		 if(typeof ui.cellData == "undefined"){
+            		 debugger;
+            		 if(typeof ui.cellData == "undefined" && ui.rowData.fileName == null){
             		   	return "<input type='file' class='btn_file'/>";
-            		  }
+            		 }
             		 else{
-            			 ui.rowData.fileName=ui.cellData.val();
-            			 var fullPath=ui.cellData.val();
-           			     var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-           			     var filename = fullPath.substring(startIndex);
-           			     if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-           			        filename = filename.substring(1);
-           			     } 
+            			 var filename;
+            			 //ui.rowData.fileName=ui.cellData.val();
+            			 if(typeof ui.cellData != "undefined" || ui.rowData.fileName == null){
+	            			 var fullPath=ui.cellData.val();
+	           			     var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+	           			     filename = fullPath.substring(startIndex);
+	           			     if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+	           			        filename = filename.substring(1);
+	           			     } 
+            			 }
+            			 else{
+            				 filename =ui.rowData.fileName;
+            			 }
             			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close'></button></div><input type='file' class='btn_file'/>";
             		 }  
 	            }  
@@ -422,14 +458,15 @@ $(function () {
 
         refresh: function () {
         	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
+        		 debugger;
         		 var $tr = $(this).closest("tr");
                  var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
                  var rowIndx = obj.rowIndx;
                  var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
                  rowData.receipt=null;
         		 var clone = $(this).clone();
-        		 $grid.pqGrid( "updateRow", {rowIndx: rowIndx, row: { 'receipt': clone.attr('name', 'addedFiles') }} );
-        	     /* rowData.receipt = clone.attr('name', 'addedFiles');*/
+        	     rowData.receipt = clone.attr('name', 'addedFiles');
+        		 $grid.pqGrid( "updateRow", {rowIndx: rowIndx, row: { 'modified':true},checkEditable:false} );
 				 $grid.pqGrid("refresh"); 
 				 
         	});  
@@ -480,7 +517,7 @@ $(function () {
 			<tbody>
 			<tr>
 			<td style="width: 75px;"><form:label path="startDate">Start Date:</form:label></td>
-			<td style="width: 181px;"> <form:input path="startDate" readonly="true"/> </td>
+			<td style="width: 181px;"> <form:input id="startDate" path="startDate" readonly="true"/> </td>
 			<td style="width: 75px;"><form:label path="endDate">End Date:</form:label></td>
 			<td style="width: 262px;"><form:input path="endDate" readonly="true"/> </td>
 			</tr>
@@ -488,19 +525,21 @@ $(function () {
 			<td style="width: 75px;"><form:label path="title">Title:</form:label></td>
 			<td style="width: 181px;"><form:input path="title"/></td>
 			<td style="width: 75px;"><form:label path="purpose">Purpose:</form:label></td>
-			<td style="width: 262px;"><form:textarea style="margin-left: 0px; margin-right: 0px; width: 165px;" cols="" path="purpose" id="purpose" rows=""></form:textarea></td>
+			<td style="width: 262px;"><form:textarea path="purpose" style="margin-left: 0px; margin-right: 0px; width: 165px;" cols="" id="purpose" rows=""></form:textarea></td>
 			
 			</tr>
 			</tbody>
 			</table>
  	    </div>
+ 	    
         <div id="grid_editing" style="margin: auto;"></div>
  		<input type="hidden" id="data" name="data"/>
  		<div id="filesDiv" style="border: medium; display: none;"></div>
+ 		<form:hidden id="voucherStatusId" path="voucherStatusId"></form:hidden>  
  		<form:hidden path="expenseHeaderId"></form:hidden>
- 		<form:hidden id="voucherStatusId" path="voucherStatusId"/>  
     </form:form>
     
-     
+     <div id="dialog" style="display: none" title="Validation failure">
+	</div>
 </body>
 </html>

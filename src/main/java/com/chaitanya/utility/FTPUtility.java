@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class FTPUtility {
 	
-	static String ftpServerAddress = "10.90.19.28";
+	static String ftpServerAddress = "192.168.43.188";
     static String userName = "anonymous";
     static String password = "";
     static FTPClient ftpclient;
@@ -36,13 +36,15 @@ public class FTPUtility {
     public static void main(String[] arg) throws SocketException, IOException{
     	connect();
     }
-    public static Boolean uploadFile(File file) throws IOException{
-    	logger.debug("FTPUtility: uploadFile-Start");
+    public static Boolean uploadFile(File file,String filePath) throws IOException{
+    	logger.debug("FTPUtility: uploadFile-Start.");
     	if(connect()){
 	    	ftpclient.setFileType(FTP.BINARY_FILE_TYPE);
 	
-	        ftpclient.changeWorkingDirectory("/");
+	        ftpclient.changeWorkingDirectory("/Attachment/");
 	
+	        ftpclient.makeDirectory(filePath);
+	        ftpclient.changeWorkingDirectory("/Attachment/"+filePath);
 	        FileInputStream fileInputStream = new FileInputStream(file);
 	
 	        // Upload file to the ftp server

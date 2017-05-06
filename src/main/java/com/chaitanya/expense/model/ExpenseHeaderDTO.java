@@ -19,6 +19,8 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	
 	private Long expenseHeaderId;
 	
+	private String voucherNumber;
+	
 	private Integer voucherStatusId;
 	
 	@JsonIgnore
@@ -112,6 +114,7 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		this.deletedExpenseDetailsDTOList = deletedExpenseDetailsDTOList;
 	}
 
+	@JsonIgnore
 	public EmployeeDTO getEmployeeDTO() {
 		return employeeDTO;
 	}
@@ -138,6 +141,14 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	public void setVoucherStatusDTO(VoucherStatusDTO voucherStatusDTO) {
 		this.voucherStatusDTO = voucherStatusDTO;
 		this.voucherStatusId=voucherStatusDTO.getVoucherStatusId();
+	}
+
+	public String getVoucherNumber() {
+		return voucherNumber;
+	}
+
+	public void setVoucherNumber(String voucherNumber) {
+		this.voucherNumber = voucherNumber;
 	}
 	
 }

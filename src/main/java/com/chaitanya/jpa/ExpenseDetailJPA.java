@@ -51,9 +51,9 @@ public class ExpenseDetailJPA {
 	@Column(name="file_name")
 	private String fileName;
 	
-	@Transient
+	/*@Transient
 	private File receipt;
-
+*/
 	public Long getExpenseDetailId() {
 		return expenseDetailId;
 	}
@@ -110,13 +110,13 @@ public class ExpenseDetailJPA {
 		this.expenseHeaderJPA = expenseHeaderJPA;
 	}
 
-	public File getReceipt() {
+	/*public File getReceipt() {
 		return receipt;
 	}
 
 	public void setReceipt(File receipt) {
 		this.receipt = receipt;
-	}
+	}*/
 
 	public ExpenseCategoryJPA getExpenseCategoryJPA() {
 		return expenseCategoryJPA;

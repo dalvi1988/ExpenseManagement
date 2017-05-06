@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -23,9 +22,9 @@ public class LoginJPA {
 	@Column(name="login_id")
 	private Long loginId;
 	
-	@OneToOne
-	@PrimaryKeyJoinColumn
-	private EmployeeJPA employeeDetails;
+	@OneToOne(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "employee_id")
+	private EmployeeJPA employeeJPA;
 	
 	private String password;
 	
@@ -47,6 +46,7 @@ public class LoginJPA {
 		return password;
 	}
 	public void setPassword(String password) {
+		
 		this.password = password;
 	}
 	
@@ -63,11 +63,11 @@ public class LoginJPA {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	public EmployeeJPA getEmployeeDetails() {
-		return employeeDetails;
+	public EmployeeJPA getEmployeeJPA() {
+		return employeeJPA;
 	}
-	public void setEmployeeDetails(EmployeeJPA employeeDetails) {
-		this.employeeDetails = employeeDetails;
+	public void setEmployeeJPA(EmployeeJPA employeeJPA) {
+		this.employeeJPA = employeeJPA;
 	}
 
 }

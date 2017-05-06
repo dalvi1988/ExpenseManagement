@@ -16,5 +16,7 @@ public class ApplicationConstant {
 	public static final String FUNCTIONAL_FLOW= "FunctionalFlow";
 	
 	public static final String BRANCH_FLOW="BranchFlow";
+	
+	public static final String PASSWORD_SENT="Your new  password has been sent to your mail id.";
 
 }

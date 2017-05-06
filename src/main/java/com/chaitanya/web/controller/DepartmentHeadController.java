@@ -1,6 +1,7 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -44,7 +45,7 @@ public class DepartmentHeadController {
 	IEmployeeService employeeService;
 	
 	@RequestMapping(value="/departmentHead",method=RequestMethod.GET)
-	public ModelAndView getDepartmentHeadJSP() throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView getDepartmentHeadJSP() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
 		List<EmployeeDTO> employeeDTOList=null;

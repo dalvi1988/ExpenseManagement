@@ -1,18 +1,20 @@
 package com.chaitanya.expense.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.employee.convertor.EmployeeConvertor;
-import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.convertor.ExpenseConvertor;
 import com.chaitanya.expense.dao.IExpenseDAO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
@@ -21,9 +23,12 @@ import com.chaitanya.expenseCategory.convertor.ExpenseCategoryConvertor;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
+import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.FTPUtility;
 import com.chaitanya.utility.Validation;
 
 @Service("expenseService")
+@Transactional(rollbackFor=Exception.class)
 public class ExpenseService implements IExpenseService{
 	
 	@Autowired
@@ -38,57 +43,75 @@ public class ExpenseService implements IExpenseService{
 
 	
 	@Override
-	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) {
+	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException {
 		logger.debug("ExpenseService: addExpense-Start");
 		if(validateExpenseMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
 		}
-		try{
-			ExpenseHeaderDTO expenseHeaderDTO = (ExpenseHeaderDTO)baseDTO;
-			ExpenseHeaderJPA expenseHeaderJPA = ExpenseConvertor.setExpenseHeaderDTOToJPA(expenseHeaderDTO);
-			List<ExpenseDetailJPA> expenseDetailJPAList=new ArrayList<>();
-			
-			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
-				ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
-				expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
-				expenseDetailJPAList.add(expenseDetailJPA);
-			}
-			
-			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
-				ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
-				expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
-				expenseDetailJPAList.add(expenseDetailJPA);
-			}
-			expenseHeaderJPA.setExpenseDetailJPA(expenseDetailJPAList);
-			
-			ProcessHistoryJPA processHistoryJPA = ExpenseConvertor.setExpenseHeaderJPAtoProcessHistoryJPA(expenseHeaderJPA);
-			processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
-			List<ProcessHistoryJPA> processHistoryJPAList= new ArrayList<ProcessHistoryJPA>();
-			processHistoryJPAList.add(processHistoryJPA);
-			expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
-			
-			if (Validation.validateForNullObject(expenseHeaderJPA)) {
-				expenseHeaderJPA = expenseDAO.saveUpdateExpense(expenseHeaderJPA);
-				if(Validation.validateForNullObject(expenseHeaderJPA)){
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
-				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			}
+		ExpenseHeaderDTO expenseHeaderDTO = (ExpenseHeaderDTO)baseDTO;
+		ExpenseHeaderJPA expenseHeaderJPA = ExpenseConvertor.setExpenseHeaderDTOToJPA(expenseHeaderDTO);
+		List<ExpenseDetailJPA> expenseDetailJPAList=new ArrayList<>();
+		
+		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
+			ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
+			expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+			expenseDetailJPAList.add(expenseDetailJPA);
 		}
-		catch(DataIntegrityViolationException e){
+		
+		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
+			ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
+			expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+			expenseDetailJPAList.add(expenseDetailJPA);
+		}
+		expenseHeaderJPA.setExpenseDetailJPA(expenseDetailJPAList);
+		
+		ProcessHistoryJPA processHistoryJPA = ExpenseConvertor.setExpenseHeaderJPAtoProcessHistoryJPA(expenseHeaderJPA);
+		processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+		List<ProcessHistoryJPA> processHistoryJPAList= new ArrayList<ProcessHistoryJPA>();
+		processHistoryJPAList.add(processHistoryJPA);
+		expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
+		
+		if (Validation.validateForNullObject(expenseHeaderJPA)) {
+			expenseHeaderJPA = expenseDAO.saveUpdateExpense(expenseHeaderJPA);
+			
+			//Create process instance if voucher not saved as draft.
+			if(expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
+				String voucherNumber = expenseDAO.generateVoucherNumber(expenseHeaderDTO);
+				expenseHeaderJPA.setVoucherNumber(voucherNumber);
+				expenseDAO.updateProcessInstance(expenseHeaderJPA,expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId());
+			}
+			
+			//Add, Update,delete attachment
+			addUpdateDeleteAttachment(expenseHeaderDTO,expenseHeaderJPA.getExpenseHeaderId());
+			baseDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("ExpenseService: Exception",e);
-		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("ExpenseService: Exception",e);
 		}
 		logger.debug("ExpenseService: addExpense-End");
 		return baseDTO;
 	}
+
+	private void addUpdateDeleteAttachment(ExpenseHeaderDTO expenseHeaderDTO,Long expenseHeaderId) throws IllegalStateException, IOException {
+		
+		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
+			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
+				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
+				expenseDetailDTO.getReceipt().transferTo(convFile);
+				FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+			}
+		}
+		
+		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
+			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
+				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
+				expenseDetailDTO.getReceipt().transferTo(convFile);
+				FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+			}
+		}
+	}
+
 
 	@Override
 	public List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) {
@@ -208,6 +231,7 @@ public class ExpenseService implements IExpenseService{
 				if(Validation.validateForNullObject(expenseHeaderJPA)){
 					expenseHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
 					List<ExpenseDetailDTO> expenseDetailDTOList= new ArrayList<ExpenseDetailDTO>();
+					
 					for(ExpenseDetailJPA expenseDetailJPA: expenseHeaderJPA.getExpenseDetailJPA()){
 						ExpenseDetailDTO expenseDetailDTO=ExpenseConvertor.setExpenseDetailJPAtoDTO(expenseDetailJPA);
 						expenseDetailDTOList.add(expenseDetailDTO);
@@ -230,28 +254,45 @@ public class ExpenseService implements IExpenseService{
 	}
 	
 	@Override
-	public BaseDTO approveRejectExpenses(BaseDTO baseDTO) {
+	public BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException {
 		logger.debug("ExpenseService: approveRejectExpenses-Start");
 		if(validateExpenseMasterDTO(baseDTO)){
 			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
 		}
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-				ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.approveRejectExpenses(expenseHeaderDTO);
-				if(Validation.validateForNullObject(expenseHeaderJPA)){
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.approveRejectExpenses(expenseHeaderDTO);
+			Integer statusID= expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId();
+			
+			VoucherStatusJPA voucherStatusJPA= new VoucherStatusJPA();
+			if(Validation.validateForNullObject(expenseHeaderJPA)){
+				if(expenseHeaderDTO.getVoucherStatusId() == 3){// Approved
+					// Set Voucher Status in ExpenseHEader
+					voucherStatusJPA.setVoucherStatusId(statusID+2);
+					expenseHeaderJPA.setVoucherStatusJPA(voucherStatusJPA);
 					
-					baseDTO=expenseHeaderDTO;
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				else if(expenseHeaderDTO.getVoucherStatusId() == 4){//Rejected
+					voucherStatusJPA.setVoucherStatusId(statusID+3);
+					expenseHeaderJPA.setVoucherStatusJPA(voucherStatusJPA);
+				}
+				
+				// Set Process History
+				ProcessHistoryJPA processHistoryJPA = new ProcessHistoryJPA();
+				processHistoryJPA.setVoucherStatusJPA(voucherStatusJPA);
+				processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+				List<ProcessHistoryJPA> processHistoryJPAList= new ArrayList<ProcessHistoryJPA>();
+				processHistoryJPAList.add(processHistoryJPA);
+				expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
+				
+				expenseDAO.updateProcessInstance(expenseHeaderJPA,expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId());
+				
+				baseDTO=expenseHeaderDTO;
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("ExpenseService: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		logger.debug("ExpenseService: approveRejectExpenses-End");
 		return  baseDTO;

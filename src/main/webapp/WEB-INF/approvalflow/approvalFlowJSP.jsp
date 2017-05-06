@@ -66,7 +66,6 @@
 
 
        $gridMain = $("div#grid_md").pqGrid({
-    	   width: 860, height: 500,
            dataModel:{ 
         	   location: "remote",
                sorting: "local",            
