@@ -7,13 +7,13 @@
 	<modelVersion>4.0.0</modelVersion>
    <groupId>com.chaitanya.com</groupId>
    <artifactId>ExpenseManagement</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
+   <version>0.0.2-SNAPSHOT</version>
    <packaging>war</packaging>
    <name>Expense Management</name>
    <description>Expense Management</description>
 
 	<properties>
-	    <java.version>1.8</java.version>
+	    <java.version>1.7</java.version>
 	    <jsp.api.version>2.2</jsp.api.version>
 	    
 	    <spring.version>4.1.4.RELEASE</spring.version>
@@ -27,6 +27,8 @@
 		<servletapi.version>3.1.0</servletapi.version>
 		<javax.validation>1.1.0.Final</javax.validation>
 		<jackson.version>2.3.0</jackson.version>
+		<maven.compiler.target>1.7</maven.compiler.target>
+  		<maven.compiler.source>1.7</maven.compiler.source>
 	</properties>
 
 	<dependencies>
@@ -199,28 +201,36 @@
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
         </dependency>
+        
 	</dependencies>
 
 
 	<build>
 	    <finalName>ExpenseManagement</finalName>
 	    <plugins>
-		<plugin>
-		     <groupId>org.apache.maven.plugins</groupId>
-		     <artifactId>maven-compiler-plugin</artifactId>
-		     <version>3.1</version>
-		     <configuration>
-			<source>${java.version}</source>
-			<target>${java.version}</target>
-		     </configuration>
-		</plugin>
-		<plugin>
+			<plugin>
+			     <groupId>org.apache.maven.plugins</groupId>
+			     <artifactId>maven-compiler-plugin</artifactId>
+			     <version>3.1</version>
+			     <configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+			     </configuration>
+			</plugin>
+			<plugin>
 	           <groupId>org.apache.maven.plugins</groupId>
 	           <artifactId>maven-war-plugin</artifactId>
+	           <version>2.6</version>
 	           <configuration>
-	              <failOnMissingWebXml>true</failOnMissingWebXml>
+	              <failOnMissingWebXml>false</failOnMissingWebXml>
 	           </configuration>           
         	</plugin>
+        	<plugin>
+			   <groupId>com.google.appengine</groupId>
+			   <artifactId>appengine-maven-plugin</artifactId>
+			   <version>1.9.46</version>
+			</plugin>
 	    </plugins>
 	</build>
+	
 </project>

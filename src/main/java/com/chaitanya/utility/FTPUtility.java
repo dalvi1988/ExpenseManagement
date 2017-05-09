@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class FTPUtility {
 	
-	static String ftpServerAddress = "192.168.43.188";
+	static String ftpServerAddress = "10.90.19.28";
     static String userName = "anonymous";
     static String password = "";
     static FTPClient ftpclient;
