@@ -17,34 +17,6 @@
    var branchList= ${branchList};
    var departmentList=${departmentList};
    $(function () {
-	   
-		//var branchList = [{ label:'Mumbai',value:'1'},{ label:'Mumbai2', value:'2'},{ label:'Mumbai3', value:'3'}]
-		//var branchList = [{ 'Mumbai':'1'},{'Mumbai2':'2'},{'Mumbai3':'3'}]
-       //define common ajax object for addition, update and delete.
-       		
-        var autoCompleteEditor = function (ui) {
-            var $inp = ui.$cell.find("input");
-			
-            //initialize the editor
-            $inp.autocomplete({
-                source: branchList,
-                selectItem: { on: true }, //custom option
-                highlightText: { on: false }, //custom option
-                minLength: 0,
-                select: function(event, ui) { 
-					event.preventDefault();
-		             $(this).val(ui.item.label);
-					
-				}
-            }).focus(function () {
-                //open the autocomplete upon focus   
-                //alert($(this).val());
-                event.preventDefault();
-                $(this).autocomplete("search", "");
-            });
-            
-        }
-		
        //to check whether any row is currently being edited.
        function isEditing($grid) {
            var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
@@ -287,7 +259,7 @@
                                   }
                                   str += "<input type='radio' " + checked + " name='" + ui.dataIndx + "' style='margin-left:5px;' value='" + option + "'>  " + option;
                               });
-                              ui.$cell.append("<div tabindex='0' style='padding:5px;'>" + str + "</div>");
+                              ui.$cell.append("<div class='pq-editor-focus' tabindex='0' style='padding:5px;'>" + str + "</div>");
                           },
                           getData: function (ui) {
                               return $("input[name='" + ui.dataIndx + "']:checked").val();
@@ -438,12 +410,7 @@
                }
            }
        };
-       var $grid = $("#grid_editing").pqGrid(obj);
-      
-       $grid.pqGrid( "filter", {
- 		    oper: 'add', 
- 		    data: [{dataIndx: 'branchId', value:logerBranchId}] 
- 		});
+       var $grid = $("#grid_editing");
        
        //use refresh & refreshRow events to display jQueryUI buttons and bind events.
        $grid.on('pqgridrefresh pqgridrefreshrow', function () {
@@ -481,8 +448,13 @@
                editRow(rowIndx, $grid);
            }
        }); 
-	   $("#grid_editing").pqGrid("refresh")
+	   $("#grid_editing").pqGrid(obj);
 	   
+	   $grid.pqGrid( "filter", {
+		    oper: 'add', 
+		    data: [{dataIndx: 'branchId', value:logerBranchId}] 
+		});
+	   $grid.pqGrid("refresh")
    });
 
 

@@ -5,10 +5,6 @@
 <head>
 
     <title>Branch Master</title>
-   
- 	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
    <script type="text/javascript">
    var branchList= ${branchList};
@@ -185,10 +181,9 @@
            wrap: false,
            hwrap: false,
            resizable: true,
-           columnBorders: false,
-           sortable: false,
+           columnBorders: true,
+           sortable: true,
            numberCell: { show: false },
-           filterModel: { on: true, mode: "AND", header: true },
            track: true, //to turn on the track changes.
            flexHeight: true,
            toolbar: {
@@ -223,8 +218,7 @@
            title: "<h1><b>Branch Master</b></h1>",
 
            colModel: [
-                  { title: "Branch Id", dataType: "integer", dataIndx: "branchId",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },editable: false, width: 80 },
+                  { title: "Branch Id", dataType: "integer", dataIndx: "branchId",hidden:true},
                   { title: "Branch Code", width: 140, dataType: "string", align: "right", dataIndx: "branchCode",
                       filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                       validations: [
@@ -259,9 +253,11 @@
            dataModel: {
                dataType: "JSON",
                location: "local",
-               recIndx: "branchId",
+               sorting: "local",
+               sortIndx: "branchName",
                data: branchList
            },
+           filterModel: { on: true, mode: "AND", header: true },
            pageModel: { type: "local" },
            cellBeforeSave: function (evt, ui) {
                var $grid = $(this);
@@ -282,7 +278,7 @@
                }
            }
        };
-       var $grid = $("#grid_editing").pqGrid(obj);
+       var $grid = $("#grid_editing");
        //use refresh & refreshRow events to display jQueryUI buttons and bind events.
        $grid.on('pqgridrefresh pqgridrefreshrow', function () {
            //debugger;
@@ -319,7 +315,8 @@
                editRow(rowIndx, $grid);
            }
        }); 
-		$("#grid_editing").pqGrid("refresh")
+       $grid.pqGrid( obj );
+		
    });
 
 

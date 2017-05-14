@@ -20,7 +20,15 @@
         var colM = [
             { title: "", minWidth: 27, width: 27, type: "detail", resizable: false, editable:false },
             { title: "Branch Code", width: 100, dataIndx: "branchCode" },
-            { title: "Branch Name", width: 100, dataIndx: "branchName" },
+            { title: "Branch Name", width: 100, dataIndx: "branchName",
+            	filter: { type: "select",
+    		        condition: 'equal',
+    		        prepend: { '': '--Select--' },
+    		        valueIndx: "branchName",
+    		        labelIndx: "branchName",
+    		        listeners: ['change']
+    		    }
+            },
             { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                 editor: { type: "checkbox", style: "margin:3px 5px;" },
                 render: function (ui) {
@@ -47,8 +55,9 @@
             }
         }
 
-        var $gridMain = $("div#grid_md").pqGrid({ 
-            width: 860, height: 500,
+        var $gridMain = $("div#grid_md").pqGrid({
+            width: '100%', height: '100%-5',
+            flexHeight: true,
             dataModel: dataModel,
             virtualX: true, virtualY: true,
             editable: false,
@@ -60,6 +69,7 @@
             resizable: true,
             freezeCols: 1,            
             selectionModel: { type: 'cell' },
+            filterModel: { on: true, mode: "AND", header: true },
             detailModel: {
                 cache: true,
                 collapseIcon: "ui-icon-plus",
@@ -83,9 +93,12 @@
     	
         var gridDetailModel = function( $gridMain, rowData ){
             return {
+            	scrollModel: {
+                    autoFit: true
+                },
             	wrap: false,
                 hwrap: false,
-                resizable: true,
+                resizable: false,
                 columnBorders: false,
                 sortable: false,
                 numberCell: { show: false },
@@ -93,7 +106,7 @@
                 flexHeight: true,
                 toolbar: {
                     items: [
-                        { type: 'button', icon: 'ui-icon-plus', label: 'Add Product', listeners: [
+                        { type: 'button', icon: 'ui-icon-plus', label: 'Add New Department Head', listeners: [
                             { "click": function (evt, ui) {
                                 var $grid = $(this).closest('.pq-grid');
                                 addRow($grid);

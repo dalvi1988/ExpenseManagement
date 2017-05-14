@@ -13,7 +13,7 @@
    <description>Expense Management</description>
 
 	<properties>
-	    <java.version>1.7</java.version>
+	    <java.version>1.8</java.version>
 	    <jsp.api.version>2.2</jsp.api.version>
 	    
 	    <spring.version>4.1.4.RELEASE</spring.version>
@@ -225,11 +225,6 @@
 	              <failOnMissingWebXml>false</failOnMissingWebXml>
 	           </configuration>           
         	</plugin>
-        	<plugin>
-			   <groupId>com.google.appengine</groupId>
-			   <artifactId>appengine-maven-plugin</artifactId>
-			   <version>1.9.46</version>
-			</plugin>
 	    </plugins>
 	</build>
 	

@@ -27,7 +27,7 @@
        }
        //called by add button in toolbar.
        function addRow($grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            if (isEditing($grid)) {
                return false;
@@ -44,7 +44,7 @@
        }
        //called by delete button.
        function deleteRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
@@ -69,13 +69,11 @@
                        xhr.setRequestHeader("Content-Type", "application/json");
                    },
             	   success: function(data) { 
-                	  alert("success")
                       this.pqGrid("commit");
                       this.pqGrid("refreshDataAndView");
                    },
                    error: function () {
                        //debugger;
-                       alert("error")
                        this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
                        this.pqGrid("rollback");
                    }
@@ -87,7 +85,7 @@
        }
        //called by edit button.
        function editRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
            $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
@@ -133,7 +131,7 @@
               jsonToBeSend["companyName"] = rowData.companyName;
               jsonToBeSend["companyCode"] = rowData.companyCode;
               jsonToBeSend["status"] = rowData.status;
-              url = "/SpringMVCSecruityMavenApp/addCompany";
+              url = "addCompany";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record
@@ -163,16 +161,17 @@
 	                    } 
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	          	    	$grid.pqGrid("commit");
+	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
+	          	    	$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
           	    	else{
-          	    		
+          	    		$(".alert").addClass("alert-danger").text(data.message).show();
           	    		$grid.pqGrid("rollback");
           	    	}
-          	    	$(".customMessage").text(data.message);
           	    	
           	    },
           	    error:function(data) { 
-          	    	$(".customMessage").text(data.message);
+          	    	$(".alert").addClass("alert-danger").text(data.message).show();
           	    }
           	    
           	}));
@@ -231,9 +230,7 @@
            title: "<h1><b>Company Master</b></h1>",
 
            colModel: [
-                  { title: "Company Id", dataType: "integer", dataIndx: "companyId",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
-                      editable: false, width: 80 },
+                  { title: "Company Id", dataType: "integer", dataIndx: "companyId", hidden:true},
                   { title: "Company Code", width: 140, dataType: "string", align: "right", dataIndx: "companyCode",
                 	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
                        validations: [
