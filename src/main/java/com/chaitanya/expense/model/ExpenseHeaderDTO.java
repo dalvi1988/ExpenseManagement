@@ -44,6 +44,14 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO employeeDTO;
 	
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
+	@JsonIdentityReference(alwaysAsId=true)
+	private EmployeeDTO pendingAtEmployeeDTO;
+	
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
+	@JsonIdentityReference(alwaysAsId=true)
+	private EmployeeDTO approvedByEmployeeDTO;
+	
 	private List<ExpenseDetailDTO> addedExpenseDetailsDTOList;
 	
 	private List<ExpenseDetailDTO> updatedExpenseDetailsDTOList;
@@ -114,7 +122,6 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		this.deletedExpenseDetailsDTOList = deletedExpenseDetailsDTOList;
 	}
 
-	@JsonIgnore
 	public EmployeeDTO getEmployeeDTO() {
 		return employeeDTO;
 	}
@@ -138,6 +145,7 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		return voucherStatusDTO;
 	}
 
+	@JsonIgnore
 	public void setVoucherStatusDTO(VoucherStatusDTO voucherStatusDTO) {
 		this.voucherStatusDTO = voucherStatusDTO;
 		this.voucherStatusId=voucherStatusDTO.getVoucherStatusId();
@@ -149,6 +157,22 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setVoucherNumber(String voucherNumber) {
 		this.voucherNumber = voucherNumber;
+	}
+
+	public EmployeeDTO getPendingAtEmployeeDTO() {
+		return pendingAtEmployeeDTO;
+	}
+
+	public void setPendingAtEmployeeDTO(EmployeeDTO pendingAtEmployeeDTO) {
+		this.pendingAtEmployeeDTO = pendingAtEmployeeDTO;
+	}
+
+	public EmployeeDTO getApprovedByEmployeeDTO() {
+		return approvedByEmployeeDTO;
+	}
+
+	public void setApprovedByEmployeeDTO(EmployeeDTO approvedByEmployeeDTO) {
+		this.approvedByEmployeeDTO = approvedByEmployeeDTO;
 	}
 	
 }

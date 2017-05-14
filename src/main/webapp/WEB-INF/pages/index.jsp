@@ -10,11 +10,13 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   
- <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
+ 	
+ 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
- 	
- 	
+    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
+    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
+ 	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
   
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href=<spring:url value="/theme/bootstrap/css/bootstrap.min.css"/> />
@@ -35,6 +37,10 @@
 	<script>
 	
 	$(document).ready(function(){
+		
+		$('a').click(function() {
+			$(".alert").hide();
+		});
 		
 	    $('.branchMaster').click(function(){
 	    	$( this ).parent().addClass("active")
@@ -84,6 +90,11 @@
 	    $('.draftExpense').click(function(){
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('/ExpenseManagement/viewDraftExpense');
+	     });
+	    
+	    $('.pendingExpense').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('/ExpenseManagement/pendingExpense');
 	     });
 	    
 	    $('.createExpense').click();
@@ -159,6 +170,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="createExpense"><i class="fa fa-circle-o"></i> Create New Expense</a></li>
             <li><a href="#" class="draftExpense"><i class="fa fa-circle-o"></i>Draft Expenses</a></li>
+            <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
           </ul>
         </li>
         

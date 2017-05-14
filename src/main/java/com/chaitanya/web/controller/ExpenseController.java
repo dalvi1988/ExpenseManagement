@@ -1,6 +1,7 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -27,6 +28,7 @@ import com.chaitanya.expense.service.IExpenseService;
 import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
 import com.chaitanya.expenseCategory.service.IExpenseCategoryService;
 import com.chaitanya.login.model.LoginUserDetails;
+import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -72,7 +74,7 @@ public class ExpenseController {
 	@RequestMapping(value="/toBeApproveExpense",method=RequestMethod.GET)
 	public @ResponseBody ModelAndView getExppenseAprrovalPage() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
-		model.setViewName("expense/toBeApproveExpenseJSP");
+		model.setViewName("expense/approvalExpenseJSP");
 		return model;
 	}
 	
@@ -89,6 +91,7 @@ public class ExpenseController {
 		return "{\"data\":"+mapper.writeValueAsString(expenseHeaderDTOList)+"}";
 	}
 	
+	
 	@RequestMapping(value="/expenseDetail",method=RequestMethod.POST)
 	public @ResponseBody String getExpenseDetailListByHeaderId(@RequestBody ExpenseHeaderDTO receivedExpenseHeaderDTO) throws JsonGenerationException, JsonMappingException, IOException{
 		ObjectMapper mapper= new ObjectMapper();
@@ -101,26 +104,39 @@ public class ExpenseController {
 	}
 	
 	@RequestMapping(value="/approveRejectExpense",method=RequestMethod.POST)
-	public @ResponseBody String approveRejectExpenses(@RequestBody List<ExpenseHeaderDTO> expenseHeaderDTOList) throws JsonGenerationException, JsonMappingException, IOException{
-		ObjectMapper mapper= new ObjectMapper();
-
+	public @ResponseBody BaseDTO approveRejectExpenses(@RequestBody List<ExpenseHeaderDTO> expenseHeaderDTOList) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
+		StringBuilder message= new StringBuilder();
+		BaseDTO baseDTO= null;
+		
+		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
 		for(ExpenseHeaderDTO expenseHeaderDTO:expenseHeaderDTOList){
-			BaseDTO baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
+			
+			 expenseHeaderDTO.setApprovedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			 
+		     baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
+			 if(Validation.validateForSuccessStatus(baseDTO)){
+				 ExpenseHeaderDTO expHeaderDTO=(ExpenseHeaderDTO)baseDTO;
+				 if(expenseHeaderDTO.getVoucherStatusId() == 3){
+					 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been approved\n.");
+				 }
+				 else if(expenseHeaderDTO.getVoucherStatusId() == 4){
+					 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been rejected\n.");
+				 }
+			 }
+			 else{
+				 message.append(ApplicationConstant.SYSTEM_FAILURE);
+			 }
+			 baseDTO.setMessage(message);
 		}
 
-		return "{\"data\":"+mapper.writeValueAsString(expenseHeaderDTOList)+"}";
+		return baseDTO;
 	}
 	
 	@RequestMapping(value="/saveExpense",method=RequestMethod.POST)
 	public @ResponseBody ExpenseHeaderDTO saveExpense(@Valid @ModelAttribute("ExpenseHeaderDTO") ExpenseHeaderDTO receivedExpenseHeaderDTO,BindingResult result, @RequestParam("addedFiles") List<MultipartFile> addedFiles,@RequestParam("updatedFiles") List<MultipartFile> updatedFiles, String data) throws JsonGenerationException, JsonMappingException, IOException{
 		ObjectMapper mapper= new ObjectMapper();
 		ExpenseHeaderDTO toBeSendExpenseHeaderDTO = null;
-		//ModelAndView model=new ModelAndView();
-		/*if(result.hasErrors()){
-			model.addObject("ExpenseHeaderDTO", expenseHeaderDTO);
-			model.setViewName("expense/expenseJSP");
-			return model;
-		}*/
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			receivedExpenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
@@ -168,9 +184,8 @@ public class ExpenseController {
 			}
 		}
 		catch(Exception e){
-			//model.setViewName("others/505");
+			toBeSendExpenseHeaderDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
-		//return model;
 		return toBeSendExpenseHeaderDTO;
 	}
 	
@@ -188,8 +203,31 @@ public class ExpenseController {
 		}
 		
 		model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
-		model.setViewName("expense/viewExpensesJSP");
+		model.setViewName("expense/draftExpensesJSP");
 		return model;
 	}
 	
+	@RequestMapping(value="/pendingExpense",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPendingApprovalPage() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 expenseHeaderDTOList = expenseService.getPendingExpenseList(expenseHeaderDTO);
+			}
+			
+			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
+			model.setViewName("expense/pendingExpensesJSP");
+		}
+		catch(Exception e){
+			model.setViewName("others/505");
+		}
+		return model;
+	}
 }

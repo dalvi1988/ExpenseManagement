@@ -5,6 +5,8 @@ import java.text.ParseException;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.chaitanya.employee.convertor.EmployeeConvertor;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
@@ -19,7 +21,7 @@ import com.chaitanya.utility.Validation;
 
 public class ExpenseConvertor {
 	
-	public static ExpenseHeaderDTO setExpenseHeaderJPAtoDTO(ExpenseHeaderJPA expenseHeaderJPA){
+	public static ExpenseHeaderDTO setExpenseHeaderJPAtoDTO(ExpenseHeaderJPA expenseHeaderJPA) throws ParseException{
 		ExpenseHeaderDTO expenseHeaderDTO=null;
 		
 		if(Validation.validateForNullObject(expenseHeaderJPA)){
@@ -29,6 +31,17 @@ public class ExpenseConvertor {
 			expenseHeaderDTO.setEndDate(Convertor.calendartoString(expenseHeaderJPA.getEndDate(),Convertor.dateFormat));
 			expenseHeaderDTO.setTitle(expenseHeaderJPA.getTitle());
 			expenseHeaderDTO.setPurpose(expenseHeaderJPA.getPurpose());
+			if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA())){
+				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt())){
+					EmployeeDTO pendingAtEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt());
+					expenseHeaderDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+				}
+				
+				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getApprovedBy())){
+					EmployeeDTO approvedByEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getApprovedBy());
+					expenseHeaderDTO.setApprovedByEmployeeDTO(approvedByEmployeeDTO);
+				}
+			}
 			if(Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
 				expenseHeaderDTO.setVoucherNumber(expenseHeaderJPA.getVoucherNumber());
 			}

@@ -65,8 +65,16 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		BasicDataSource ds = new BasicDataSource();
 	    ds.setDriverClassName("com.mysql.jdbc.Driver");
 		ds.setUrl("jdbc:mysql://localhost:3306/test");
+<<<<<<< Upstream, based on origin/master
 		/*ds.setUsername("root");
 		ds.setPassword("Nexus@123");*/
+=======
+		ds.setUsername("root");
+		ds.setPassword("Nexus@123");
+		/*ds.setUrl("jdbc:mysql://node31131-env-8602550.cloud.cms500.com/test");
+		ds.setUsername("root");
+		ds.setPassword("DTAvei15213");*/
+>>>>>>> d9881aa Remove google App setting. Approval cycle changes Removed Bug
 		return ds;
 	}
 	
@@ -117,7 +125,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
         mailSender.setUsername("dalvi21288@gmail.com");
-        mailSender.setPassword("Pramila21");
+        mailSender.setPassword("Nexus@123");
          
         Properties javaMailProperties = new Properties();
         javaMailProperties.put("mail.smtp.starttls.enable", "true");

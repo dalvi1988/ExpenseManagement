@@ -28,6 +28,10 @@ public class ProcessInstanceJPA {
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="pending_at")
 	private EmployeeJPA pendingAt;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="approved_by")
+	private EmployeeJPA approvedBy;
 
 	public Long getProcessInstanceId() {
 		return processInstanceId;
@@ -59,5 +63,13 @@ public class ProcessInstanceJPA {
 
 	public void setPendingAt(EmployeeJPA pendingAt) {
 		this.pendingAt = pendingAt;
+	}
+
+	public EmployeeJPA getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(EmployeeJPA approvedBy) {
+		this.approvedBy = approvedBy;
 	}
 }

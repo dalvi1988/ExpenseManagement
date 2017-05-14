@@ -20,6 +20,8 @@ public interface IExpenseService {
 
 	List<ExpenseDetailDTO> getExpenseDetailsByHeaderId(BaseDTO baseDTO);
 
-	BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException;
+	BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException, ParseException;
+
+	List<ExpenseHeaderDTO> getPendingExpenseList(BaseDTO baseDTO) throws ParseException;
 
 }

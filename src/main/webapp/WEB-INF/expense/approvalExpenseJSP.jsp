@@ -22,22 +22,16 @@
          	 
          	    success: function(data) { 
          	    	if(data.serviceStatus=="SUCCESS"){
-	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
-	                    if (rowData[recIndx] == null || rowData[recIndx] == "") {
-	                       rowData.branchId= data.branchId;
-	                    } 
-	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-	          	    	$grid.pqGrid("commit");
+         	    		$(".alert").addClass("alert-success").text(data.message).show();
          	    	}
          	    	else{
-         	    		
+         	    		$(".alert").addClass("alert-danger").text(data.message).show();
          	    		$grid.pqGrid("rollback");
          	    	}
-         	    	//$(".customMessage").text(data.message);
          	    	
          	    },
-         	    error:function(data) { 
-         	    	//$(".customMessage").text(data.message);
+         	    error:function(data) {
+         	    	alert("error")
          	    }
 		   }));
 	   }
@@ -51,6 +45,7 @@
            { title: "Start Date", width: 100, dataIndx: "startDate" },
 		   { title: "End Date", width: 100, dataIndx: "endDate"},
            { title: "Amount", width: 100, align: "right", dataType: "float", dataIndx: "amount" },
+           { title: "Previously Approved By", minWidth: 100, dataIndx: "approvedByEmployeeDTO" },
            { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
                return "<button type='button' class='approve_btn'>Approve</button>\
                    <button type='button' class='reject_btn'>Reject</button>";
@@ -69,6 +64,9 @@
            //url: "/pro/orders.php",//for PHP
            getData: function (dataJSON) {
                var data = dataJSON.data;
+               if(data == ""){
+            	   $gridMain.pqGrid("hideLoading");
+               }
                //expand the first row.
                data[0]['pq_detail'] = { 'show': false };
                return { curPage: dataJSON.curPage, totalRecords: dataJSON.totalRecords, data: data };
