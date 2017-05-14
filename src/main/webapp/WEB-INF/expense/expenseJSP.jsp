@@ -17,6 +17,15 @@ var expenseCategoryList =${expenseCategoryList};
 
 $(function () {
     
+	function resetDate(){
+           var data =  $grid.pqGrid("option", "dataModel.data");
+           if(data !=null){
+            for (var i = 0; i < data.length; i++) {
+                /* $grid.pqGrid( "updateRow", {rowIndx: i, row: { 'date':''}} );
+                $grid.pqGrid("refresh");  */
+            }
+           }
+	}
 	function jsonParseForAutoComplete(data,value,id) {
 	    var rows = [];
 	    var rowData = null;
@@ -82,7 +91,7 @@ $(function () {
 	    changeMonth: true,
 	    changeYear: true,
 	    onSelect: function (dateText,inst) {
-	
+	    	resetDate();
 	  	 $( "#endDate" ).datepicker( "option", "disabled", false );
 	  	  $( "#endDate" ).datepicker( "option", "minDate", dateText);
 	    }
@@ -97,7 +106,10 @@ $(function () {
 		changeYear: true,
 		onClose: function (dateText,inst) {
 			$( "#purpose" ).focus();
-		}
+		},
+		onSelect: function (dateText,inst) {
+	    	resetDate();
+	    }
 	});
 	
 	var dateEditor = function (ui) {
@@ -139,7 +151,7 @@ $(function () {
 			return false;
 		}
 		
-		var rowData = {locationRequired :false,unitRequired:false }; //empty row
+		var rowData = {date:$("#startDate").val(), locationRequired :false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
 	}

@@ -286,7 +286,6 @@ var getFunctionalGrid = function( rowData ){
            },
            //make rows editable selectively.
            editable: function (ui) {
-        	   alert("editable")
                var $grid = $(this);
                var rowIndx = ui.rowIndx;
                if ($grid.pqGrid("hasClass", { rowIndx: rowIndx, cls: 'pq-row-edit' }) == true) {
