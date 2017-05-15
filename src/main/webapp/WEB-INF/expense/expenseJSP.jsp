@@ -14,17 +14,45 @@
 
 var expenseDetailList=${expenseDetailList};
 var expenseCategoryList =${expenseCategoryList};
-
+var $summary = "";
+var totalData,
+averageData;
 $(function () {
-    
+	
+		//calculate sum of 3rd and 4th column.
+	function calculateSummary() {
+		var arrayData=[];
+		
+		if(typeof $(this).pqGrid( "option" , "dataModel.getData" ) != "undefined" ){
+			alert($(this).pqGrid( "option" , "dataModel.getData" ))
+			arrayData = $grid? $grid.pqGrid( "option" , "dataModel.getData" ): expenseDetailList;
+		    var revenueTotal = 0,
+			profitTotal = 0;
+		    for (var i = 0; i < arrayData.length; i++) {
+		        var row = arrayData[i];
+		        revenueTotal += parseFloat(row["amount"]);
+		        profitTotal += parseFloat(row["amount"]);
+		    }
+		    var revenueAverage = $.paramquery.formatCurrency(revenueTotal / arrayData.length);
+		    var profitAverage = $.paramquery.formatCurrency(profitTotal / arrayData.length);
+		
+		    revenueTotal = $.paramquery.formatCurrency(revenueTotal);
+		    profitTotal = $.paramquery.formatCurrency(profitTotal);
+		    totalData = { description: "<b>Total</b>",  amount: profitTotal, pq_rowcls: 'green' };
+		    
+		}else{
+			totalData = { description: "<b>Total</b>",  amount: 0, pq_rowcls: 'green'};
+		}
+	}
+	
 	function resetDate(){
-           var data =  $grid.pqGrid("option", "dataModel.data");
-           if(data !=null){
-            for (var i = 0; i < data.length; i++) {
-                /* $grid.pqGrid( "updateRow", {rowIndx: i, row: { 'date':''}} );
-                $grid.pqGrid("refresh");  */
-            }
-           }
+        var data =  grid.pqGrid("option", "dataModel.data");
+        if(data !=null){
+          for (var i = 0; i < data.length; i++) {
+              /* $grid.pqGrid( "updateRow", {rowIndx: i, row: { 'date':''}} );
+              $grid.pqGrid("refresh");  */
+          }
+        }
 	}
 	function jsonParseForAutoComplete(data,value,id) {
 	    var rows = [];
@@ -147,9 +175,9 @@ $(function () {
 	}
 	
 	function addNewRow(){
-		if(validateComponent() == false){
+		/* if(validateComponent() == false){
 			return false;
-		}
+		} */
 		
 		var rowData = {date:$("#startDate").val(), locationRequired :false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
@@ -467,55 +495,65 @@ $(function () {
                 $grid.pqGrid("saveEditCell");
             }
         },
-
-        refresh: function () {
-        	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
-        		 debugger;
-        		 var $tr = $(this).closest("tr");
-                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
-                 var rowIndx = obj.rowIndx;
-                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
-                 rowData.receipt=null;
-        		 var clone = $(this).clone();
-        	     rowData.receipt = clone.attr('name', 'addedFiles');
-        		 $grid.pqGrid( "updateRow", {rowIndx: rowIndx, row: { 'modified':true},checkEditable:false} );
-				 $grid.pqGrid("refresh"); 
-				 
-        	});  
-            $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                var $tr = $(this).closest("tr");
-                var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
-                var rowIndx = obj.rowIndx;
-                $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
-
-                var ans = window.confirm("Are you sure to delete row No " + (rowIndx + 1) + "?");
-
-                if (ans) {
-                    $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true, complete: function () {
-                        $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
-                    }
-                    });
-                }
-                else {
-                    $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
-                }
-            });
+        render : function (evt, ui) {
+            $summary = $("<div class='pq-grid-summary'  ></div>")
+                .prependTo($(".pq-grid-bottom", this));
+            calculateSummary();
+        },
+        cellSave : function (evt, ui) {
+            calculateSummary();
+            obj.refresh.call(this);
         },
         cellBeforeSave: function (evt, ui) {
-            var isValid = grid.isValid(ui);
-            if (!isValid.valid) {
-                evt.preventDefault();
+        	var cd = ui.newVal;
+            if (cd == "") {
                 return false;
             }
+            
         }
     };
+    obj.refresh= function () {
+    	
+	   	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
+	   		 debugger;
+	   		 var $tr = $(this).closest("tr");
+	            var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+	            var rowIndx = obj.rowIndx;
+	            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
+	            rowData.receipt=null;
+	   		 var clone = $(this).clone();
+	   	     rowData.receipt = clone.attr('name', 'addedFiles');
+	   		 $grid.pqGrid( "updateRow", {rowIndx: rowIndx, row: { 'modified':true},checkEditable:false} );
+			 $grid.pqGrid("refresh"); 
+				 
+	   	});  
+       $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
+       .unbind("click")
+       .bind("click", function (evt) {
+           var $tr = $(this).closest("tr");
+           var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+           var rowIndx = obj.rowIndx;
+           $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
+
+           var ans = window.confirm("Are you sure to delete row No " + (rowIndx + 1) + "?");
+
+           if (ans) {
+               $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true, complete: function () {
+                   $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
+               }
+               });
+           }
+           else {
+               $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
+           }
+       });
+       debugger;
+       var data = [totalData]; //JSON (array of objects)
+       var obj1 = { data: data, $cont: $summary }
+       $(this).pqGrid("createTable", obj1);  
+   }
     var $grid = $("#grid_editing").pqGrid(obj);
-    
-    //get instance of the grid.
-    var grid = $grid.data("paramqueryPqGrid");
-        
+           
 });
 
 
