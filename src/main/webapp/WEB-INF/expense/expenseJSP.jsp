@@ -22,27 +22,18 @@ $(function () {
 		//calculate sum of 3rd and 4th column.
 	function calculateSummary() {
 		var arrayData=[];
-		
-		if(typeof $(this).pqGrid( "option" , "dataModel.getData" ) != "undefined" ){
-			alert($(this).pqGrid( "option" , "dataModel.getData" ))
-			arrayData = $grid? $grid.pqGrid( "option" , "dataModel.getData" ): expenseDetailList;
-		    var revenueTotal = 0,
+			var revenueTotal = 0,
 			profitTotal = 0;
-		    for (var i = 0; i < arrayData.length; i++) {
-		        var row = arrayData[i];
-		        revenueTotal += parseFloat(row["amount"]);
-		        profitTotal += parseFloat(row["amount"]);
+			arrayData = $grid? $grid.pqGrid( "option" , "dataModel.data" ): expenseDetailList;
+		    if(arrayData != null){
+			    for (var i = 0; i < arrayData.length; i++) {
+			        var row = arrayData[i];
+			        revenueTotal += parseFloat(row["amount"]);
+			    }
 		    }
-		    var revenueAverage = $.paramquery.formatCurrency(revenueTotal / arrayData.length);
-		    var profitAverage = $.paramquery.formatCurrency(profitTotal / arrayData.length);
 		
-		    revenueTotal = $.paramquery.formatCurrency(revenueTotal);
-		    profitTotal = $.paramquery.formatCurrency(profitTotal);
-		    totalData = { description: "<b>Total</b>",  amount: profitTotal, pq_rowcls: 'green' };
-		    
-		}else{
-			totalData = { description: "<b>Total</b>",  amount: 0, pq_rowcls: 'green'};
-		}
+		    totalData = { description: "<b>Total</b>",  amount: revenueTotal ,receipt:"", delButton:"", pq_rowcls: 'green' };
+
 	}
 	
 	function resetDate(){
@@ -119,7 +110,7 @@ $(function () {
 	    changeMonth: true,
 	    changeYear: true,
 	    onSelect: function (dateText,inst) {
-	    	resetDate();
+	    	//resetDate();
 	  	 $( "#endDate" ).datepicker( "option", "disabled", false );
 	  	  $( "#endDate" ).datepicker( "option", "minDate", dateText);
 	    }
@@ -136,7 +127,7 @@ $(function () {
 			$( "#purpose" ).focus();
 		},
 		onSelect: function (dateText,inst) {
-	    	resetDate();
+	    	//resetDate();
 	    }
 	});
 	
@@ -455,8 +446,10 @@ $(function () {
             { title: "Receipt/Document",editable:false, dataIndx: "receipt", minWidth: 200, sortable: false, 
 
             	  render:function (ui) {
-            		 debugger;
-            		 if(typeof ui.cellData == "undefined" && ui.rowData.fileName == null){
+            		 if(ui.cellData == ""){
+            			 return "";
+            		 }
+            		 else if(typeof ui.cellData == "undefined" && ui.rowData.fileName == null){
             		   	return "<input type='file' class='btn_file'/>";
             		 }
             		 else{
@@ -478,9 +471,11 @@ $(function () {
 	            }  
             },
             { title: "", editable: false, minWidth: 83, dataIndx: "delButton", sortable: false, render: function (ui) {
-                return "<button type='button' class='delete_btn' >Delete</button>";
-            	},
-            },
+	            	if(ui.cellData != ""){
+	                	return "<button type='button' class='delete_btn' >Delete</button>";
+	            	}
+           	 	}
+            }
            
         ],
         dataModel: {                
@@ -501,8 +496,10 @@ $(function () {
             calculateSummary();
         },
         cellSave : function (evt, ui) {
-            calculateSummary();
-            obj.refresh.call(this);
+        	if(ui.dataIndx == "amount"){
+	            calculateSummary();
+	            obj.refresh.call(this);
+        	}
         },
         cellBeforeSave: function (evt, ui) {
         	var cd = ui.newVal;
@@ -547,12 +544,13 @@ $(function () {
                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            }
        });
-       debugger;
        var data = [totalData]; //JSON (array of objects)
        var obj1 = { data: data, $cont: $summary }
        $(this).pqGrid("createTable", obj1);  
    }
     var $grid = $("#grid_editing").pqGrid(obj);
+  //get instance of the grid.
+    var grid = $grid.data("paramqueryPqGrid");
            
 });
 

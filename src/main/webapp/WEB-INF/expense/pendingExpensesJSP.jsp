@@ -20,6 +20,7 @@
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
 		   { title: "End Date", minWidth: 190, dataIndx: "endDate"},
 	       { title: "Purpose", width: 100, dataIndx: "purpose", align: "center"},
+	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center"},
 	       { title: "Previously Approved By", minWidth: 120, dataIndx: "approvedByEmployeeDTO" },
 	       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO" },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},

@@ -44,7 +44,7 @@
            { title: "Title", width: 120, dataIndx: "title" },
            { title: "Start Date", width: 100, dataIndx: "startDate" },
 		   { title: "End Date", width: 100, dataIndx: "endDate"},
-           { title: "Amount", width: 100, align: "right", dataType: "float", dataIndx: "amount" },
+           { title: "Total Amount", width: 100, align: "right", dataType: "float", dataIndx: "totalAmount" },
            { title: "Previously Approved By", minWidth: 100, dataIndx: "approvedByEmployeeDTO" },
            { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
                return "<button type='button' class='approve_btn'>Approve</button>\

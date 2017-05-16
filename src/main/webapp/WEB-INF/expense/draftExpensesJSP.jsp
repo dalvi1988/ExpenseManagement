@@ -28,6 +28,7 @@
        },
 	   { title: "End Date", minWidth: 190, dataIndx: "endDate"},
        { title: "Purpose", width: 100, dataIndx: "purpose", align: "center"},
+       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center"},
        { title: "", dataIndx: "expenseHeaderId",hidden:true},
        { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {
         	return "<button type='button' class='edit_btn' >Edit</button>";

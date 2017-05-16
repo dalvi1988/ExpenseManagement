@@ -45,6 +45,9 @@ public class ExpenseConvertor {
 			if(Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
 				expenseHeaderDTO.setVoucherNumber(expenseHeaderJPA.getVoucherNumber());
 			}
+			if(Validation.validateForNullObject(expenseHeaderJPA.getExpenseDetailJPA())){
+				expenseHeaderDTO.setTotalAmount(expenseHeaderJPA.getExpenseDetailJPA().stream().mapToDouble(o -> o.getAmount()).sum());
+			}
 		}
 		return expenseHeaderDTO;
 	}
@@ -139,4 +142,5 @@ public class ExpenseConvertor {
 		}
 		return expenseDetailDTO;
 	}
+
 }

@@ -23,6 +23,8 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	
 	private Integer voucherStatusId;
 	
+	private Double totalAmount;
+	
 	@JsonIgnore
 	private VoucherStatusDTO voucherStatusDTO;
 	
@@ -38,6 +40,14 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	@Size(min=5)
 	private String title;
 	
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
 	private String purpose;
 	
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
