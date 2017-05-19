@@ -61,7 +61,7 @@
                $.ajax($.extend({}, ajaxObj, {
             	   type: 'DELETE', 
                    context: $grid,
-                   url: "/ExpenseManagement/delete",
+                   url: "delete",
                    //url: "/pro/products.php?pq_delete=1",//for PHP
                    data: JSON.stringify(jsonToBeSend),
             	   success: function(data) { 
@@ -133,7 +133,7 @@
               jsonToBeSend["gender"] = rowData.gender;
               jsonToBeSend["emailId"] = rowData.emailId;
              
-              url = "/ExpenseManagement/addEmployee";
+              url = "addEmployee";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record

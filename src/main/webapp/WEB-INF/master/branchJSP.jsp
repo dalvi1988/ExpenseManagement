@@ -55,7 +55,7 @@
             	   type: 'DELETE', 
                    context: $grid,
                    dataType: 'json', 
-                   url: "/ExpenseManagement/deleteBranch",
+                   url: "deleteBranch",
                    //url: "/pro/products.php?pq_delete=1",//for PHP
                    data: JSON.stringify(jsonToBeSend),
                    async: true,
@@ -127,7 +127,7 @@
               jsonToBeSend["branchName"] = rowData.branchName;
               jsonToBeSend["branchCode"] = rowData.branchCode;
               jsonToBeSend["status"] = rowData.status;
-              url = "/ExpenseManagement/addBranch";
+              url = "addBranch";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record

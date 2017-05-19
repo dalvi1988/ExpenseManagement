@@ -51,7 +51,7 @@
 
 		
 
-    <form name='loginForm' action="/ExpenseManagement/login" method="post">
+    <form name='loginForm' action="login" method="post">
       <div class="form-group has-feedback">
         <input name="username" type="email" class="form-control" placeholder="Email">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

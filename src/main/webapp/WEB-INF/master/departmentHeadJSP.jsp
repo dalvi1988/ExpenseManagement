@@ -46,7 +46,7 @@
             method: "POST",
             recIndx: "branchId",
             rPPOptions: [1, 10, 20, 30, 40, 50, 100, 500, 1000],
-            url: "/ExpenseManagement/branchList",
+            url: "branchList",
             getData: function (dataJSON) {
             	var data = dataJSON;
                 //expand the first row.
@@ -126,7 +126,7 @@
                     method: "POST",
                     recIndx: "branchId",
                     getUrl: function() {
-                        return { url: "/ExpenseManagement/departmentHeadList", data: "{\"branchId\":"+rowData.branchId+"}" };
+                        return { url: "departmentHeadList", data: "{\"branchId\":"+rowData.branchId+"}" };
                     },
                    
                     mimeType : 'application/json',
@@ -362,7 +362,7 @@
                jsonToBeSend["departmentId"] = rowData.departmentId;
                jsonToBeSend["employeeId"] = rowData.employeeId;
                jsonToBeSend["status"] = rowData.status;
-               url = "/ExpenseManagement/addDepartmentHead";
+               url = "addDepartmentHead";
                
                if (rowData[recIndx] == null || rowData[recIndx] == "") {
              	  //For new record

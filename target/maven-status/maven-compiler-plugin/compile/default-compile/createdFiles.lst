@@ -1,4 +1,5 @@
 com\chaitanya\departmentHead\service\DepartmentHeadService.class
+com\chaitanya\jpa\BranchJPA_.class
 com\chaitanya\departmentHead\service\IDepartmentHeadService.class
 com\chaitanya\config\core\SpringSecurityInitializer.class
 com\chaitanya\expenseCategory\dao\ExpenseCategoryDAO.class
@@ -10,6 +11,7 @@ com\chaitanya\employee\dao\EmployeeDAO.class
 com\chaitanya\company\service\ICompanyService.class
 com\chaitanya\web\controller\DepartmentHeadController.class
 com\chaitanya\expenseCategory\convertor\ExpenseCategoryConvertor.class
+com\chaitanya\jpa\ProcessHistoryJPA_.class
 com\chaitanya\branch\convertor\BranchConvertor.class
 com\chaitanya\jpa\VoucherStatusJPA.class
 com\chaitanya\base\BaseDTO$Command.class
@@ -19,11 +21,13 @@ com\chaitanya\approvalFlow\dao\ApprovalFlowDAO.class
 com\chaitanya\expense\service\IExpenseService.class
 com\chaitanya\branch\dao\IBranchDAO.class
 com\chaitanya\department\service\IDepartmentService.class
+com\chaitanya\jpa\ApprovalFlowJPA_.class
 com\chaitanya\login\model\LoginUserDetails.class
 com\chaitanya\departmentHead\model\DepartmentHeadDTO.class
 com\chaitanya\base\KeyValueDTO.class
 com\chaitanya\expenseCategory\model\ExpenseCategoryDTO.class
 com\chaitanya\utility\dao\ICommonDAO.class
+com\chaitanya\jpa\DepartmentHeadJPA_.class
 com\chaitanya\branch\service\BranchService.class
 com\chaitanya\utility\model\VoucherStatusDTO.class
 com\chaitanya\utility\FTPUtility.class
@@ -38,6 +42,8 @@ com\chaitanya\expenseCategory\dao\IExpenseCategoryDAO.class
 com\chaitanya\jpa\ExpenseHeaderJPA.class
 com\chaitanya\branch\model\BranchDTO.class
 com\chaitanya\branch\service\IBranchService.class
+com\chaitanya\jpa\ProcessInstanceJPA_.class
+com\chaitanya\jpa\DepartmentJPA_.class
 com\chaitanya\utility\Utility.class
 com\chaitanya\expense\model\ProcessInstanceDTO.class
 com\chaitanya\expenseCategory\service\ExpenseCategoryService.class
@@ -45,6 +51,7 @@ com\chaitanya\jpa\LoginJPA.class
 com\chaitanya\jpa\ProcessInstanceJPA.class
 com\chaitanya\department\dao\DepartmentDAO.class
 com\chaitanya\utility\Validation.class
+com\chaitanya\jpa\ExpenseCategoryJPA_.class
 com\chaitanya\branch\dao\BranchDAO.class
 com\chaitanya\utility\MailServiceImpl.class
 com\chaitanya\departmentHead\dao\IDepartmentHeadDAO.class
@@ -52,6 +59,7 @@ com\chaitanya\expense\dao\ExpenseDAO.class
 com\chaitanya\web\controller\LoginController.class
 com\chaitanya\utility\dao\CommonDAO.class
 com\chaitanya\company\dao\CompanyDAO.class
+com\chaitanya\jpa\ExpenseHeaderJPA_.class
 com\chaitanya\config\core\SpringMvcInitializer.class
 com\chaitanya\company\dao\ICompanyDAO.class
 com\chaitanya\ajax\AjaxResponse.class
@@ -78,6 +86,7 @@ com\chaitanya\company\convertor\CompanyConvertor.class
 com\chaitanya\departmentHead\dao\DepartmentHeadDAO.class
 com\chaitanya\web\controller\ApprovalFlowController.class
 com\chaitanya\web\controller\ExpenseCategoryController.class
+com\chaitanya\jpa\UserRoleJPA_.class
 com\chaitanya\jpa\DepartmentJPA.class
 com\chaitanya\config\SecurityConfig.class
 com\chaitanya\employee\service\EmployeeService.class
@@ -89,14 +98,19 @@ com\chaitanya\jpa\DepartmentHeadJPA.class
 com\chaitanya\approvalFlow\dao\IApprovalFlowDAO.class
 com\chaitanya\company\service\CompanyService.class
 com\chaitanya\web\controller\BranchController.class
+com\chaitanya\jpa\EmployeeJPA_.class
 com\chaitanya\login\dao\LoginDAO.class
 com\chaitanya\login\dao\ILoginDAO.class
 com\chaitanya\jpa\ApprovalFlowJPA.class
+com\chaitanya\jpa\VoucherStatusJPA_.class
 com\chaitanya\expense\model\ExpenseHeaderDTO.class
 com\chaitanya\departmentHead\convertor\DepartmentHeadConvertor.class
 com\chaitanya\jpa\ExpenseCategoryJPA.class
+com\chaitanya\jpa\CompanyJPA_.class
 com\chaitanya\expense\convertor\ExpenseConvertor.class
 com\chaitanya\web\controller\ExpenseController$3.class
+com\chaitanya\jpa\LoginJPA_.class
+com\chaitanya\jpa\ExpenseDetailJPA_.class
 com\chaitanya\company\model\CompanyDTO.class
 com\chaitanya\approvalFlow\service\IApprovalFlowService.class
 com\chaitanya\web\controller\ExpenseController$2.class

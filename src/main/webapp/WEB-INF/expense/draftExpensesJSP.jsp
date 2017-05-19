@@ -68,7 +68,7 @@
 	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
 	        	     $("#expenseHeaderId").val(rowData.expenseHeaderId);
            	    	 $( this ).parent().addClass("active")
-         	         $('.content').load('/ExpenseManagement/expense?expenseHeaderId='+rowData.expenseHeaderId);
+         	         $('.content').load('expense?expenseHeaderId='+rowData.expenseHeaderId);
 	                 //$("#form").submit();
 	           }); 
 	       }
@@ -80,7 +80,7 @@
 </script>
 </head>
 <body>
-  <form id="form" action="/ExpenseManagement/expense" method="post">
+  <form id="form" action="expense" method="post">
   	<div id="grid_filter" style="margin: auto;"></div>
   	<input name="expenseHeaderId" id="expenseHeaderId" type="text" hidden/>
   </form>

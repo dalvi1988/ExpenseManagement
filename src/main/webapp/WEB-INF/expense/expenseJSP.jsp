@@ -253,7 +253,7 @@ $(function () {
             
             $.ajax( { 
               	//context: $grid,
-          	    url: "/ExpenseManagement/saveExpense", 
+          	    url: "saveExpense", 
           	    type: 'POST', 
           	    data:new FormData($('#form')[0]),
           	    cache: false,

@@ -44,57 +44,57 @@
 		
 	    $('.branchMaster').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/branch');
+	        $('.content').load('branch');
 	     });
 	    
 	    $('.employeeMaster').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/employee');
+	        $('.content').load('employee');
 	     });
 	    
 	    $('.companyMaster').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/company');
+	        $('.content').load('company');
 	     });
 	    
 	    $('.departmentHeadMaster').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/departmentHead');
+	        $('.content').load('departmentHead');
 	     });
 	    
 	    $('.departmentMaster').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/department');
+	        $('.content').load('department');
 	     });
 	    
 	    $('.expenseCategoryMaster').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/expenseCategory');
+	        $('.content').load('expenseCategory');
 	     });
 	    
 	    $('.approvalFlowMaster').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/approvalFlow');
+	        $('.content').load('approvalFlow');
 	     });
 	    
 	    $('.voucherForApproval').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/toBeApproveExpense');
+	        $('.content').load('toBeApproveExpense');
 	     });
 	    
 	    $('.createExpense').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/expense');
+	        $('.content').load('expense');
 	     });
 	    
 	    $('.draftExpense').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/viewDraftExpense');
+	        $('.content').load('viewDraftExpense');
 	     });
 	    
 	    $('.pendingExpense').click(function(){
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('/ExpenseManagement/pendingExpense');
+	        $('.content').load('pendingExpense');
 	     });
 	    
 	    $('.createExpense').click();
@@ -160,20 +160,31 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
+        
+        <li>
+          <a href="#" class="createExpense">
+            <i class="fa fa-calendar"></i> <span>Create New Expense</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="draftExpense">
+            <i class="fa fa-calendar"></i> <span>Draft Expenses</span>
+          </a>
+        </li>
+        
         <li class="active treeview">
           <a href="#">
-            <i class="fa fa-th"></i> <span>Transaction</span>
+            <i class="fa fa-th"></i> <span>Status</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="createExpense"><i class="fa fa-circle-o"></i> Create New Expense</a></li>
-            <li><a href="#" class="draftExpense"><i class="fa fa-circle-o"></i>Draft Expenses</a></li>
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
+            <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
+            <li><a href="#" class="paymentDeskExpense"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
           </ul>
         </li>
-        
         <sec:authorize access="hasAnyRole('ADMIN_ROLE','SUPER_ADMIN')" var="isAuthorizeAny">
         <li class="treeview">
           <a href="#">

@@ -132,7 +132,7 @@
               jsonToBeSend["departmentName"] = rowData.departmentName;
               jsonToBeSend["departmentCode"] = rowData.departmentCode;
               jsonToBeSend["status"] = rowData.status;
-              url = "/ExpenseManagement/addDepartment";
+              url = "addDepartment";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record

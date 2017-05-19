@@ -73,7 +73,7 @@
                method: "POST",
                recIndx: "branchId",
                rPPOptions: [1, 10, 20, 30, 40, 50, 100, 500, 1000],
-               url: "/ExpenseManagement/branchList",
+               url: "branchList",
                getData: function (dataJSON) {
                	var data = dataJSON;
                    //expand the first row.

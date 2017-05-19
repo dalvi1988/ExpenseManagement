@@ -33,7 +33,7 @@ var getFunctionalGrid = function( rowData ){
                method: "POST",
                recIndx: "branchId",
                getUrl: function() {
-                   return { url: "/ExpenseManagement/fuctionalFlow", data: "{\"branchId\":"+rowData.branchId+"}" };
+                   return { url: "fuctionalFlow", data: "{\"branchId\":"+rowData.branchId+"}" };
                },
                async: false,
           	   beforeSend: function(xhr) {   
@@ -65,7 +65,7 @@ var getFunctionalGrid = function( rowData ){
                      	   
                            	   $.ajax($.extend({}, ajaxObj, { 
                                    	context: $gridMain,
-                               	    url: "/ExpenseManagement/empUnderDeptBranchWithLevel", 
+                               	    url: "empUnderDeptBranchWithLevel", 
                                	    type: 'POST', 
                                	    data: JSON.stringify(jsonToBeSend),
                                	 
@@ -335,7 +335,7 @@ var getFinanceGrid = function( rowData ){
             method: "POST",
             recIndx: "branchId",
             getUrl: function() {
-                return { url: "/ExpenseManagement/financeFlow", data: "{\"branchId\":"+rowData.branchId+"}" };
+                return { url: "financeFlow", data: "{\"branchId\":"+rowData.branchId+"}" };
             },
             async: true,
        	   beforeSend: function(xhr) {   
@@ -564,7 +564,7 @@ var getBranchGrid = function( rowData ){
             method: "POST",
             recIndx: "branchId",
             getUrl: function() {
-                return { url: "/ExpenseManagement/branchFlow", data: "{\"branchId\":"+rowData.branchId+"}" };
+                return { url: "branchFlow", data: "{\"branchId\":"+rowData.branchId+"}" };
             },
             async: false,
        	   beforeSend: function(xhr) {   
@@ -861,7 +861,7 @@ function editRow(rowIndx, $grid, gridName) {
 			          
 			          $.ajax($.extend({}, ajaxObj, { 
 			            	context: $gridMain,
-			          	    url: "/ExpenseManagement/deactivateFlow", 
+			          	    url: "deactivateFlow", 
 			          	    type: 'POST', 
 			          	    data: "{\"flowId\":"+rowData.flowId+"}",
 			          	    success: function(response) {
@@ -933,7 +933,7 @@ function update(rowIndx, $grid, gridName) {
        jsonToBeSend["level2"] = rowData.level2;
        jsonToBeSend["level3"] = rowData.level3;
        jsonToBeSend["status"] =true;
-       url = "/ExpenseManagement/addFunctionalFlow";
+       url = "addFunctionalFlow";
        
        if (rowData[recIndx] == null || rowData[recIndx] == "") {
      	  //For new record

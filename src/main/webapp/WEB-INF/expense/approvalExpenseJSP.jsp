@@ -16,7 +16,7 @@
 	   function submitDetails(voucherIds,command){
 		   $.ajax($.extend({}, ajaxObj, { 
              	context: $gridMain,
-         	    url: "/ExpenseManagement/approveRejectExpense", 
+         	    url: "approveRejectExpense", 
          	    type: 'POST', 
          	    data: JSON.stringify(voucherIds),
          	 
@@ -60,7 +60,7 @@
            method: "post",
            recIndx: "expenseHeaderId",
            rPPOptions: [1, 10, 20, 30, 40, 50, 100, 500, 1000],
-           url: "/ExpenseManagement/toBeApproveExpenseList",
+           url: "toBeApproveExpenseList",
            //url: "/pro/orders.php",//for PHP
            getData: function (dataJSON) {
                var data = dataJSON.data;
@@ -206,7 +206,7 @@
                    method: "POST",
                    sortIndx: "expenseDetailId",
                    getUrl: function() {
-                       return { url: "/ExpenseManagement/expenseDetail", data: "{\"expenseHeaderId\":"+rowData.expenseHeaderId+"}" };
+                       return { url: "expenseDetail", data: "{\"expenseHeaderId\":"+rowData.expenseHeaderId+"}" };
                    },
                   
                    mimeType : 'application/json',
