@@ -67,8 +67,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    
 	    
 		ds.setUrl("jdbc:mysql://localhost:3306/test");
-	/*	ds.setUsername("root");
-		ds.setPassword("Nexus@123");*/
+		ds.setUsername("root");
+		ds.setPassword("Nexus@123");
 	    
 	/*	ds.setUrl("jdbc:mysql://node31131-env-8602550.cloud.cms500.com/test");
 		ds.setUsername("root");
