@@ -226,14 +226,14 @@
            colModel: [
                   { title: "Id", dataType: "integer", dataIndx: "employeeId", editable: false, hidden: true},
                   { title: "First Name", width: 130, dataType: "string", dataIndx: "firstName",
-         	  			filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+         	  			filter: { type: 'textbox',attr: 'placeholder="Search First Name"', condition: 'contain', listeners: ['keyup'] },
                 	    validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
                           { type: 'maxLen', value: 20, msg: "length should be <= 20" }
                         ]
                   },
                   { title: "Last Name", width: 130, dataType: "string", dataIndx: "lastName",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                	  filter: { type: 'textbox',attr: 'placeholder="Search Last Name"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 20" }
@@ -269,7 +269,7 @@
                   },
                  
                   { title: "Email ID", width: 200, dataType: "string", dataIndx: "emailId",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                	  filter: { type: 'textbox',attr: 'placeholder="Search Email ID"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'nonEmpty', msg: "Required" }
                       ]

@@ -220,14 +220,14 @@
            colModel: [
                   { title: "Branch Id", dataType: "integer", dataIndx: "branchId",hidden:true},
                   { title: "Branch Code", width: 140, dataType: "string", align: "right", dataIndx: "branchCode",
-                      filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                      filter: { type: 'textbox',attr: 'placeholder="Search Branch Code"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
-                          { type: 'maxLen', value: 20, msg: "length should be <= 20" }
+                          { type: 'maxLen', value: 30, msg: "length should be <= 30" }
                       ]
                   },
                   { title: "Branch Name", width: 165, dataType: "string", dataIndx: "branchName",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                	  filter: { type: 'textbox',attr: 'placeholder="Search Branch Name"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }

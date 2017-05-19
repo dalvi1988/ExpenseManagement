@@ -15,8 +15,7 @@
 var expenseDetailList=${expenseDetailList};
 var expenseCategoryList =${expenseCategoryList};
 var $summary = "";
-var totalData,
-averageData;
+var totalData;;
 $(function () {
 	
 		//calculate sum of 3rd and 4th column.
@@ -116,7 +115,6 @@ $(function () {
 	    }
 	  });
 	  
-	  
 	$( "#endDate" ).datepicker({
 		minDate: $( "#startDate" ).val(),
 		maxDate: "Now",
@@ -130,6 +128,8 @@ $(function () {
 	    	//resetDate();
 	    }
 	});
+	$( "#startDate" ).datepicker( "setDate", "Now" );
+	$( "#endDate" ).datepicker( "setDate", "Now" );
 	
 	var dateEditor = function (ui) {
 	    var $inp = ui.$cell.find("input"),
@@ -317,13 +317,13 @@ $(function () {
                     }
                 ]
                 },
-                { type: 'button', icon: 'ui-icon-cancel', label: 'Reject Changes', listeners: [
+                /* { type: 'button', icon: 'ui-icon-cancel', label: 'Reject Changes', listeners: [
                     { "click": function (evt, ui) {
                         $grid.pqGrid("rollback");
                     }
                     }
                 ]
-                }
+                } */
                 
             ]
         },
@@ -551,7 +551,7 @@ $(function () {
     var $grid = $("#grid_editing").pqGrid(obj);
   //get instance of the grid.
     var grid = $grid.data("paramqueryPqGrid");
-           
+    addNewRow();         
 });
 
 

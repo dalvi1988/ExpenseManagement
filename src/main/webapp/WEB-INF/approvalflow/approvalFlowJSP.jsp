@@ -100,7 +100,8 @@
            numberCell: { show: false },
            filterModel: { on: true, mode: "AND", header: true },
            title: "<b>Approval Flow Cycle Details</b>",                        
-           resizable: true,
+           width: '100%', height: '100%-5',
+           flexHeight: true,
            freezeCols: 1,            
            selectionModel: { type: 'cell' },
            detailModel: { init: initDetail }

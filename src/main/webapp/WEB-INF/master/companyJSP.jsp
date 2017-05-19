@@ -197,7 +197,7 @@
            flexHeight: true,
            toolbar: {
                items: [
-                   { type: 'button', icon: 'ui-icon-plus', label: 'Add Product', listeners: [
+                   { type: 'button', icon: 'ui-icon-plus', label: 'Add New Company', listeners: [
                        { "click": function (evt, ui) {
                            var $grid = $(this).closest('.pq-grid');
                            addRow($grid);
@@ -232,14 +232,14 @@
            colModel: [
                   { title: "Company Id", dataType: "integer", dataIndx: "companyId", hidden:true},
                   { title: "Company Code", width: 140, dataType: "string", align: "right", dataIndx: "companyCode",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                	  filter: { type: 'textbox', attr: 'placeholder="Search Company Code"', condition: 'contain', listeners: ['keyup'] },
                        validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
-                          { type: 'maxLen', value: 20, msg: "length should be <= 20" }
+                          { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
                   },
                   { title: "Company Name", width: 165, dataType: "string", dataIndx: "companyName",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                	  filter: { type: 'textbox', attr: 'placeholder="Search Company Name"', condition: 'contain', listeners: ['keyup'] },
                          validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }

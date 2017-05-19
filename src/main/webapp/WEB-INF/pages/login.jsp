@@ -36,7 +36,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="">Expense Management System</a>
+    <a href="">Expense & Event Management System</a>
   </div>
  
   <!-- /.login-logo -->
@@ -86,7 +86,6 @@
       </div>
     </form>
 	<a href="#" onclick="login()">Log In</a><br>
-	<a href="#" onclick="resetPassword()">Reset Password</a><br>
   <!-- /.form-box -->
   </div>
   

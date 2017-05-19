@@ -226,14 +226,14 @@
            colModel: [
                   { title: "Department Id", dataType: "integer", dataIndx: "departmentId",hidden:true, editable: false, width: 80 },
                   { title: "Department Code", width: 140, dataType: "string", align: "right", dataIndx: "departmentCode",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },                      
+                	  filter: { type: 'textbox',attr: 'placeholder="Search Department Code"', condition: 'contain', listeners: ['keyup'] },                      
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
-                          { type: 'maxLen', value: 20, msg: "length should be <= 20" }
+                          { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
                   },
                   { title: "Department Name", width: 165, dataType: "string", dataIndx: "departmentName",
-                	  filter: { type: 'textbox', condition: 'contain', listeners: ['keyup'] },
+                	  filter: { type: 'textbox',attr: 'placeholder="Search Department Name"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
