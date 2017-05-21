@@ -26,7 +26,7 @@
        }
        //called by add button in toolbar.
        function addRow($grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            if (isEditing($grid)) {
                return false;
@@ -43,7 +43,7 @@
        }
        //called by delete button.
        function deleteRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
@@ -84,7 +84,7 @@
        }
        //called by edit button.
        function editRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
+    	   $(".alert").hide();
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
            $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
@@ -159,16 +159,16 @@
 	                    } 
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	          	    	$grid.pqGrid("commit");
+	          	    	$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
           	    	else{
-          	    		
+          	    		$(".alert").addClass("alert-danger").text(data.message).show();
           	    		$grid.pqGrid("rollback");
           	    	}
-          	    	$(".customMessage").text(data.message);
           	    	
           	    },
           	    error:function(data) { 
-          	    	$(".customMessage").text(data.message);
+          	    	$(".alert").addClass("alert-danger").text(data.message).show();
           	    }
           	    
           	}));

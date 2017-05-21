@@ -106,6 +106,7 @@ $(function () {
 	$( "#startDate" ).datepicker({
 	    maxDate: "Now",
 	    dateFormat: "dd-MM-yy",
+	    buttonImage: "/images/calendar.gif",
 	    changeMonth: true,
 	    changeYear: true,
 	    onSelect: function (dateText,inst) {
@@ -119,6 +120,7 @@ $(function () {
 		minDate: $( "#startDate" ).val(),
 		maxDate: "Now",
 		dateFormat: "dd-MM-yy",
+		buttonImage: "images/calendar.gif",
 		changeMonth: true,
 		changeYear: true,
 		onClose: function (dateText,inst) {
@@ -565,7 +567,7 @@ $(function () {
 			<tbody>
 			<tr>
 			<td style="width: 75px;"><form:label path="startDate">Start Date:</form:label></td>
-			<td style="width: 181px;"> <form:input id="startDate" path="startDate" readonly="true"/> </td>
+			<td style="width: 181px;"> <form:input  id="startDate" path="startDate" readonly="true"/> </td>
 			<td style="width: 75px;"><form:label path="endDate">End Date:</form:label></td>
 			<td style="width: 262px;"><form:input path="endDate" readonly="true"/> </td>
 			</tr>

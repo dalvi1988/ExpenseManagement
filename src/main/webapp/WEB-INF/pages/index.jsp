@@ -102,7 +102,12 @@
 	        $('.content').load('event');
 	     });
 	    
-	    $('.createExpense').click();
+	    $('.requestAdvance').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('advance');
+	     });
+	    
+	    $('.requestAdvance').click();
 	    
 	});
 	function logout(){
@@ -178,7 +183,7 @@
         
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-th"></i> <span>Status</span>
+            <i class="fa fa-th"></i> <span>Expense Voucher Status</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -187,6 +192,19 @@
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
             <li><a href="#" class="paymentDeskExpense"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
+          </ul>
+        </li>
+        
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-th"></i> <span>Advances</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="requestAdvance"><i class="fa fa-circle-o"></i>Request Expenses</a></li>
+           
           </ul>
         </li>
         
