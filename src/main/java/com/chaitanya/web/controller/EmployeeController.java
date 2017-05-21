@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.Command;
 import com.chaitanya.branch.model.BranchDTO;
-import com.chaitanya.company.service.ICompanyService;
+import com.chaitanya.branch.service.IBranchService;
 import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.department.service.IDepartmentService;
 import com.chaitanya.employee.model.EmployeeDTO;
@@ -35,7 +35,7 @@ public class EmployeeController {
 	@Autowired
 	IEmployeeService employeeService;
 	@Autowired
-	ICompanyService companyService;
+	IBranchService branchService;
 	@Autowired
 	IDepartmentService departmentService;
 	
@@ -56,7 +56,7 @@ public class EmployeeController {
 				EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
 				if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
 					employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
-					branchDTOList=companyService.findBranchOnCompany(employeeDTO.getBranchDTO().getCompanyDTO());
+					branchDTOList=branchService.findAllBranchUnderCompany(employeeDTO.getBranchDTO());
 					departmentDTOList=departmentService.findAll();
 				}
 				

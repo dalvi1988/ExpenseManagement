@@ -97,9 +97,13 @@
 	        $('.content').load('pendingExpense');
 	     });
 	    
+	    $('.eventMaster').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('event');
+	     });
+	    
 	    $('.createExpense').click();
 	    
-	
 	});
 	function logout(){
     	document.getElementById("logoutForm").submit();
@@ -172,7 +176,7 @@
           </a>
         </li>
         
-        <li class="active treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-th"></i> <span>Status</span>
             <span class="pull-right-container">
@@ -185,6 +189,7 @@
             <li><a href="#" class="paymentDeskExpense"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
           </ul>
         </li>
+        
         <sec:authorize access="hasAnyRole('ADMIN_ROLE','SUPER_ADMIN')" var="isAuthorizeAny">
         <li class="treeview">
           <a href="#">
@@ -199,7 +204,8 @@
             <li><a href="#" class="departmentHeadMaster"><i class="fa fa-circle-o"></i> Department Head Master</a></li>
             <li><a href="#" class="departmentMaster"><i class="fa fa-circle-o"></i> Department Master</a></li>
             <li><a href="#" class="branchMaster"><i class="fa fa-circle-o"></i> Branch Master</a></li>
-            <li><a href="#" class="expenseCategoryMaster"><i class="fa fa-circle-o"></i> Expense Category Master</a></li>
+            <li><a href="#" class="eventMaster"><i class="fa fa-circle-o"></i> Event Master</a></li>
+            
             
           </ul>
         </li>
@@ -223,9 +229,11 @@
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
+
           </a>
           <ul class="treeview-menu">
             <li><a href="#" class="companyMaster"><i class="fa fa-circle-o"></i> Country Master</a></li>
+             <li><a href="#" class="expenseCategoryMaster"><i class="fa fa-circle-o"></i> Expense Category Master</a></li>
           </ul>
         </li>
         </sec:authorize>
@@ -263,15 +271,19 @@
 
     <!-- Main content -->
     <section class="content">
+    <div class="overlay" width="100%">
+        <i class="fa fa-refresh fa-spin"></i>
+      </div>
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
     </div>
-    <strong>Copyright &copy; 2016-2018 <a href="http://almsaeedstudio.com">Chaitanya SoftTech</a>.</strong> All rights
+    <strong>Copyright &copy; 2016-2018 <a href="http://finsoftsolution.com">Finsoft Solution</a>.</strong> All rights
     reserved.
   </footer>
   

@@ -4,10 +4,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <head>
 
-    <title>Branch Master</title>
+    <title>Event Master</title>
 
    <script type="text/javascript">
-   var branchList= ${branchList};
+   var eventList= ${eventList};
    $(function () {
 
        //to check whether any row is currently being edited.
@@ -28,7 +28,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { branchId:"", branchCode: "", branchName:"", status:""}; //empty row template
+           var rowData = { eventId:"", eventCode: "", eventName:"", status:""}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -50,7 +50,7 @@
                $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
 
                var data = $grid.pqGrid("getRecId", { rowIndx: rowIndx });
-               jsonToBeSend["branchId"] = data;
+               jsonToBeSend["eventId"] = data;
                $.ajax($.extend({}, ajaxObj, {
             	   type: 'DELETE', 
                    context: $grid,
@@ -124,10 +124,10 @@
                   recIndx = $grid.pqGrid("option", "dataModel.recIndx");
               $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	
-              jsonToBeSend["branchName"] = rowData.branchName;
-              jsonToBeSend["branchCode"] = rowData.branchCode;
+              jsonToBeSend["eventName"] = rowData.eventName;
+              jsonToBeSend["eventCode"] = rowData.eventCode;
               jsonToBeSend["status"] = rowData.status;
-              url = "addBranch";
+              url = "addEvent";
               
               if (rowData[recIndx] == null || rowData[recIndx] == "") {
             	  //For new record
@@ -136,7 +136,7 @@
             	  // For update
             	  jsonToBeSend["createdBy"] = rowData.createdBy;
               	  jsonToBeSend["createdDate"] = rowData.createdDate;
-            	  jsonToBeSend["branchId"] = rowData.branchId;
+            	  jsonToBeSend["eventId"] = rowData.eventId;
               }
               
               $.ajax($.extend({}, ajaxObj, { 
@@ -149,7 +149,7 @@
           	    	if(data.serviceStatus=="SUCCESS"){
 	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
 	                    if (rowData[recIndx] == null || rowData[recIndx] == "") {
-	                       rowData.branchId= data.branchId;
+	                       rowData.eventId= data.eventId;
 	                    } 
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
@@ -188,7 +188,7 @@
            flexHeight: true,
            toolbar: {
                items: [
-                   { type: 'button', icon: 'ui-icon-plus', label: 'Add New Branch', listeners: [
+                   { type: 'button', icon: 'ui-icon-plus', label: 'Add New Event', listeners: [
                        { "click": function (evt, ui) {
                            var $grid = $(this).closest('.pq-grid');
                            addRow($grid);
@@ -215,19 +215,19 @@
            validation: {
                icon: 'ui-icon-info'
            },
-           title: "<h1><b>Branch Master</b></h1>",
+           title: "<h1><b>Event Master</b></h1>",
 
            colModel: [
-                  { title: "Branch Id", dataType: "integer", dataIndx: "branchId",hidden:true},
-                  { title: "Branch Code", width: 140, dataType: "string", align: "right", dataIndx: "branchCode",
-                      filter: { type: 'textbox',attr: 'placeholder="Search Branch Code"', condition: 'contain', listeners: ['keyup'] },
+                  { title: "Event Id", dataType: "integer", dataIndx: "eventId",hidden:true},
+                  { title: "Event Code", width: 140, dataType: "string", align: "right", dataIndx: "eventCode",
+                      filter: { type: 'textbox',attr: 'placeholder="Search Event Code"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
                           { type: 'maxLen', value: 30, msg: "length should be <= 30" }
                       ]
                   },
-                  { title: "Branch Name", width: 165, dataType: "string", dataIndx: "branchName",
-                	  filter: { type: 'textbox',attr: 'placeholder="Search Branch Name"', condition: 'contain', listeners: ['keyup'] },
+                  { title: "Event Name", width: 165, dataType: "string", dataIndx: "eventName",
+                	  filter: { type: 'textbox',attr: 'placeholder="Search Event Name"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
@@ -254,8 +254,8 @@
                dataType: "JSON",
                location: "local",
                sorting: "local",
-               recIndx: "branchId",
-               data: branchList
+               sortIndx: "eventName",
+               data: eventList
            },
            filterModel: { on: true, mode: "AND", header: true },
            pageModel: { type: "local" },

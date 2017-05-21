@@ -13,7 +13,6 @@ public class EmployeeDTO extends BaseDTO {
 	private Long employeeId;
 	private String  firstName;
 	private String middleName;
-	private String fullName;
 	private String lastName;
 	private String emailId;
 	private Character gender;
