@@ -1,37 +1,83 @@
 package com.chaitanya.advance.model;
 
 import com.chaitanya.base.BaseDTO;
-import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.event.model.EventDTO;
+import com.chaitanya.utility.model.VoucherStatusDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class AdvanceDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
-	private Long eventId;
-	private String eventCode;
-	private String eventName;
-	private BranchDTO branchDTO;
-	public Long getEventId() {
-		return eventId;
+	private Long advanceDetailId;
+	private String purpose;
+	private Double amount;
+	private Boolean isEvent;
+	private EventDTO eventDTO;
+	private Integer voucherStatusId;
+	@JsonIgnore
+	private VoucherStatusDTO voucherStatusDTO;
+	
+	public Long getAdvanceDetailId() {
+		return advanceDetailId;
 	}
-	public void setEventId(Long branchId) {
-		this.eventId = branchId;
+
+	public Boolean getIsEvent() {
+		return isEvent;
 	}
-	public String getEventCode() {
-		return eventCode;
+
+	public void setIsEvent(Boolean isEvent) {
+		this.isEvent = isEvent;
 	}
-	public void setEventCode(String eventCode) {
-		this.eventCode = eventCode;
+
+	public void setAdvanceDetailId(Long advanceDetailId) {
+		this.advanceDetailId = advanceDetailId;
 	}
-	public String getEventName() {
-		return eventName;
+
+	public String getPurpose() {
+		return purpose;
 	}
-	public void setEventName(String eventName) {
-		this.eventName = eventName;
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
 	}
-	public BranchDTO getBranchDTO() {
-		return branchDTO;
+
+	public Double getAmount() {
+		return amount;
 	}
-	public void setBranchDTO(BranchDTO branchDTO) {
-		this.branchDTO = branchDTO;
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+
+	public EventDTO getEventDTO() {
+		return eventDTO;
+	}
+
+	public void setEventDTO(EventDTO eventDTO) {
+		this.eventDTO = eventDTO;
+	}
+
+	
+
+	public Integer getVoucherStatusId() {
+		return voucherStatusId;
+	}
+
+	public void setVoucherStatusId(Integer voucherStatusId) {
+		this.voucherStatusId = voucherStatusId;
+		VoucherStatusDTO voucherStatusDTO= new VoucherStatusDTO();
+		voucherStatusDTO.setVoucherStatusId(voucherStatusId);
+		this.setVoucherStatusDTO(voucherStatusDTO);
+	}
+
+	public VoucherStatusDTO getVoucherStatusDTO() {
+		return voucherStatusDTO;
+	}
+
+	@JsonIgnore
+	public void setVoucherStatusDTO(VoucherStatusDTO voucherStatusDTO) {
+		this.voucherStatusDTO = voucherStatusDTO;
+		this.voucherStatusId=voucherStatusDTO.getVoucherStatusId();
 	}
 	
 }
