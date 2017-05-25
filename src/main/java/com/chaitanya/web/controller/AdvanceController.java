@@ -8,13 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.Command;
 import com.chaitanya.event.model.EventDTO;
@@ -27,7 +28,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RestController
+@Controller
 public class AdvanceController {
 
 	@Autowired 
@@ -45,6 +46,8 @@ public class AdvanceController {
 			eventDTO.setBranchDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO());
 			List<EventDTO> eventDTOList = eventService.findAllUnderCompany(eventDTO);
 			model.addObject("eventList", mapper.writeValueAsString(eventDTOList));
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			model.addObject("advance", advanceDTO);
 			model.setViewName("advance/advanceJSP");
 		}
 		catch(Exception e){
