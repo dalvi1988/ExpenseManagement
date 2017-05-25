@@ -45,15 +45,21 @@
   <div class="form-group"> 
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
-        <label><form:input path="isEvent" type="checkbox" onclick="toggler('eventDiv');" value=""/>For Event</label>
+        <label><form:checkbox path="isEvent" onclick="toggler('eventDiv');" value=""/>For Event</label>
       </div>
     </div>
   </div>
   
   <div class="form-group"> 
      <div class="col-sm-offset-2 col-sm-3" id="eventDiv" style="display: none" >
-	  <select class="form-control" id="eventSelect">
-	  </select>
+	  <!-- <select class="form-control" id="eventSelect">
+	  </select> -->
+	  <form:select path="eventId" >
+	  
+	  	 <form:option value="NONE" label="--- Select ---" />
+					  <form:options items="${eventList}" />
+	  	
+	  </form:select>
 	</div>
   </div>
   
