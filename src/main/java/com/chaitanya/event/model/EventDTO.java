@@ -5,14 +5,14 @@ import com.chaitanya.branch.model.BranchDTO;
 
 public class EventDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
-	private Long eventId;
+	private Integer eventId;
 	private String eventCode;
 	private String eventName;
 	private BranchDTO branchDTO;
-	public Long getEventId() {
+	public Integer getEventId() {
 		return eventId;
 	}
-	public void setEventId(Long branchId) {
+	public void setEventId(Integer branchId) {
 		this.eventId = branchId;
 	}
 	public String getEventCode() {

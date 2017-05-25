@@ -11,11 +11,14 @@ public class AdvanceDTO extends BaseDTO {
 	private String purpose;
 	private Double amount;
 	private Boolean isEvent;
+	private Integer eventId;
 	private EventDTO eventDTO;
+	
 	private Integer voucherStatusId;
 	@JsonIgnore
 	private VoucherStatusDTO voucherStatusDTO;
 	
+
 	public Long getAdvanceDetailId() {
 		return advanceDetailId;
 	}
@@ -47,7 +50,16 @@ public class AdvanceDTO extends BaseDTO {
 	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
+	public Integer getEventId() {
+		return eventId;
+	}
 
+	public void setEventId(Integer eventId) {
+		this.eventId = eventId;
+		EventDTO eventDTO=new EventDTO();
+		eventDTO.setEventId(eventId);
+		this.setEventDTO(eventDTO);
+	}
 
 	public EventDTO getEventDTO() {
 		return eventDTO;
@@ -56,8 +68,6 @@ public class AdvanceDTO extends BaseDTO {
 	public void setEventDTO(EventDTO eventDTO) {
 		this.eventDTO = eventDTO;
 	}
-
-	
 
 	public Integer getVoucherStatusId() {
 		return voucherStatusId;

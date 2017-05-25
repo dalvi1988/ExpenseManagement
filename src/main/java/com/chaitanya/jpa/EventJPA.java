@@ -17,7 +17,7 @@ public class EventJPA {
 	
 	@Id @GeneratedValue
 	@Column(name="event_id")
-	private Long eventId;
+	private Integer eventId;
 	
 	@Column(name="event_code",unique=true,nullable=false)
 	private String eventCode;
@@ -44,11 +44,11 @@ public class EventJPA {
 	@Column(name="status",nullable=false)
 	private Character status;
 	
-	public Long getEventId() {
+	public Integer getEventId() {
 		return eventId;
 	}
-	public void setEventId(Long branchId) {
-		this.eventId = branchId;
+	public void setEventId(Integer eventId) {
+		this.eventId = eventId;
 	}
 	public String getEventCode() {
 		return eventCode;
