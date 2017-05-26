@@ -7,8 +7,6 @@
 <title>Advance Master</title>
 
 <script type="text/javascript">
-	var eventList= ${eventList};
-	
 	function toggler(divId) {
 	    $("#" + divId).toggle();
 	}
@@ -54,11 +52,9 @@
      <div class="col-sm-offset-2 col-sm-3" id="eventDiv" style="display: none" >
 	  <!-- <select class="form-control" id="eventSelect">
 	  </select> -->
-	  <form:select path="eventId" >
-	  
-	  	 <form:option value="NONE" label="--- Select ---" />
-					  <form:options items="${eventList}" />
-	  	
+	  <form:select class="form-control" path="eventId" >
+	  <form:option value="NONE" label="--- Select Code ---" />
+	  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
 	  </form:select>
 	</div>
   </div>

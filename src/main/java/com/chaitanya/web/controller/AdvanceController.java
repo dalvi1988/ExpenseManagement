@@ -2,7 +2,9 @@ package com.chaitanya.web.controller;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +47,7 @@ public class AdvanceController {
 			EventDTO eventDTO= new EventDTO();
 			eventDTO.setBranchDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO());
 			List<EventDTO> eventDTOList = eventService.findAllUnderCompany(eventDTO);
-			model.addObject("eventList", mapper.writeValueAsString(eventDTOList));
+			model.addObject("eventList", eventDTOList);
 			AdvanceDTO advanceDTO=new AdvanceDTO();
 			model.addObject("advance", advanceDTO);
 			model.setViewName("advance/advanceJSP");
