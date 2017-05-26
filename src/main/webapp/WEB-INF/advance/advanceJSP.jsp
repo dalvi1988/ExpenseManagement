@@ -11,7 +11,28 @@
 	    $("#" + divId).toggle();
 	}
 	
-	
+	function submitData(command){
+		$("#voucherStatusId").val(command);
+		 $.ajax( { 
+      	    url: "saveAdvance", 
+      	    type: 'POST', 
+      	    data: $("#form").serialize(),
+      	 
+      	    success: function(data) { 
+      	    	if(data.serviceStatus=="SUCCESS"){
+      	    		$(".alert").addClass("alert-success").text(data.message).show();
+      	    	}
+      	    	else{
+      	    		$(".alert").addClass("alert-danger").text(data.message).show();
+      	    		$grid.pqGrid("rollback");
+      	    	}
+      	    	
+      	    },
+      	    error:function(data) {
+      	    	alert("error")
+      	    }
+		   });
+	}
 	/* var output = [];
 	
 	output.push('<option value="'+ -1 +'">'+ "--Select Event--" +'</option>');
@@ -25,7 +46,7 @@
 </head>
 <body>
        
-<form:form method="POST" modelAttribute="advance" class="form-horizontal">
+<form:form id="form" modelAttribute="advance" class="form-horizontal">
 <h2 class="text-center">Request Advance</h2>
 <br/>
   <div class="form-group row">
@@ -50,10 +71,8 @@
   
   <div class="form-group"> 
      <div class="col-sm-offset-2 col-sm-3" id="eventDiv" style="display: none" >
-	  <!-- <select class="form-control" id="eventSelect">
-	  </select> -->
 	  <form:select class="form-control" path="eventId" >
-	  <form:option value="NONE" label="--- Select Code ---" />
+	  <form:option value="-1" label="--- Select Code ---" />
 	  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
 	  </form:select>
 	</div>
@@ -61,10 +80,11 @@
   
   <div class="form-group"> 
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Save as Draft</button>
-      <button type="submit" class="btn btn-default">Send for Approval</button>
+      <button type="button" class="btn btn-default" onclick="submitData(1)">Save as Draft</button>
+      <button type="button" class="btn btn-default" onclick="submitData(2)">Send for Approval</button>
     </div>
   </div>
+  <form:hidden id="voucherStatusId" path="voucherStatusId"></form:hidden>  
 </form:form>
 </body>
 </html>

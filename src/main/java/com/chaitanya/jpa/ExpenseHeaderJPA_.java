@@ -6,7 +6,7 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2017-05-19T21:17:19.613+0530")
+@Generated(value="Dali", date="2017-05-29T11:21:06.737+0530")
 @StaticMetamodel(ExpenseHeaderJPA.class)
 public class ExpenseHeaderJPA_ {
 	public static volatile SingularAttribute<ExpenseHeaderJPA, Long> expenseHeaderId;
@@ -20,4 +20,8 @@ public class ExpenseHeaderJPA_ {
 	public static volatile SingularAttribute<ExpenseHeaderJPA, Calendar> endDate;
 	public static volatile SingularAttribute<ExpenseHeaderJPA, String> title;
 	public static volatile SingularAttribute<ExpenseHeaderJPA, String> purpose;
+	public static volatile SingularAttribute<ExpenseHeaderJPA, Long> createdBy;
+	public static volatile SingularAttribute<ExpenseHeaderJPA, Long> modifiedBy;
+	public static volatile SingularAttribute<ExpenseHeaderJPA, Calendar> createdDate;
+	public static volatile SingularAttribute<ExpenseHeaderJPA, Calendar> modifiedDate;
 }

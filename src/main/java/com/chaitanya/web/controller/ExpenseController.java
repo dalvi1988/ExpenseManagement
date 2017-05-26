@@ -2,6 +2,7 @@ package com.chaitanya.web.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -22,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.event.model.EventDTO;
+import com.chaitanya.event.service.IEventService;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.expense.service.IExpenseService;
@@ -29,6 +32,7 @@ import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
 import com.chaitanya.expenseCategory.service.IExpenseCategoryService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
+import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -40,12 +44,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ExpenseController {
 	
 	@Autowired
-	@Qualifier("expenseService")
 	private IExpenseService expenseService;
 	
 	@Autowired 
-	@Qualifier("expenseCategoryService")
 	private IExpenseCategoryService expenseCategoryService;
+	
+	@Autowired 
+	private IEventService eventService;
 	
 	@RequestMapping(value="/expense",method={RequestMethod.GET,RequestMethod.POST})
 	public ModelAndView createExpense(@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) throws Exception{
@@ -53,6 +58,7 @@ public class ExpenseController {
 		ObjectMapper mapper= new ObjectMapper();
 		ExpenseHeaderDTO expenseHeaderDTO =new ExpenseHeaderDTO();
 		List<ExpenseCategoryDTO> expenseCategoryDTOList= null;
+		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(Validation.validateForZero(expenseHeaderId)){
 			expenseHeaderDTO.setExpenseHeaderId(expenseHeaderId);
 			BaseDTO baseDTO= expenseService.getExpense(expenseHeaderDTO);
@@ -63,6 +69,11 @@ public class ExpenseController {
 				throw new Exception("");
 			}
 		}
+		EventDTO eventDTO= new EventDTO();
+		eventDTO.setBranchDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO());
+		List<EventDTO> eventDTOList = eventService.findAllUnderCompany(eventDTO);
+		model.addObject("eventList", eventDTOList);
+		
 		expenseCategoryDTOList = expenseCategoryService.findAll();
 		model.addObject("expenseDetailList", mapper.writeValueAsString(expenseHeaderDTO.getAddedExpenseDetailsDTOList()));
 		model.addObject("expenseCategoryList", mapper.writeValueAsString(expenseCategoryDTOList));
@@ -140,6 +151,15 @@ public class ExpenseController {
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			receivedExpenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(!Validation.validateForNullObject(receivedExpenseHeaderDTO.getExpenseHeaderId())){
+				receivedExpenseHeaderDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedExpenseHeaderDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
+			}
+			else{
+				receivedExpenseHeaderDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedExpenseHeaderDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
+			}
 			
 			// added List
 			String addList=mapper.readTree(data).get("addList").toString();

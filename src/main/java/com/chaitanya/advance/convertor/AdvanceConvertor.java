@@ -2,68 +2,101 @@ package com.chaitanya.advance.convertor;
 
 import java.text.ParseException;
 
-import com.chaitanya.event.model.EventDTO;
-import com.chaitanya.jpa.BranchJPA;
+import com.chaitanya.advance.model.AdvanceDTO;
+import com.chaitanya.jpa.AdvanceJPA;
+import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
+import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.EventJPA;
+import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 
 public class AdvanceConvertor {
 	
-	public static EventDTO setAdvanceJPAtoDTO(EventJPA eventJPA){
-		EventDTO eventDTO=null;
-		if(Validation.validateForNullObject(eventJPA)){
-			eventDTO=new EventDTO(); 
-			eventDTO.setEventId(eventJPA.getEventId());
-			eventDTO.setEventName(eventJPA.getEventName());
-			eventDTO.setEventCode(eventJPA.getEventCode());
-			if(Validation.validateForNullObject(eventJPA.getCreatedBy())){
-				eventDTO.setCreatedBy(eventJPA.getCreatedBy());
+	public static AdvanceDTO setAdvanceJPAtoDTO(AdvanceJPA advanceJPA){
+		AdvanceDTO advanceDTO=null;
+		if(Validation.validateForNullObject(advanceJPA)){
+			advanceDTO=new AdvanceDTO(); 
+			advanceDTO.setAdvanceDetailId(advanceJPA.getAdvanceDetailId());
+			advanceDTO.setPurpose(advanceJPA.getPurpose());
+			advanceDTO.setAmount(advanceJPA.getAmount());
+			
+			if(Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
+				advanceDTO.setAdvanceNumber(advanceJPA.getAdvanceNumber());
 			}
-			if(Validation.validateForNullObject(eventJPA.getModifiedBy())){
-				eventDTO.setModifiedBy(eventJPA.getModifiedBy());
+			if(Validation.validateForNullObject(advanceJPA.getCreatedBy())){
+				advanceDTO.setCreatedBy(advanceJPA.getCreatedBy());
 			}
-			if(Validation.validateForNullObject(eventJPA.getCreatedDate())){
-				eventDTO.setCreatedDate(Convertor.calendartoString(eventJPA.getCreatedDate(),Convertor.dateFormatWithTime));
+			if(Validation.validateForNullObject(advanceJPA.getModifiedBy())){
+				advanceDTO.setModifiedBy(advanceJPA.getModifiedBy());
 			}
-			if(Validation.validateForNullObject(eventJPA.getModifiedDate())){
-				eventDTO.setModifiedDate(Convertor.calendartoString(eventJPA.getModifiedDate(),Convertor.dateFormatWithTime));
+			if(Validation.validateForNullObject(advanceJPA.getCreatedDate())){
+				advanceDTO.setCreatedDate(Convertor.calendartoString(advanceJPA.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
-			eventDTO.setStatus(Convertor.convetStatusToBool(eventJPA.getStatus()));
+			if(Validation.validateForNullObject(advanceJPA.getModifiedDate())){
+				advanceDTO.setModifiedDate(Convertor.calendartoString(advanceJPA.getModifiedDate(),Convertor.dateFormatWithTime));
+			}
 		}
-		return eventDTO;
+		return advanceDTO;
 	}
 	
 	
-	public static EventJPA setAdvanceDTOToJPA(EventDTO eventDTO) throws ParseException
+	public static AdvanceJPA setAdvanceDTOToJPA(AdvanceDTO advanceDTO) throws ParseException
 	{
-		EventJPA eventJPA=null;
-		if(Validation.validateForNullObject(eventDTO)){
-			eventJPA=new EventJPA();
-			if(Validation.validateForZero(eventDTO.getEventId())){
-				eventJPA.setEventId(eventDTO.getEventId());
-			}
-			if(Validation.validateForZero(eventDTO.getModifiedBy())){
-				eventJPA.setModifiedBy(eventDTO.getModifiedBy());
-			}
-			if(Validation.validateForZero(eventDTO.getCreatedBy())){
-				eventJPA.setCreatedBy(eventDTO.getCreatedBy());
-			}
-			if(Validation.validateForNullObject(eventDTO.getCreatedDate())){
-				eventJPA.setCreatedDate(Convertor.stringToCalendar(eventDTO.getCreatedDate(),Convertor.dateFormatWithTime));
-			}
-			if(Validation.validateForNullObject(eventDTO.getModifiedDate())){
-				eventJPA.setModifiedDate(Convertor.stringToCalendar(eventDTO.getModifiedDate(),Convertor.dateFormatWithTime));
+		AdvanceJPA advanceJPA=null;
+		if(Validation.validateForNullObject(advanceDTO)){
+			advanceJPA=new AdvanceJPA();
+			
+			EmployeeJPA employeeJPA=new EmployeeJPA();
+			employeeJPA.setEmployeeId(advanceDTO.getEmployeeDTO().getEmployeeId());
+			advanceJPA.setEmployeeJPA(employeeJPA);
+			
+			advanceJPA.setAmount(advanceDTO.getAmount());
+			advanceJPA.setPurpose(advanceDTO.getPurpose());
+			advanceJPA.setIsEvent(Convertor.convertStatusToChar(advanceDTO.getIsEvent()));
+			
+			VoucherStatusJPA voucherStatusJPA=new VoucherStatusJPA();
+			voucherStatusJPA.setVoucherStatusId(advanceDTO.getVoucherStatusDTO().getVoucherStatusId());
+			advanceJPA.setVoucherStatusJPA(voucherStatusJPA);
+			
+			if(advanceDTO.getIsEvent()== true){
+				EventJPA eventJPA= new EventJPA();
+				eventJPA.setEventId(advanceDTO.getEventDTO().getEventId());
+				advanceJPA.setEventJPA(eventJPA);
 			}
 			
-			BranchJPA branchJPA= new BranchJPA();
-			branchJPA.setBranchId(eventDTO.getBranchDTO().getBranchId());
-			eventJPA.setBranchJPA(branchJPA);
+			if(Validation.validateForZero(advanceDTO.getAdvanceDetailId())){
+				advanceJPA.setAdvanceDetailId(advanceDTO.getAdvanceDetailId());
+			}
 			
-			eventJPA.setEventCode(eventDTO.getEventCode());
-			eventJPA.setEventName(eventDTO.getEventName());
-			eventJPA.setStatus(Convertor.convertStatusToChar(eventDTO.getStatus()));
+			if(Validation.validateForZero(advanceDTO.getModifiedBy())){
+				advanceJPA.setModifiedBy(advanceDTO.getModifiedBy());
+			}
+			if(Validation.validateForZero(advanceDTO.getCreatedBy())){
+				advanceJPA.setCreatedBy(advanceDTO.getCreatedBy());
+			}
+			if(Validation.validateForNullObject(advanceDTO.getCreatedDate())){
+				advanceJPA.setCreatedDate(Convertor.stringToCalendar(advanceDTO.getCreatedDate(),Convertor.dateFormatWithTime));
+				advanceJPA.setDate(Convertor.stringToCalendar(advanceDTO.getCreatedDate(),Convertor.dateFormatWithTime));
+			}
+			if(Validation.validateForNullObject(advanceDTO.getModifiedDate())){
+				advanceJPA.setModifiedDate(Convertor.stringToCalendar(advanceDTO.getModifiedDate(),Convertor.dateFormatWithTime));
+			}
+			
 		}
-		return eventJPA;
+		return advanceJPA;
+	}
+	
+	public static AdvanceProcessHistoryJPA setExpenseHeaderJPAtoProcessHistoryJPA(AdvanceJPA advanceJPA){
+		AdvanceProcessHistoryJPA processHistoryJPA=null;
+		
+		if(Validation.validateForNullObject(advanceJPA)){
+			processHistoryJPA=new AdvanceProcessHistoryJPA(); 
+			processHistoryJPA.setVoucherStatusJPA(advanceJPA.getVoucherStatusJPA());
+			processHistoryJPA.setProcessedBy(advanceJPA.getEmployeeJPA());
+			processHistoryJPA.setProcessDate(advanceJPA.getCreatedDate());
+			
+		}
+		return processHistoryJPA;
 	}
 }

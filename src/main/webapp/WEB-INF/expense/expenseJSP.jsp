@@ -291,16 +291,16 @@ $(function () {
         flexHeight: true,
         toolbar: {
             items: [
-				{ type: 'separator',style: 'margin:0px 0px 0px 65%' },
-				{ type: 'button', icon: 'ui-icon-disk', attr:"value='1'", label: 'Save as Draft', style: 'margin:0px 0px 0px 0px', listeners: [
+                { type: 'separator' },
+                { type: 'button', icon: 'ui-icon-disk',attr:"value='2'", label: 'Send for Approval', cls:"pull-right", listeners: [
                     { "click": function (evt, ui) {
                         acceptChanges(this.value);
                     }
                     }
                 ]
                 },
-                { type: 'separator' },
-                { type: 'button', icon: 'ui-icon-disk',attr:"value='2'", label: 'Send for Approval', style: 'margin:0px 0px 0px 0px;', listeners: [
+				{ type: 'separator',style: 'margin:0px 0px 0px 65%' },
+				{ type: 'button', icon: 'ui-icon-disk', attr:"value='1'", label: 'Save as Draft',cls:"pull-right", listeners: [
                     { "click": function (evt, ui) {
                         acceptChanges(this.value);
                     }
@@ -560,26 +560,38 @@ $(function () {
 </script>
 </head>
 <body>
- 	<form:form id="form" action="saveExpense" method="POST" enctype="multipart/form-data" modelAttribute="ExpenseHeaderDTO">
- 	    <div id="headerToolbar" >
-			<div><form:errors path="*" cssStyle="color: #ff0000;"/></div>
- 	    	<table style="width: 600px;">
-			<tbody>
-			<tr>
-			<td style="width: 75px;"><form:label path="startDate">Start Date:</form:label></td>
-			<td style="width: 181px;"> <form:input  id="startDate" path="startDate" readonly="true"/> </td>
-			<td style="width: 75px;"><form:label path="endDate">End Date:</form:label></td>
-			<td style="width: 262px;"><form:input path="endDate" readonly="true"/> </td>
-			</tr>
-			<tr>
-			<td style="width: 75px;"><form:label path="title">Title:</form:label></td>
-			<td style="width: 181px;"><form:input path="title"/></td>
-			<td style="width: 75px;"><form:label path="purpose">Purpose:</form:label></td>
-			<td style="width: 262px;"><form:textarea path="purpose" style="margin-left: 0px; margin-right: 0px; width: 165px;" cols="" id="purpose" rows=""></form:textarea></td>
-			
-			</tr>
-			</tbody>
-			</table>
+ 	<form:form  class="" id="form" action="saveExpense" method="POST" enctype="multipart/form-data" modelAttribute="ExpenseHeaderDTO">
+ 	    <div class=" container" id="headerToolbar" >
+ 	    	  
+ 	    	 <div class="form-group row">
+				 <label class="col-sm-2"><input type="radio" name="optradio">Employee Expense</label>
+				 <label class="col-sm-2"><input type="radio" name="optradio">Travel Expense</label>
+				 <label class="col-sm-2"><input type="radio" name="optradio">Event Expense</label>
+			 </div>
+			 <br/>
+		 	 <div class="form-group row">
+		        <label class="col-sm-1" for="startDate">Start Date</label>
+		        <div class="col-sm-2"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
+				 
+		        <label class="col-sm-1" for="endDate">End Date</label>
+		        <div class="col-sm-2"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
+		    </div>
+		    <br/>
+		    
+		    <div class="form-group row">
+		       <div>
+			       <label class="col-sm-1" for="title">Title</label>
+			       <div class="col-sm-2"><form:input path="title" class="form-control input-sm" /></div>
+			   </div>
+			   <div>
+				   <form:select class="form-control" path="eventId" >
+		  			<form:option value="-1" label="--- Select Code ---" />
+				  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
+				  </form:select>
+			   </div>
+		       <label class="col-sm-1" for="endDate">Purpose</label>
+		      <div class="col-sm-2"><form:input path="purpose" class="form-control input-sm" /></div>
+		    </div>
  	    </div>
  	    
         <div id="grid_editing" style="margin: auto;"></div>

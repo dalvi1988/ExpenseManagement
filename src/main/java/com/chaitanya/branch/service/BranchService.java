@@ -30,7 +30,7 @@ public class BranchService implements IBranchService{
 	@Override
 	public List<BranchDTO> findAllBranchUnderCompany(BaseDTO baseDTO) {
 		logger.debug("BranchService: findAllBranchUnderCompany-Start");
-		validateCompanyBrachMasterDTO(baseDTO);
+		validateBranchMasterDTO(baseDTO);
 		
 		BranchDTO branchDTO=(BranchDTO)baseDTO;
 		List<BranchJPA> branchList=branchDAO.findAllBranchUnderCompany(branchDTO.getCompanyDTO());
@@ -51,7 +51,7 @@ public class BranchService implements IBranchService{
 	@Override
 	public BaseDTO addBranch(BaseDTO baseDTO) throws ParseException {
 		logger.debug("BranchService: addBranch-Start");
-		validateCompanyBrachMasterDTO(baseDTO);
+		validateBranchMasterDTO(baseDTO);
 		try{
 			BranchJPA branchJPA=BranchConvertor.setBranchDTOToJPA((BranchDTO)baseDTO);
 			if (Validation.validateForNullObject(branchJPA)) {
@@ -74,7 +74,7 @@ public class BranchService implements IBranchService{
 		return baseDTO;
 	}
 	
-	private void validateCompanyBrachMasterDTO(BaseDTO baseDTO) {
+	private void validateBranchMasterDTO(BaseDTO baseDTO) {
 		if( baseDTO == null  || !(baseDTO instanceof BranchDTO)){
 			throw new IllegalArgumentException("Object expected of BranchDTO type.");
 		}

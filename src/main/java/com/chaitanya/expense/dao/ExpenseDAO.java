@@ -190,6 +190,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				ProcessHistoryJPA processHistoryJPA = new ProcessHistoryJPA();
 				processHistoryJPA.setComment("Skipping "+levelInfo+" because voucher creator and approval are same");
 				processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+				processHistoryJPA.setProcessDate(expenseHeaderJPA.getModifiedDate());
 				expenseHeaderJPA.getProcessHistoryJPA().add(processHistoryJPA);
 				getApprovalOfLevel(statusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA,approvalEmployeeDTO, session);
 			}
@@ -203,9 +204,11 @@ public class ExpenseDAO implements IExpenseDAO{
 				pendingAt.setEmployeeId(approvalId);
 				processInstanceJPA.setPendingAt(pendingAt);
 				
-				EmployeeJPA approveBy = new EmployeeJPA();
-				approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-				processInstanceJPA.setPendingAt(approveBy);
+				if(Validation.validateForNullObject(approvalEmployeeDTO)){
+					EmployeeJPA approveBy = new EmployeeJPA();
+					approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
+					processInstanceJPA.setPendingAt(approveBy);
+				}
 				
 				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
 				voucherStatusJPA.setVoucherStatusId(statusId);

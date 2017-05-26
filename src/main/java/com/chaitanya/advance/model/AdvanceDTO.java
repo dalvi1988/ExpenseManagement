@@ -1,6 +1,7 @@
 package com.chaitanya.advance.model;
 
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.utility.model.VoucherStatusDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class AdvanceDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
 	private Long advanceDetailId;
+	private String advanceNumber;
 	private String purpose;
 	private Double amount;
 	private Boolean isEvent;
@@ -17,6 +19,8 @@ public class AdvanceDTO extends BaseDTO {
 	private Integer voucherStatusId;
 	@JsonIgnore
 	private VoucherStatusDTO voucherStatusDTO;
+	
+	private EmployeeDTO employeeDTO;
 	
 
 	public Long getAdvanceDetailId() {
@@ -88,6 +92,22 @@ public class AdvanceDTO extends BaseDTO {
 	public void setVoucherStatusDTO(VoucherStatusDTO voucherStatusDTO) {
 		this.voucherStatusDTO = voucherStatusDTO;
 		this.voucherStatusId=voucherStatusDTO.getVoucherStatusId();
+	}
+
+	public EmployeeDTO getEmployeeDTO() {
+		return employeeDTO;
+	}
+
+	public void setEmployeeDTO(EmployeeDTO employeeDTO) {
+		this.employeeDTO = employeeDTO;
+	}
+
+	public String getAdvanceNumber() {
+		return advanceNumber;
+	}
+
+	public void setAdvanceNumber(String advanceNumber) {
+		this.advanceNumber = advanceNumber;
 	}
 	
 }

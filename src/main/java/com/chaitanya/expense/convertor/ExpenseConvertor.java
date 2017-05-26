@@ -48,6 +48,19 @@ public class ExpenseConvertor {
 			if(Validation.validateForNullObject(expenseHeaderJPA.getExpenseDetailJPA())){
 				expenseHeaderDTO.setTotalAmount(expenseHeaderJPA.getExpenseDetailJPA().stream().mapToDouble(o -> o.getAmount()).sum());
 			}
+			
+			if(Validation.validateForNullObject(expenseHeaderJPA.getCreatedBy())){
+				expenseHeaderDTO.setCreatedBy(expenseHeaderJPA.getCreatedBy());
+			}
+			if(Validation.validateForNullObject(expenseHeaderJPA.getModifiedBy())){
+				expenseHeaderDTO.setModifiedBy(expenseHeaderJPA.getModifiedBy());
+			}
+			if(Validation.validateForNullObject(expenseHeaderJPA.getCreatedDate())){
+				expenseHeaderDTO.setCreatedDate(Convertor.calendartoString(expenseHeaderJPA.getCreatedDate(),Convertor.dateFormatWithTime));
+			}
+			if(Validation.validateForNullObject(expenseHeaderJPA.getModifiedDate())){
+				expenseHeaderDTO.setModifiedDate(Convertor.calendartoString(expenseHeaderJPA.getModifiedDate(),Convertor.dateFormatWithTime));
+			}
 		}
 		return expenseHeaderDTO;
 	}
@@ -57,11 +70,9 @@ public class ExpenseConvertor {
 		
 		if(Validation.validateForNullObject(expenseHeaderJPA)){
 			processHistoryJPA=new ProcessHistoryJPA(); 
-			//expenseHeaderDTO.setExpenseHeaderId(expenseHeaderJPA.getExpenseHeaderId());
 			processHistoryJPA.setVoucherStatusJPA(expenseHeaderJPA.getVoucherStatusJPA());
-			//processInstanceJPA.set
 			processHistoryJPA.setProcessedBy(expenseHeaderJPA.getEmployeeJPA());
-			//processHistoryJPA.setProcessDate(expenseHeaderJPA.getPurpose());
+			processHistoryJPA.setProcessDate(expenseHeaderJPA.getCreatedDate());
 			
 		}
 		return processHistoryJPA;
@@ -86,6 +97,19 @@ public class ExpenseConvertor {
 			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),Convertor.dateFormat));
 			expenseHeaderJPA.setPurpose(expenseHeaderDTO.getPurpose());
 			expenseHeaderJPA.setTitle(expenseHeaderDTO.getTitle());
+			
+			if(Validation.validateForZero(expenseHeaderDTO.getModifiedBy())){
+				expenseHeaderJPA.setModifiedBy(expenseHeaderDTO.getModifiedBy());
+			}
+			if(Validation.validateForZero(expenseHeaderDTO.getCreatedBy())){
+				expenseHeaderJPA.setCreatedBy(expenseHeaderDTO.getCreatedBy());
+			}
+			if(Validation.validateForNullObject(expenseHeaderDTO.getCreatedDate())){
+				expenseHeaderJPA.setCreatedDate(Convertor.stringToCalendar(expenseHeaderDTO.getCreatedDate(),Convertor.dateFormatWithTime));
+			}
+			if(Validation.validateForNullObject(expenseHeaderDTO.getModifiedDate())){
+				expenseHeaderJPA.setModifiedDate(Convertor.stringToCalendar(expenseHeaderDTO.getModifiedDate(),Convertor.dateFormatWithTime));
+			}
 		}
 		return expenseHeaderJPA;
 	}

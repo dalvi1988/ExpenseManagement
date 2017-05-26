@@ -1,13 +1,13 @@
 package com.chaitanya.advance.dao;
 
-import java.util.List;
-
-import com.chaitanya.company.model.CompanyDTO;
-import com.chaitanya.jpa.EventJPA;
+import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.jpa.AdvanceJPA;
 
 public interface IAdvanceDAO {
+	AdvanceJPA saveUpdateAdvance(AdvanceJPA branchJPA);
 
-	public EventJPA add(EventJPA department);
+	void updateProcessInstance(AdvanceJPA advanceJPA, int voucherStatusId,
+			EmployeeDTO employeeDTO);
 
-	public List<EventJPA> findAllUnderCompany(CompanyDTO companyDTO);
+	String generateAdvanceNumber(AdvanceJPA advanceJPA);
 }

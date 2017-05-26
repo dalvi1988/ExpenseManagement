@@ -2,24 +2,21 @@ package com.chaitanya.web.controller;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.advance.model.AdvanceDTO;
+import com.chaitanya.advance.service.IAdvanceService;
 import com.chaitanya.base.BaseDTO;
-import com.chaitanya.base.BaseDTO.Command;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.event.service.IEventService;
 import com.chaitanya.login.model.LoginUserDetails;
@@ -28,7 +25,6 @@ import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class AdvanceController {
@@ -36,12 +32,15 @@ public class AdvanceController {
 	@Autowired 
 	private IEventService eventService;
 	
+	@Autowired 
+	private IAdvanceService advanceService;
+	
 	private Logger logger= LoggerFactory.getLogger(AdvanceController.class);
 	
 	@RequestMapping(value="/advance",method=RequestMethod.GET)
 	public ModelAndView advance() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
-		ObjectMapper mapper = new ObjectMapper();
+		//ObjectMapper mapper = new ObjectMapper();
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			EventDTO eventDTO= new EventDTO();
@@ -61,36 +60,32 @@ public class AdvanceController {
 	
 	
 	@RequestMapping(value="/saveAdvance", method=RequestMethod.POST)
-	public @ResponseBody EventDTO saveAdvance(@RequestBody EventDTO receivedEventDTO){
-		EventDTO toBeSentEventDTO=null;
+	public @ResponseBody AdvanceDTO saveAdvance(AdvanceDTO receivedAdvanceDTO){
+		System.out.println(receivedAdvanceDTO);
+		AdvanceDTO toBeSentEventDTO=null;
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if(!Validation.validateForNullObject(receivedEventDTO.getEventId())){
-				receivedEventDTO.setCommand(Command.ADD);
-				receivedEventDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedEventDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
+			receivedAdvanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			if(!Validation.validateForNullObject(receivedAdvanceDTO.getAdvanceDetailId())){
+				receivedAdvanceDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedAdvanceDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
-				receivedEventDTO.setCommand(Command.UPDATE);
-				receivedEventDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedEventDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
+				receivedAdvanceDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedAdvanceDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
-			receivedEventDTO.setBranchDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO());
-			BaseDTO baseDTO=eventService.addEvent(receivedEventDTO);
+			BaseDTO baseDTO=advanceService.saveAdvance(receivedAdvanceDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){
-				toBeSentEventDTO=(EventDTO)baseDTO;
-				if(receivedEventDTO.getCommand().equals(Command.ADD)){
-					toBeSentEventDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
+				toBeSentEventDTO=(AdvanceDTO)baseDTO;
+				if(receivedAdvanceDTO.getVoucherStatusId() == 2){
+					toBeSentEventDTO.setMessage(new StringBuilder("Your advance number: "+ toBeSentEventDTO.getAdvanceNumber()+"  has beed send for approval."));
 				}
-				else
-					toBeSentEventDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
+				else{
+					toBeSentEventDTO.setMessage(new StringBuilder("Your voucher has been saved in draft."));
+				}
 			}
-			else if(Validation.validateForSystemFailureStatus(baseDTO)){
-				toBeSentEventDTO=receivedEventDTO;
-				toBeSentEventDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
-			}
-			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
-				toBeSentEventDTO=receivedEventDTO;
+			else{
+				toBeSentEventDTO=receivedAdvanceDTO;
 				toBeSentEventDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
 			}
 		}

@@ -13,7 +13,7 @@
    
    $(function () {
 	   
-	   function submitDetails(voucherIds,command){
+	   function submitDetails(voucherIds){
 		   $.ajax($.extend({}, ajaxObj, { 
              	context: $gridMain,
          	    url: "approveRejectExpense", 

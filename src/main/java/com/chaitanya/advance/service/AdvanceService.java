@@ -11,32 +11,52 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chaitanya.advance.convertor.AdvanceConvertor;
+import com.chaitanya.advance.dao.IAdvanceDAO;
+import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
-import com.chaitanya.event.convertor.EventConvertor;
-import com.chaitanya.event.dao.IEventDAO;
-import com.chaitanya.event.model.EventDTO;
-import com.chaitanya.jpa.EventJPA;
+import com.chaitanya.jpa.AdvanceJPA;
+import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
 import com.chaitanya.utility.Validation;
 
 @Service("advanceService")
 @Transactional(rollbackFor=Exception.class)
 public class AdvanceService implements IAdvanceService{
+	
 	@Autowired
-	private IEventDAO eventDAO;
+	private IAdvanceDAO advanceDAO;
 	
 	private Logger logger= LoggerFactory.getLogger(AdvanceService.class);
 
 	@Override
-	public BaseDTO addEvent(BaseDTO baseDTO) throws ParseException {
-		logger.debug("EventService: addEvent-Start");
-		validateEventMasterDTO(baseDTO);
+	public BaseDTO saveAdvance(BaseDTO baseDTO) throws ParseException {
+		logger.debug("AdvanceService: saveAdvance-Start");
+		validateAdvanceDTO(baseDTO);
 		try{
-			EventJPA eventJPA=EventConvertor.setEventDTOToJPA((EventDTO)baseDTO);
-			if (Validation.validateForNullObject(eventJPA)) {
-				eventJPA=eventDAO.add(eventJPA);
-				if(Validation.validateForNullObject(eventJPA)){
-					baseDTO=EventConvertor.setEventJPAtoDTO(eventJPA);
+			AdvanceJPA advanceJPA=AdvanceConvertor.setAdvanceDTOToJPA((AdvanceDTO)baseDTO);
+			if (Validation.validateForNullObject(advanceJPA)) {
+				AdvanceProcessHistoryJPA processHistoryJPA = AdvanceConvertor.setExpenseHeaderJPAtoProcessHistoryJPA(advanceJPA);
+				processHistoryJPA.setAdvanceJPA(advanceJPA);
+				List<AdvanceProcessHistoryJPA> processHistoryJPAList= new ArrayList<AdvanceProcessHistoryJPA>();
+				processHistoryJPAList.add(processHistoryJPA);
+				advanceJPA.setProcessHistoryJPA(processHistoryJPAList);
+				
+				advanceJPA=advanceDAO.saveUpdateAdvance(advanceJPA);
+				
+				//Create process instance if voucher not saved as draft.
+				if(advanceJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
+					if(Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
+						String voucherNumber = advanceDAO.generateAdvanceNumber(advanceJPA);
+						advanceJPA.setAdvanceNumber(voucherNumber);
+					}
+					else{
+						advanceJPA.setAdvanceNumber(advanceJPA.getAdvanceNumber()+"*");
+					}
+					advanceDAO.updateProcessInstance(advanceJPA,advanceJPA.getVoucherStatusJPA().getVoucherStatusId(),null);
+				}
+				if(Validation.validateForNullObject(advanceJPA)){
+					baseDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
 			}
@@ -47,33 +67,16 @@ public class AdvanceService implements IAdvanceService{
 		catch(DataIntegrityViolationException e){
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("EventService: addEvent ",e);
+			logger.error("AdvanceService: saveAdvance ",e);
 		}
-		logger.debug("EventService: addEvent-End");
+		logger.debug("AdvanceService: saveAdvance-End");
 		return baseDTO;
 	}
 
-	@Override
-	public List<EventDTO> findAllUnderCompany(BaseDTO baseDTO) {
-		logger.debug("EventService: findAllUnderCompany-End");
-		validateEventMasterDTO(baseDTO);
-		EventDTO eventDTO=(EventDTO) baseDTO;
-		List<EventDTO> eventDTOList = null;
-		List<EventJPA> eventJPAList = eventDAO.findAllUnderCompany( eventDTO.getBranchDTO().getCompanyDTO());
-		if (Validation.validateCollectionForNullSize(eventJPAList)) {
-			eventDTOList = new ArrayList<EventDTO>();
-			for (EventJPA eventJPA: eventJPAList) {
-				EventDTO evtDTO = EventConvertor.setEventJPAtoDTO(eventJPA);
-				eventDTOList.add(evtDTO);
-			}
-		}
-		logger.debug("EventService: findAllUnderCompany-End");
-		return eventDTOList;
-	}
 	
-	private void validateEventMasterDTO(BaseDTO baseDTO) {
-		if( baseDTO == null  || !(baseDTO instanceof EventDTO)){
-			throw new IllegalArgumentException("Object expected of EventMasterDTO type.");
+	private void validateAdvanceDTO(BaseDTO baseDTO) {
+		if( baseDTO == null  || !(baseDTO instanceof AdvanceDTO)){
+			throw new IllegalArgumentException("Object expected of AdvanceDTO type.");
 		}
 	}
 }

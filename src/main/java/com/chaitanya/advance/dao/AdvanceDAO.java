@@ -2,15 +2,27 @@ package com.chaitanya.advance.dao;
 
 import java.util.List;
 
+import javax.persistence.ParameterMode;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
+import org.hibernate.procedure.ProcedureCall;
+import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.chaitanya.company.model.CompanyDTO;
-import com.chaitanya.jpa.EventJPA;
+import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.jpa.AdvanceJPA;
+import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
+import com.chaitanya.jpa.AdvanceProcessInstanceJPA;
+import com.chaitanya.jpa.ApprovalFlowJPA;
+import com.chaitanya.jpa.DepartmentHeadJPA;
+import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.Validation;
 
 @Repository
 public class AdvanceDAO implements IAdvanceDAO{
@@ -19,21 +31,205 @@ public class AdvanceDAO implements IAdvanceDAO{
 	SessionFactory sessionFactory;
 	
 	@Override
-	public EventJPA add(EventJPA branchJPA){
+	public AdvanceJPA saveUpdateAdvance(AdvanceJPA advanceJPA){
 		Session session=sessionFactory.getCurrentSession();
-		session.saveOrUpdate(branchJPA);
-		return branchJPA;
+		session.saveOrUpdate(advanceJPA);
+		return advanceJPA;
 	}
 
 	@Override
-	public List<EventJPA> findAllUnderCompany(CompanyDTO companyDTO) {
-		Session session=sessionFactory.getCurrentSession();
-		@SuppressWarnings("unchecked")
-		List<EventJPA> eventList=(List<EventJPA>)session.createCriteria(EventJPA.class)
-				.createAlias("branchJPA","branchJPA", JoinType.INNER_JOIN)
-				.add(Restrictions.eq("branchJPA.companyJPA.companyId",companyDTO.getCompanyId()))
-				.list();
-		return eventList;
+	@SuppressWarnings("unchecked")
+	public void updateProcessInstance(AdvanceJPA advanceJPA, int currentVoucherStatus,EmployeeDTO approvalEmployeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		// Get Employee details by id
+		
+		EmployeeJPA employeeJPA= (EmployeeJPA) session.get(EmployeeJPA.class,advanceJPA.getEmployeeJPA().getEmployeeId());
+		
+		Criterion deptCriterion= Restrictions.or(
+								 Restrictions.eq("departmentJPA.departmentId",employeeJPA.getDepartmentJPA().getDepartmentId()),
+								 Restrictions.isNull("departmentJPA.departmentId")
+								 );
+		
+		List<ApprovalFlowJPA> approvalFlowList = (List<ApprovalFlowJPA>) session.createCriteria(ApprovalFlowJPA.class)
+												.add(Restrictions.eq("branchJPA.branchId", employeeJPA.getBranchJPA().getBranchId()))
+												.add(deptCriterion)
+												.add(Restrictions.eq("status", 'Y'))
+												.list();
+		
+		ApprovalFlowJPA functionalFlowJPA=null;
+		ApprovalFlowJPA branchFlowJPA=null;
+		ApprovalFlowJPA financeFlowJPA=null;
+		
+		boolean functionFlowFlag=false,branchFlowFlag=false,financeFlowFlag=false;
+		
+		if(Validation.validateForNullObject(approvalFlowList)){
+			for(ApprovalFlowJPA approvalFlowJPA:approvalFlowList){
+				if(functionFlowFlag==false && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
+					functionFlowFlag = true;
+					functionalFlowJPA = approvalFlowJPA;
+				}
+				else if(branchFlowFlag==false && approvalFlowJPA.getIsBranchFlow()=='Y' && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && !Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
+					branchFlowFlag = true;
+					branchFlowJPA = approvalFlowJPA;
+				}
+				else if(financeFlowFlag==false && approvalFlowJPA.getIsBranchFlow()=='N' && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && !Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
+					financeFlowFlag = true;
+					financeFlowJPA = approvalFlowJPA;
+				}
+			}
+		}
+		
+		if( financeFlowFlag== false){
+			System.out.println("No finance Worklflow");
+		}
+		else if(functionFlowFlag == false && branchFlowFlag == false){
+			System.out.println("No Functional & Branch Flow Worklflow");
+		}
+		else if(functionFlowFlag == true){
+			System.out.println("Executing function flow.");
+	    	getApprovalOfLevel(currentVoucherStatus,advanceJPA,functionalFlowJPA,financeFlowJPA, employeeJPA,approvalEmployeeDTO, session);
+		}
+		else if(branchFlowFlag == true){
+			System.out.println("Executing branch flow.");
+	    	getApprovalOfLevel(currentVoucherStatus,advanceJPA,branchFlowJPA, financeFlowJPA, employeeJPA,approvalEmployeeDTO, session);
+		}
+		
+		
+	}
+	
+	private void getApprovalOfLevel(int currentVoucerStatus, AdvanceJPA advanceJPA, ApprovalFlowJPA functionalApprovalFlow, ApprovalFlowJPA financeApprovalFlow, EmployeeJPA employeeJPA,EmployeeDTO approvalEmployeeDTO, Session session){
+		Long approvalId = null;
+		int statusId=0;
+		Long level = null;
+		String levelInfo = null;
+		
+		if(currentVoucerStatus == 2){
+			statusId=11;
+			level = functionalApprovalFlow.getLevel1();
+			levelInfo = "Functional Level1";
+
+		}
+		else if(currentVoucerStatus == 11){
+			statusId=21;
+			level = functionalApprovalFlow.getLevel2();
+			levelInfo = "Functional Level2";
+		}
+		else if(currentVoucerStatus == 21){
+			statusId=31;
+			level = functionalApprovalFlow.getLevel3();
+			levelInfo = "Functional Level3";
+		}
+		else if(currentVoucerStatus == 31){
+			statusId=111;
+			level = financeApprovalFlow.getLevel1();
+			levelInfo = "Finance Level1";
+		}
+		else if(currentVoucerStatus == 111){
+			statusId=121;
+			level = financeApprovalFlow.getLevel2();
+			levelInfo = "Finance Level2";
+		}
+		else if(currentVoucerStatus == 121){
+			statusId=131;
+			level = financeApprovalFlow.getLevel3();
+			levelInfo = "Finance Level3";
+		}
+		else if(currentVoucerStatus == 131){
+			statusId=3;
+			
+			AdvanceProcessInstanceJPA processInstanceJPA = advanceJPA.getProcessInstanceJPA();
+			if(! Validation.validateForNullObject(processInstanceJPA)){
+				processInstanceJPA= new AdvanceProcessInstanceJPA();
+			}
+			
+			EmployeeJPA pendingAt = new EmployeeJPA();
+			pendingAt.setEmployeeId(advanceJPA.getEmployeeJPA().getEmployeeId());
+			processInstanceJPA.setPendingAt(pendingAt);
+			
+			EmployeeJPA approveBy = new EmployeeJPA();
+			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
+			processInstanceJPA.setPendingAt(approveBy);
+		
+			
+			VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
+			voucherStatusJPA.setVoucherStatusId(statusId);
+			processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
+			
+			processInstanceJPA.setAdvanceJPA(advanceJPA);
+			advanceJPA.setProcessInstanceJPA(processInstanceJPA);
+		}
+			
+		if(Validation.validateForNullObject(level)){
+			if(level == -10){
+				 approvalId= employeeJPA.getReportingMgr().getEmployeeId();
+			}
+			else if(level == -11){
+				approvalId=employeeJPA.getReportingMgr().getReportingMgr().getEmployeeId();
+			}
+			else if(level == -1){
+				approvalId = (Long) session.createCriteria(DepartmentHeadJPA.class)
+							.setProjection(Projections.property("employeeJPA.employeeId"))
+							.add(Restrictions.eq("departmentJPA.departmentId",employeeJPA.getDepartmentJPA().getDepartmentId()))
+							.add(Restrictions.eq("branchJPA.branchId",employeeJPA.getBranchJPA().getBranchId()))
+							.uniqueResult();
+			}
+			else{
+				approvalId=level;
+			}
+		
+			if(employeeJPA.getEmployeeId()== approvalId){
+				AdvanceProcessHistoryJPA processHistoryJPA = new AdvanceProcessHistoryJPA();
+				processHistoryJPA.setComment("Skipping "+levelInfo+" because voucher creator and approval are same");
+				processHistoryJPA.setAdvanceJPA(advanceJPA);
+				processHistoryJPA.setProcessDate(advanceJPA.getModifiedDate());
+				advanceJPA.getProcessHistoryJPA().add(processHistoryJPA);
+				getApprovalOfLevel(statusId,advanceJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA,approvalEmployeeDTO, session);
+			}
+			else{
+				AdvanceProcessInstanceJPA processInstanceJPA = advanceJPA.getProcessInstanceJPA();
+				if(! Validation.validateForNullObject(processInstanceJPA)){
+					processInstanceJPA= new AdvanceProcessInstanceJPA();
+				}
+				
+				EmployeeJPA pendingAt = new EmployeeJPA();
+				pendingAt.setEmployeeId(approvalId);
+				processInstanceJPA.setPendingAt(pendingAt);
+				
+				if(Validation.validateForNullObject(approvalEmployeeDTO)){
+					EmployeeJPA approveBy = new EmployeeJPA();
+					approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
+					processInstanceJPA.setPendingAt(approveBy);
+				}
+				
+				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
+				voucherStatusJPA.setVoucherStatusId(statusId);
+				processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
+				
+				processInstanceJPA.setAdvanceJPA(advanceJPA);
+				advanceJPA.setProcessInstanceJPA(processInstanceJPA);
+			}
+		}
+		else{
+			System.out.println(levelInfo +" not available.");
+			getApprovalOfLevel(statusId,advanceJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA,approvalEmployeeDTO, session);
+		}
+	}
+
+	@Override
+	public String generateAdvanceNumber(AdvanceJPA advanceJPA) {
+	
+		Session session = sessionFactory.getCurrentSession();
+		ProcedureCall query =  session.createStoredProcedureCall("voucher_number");
+				query.registerParameter(
+			        "module", String.class, ParameterMode.IN).bindValue("EMPLOYEE_EXPENSE");
+				query.registerParameter(
+			        "voucherNumber", String.class, ParameterMode.OUT);
+
+		ProcedureOutputs procedureResult=query.getOutputs();
+		String voucherNumber= (String) procedureResult.getOutputParameterValue("voucherNumber");
+		voucherNumber="Advance/"+advanceJPA.getDate()+"/"+voucherNumber;
+		return voucherNumber;
 	}
 
 }

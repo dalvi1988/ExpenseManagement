@@ -39,17 +39,19 @@ public class ExpenseService implements IExpenseService{
 	private Logger logger= LoggerFactory.getLogger(ExpenseService.class);
 	
 
-	private boolean validateExpenseMasterDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof ExpenseHeaderDTO);
+	private void validateExpenseMasterDTO(BaseDTO baseDTO) {
+		if( baseDTO == null  || !(baseDTO instanceof ExpenseHeaderDTO)){
+			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
+		}
+			
 	}
 
 	
 	@Override
 	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException {
 		logger.debug("ExpenseService: addExpense-Start");
-		if(validateExpenseMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
-		}
+		validateExpenseMasterDTO(baseDTO);
+		
 		ExpenseHeaderDTO expenseHeaderDTO = (ExpenseHeaderDTO)baseDTO;
 		ExpenseHeaderJPA expenseHeaderJPA = ExpenseConvertor.setExpenseHeaderDTOToJPA(expenseHeaderDTO);
 		List<ExpenseDetailJPA> expenseDetailJPAList=new ArrayList<>();
@@ -78,8 +80,13 @@ public class ExpenseService implements IExpenseService{
 			
 			//Create process instance if voucher not saved as draft.
 			if(expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
-				String voucherNumber = expenseDAO.generateVoucherNumber(expenseHeaderDTO);
-				expenseHeaderJPA.setVoucherNumber(voucherNumber);
+				if(Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
+					String voucherNumber = expenseDAO.generateVoucherNumber(expenseHeaderDTO);
+					expenseHeaderJPA.setVoucherNumber(voucherNumber);
+				}
+				else{
+					expenseHeaderJPA.setVoucherNumber(expenseHeaderJPA.getVoucherNumber()+"*");
+				}
 				expenseDAO.updateProcessInstance(expenseHeaderJPA,expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId(),null);
 			}
 			
@@ -118,9 +125,8 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) {
 		logger.debug("ExpenseService: getDraftExpense-Start");
-		if(validateExpenseMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
-		}
+		validateExpenseMasterDTO(baseDTO);
+		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		try{
 			if (Validation.validateForNullObject(baseDTO)) {
@@ -150,9 +156,8 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public List<ExpenseHeaderDTO> getPendingExpenseList(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ExpenseService: getPendingExpenseList-Start");
-		if(validateExpenseMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
-		}
+		validateExpenseMasterDTO(baseDTO);
+		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
@@ -177,9 +182,8 @@ public class ExpenseService implements IExpenseService{
 	public List<ExpenseHeaderDTO> getExpenseToBeApprove(BaseDTO baseDTO) {
 
 		logger.debug("ExpenseService: getExpenseToBeApprove-Start");
-		if(validateExpenseMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
-		}
+		validateExpenseMasterDTO(baseDTO);
+		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		try{
 			if (Validation.validateForNullObject(baseDTO)) {
@@ -213,9 +217,8 @@ public class ExpenseService implements IExpenseService{
 	public List<ExpenseDetailDTO> getExpenseDetailsByHeaderId(BaseDTO baseDTO) {
 
 		logger.debug("ExpenseService: getExpenseDetailsByHeaderId-Start");
-		if(validateExpenseMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
-		}
+		validateExpenseMasterDTO(baseDTO);
+		
 		List<ExpenseDetailDTO> expenseDetailDTOList= null;
 		try{
 			if (Validation.validateForNullObject(baseDTO)) {
@@ -249,9 +252,8 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public BaseDTO getExpense(BaseDTO baseDTO) {
 		logger.debug("ExpenseService: getExpense-Start");
-		if(validateExpenseMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
-		}
+		validateExpenseMasterDTO(baseDTO);
+		
 		try{
 			if (Validation.validateForNullObject(baseDTO)) {
 				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
@@ -284,9 +286,8 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException, ParseException {
 		logger.debug("ExpenseService: approveRejectExpenses-Start");
-		if(validateExpenseMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
-		}
+		validateExpenseMasterDTO(baseDTO);
+		
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
 			ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.approveRejectExpenses(expenseHeaderDTO);

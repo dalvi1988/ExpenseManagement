@@ -65,6 +65,18 @@ public class ExpenseHeaderJPA {
 	@Column(name="purpose")
 	private String purpose;
 
+	@Column(name="created_by")
+	private Long createdBy;
+	
+	@Column(name="modified_by")
+    private Long modifiedBy;
+	
+	@Column(name="created_date")
+	private Calendar createdDate;
+		
+	@Column(name="modified_date")
+	private Calendar modifiedDate;
+
 	public Long getExpenseHeaderId() {
 		return expenseHeaderId;
 	}
@@ -151,6 +163,38 @@ public class ExpenseHeaderJPA {
 
 	public void setVoucherNumber(String voucherNumber) {
 		this.voucherNumber = voucherNumber;
+	}
+
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Long getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(Long modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+
+	public Calendar getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Calendar createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Calendar getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Calendar modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 }

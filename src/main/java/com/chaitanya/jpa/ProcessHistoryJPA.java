@@ -77,5 +77,13 @@ public class ProcessHistoryJPA {
 	public void setExpenseHeaderJPA(ExpenseHeaderJPA expenseHeaderJPA) {
 		this.expenseHeaderJPA = expenseHeaderJPA;
 	}
+
+	public Calendar getProcessDate() {
+		return processDate;
+	}
+
+	public void setProcessDate(Calendar processDate) {
+		this.processDate = processDate;
+	}
 	
 }

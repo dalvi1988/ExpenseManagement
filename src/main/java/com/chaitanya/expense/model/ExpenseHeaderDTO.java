@@ -2,11 +2,9 @@ package com.chaitanya.expense.model;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.utility.model.VoucherStatusDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -21,23 +19,21 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	
 	private String voucherNumber;
 	
-	private Integer voucherStatusId;
 	
 	private Double totalAmount;
 	
+	private Integer voucherStatusId;
 	@JsonIgnore
 	private VoucherStatusDTO voucherStatusDTO;
+
+	private Integer eventId;
+	@JsonIgnore
+	private EventDTO eventDTO;
 	
-	@NotNull
-	@Size(min=8)
 	private String startDate;
 	
-	@NotNull
-	@Size(min=8)
 	private String endDate;
 	
-	@NotNull
-	@Size(min=5)
 	private String title;
 	
 	public Double getTotalAmount() {
@@ -183,6 +179,26 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setApprovedByEmployeeDTO(EmployeeDTO approvedByEmployeeDTO) {
 		this.approvedByEmployeeDTO = approvedByEmployeeDTO;
+	}
+
+	public Integer getEventId() {
+		return eventId;
+	}
+
+	public void setEventId(Integer eventId) {
+		this.eventId = eventId;
+		EventDTO eventDTO= new EventDTO();
+		eventDTO.setEventId(eventId);
+		this.setEventDTO(eventDTO);
+	}
+
+	public EventDTO getEventDTO() {
+		return eventDTO;
+	}
+
+	public void setEventDTO(EventDTO eventDTO) {
+		this.eventDTO = eventDTO;
+		this.eventId=eventDTO.getEventId();
 	}
 	
 }
