@@ -17,8 +17,8 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	
 	private Long expenseHeaderId;
 	
+	private String expenseType; 
 	private String voucherNumber;
-	
 	
 	private Double totalAmount;
 	
@@ -200,5 +200,15 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		this.eventDTO = eventDTO;
 		this.eventId=eventDTO.getEventId();
 	}
+
+	public String getExpenseType() {
+		return expenseType;
+	}
+
+	public void setExpenseType(String expenseType) {
+		this.expenseType = expenseType;
+	}
+
+
 	
 }

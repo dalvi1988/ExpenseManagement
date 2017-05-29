@@ -9,7 +9,6 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -68,6 +67,9 @@ public class ExpenseController {
 			}else{
 				throw new Exception("");
 			}
+		}
+		else{
+			expenseHeaderDTO.setExpenseType("EmployeeExpense");
 		}
 		EventDTO eventDTO= new EventDTO();
 		eventDTO.setBranchDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO());

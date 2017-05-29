@@ -564,9 +564,9 @@ $(function () {
  	    <div class=" container" id="headerToolbar" >
  	    	  
  	    	 <div class="form-group row">
-				 <label class="col-sm-2"><input type="radio" name="optradio">Employee Expense</label>
-				 <label class="col-sm-2"><input type="radio" name="optradio">Travel Expense</label>
-				 <label class="col-sm-2"><input type="radio" name="optradio">Event Expense</label>
+				 <label class="col-sm-2"><form:radiobutton  path="expenseType" value="EmployeeExpense"/>Employee Expense</label>
+				 <label class="col-sm-2"><form:radiobutton  path="expenseType" value="TravelExpense"/>Travel Expense</label>
+				 <label class="col-sm-2"><form:radiobutton  path="expenseType" value="EventExpense"/>Event Expense</label>
 			 </div>
 			 <br/>
 		 	 <div class="form-group row">
@@ -579,13 +579,13 @@ $(function () {
 		    <br/>
 		    
 		    <div class="form-group row">
-		       <div>
+		       <div >
 			       <label class="col-sm-1" for="title">Title</label>
 			       <div class="col-sm-2"><form:input path="title" class="form-control input-sm" /></div>
 			   </div>
-			   <div>
-				   <form:select class="form-control" path="eventId" >
-		  			<form:option value="-1" label="--- Select Code ---" />
+			   <div class=" col-sm-2">
+				   <form:select class="form-control " path="eventId" >
+		  			<form:option value="-1" label="--- Select Event ---" />
 				  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
 				  </form:select>
 			   </div>

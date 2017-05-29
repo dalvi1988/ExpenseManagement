@@ -72,7 +72,7 @@
   <div class="form-group"> 
      <div class="col-sm-offset-2 col-sm-3" id="eventDiv" style="display: none" >
 	  <form:select class="form-control" path="eventId" >
-	  <form:option value="-1" label="--- Select Code ---" />
+	  <form:option value="-1" label="--- Select Event ---" />
 	  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
 	  </form:select>
 	</div>
