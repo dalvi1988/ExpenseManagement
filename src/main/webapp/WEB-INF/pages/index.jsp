@@ -107,7 +107,7 @@
 	        $('.content').load('advance');
 	     });
 	    
-	    $('.requestAdvance').click();
+	    $('.createExpense').click();
 	    
 	});
 	function logout(){

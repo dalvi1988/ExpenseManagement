@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.chaitanya.advance.service.IAdvanceService;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.event.service.IEventService;
@@ -50,6 +51,9 @@ public class ExpenseController {
 	
 	@Autowired 
 	private IEventService eventService;
+	
+	@Autowired 
+	private IAdvanceService advanceService;
 	
 	@RequestMapping(value="/expense",method={RequestMethod.GET,RequestMethod.POST})
 	public ModelAndView createExpense(@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) throws Exception{

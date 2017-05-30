@@ -556,42 +556,70 @@ $(function () {
     addNewRow();         
 });
 
-
+function toggler(divId) {
+    $("." + divId).toggle();
+}
 </script>
 </head>
 <body>
  	<form:form  class="" id="form" action="saveExpense" method="POST" enctype="multipart/form-data" modelAttribute="ExpenseHeaderDTO">
  	    <div class=" container" id="headerToolbar" >
- 	    	  
- 	    	 <div class="form-group row">
-				 <label class="col-sm-2"><form:radiobutton  path="expenseType" value="EmployeeExpense"/>Employee Expense</label>
-				 <label class="col-sm-2"><form:radiobutton  path="expenseType" value="TravelExpense"/>Travel Expense</label>
-				 <label class="col-sm-2"><form:radiobutton  path="expenseType" value="EventExpense"/>Event Expense</label>
-			 </div>
-			 <br/>
-		 	 <div class="form-group row">
-		        <label class="col-sm-1" for="startDate">Start Date</label>
-		        <div class="col-sm-2"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
-				 
-		        <label class="col-sm-1" for="endDate">End Date</label>
-		        <div class="col-sm-2"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
-		    </div>
-		    <br/>
-		    
-		    <div class="form-group row">
-		       <div >
-			       <label class="col-sm-1" for="title">Title</label>
-			       <div class="col-sm-2"><form:input path="title" class="form-control input-sm" /></div>
+			  <div class="col-xs-6">			 
+	 	    	 <div class="form-group row">
+					 <label class="col-sm-4"><form:radiobutton  path="expenseType" onclick="toggler('eventTab');" value="EmployeeExpense"/>Employee Expense</label>
+					 <label class="col-sm-4"><form:radiobutton  path="expenseType" onclick="toggler('eventTab');" value="EventExpense"/>Event Expense</label>
+				 </div>
+				 <br/>
+			 	 <div class="form-group row">
+			        <label class="col-sm-1" for="startDate">Start Date</label>
+			        <div class="col-sm-4"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
+					 
+			        <label class="col-sm-1" for="endDate">End Date</label>
+			        <div class="col-sm-4"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
+			    </div>
+			    <br/>
+			    
+			    <div class="form-group row">
+			       <label class="col-sm-1" for="endDate">Purpose</label>
+			      <div class="col-sm-4"><form:input path="purpose" class="form-control input-sm" /></div>
+			      
+			      <div class="eventTab" style="display: none">
+				       <label class="col-sm-1" for="eventId">Event</label>
+				       <div class="col-sm-4">
+					      <form:select class="form-control col-sm-4" path="eventId" >
+				  			<form:option value="-1" label="--- Select Event ---" />
+						  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
+						  </form:select>
+					  </div>
+				  </div>
+			    </div>
 			   </div>
-			   <div class=" col-sm-2">
-				   <form:select class="form-control " path="eventId" >
-		  			<form:option value="-1" label="--- Select Event ---" />
-				  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
-				  </form:select>
+			   
+			   <div class="col-xs-4 panel panel-primary">
+			   		<h1 class="panel-heading">Advance Details</h1> 
+			   		<div class="form-group row panel-heading">
+			   			<input type="checkbox" onchange="toggler('advanceTab');">Do you want to settle against advance?
+			   		</div>
+			   		<div class="advanceTab" style="display: none">
+			   			<div class="form-group row">
+					       <label class="col-sm-4" for="eventId">Select Advance:</label>
+					       <div class="col-sm-5">
+						      <form:select class="form-control col-sm-4" path="eventId" >
+					  			<form:option value="-1" label="--- Select Advance ---" />
+							  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
+							  </form:select>
+						   </div>
+					   </div>
+					   <br/>
+					   <div class="form-group row">
+					        <label class="col-sm-2" for="startDate">Amount</label>
+					        <div class="col-sm-2"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
+							 
+					        <label class="col-sm-2" for="endDate">Purpose</label>
+					        <div class="col-sm-5"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
+					   </div>
+				  </div>
 			   </div>
-		       <label class="col-sm-1" for="endDate">Purpose</label>
-		      <div class="col-sm-2"><form:input path="purpose" class="form-control input-sm" /></div>
-		    </div>
  	    </div>
  	    
         <div id="grid_editing" style="margin: auto;"></div>
@@ -601,7 +629,6 @@ $(function () {
  		<form:hidden path="expenseHeaderId"></form:hidden>
     </form:form>
     
-     <div id="dialog" style="display: none" title="Validation failure">
-	</div>
+    <div id="dialog" style="display: none" title="Validation failure"></div>
 </body>
 </html>
