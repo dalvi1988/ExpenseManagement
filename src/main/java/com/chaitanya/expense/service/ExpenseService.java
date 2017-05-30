@@ -123,31 +123,25 @@ public class ExpenseService implements IExpenseService{
 
 
 	@Override
-	public List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) {
+	public List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ExpenseService: getDraftExpense-Start");
 		validateExpenseMasterDTO(baseDTO);
 		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-				List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getDraftExpenseList(expenseHeaderDTO);
-				if(Validation.validateForNullObject(expenseHeaderJPAList)){
-					expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
-					for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
-						ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
-						expenseHeaderDTOList.add(expHeaderDTO);
-					}
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getDraftExpenseList(expenseHeaderDTO);
+			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					expenseHeaderDTOList.add(expHeaderDTO);
 				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("ExpenseService: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		logger.debug("ExpenseService: getDraftExpense-End");
 		return  expenseHeaderDTOList;

@@ -16,8 +16,12 @@ import com.chaitanya.advance.dao.IAdvanceDAO;
 import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
+import com.chaitanya.event.convertor.EventConvertor;
+import com.chaitanya.expense.convertor.ExpenseConvertor;
+import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
+import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.utility.Validation;
 
 @Service("advanceService")
@@ -78,5 +82,33 @@ public class AdvanceService implements IAdvanceService{
 		if( baseDTO == null  || !(baseDTO instanceof AdvanceDTO)){
 			throw new IllegalArgumentException("Object expected of AdvanceDTO type.");
 		}
+	}
+
+
+	@Override
+	public List<AdvanceDTO> getDraftAdvanceList(BaseDTO baseDTO) {
+		logger.debug("AdvanceService: getDraftAdvanceList-Start");
+		validateAdvanceDTO(baseDTO);
+
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getDraftAdvanceList(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+					advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("AdvanceService: getDraftAdvanceList-End");
+		return  advanceDTOList;
 	}
 }

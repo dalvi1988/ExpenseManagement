@@ -107,6 +107,11 @@
 	        $('.content').load('advance');
 	     });
 	    
+	    $('.draftAdvance').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('viewDraftAdvance');
+	     });
+	    
 	    $('.createExpense').click();
 	    
 	});
@@ -203,8 +208,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="requestAdvance"><i class="fa fa-circle-o"></i>Request Expenses</a></li>
-           
+            <li><a href="#" class="requestAdvance"><i class="fa fa-circle-o"></i>Request Advance</a></li>
+            <li><a href="#" class="draftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
           </ul>
         </li>
         

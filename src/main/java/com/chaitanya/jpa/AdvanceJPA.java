@@ -24,7 +24,7 @@ import org.hibernate.annotations.FetchMode;
 public class AdvanceJPA  {
 	
 	@Id @GeneratedValue
-	@Column(name="advance_detail_id")
+	@Column(name="advance_details_id")
 	private Long advanceDetailId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -47,12 +47,12 @@ public class AdvanceJPA  {
 	@JoinColumn(name = "voucher_status_id")
 	private VoucherStatusJPA voucherStatusJPA;
 	
-	@OneToMany(mappedBy="advanceJPA",fetch=FetchType.EAGER) 
+	@OneToMany(mappedBy="advanceJPA",fetch=FetchType.LAZY) 
 	@Cascade({CascadeType.ALL})
 	@Fetch (FetchMode.SELECT)
 	private List<AdvanceProcessHistoryJPA> processHistoryJPA;
 	
-	@OneToOne(mappedBy="advanceJPA") 
+	@OneToOne(mappedBy="advanceJPA",fetch=FetchType.LAZY) 
 	@Cascade({CascadeType.ALL})
 	@Fetch (FetchMode.SELECT)
 	private AdvanceProcessInstanceJPA processInstanceJPA;

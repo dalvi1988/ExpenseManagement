@@ -11,9 +11,11 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.procedure.ProcedureCall;
 import org.hibernate.procedure.ProcedureOutputs;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
@@ -222,7 +224,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 		Session session = sessionFactory.getCurrentSession();
 		ProcedureCall query =  session.createStoredProcedureCall("voucher_number");
 				query.registerParameter(
-			        "module", String.class, ParameterMode.IN).bindValue("EMPLOYEE_EXPENSE");
+			        "module", String.class, ParameterMode.IN).bindValue("ADVANCE_EXPENSE");
 				query.registerParameter(
 			        "voucherNumber", String.class, ParameterMode.OUT);
 
@@ -230,6 +232,18 @@ public class AdvanceDAO implements IAdvanceDAO{
 		String voucherNumber= (String) procedureResult.getOutputParameterValue("voucherNumber");
 		voucherNumber="Advance/"+advanceJPA.getDate()+"/"+voucherNumber;
 		return voucherNumber;
+	}
+
+	@Override
+	public List<AdvanceJPA> getDraftAdvanceList(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+		        .createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
+				.list();
+		return advanceJPAList;
 	}
 
 }

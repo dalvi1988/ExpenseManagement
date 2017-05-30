@@ -4,7 +4,10 @@ import com.chaitanya.base.BaseDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.utility.model.VoucherStatusDTO;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 public class AdvanceDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
@@ -14,6 +17,9 @@ public class AdvanceDTO extends BaseDTO {
 	private Double amount;
 	private Boolean isEvent;
 	private Integer eventId;
+	
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="eventName")
+	@JsonIdentityReference(alwaysAsId=true)
 	private EventDTO eventDTO;
 	
 	private Integer voucherStatusId;
