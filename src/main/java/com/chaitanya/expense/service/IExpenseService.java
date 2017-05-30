@@ -12,7 +12,7 @@ public interface IExpenseService {
 
 	BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException;
 
-	List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO);
+	List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) throws ParseException;
 
 	BaseDTO getExpense(BaseDTO baseDTO);
 

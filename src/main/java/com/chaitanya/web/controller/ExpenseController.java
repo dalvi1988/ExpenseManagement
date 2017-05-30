@@ -219,17 +219,22 @@ public class ExpenseController {
 	public ModelAndView viewDraftExpense() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
-		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
-		ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
-		expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
-		
-		if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
-			 expenseHeaderDTOList = expenseService.getDraftExpenseList(expenseHeaderDTO);
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 expenseHeaderDTOList = expenseService.getDraftExpenseList(expenseHeaderDTO);
+			}
+			
+			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
+			model.setViewName("expense/draftExpensesJSP");
 		}
-		
-		model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
-		model.setViewName("expense/draftExpensesJSP");
+		catch(Exception e){
+			model.setViewName("others/505");
+		}
 		return model;
 	}
 	

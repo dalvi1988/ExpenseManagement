@@ -25,6 +25,7 @@ import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class AdvanceController {
@@ -96,4 +97,27 @@ public class AdvanceController {
 		return toBeSentEventDTO;
 	}
 	
+	@RequestMapping(value="/viewDraftAdvance",method=RequestMethod.GET)
+	public ModelAndView viewDraftExpense() throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 advanceDTOList = advanceService.getDraftAdvanceList(advanceDTO);
+			}
+			
+			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/draftAdvanceJSP");
+		}
+		catch(Exception e){
+			logger.error("EventController: viewDraftExpense",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
 }
