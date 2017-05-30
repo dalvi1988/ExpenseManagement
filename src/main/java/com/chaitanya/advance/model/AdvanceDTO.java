@@ -77,6 +77,7 @@ public class AdvanceDTO extends BaseDTO {
 
 	public void setEventDTO(EventDTO eventDTO) {
 		this.eventDTO = eventDTO;
+		this.eventId=eventDTO.getEventId();
 	}
 
 	public Integer getVoucherStatusId() {

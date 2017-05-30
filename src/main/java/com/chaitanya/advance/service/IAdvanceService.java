@@ -12,5 +12,7 @@ public interface IAdvanceService {
 
 	List<AdvanceDTO> getDraftAdvanceList(BaseDTO baseDTO);
 
+	BaseDTO getAdvance(BaseDTO baseDTO);
+
 
 }

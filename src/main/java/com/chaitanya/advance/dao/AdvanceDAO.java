@@ -246,4 +246,13 @@ public class AdvanceDAO implements IAdvanceDAO{
 		return advanceJPAList;
 	}
 
+	@Override
+	public AdvanceJPA getAdvance(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		AdvanceJPA advanceJPA= (AdvanceJPA) session.createCriteria(AdvanceJPA.class)
+												.add(Restrictions.eq("advanceDetailId",advanceDTO.getAdvanceDetailId() ))
+												.uniqueResult();
+		return advanceJPA;
+	}
+
 }

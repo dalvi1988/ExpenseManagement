@@ -33,14 +33,7 @@
       	    }
 		   });
 	}
-	/* var output = [];
 	
-	output.push('<option value="'+ -1 +'">'+ "--Select Event--" +'</option>');
-	for (var key in eventList) {
-	    output.push('<option value="'+ eventList[key].eventId +'">'+ eventList[key].eventName +'</option>');
-	}
-
-	$('#eventSelect').html(output.join('')); */
 
 </script>
 </head>
@@ -64,7 +57,7 @@
   <div class="form-group"> 
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
-        <label><form:checkbox path="isEvent" onclick="toggler('eventDiv');" value=""/>For Event</label>
+        <label><form:checkbox path="isEvent" onchange="toggler('eventDiv');"/>For Event</label>
       </div>
     </div>
   </div>

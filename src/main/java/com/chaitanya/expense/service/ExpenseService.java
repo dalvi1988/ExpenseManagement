@@ -244,34 +244,28 @@ public class ExpenseService implements IExpenseService{
 	}
 
 	@Override
-	public BaseDTO getExpense(BaseDTO baseDTO) {
+	public BaseDTO getExpense(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ExpenseService: getExpense-Start");
 		validateExpenseMasterDTO(baseDTO);
 		
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-				ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.getExpense(expenseHeaderDTO);
-				if(Validation.validateForNullObject(expenseHeaderJPA)){
-					expenseHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
-					List<ExpenseDetailDTO> expenseDetailDTOList= new ArrayList<ExpenseDetailDTO>();
-					
-					for(ExpenseDetailJPA expenseDetailJPA: expenseHeaderJPA.getExpenseDetailJPA()){
-						ExpenseDetailDTO expenseDetailDTO=ExpenseConvertor.setExpenseDetailJPAtoDTO(expenseDetailJPA);
-						expenseDetailDTOList.add(expenseDetailDTO);
-					}
-					expenseHeaderDTO.setAddedExpenseDetailsDTOList(expenseDetailDTOList);
-					baseDTO=expenseHeaderDTO;
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.getExpense(expenseHeaderDTO);
+			if(Validation.validateForNullObject(expenseHeaderJPA)){
+				expenseHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+				List<ExpenseDetailDTO> expenseDetailDTOList= new ArrayList<ExpenseDetailDTO>();
+				
+				for(ExpenseDetailJPA expenseDetailJPA: expenseHeaderJPA.getExpenseDetailJPA()){
+					ExpenseDetailDTO expenseDetailDTO=ExpenseConvertor.setExpenseDetailJPAtoDTO(expenseDetailJPA);
+					expenseDetailDTOList.add(expenseDetailDTO);
 				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				expenseHeaderDTO.setAddedExpenseDetailsDTOList(expenseDetailDTOList);
+				baseDTO=expenseHeaderDTO;
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("ExpenseService: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		logger.debug("ExpenseService: getExpense-End");
 		return  baseDTO;

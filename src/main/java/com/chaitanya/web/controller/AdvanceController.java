@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,16 +40,26 @@ public class AdvanceController {
 	private Logger logger= LoggerFactory.getLogger(AdvanceController.class);
 	
 	@RequestMapping(value="/advance",method=RequestMethod.GET)
-	public ModelAndView advance() throws JsonGenerationException, JsonMappingException, IOException{
+	public ModelAndView advance(@RequestParam(value="advanceDetailId",required=false) Long advanceDetailId) throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		//ObjectMapper mapper = new ObjectMapper();
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			if(Validation.validateForZero(advanceDetailId)){
+				advanceDTO.setAdvanceDetailId(advanceDetailId);
+				BaseDTO baseDTO= advanceService.getAdvance(advanceDTO);
+				
+				if(Validation.validateForSuccessStatus(baseDTO)){
+					advanceDTO = (AdvanceDTO) baseDTO;
+				}else{
+					throw new Exception("");
+				}
+			}
 			EventDTO eventDTO= new EventDTO();
 			eventDTO.setBranchDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO());
 			List<EventDTO> eventDTOList = eventService.findAllUnderCompany(eventDTO);
 			model.addObject("eventList", eventDTOList);
-			AdvanceDTO advanceDTO=new AdvanceDTO();
 			model.addObject("advance", advanceDTO);
 			model.setViewName("advance/advanceJSP");
 		}

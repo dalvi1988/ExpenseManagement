@@ -3,6 +3,7 @@ package com.chaitanya.advance.convertor;
 import java.text.ParseException;
 
 import com.chaitanya.advance.model.AdvanceDTO;
+import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
 import com.chaitanya.jpa.EmployeeJPA;
@@ -20,6 +21,13 @@ public class AdvanceConvertor {
 			advanceDTO.setAdvanceDetailId(advanceJPA.getAdvanceDetailId());
 			advanceDTO.setPurpose(advanceJPA.getPurpose());
 			advanceDTO.setAmount(advanceJPA.getAmount());
+			advanceDTO.setIsEvent(Convertor.convetStatusToBool(advanceJPA.getIsEvent()));
+			
+			if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
+				EventDTO eventDTO=new EventDTO();
+				eventDTO.setEventId(advanceJPA.getEventJPA().getEventId());
+				advanceDTO.setEventDTO(eventDTO);
+			}
 			
 			if(Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
 				advanceDTO.setAdvanceNumber(advanceJPA.getAdvanceNumber());

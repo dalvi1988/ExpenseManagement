@@ -17,11 +17,8 @@ import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.event.convertor.EventConvertor;
-import com.chaitanya.expense.convertor.ExpenseConvertor;
-import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
-import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.utility.Validation;
 
 @Service("advanceService")
@@ -110,5 +107,26 @@ public class AdvanceService implements IAdvanceService{
 		}
 		logger.debug("AdvanceService: getDraftAdvanceList-End");
 		return  advanceDTOList;
+	}
+
+
+	@Override
+	public BaseDTO getAdvance(BaseDTO baseDTO) {
+		logger.debug("AdvanceService: getAdvance-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			AdvanceJPA advanceJPA =advanceDAO.getAdvance(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPA)){
+				baseDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("AdvanceService: getAdvance-End");
+		return  baseDTO;
 	}
 }

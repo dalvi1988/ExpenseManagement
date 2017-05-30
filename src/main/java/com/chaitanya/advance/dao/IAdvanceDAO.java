@@ -15,4 +15,6 @@ public interface IAdvanceDAO {
 	String generateAdvanceNumber(AdvanceJPA advanceJPA);
 
 	List<AdvanceJPA> getDraftAdvanceList(AdvanceDTO advanceDTO);
+
+	AdvanceJPA getAdvance(AdvanceDTO advanceDTO);
 }
