@@ -80,7 +80,7 @@ public class ExpenseService implements IExpenseService{
 			
 			//Create process instance if voucher not saved as draft.
 			if(expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
-				if(Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
+				if(! Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
 					String voucherNumber = expenseDAO.generateVoucherNumber(expenseHeaderDTO);
 					expenseHeaderJPA.setVoucherNumber(voucherNumber);
 				}

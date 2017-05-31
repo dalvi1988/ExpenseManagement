@@ -17,4 +17,8 @@ public interface IAdvanceDAO {
 	List<AdvanceJPA> getDraftAdvanceList(AdvanceDTO advanceDTO);
 
 	AdvanceJPA getAdvance(AdvanceDTO advanceDTO);
+
+	List<AdvanceJPA> getPendingAdvanceList(AdvanceDTO advanceDTO);
+
+	List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO);
 }

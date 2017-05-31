@@ -8,6 +8,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -54,6 +56,8 @@ public class ExpenseController {
 	
 	@Autowired 
 	private IAdvanceService advanceService;
+	
+	private Logger logger= LoggerFactory.getLogger(ExpenseController.class);
 	
 	@RequestMapping(value="/expense",method={RequestMethod.GET,RequestMethod.POST})
 	public ModelAndView createExpense(@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) throws Exception{
@@ -239,7 +243,7 @@ public class ExpenseController {
 	}
 	
 	@RequestMapping(value="/pendingExpense",method=RequestMethod.GET)
-	public @ResponseBody ModelAndView getPendingApprovalPage() throws JsonGenerationException, JsonMappingException, IOException{
+	public @ResponseBody ModelAndView getPendingExpense() throws JsonGenerationException, JsonMappingException, IOException{
 		
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
@@ -257,6 +261,7 @@ public class ExpenseController {
 			model.setViewName("expense/pendingExpensesJSP");
 		}
 		catch(Exception e){
+			logger.error("ExpenseController: getPendingExpense",e);
 			model.setViewName("others/505");
 		}
 		return model;

@@ -627,6 +627,7 @@ function toggler(divId) {
  		<div id="filesDiv" style="border: medium; display: none;"></div>
  		<form:hidden id="voucherStatusId" path="voucherStatusId"></form:hidden>  
  		<form:hidden path="expenseHeaderId"></form:hidden>
+ 		<form:hidden path="title" value="hidden"></form:hidden>
     </form:form>
     
     <div id="dialog" style="display: none" title="Validation failure"></div>

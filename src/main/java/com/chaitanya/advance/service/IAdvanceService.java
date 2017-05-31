@@ -14,5 +14,9 @@ public interface IAdvanceService {
 
 	BaseDTO getAdvance(BaseDTO baseDTO);
 
+	List<AdvanceDTO> getPendingAdvanceList(BaseDTO baseDTO);
+
+	List<AdvanceDTO> getAdvanceToBeApprove(BaseDTO baseDTO);
+
 
 }

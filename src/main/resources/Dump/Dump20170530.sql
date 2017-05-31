@@ -718,6 +718,38 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'test'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `voucher_number` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `voucher_number`(
+IN moduleName varchar(20), 
+OUT voucherNumber varchar(30)
+)
+BEGIN
+    DECLARE number int;
+    
+    set @number=(select voucher_number from voucher_identification where module like moduleName);
+
+	SELECT @number;
+	if(@number is null) then
+        set @number=1;
+		insert into voucher_identification values(moduleName,@number);
+	else
+        set @number=(@number+1);
+		update voucher_identification set voucher_number=@number where module= moduleName;
+	end if;
+    
+    set voucherNumber = @number;
+    
+END ;;
+DELIMITER ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

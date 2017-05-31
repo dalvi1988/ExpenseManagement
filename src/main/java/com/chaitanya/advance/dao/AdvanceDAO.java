@@ -4,11 +4,14 @@ import java.util.List;
 
 import javax.persistence.ParameterMode;
 
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.procedure.ProcedureCall;
 import org.hibernate.procedure.ProcedureOutputs;
 import org.hibernate.sql.JoinType;
@@ -23,6 +26,8 @@ import com.chaitanya.jpa.AdvanceProcessInstanceJPA;
 import com.chaitanya.jpa.ApprovalFlowJPA;
 import com.chaitanya.jpa.DepartmentHeadJPA;
 import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.jpa.ExpenseHeaderJPA;
+import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Validation;
 
@@ -230,7 +235,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 
 		ProcedureOutputs procedureResult=query.getOutputs();
 		String voucherNumber= (String) procedureResult.getOutputParameterValue("voucherNumber");
-		voucherNumber="Advance/"+advanceJPA.getDate()+"/"+voucherNumber;
+		voucherNumber="Advance/"+advanceJPA.getPurpose()+"/"+voucherNumber;
 		return voucherNumber;
 	}
 
@@ -253,6 +258,39 @@ public class AdvanceDAO implements IAdvanceDAO{
 												.add(Restrictions.eq("advanceDetailId",advanceDTO.getAdvanceDetailId() ))
 												.uniqueResult();
 		return advanceJPA;
+	}
+
+	@Override
+	public List<AdvanceJPA> getPendingAdvanceList(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+				.createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
+				.list();
+		return advanceJPAList;
+	}
+
+	@Override
+	public List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)
+									.add(Restrictions.eq("pendingAt.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+									.setProjection(Projections.property("advanceJPA.advanceDetailId"));
+		
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+												.setFetchMode("employeeJPA",FetchMode.JOIN)
+												.add(Subqueries.propertyIn("advanceDetailId", subquery))
+												.list();
+														
+
+		return advanceJPAList;
+	
 	}
 
 }

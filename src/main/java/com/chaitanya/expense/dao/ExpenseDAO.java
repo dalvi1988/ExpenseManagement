@@ -240,12 +240,12 @@ public class ExpenseDAO implements IExpenseDAO{
 		Session session = sessionFactory.getCurrentSession();
 		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
 		@SuppressWarnings("unchecked")
-		List<ExpenseHeaderJPA> expsensHeaderList= session.createCriteria(ExpenseHeaderJPA.class)
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
 				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
 				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
 				.list();
-		return expsensHeaderList;
+		return expsensHeaderJPAList;
 	}
 	
 
@@ -267,13 +267,13 @@ public class ExpenseDAO implements IExpenseDAO{
 									.add(Restrictions.eq("pendingAt.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
 									.setProjection(Projections.property("expenseHeaderJPA.expenseHeaderId"));
 		
-		List<ExpenseHeaderJPA> expsensHeaderList= session.createCriteria(ExpenseHeaderJPA.class)
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
 												.setFetchMode("employeeJPA",FetchMode.JOIN)
 												.add(Subqueries.propertyIn("expenseHeaderId", subquery))
 												.list();
 														
 
-		return expsensHeaderList;
+		return expsensHeaderJPAList;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -281,12 +281,12 @@ public class ExpenseDAO implements IExpenseDAO{
 	public List<ExpenseDetailJPA> getExpenseDetailsByHeaderId(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		
-		List<ExpenseDetailJPA> expsensDetailList= session.createCriteria(ExpenseDetailJPA.class)
+		List<ExpenseDetailJPA> expsensDetailJPAList= session.createCriteria(ExpenseDetailJPA.class)
 												.add(Restrictions.eq("expenseHeaderJPA.expenseHeaderId", expenseHeaderDTO.getExpenseHeaderId()))
 												.setFetchMode("expenseCategoryJPA",FetchMode.JOIN)
 												.list();
 														
-		return expsensDetailList;
+		return expsensDetailJPAList;
 	}
 	
 	@Override

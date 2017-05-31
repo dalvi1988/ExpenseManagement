@@ -82,6 +82,11 @@
 	        $('.content').load('toBeApproveExpense');
 	     });
 	    
+	    $('.advanceForApproval').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('toBeApproveAdvance');
+	     });
+	    
 	    $('.createExpense').click(function(){
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('expense');
@@ -110,6 +115,11 @@
 	    $('.draftAdvance').click(function(){
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('viewDraftAdvance');
+	     });
+	    
+	    $('.pendingAdvance').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('pendingAdvance');
 	     });
 	    
 	    $('.createExpense').click();
@@ -210,6 +220,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="requestAdvance"><i class="fa fa-circle-o"></i>Request Advance</a></li>
             <li><a href="#" class="draftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
+            <li><a href="#" class="pendingAdvance"><i class="fa fa-circle-o"></i>Pending Advance</a></li>
           </ul>
         </li>
         
@@ -241,6 +252,11 @@
          <li>
           <a href="#" class="voucherForApproval">
             <i class="fa fa-calendar"></i> <span>Voucher For Approval</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="advanceForApproval">
+            <i class="fa fa-calendar"></i> <span>Advance For Approval</span>
           </a>
         </li>
         

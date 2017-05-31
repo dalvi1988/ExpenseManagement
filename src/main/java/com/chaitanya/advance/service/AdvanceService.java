@@ -16,9 +16,13 @@ import com.chaitanya.advance.dao.IAdvanceDAO;
 import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
+import com.chaitanya.employee.convertor.EmployeeConvertor;
 import com.chaitanya.event.convertor.EventConvertor;
+import com.chaitanya.expense.convertor.ExpenseConvertor;
+import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
+import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.utility.Validation;
 
 @Service("advanceService")
@@ -47,7 +51,7 @@ public class AdvanceService implements IAdvanceService{
 				
 				//Create process instance if voucher not saved as draft.
 				if(advanceJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
-					if(Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
+					if(! Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
 						String voucherNumber = advanceDAO.generateAdvanceNumber(advanceJPA);
 						advanceJPA.setAdvanceNumber(voucherNumber);
 					}
@@ -96,7 +100,9 @@ public class AdvanceService implements IAdvanceService{
 				advanceDTOList= new ArrayList<AdvanceDTO>();
 				for(AdvanceJPA advanceJPA: advanceJPAList){
 					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
-					advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
+						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					}
 					advanceDTOList.add(advDTO);
 				}
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
@@ -128,5 +134,71 @@ public class AdvanceService implements IAdvanceService{
 		}
 		logger.debug("AdvanceService: getAdvance-End");
 		return  baseDTO;
+	}
+
+
+	@Override
+	public List<AdvanceDTO> getPendingAdvanceList(BaseDTO baseDTO) {
+		logger.debug("AdvanceService: getPendingAdvanceList-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getPendingAdvanceList(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
+						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					}
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("AdvanceService: getPendingAdvanceList-End");
+		return  advanceDTOList;
+	}
+
+
+	@Override
+	public List<AdvanceDTO> getAdvanceToBeApprove(BaseDTO baseDTO) {
+
+		logger.debug("AdvanceService: getAdvanceToBeApprove-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		try{
+			if (Validation.validateForNullObject(baseDTO)) {
+				AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+				List<AdvanceJPA> advanceJPAList =advanceDAO.getAdvanceToBeApprove(advanceDTO);
+				if(Validation.validateForNullObject(advanceJPAList)){
+					advanceDTOList= new ArrayList<AdvanceDTO>();
+					for(AdvanceJPA expenseHeaderJPA: advanceJPAList){
+						AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA);
+						if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+							advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+						}
+						advanceDTOList.add(advDTO);
+					}
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				}
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
+			logger.error("AdvanceService: Exception",e);
+		}
+		logger.debug("AdvanceService: getAdvanceToBeApprove-End");
+		return  advanceDTOList;
 	}
 }

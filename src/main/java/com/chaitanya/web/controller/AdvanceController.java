@@ -73,7 +73,6 @@ public class AdvanceController {
 	
 	@RequestMapping(value="/saveAdvance", method=RequestMethod.POST)
 	public @ResponseBody AdvanceDTO saveAdvance(AdvanceDTO receivedAdvanceDTO){
-		System.out.println(receivedAdvanceDTO);
 		AdvanceDTO toBeSentEventDTO=null;
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -93,7 +92,7 @@ public class AdvanceController {
 					toBeSentEventDTO.setMessage(new StringBuilder("Your advance number: "+ toBeSentEventDTO.getAdvanceNumber()+"  has beed send for approval."));
 				}
 				else{
-					toBeSentEventDTO.setMessage(new StringBuilder("Your voucher has been saved in draft."));
+					toBeSentEventDTO.setMessage(new StringBuilder("Your advance has been saved in draft."));
 				}
 			}
 			else{
@@ -102,7 +101,7 @@ public class AdvanceController {
 			}
 		}
 		catch(Exception e){
-			logger.error("EventController: addEvent",e);
+			logger.error("AdvanceController: addEvent",e);
 			toBeSentEventDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 		return toBeSentEventDTO;
@@ -126,7 +125,52 @@ public class AdvanceController {
 			model.setViewName("advance/draftAdvanceJSP");
 		}
 		catch(Exception e){
-			logger.error("EventController: viewDraftExpense",e);
+			logger.error("AdvanceController: viewDraftExpense",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/pendingAdvance",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPendingAdvance() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 advanceDTOList = advanceService.getPendingAdvanceList(advanceDTO);
+			}
+			
+			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/pendingAdvanceJSP");
+		}
+		catch(Exception e){
+			logger.error("AdvanceController: getPendingAdvance",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/toBeApproveAdvance",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getAdvanceApprovalPage() throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper= new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			advanceDTOList=advanceService.getAdvanceToBeApprove(advanceDTO);
+			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/approvalAdvanceJSP");
+		}
+		catch(Exception e){
+			logger.error("AdvanceController: getAdvanceApprovalPage",e);
 			model.setViewName("others/505");
 		}
 		return model;
