@@ -13,16 +13,17 @@
    
    $(function () {
 	   
-	   function submitDetails(voucherIds){
+	   function submitDetails(rowData){
 		   $.ajax($.extend({}, ajaxObj, { 
              	context: $gridMain,
          	    url: "approveRejectExpense", 
          	    type: 'POST', 
-         	    data: JSON.stringify(voucherIds),
+         	    data: JSON.stringify(rowData),
          	 
          	    success: function(data) { 
          	    	if(data.serviceStatus=="SUCCESS"){
          	    		$(".alert").addClass("alert-success").text(data.message).show();
+         	    		 $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
          	    	}
          	    	else{
          	    		$(".alert").addClass("alert-danger").text(data.message).show();
@@ -84,45 +85,7 @@
            scrollModel: {
                autoFit: true
            },
-           toolbar: {
-               items: [
-                   { type: 'button', attr:"id='approveSelected'", icon: 'ui-icon-check', label: 'Approve selected', listeners: [
-                       { "click": function (evt, ui) {
-                    	   debugger;
-                           var $grid = $(this).closest('.pq-grid'),
-                           selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
-							ids = [];
-	                       for (var i = 0, len = selarray.length; i < len; i++) {
-	                           var rowData = selarray[i].rowData;
-	                           rowData.voucherStatusId = 3;
-	                           ids.push(rowData);
-	                       }
-	                                                                       
-	                       submitDetails(ids);
-                           //debugger;
-                         }
-                       }
-                   	 ]
-                   },
-                   { type: 'button', attr:"id='rejectSelected'", icon: 'ui-icon-closethick', label: 'Reject selected', listeners: [
-                         { "click": function (evt, ui) {
-                        	 debugger;
-                        	 var $grid = $(this).closest('.pq-grid'),
-                             selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
-  							 ids = [];
-  	                         for (var i = 0, len = selarray.length; i < len; i++) {
-  	                           var rowData = selarray[i].rowData;
-  								rowData.voucherStatusId = 4;
-  	                           ids.push(rowData);
-  	                         }
-  	                                                                       
-  	                       	 submitDetails(ids);
-                            }
-                         }
-                      ]
-                   }
-               ]
-           },
+          
            numberCell: { show: false },
            title: "<b>Vouchers For Approval</b>",                        
            resizable: true,
@@ -165,9 +128,7 @@
                        rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
                    rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
                    rowData.voucherStatusId = 4;
-                   id= [];
-                   id.push(rowData);
-                   submitDetails(id);
+                   submitDetails(rowData);
                });
                //edit button
                $grid.find("button.approve_btn").button({ icons: { primary: 'ui-icon-check'} })
@@ -178,9 +139,7 @@
                        rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
                        rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
                    rowData.voucherStatusId = 3;
-                   id= [];
-                   id.push(rowData);
-                   submitDetails(id);
+                   submitDetails(rowData);
                });
 
                $("#approveSelected").prop( "disabled", true );

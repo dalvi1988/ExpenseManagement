@@ -1,6 +1,7 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -174,5 +176,33 @@ public class AdvanceController {
 			model.setViewName("others/505");
 		}
 		return model;
+	}
+	
+	@RequestMapping(value="/approveRejectAdvance",method=RequestMethod.POST)
+	public @ResponseBody BaseDTO approveRejectExpenses(@RequestBody AdvanceDTO advanceDTO) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
+		BaseDTO baseDTO= null;
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			 advanceDTO.setApprovedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			 
+		     baseDTO=advanceService.approveRejectAdvance(advanceDTO);
+			 if(Validation.validateForSuccessStatus(baseDTO)){
+				 AdvanceDTO advDTO=(AdvanceDTO)baseDTO;
+				 if(advanceDTO.getVoucherStatusId() == 3){
+					 baseDTO.setMessage(new StringBuilder("Advance Number "+ advDTO.getAdvanceNumber()+" has been approved\n."));
+				 }
+				 else if(advanceDTO.getVoucherStatusId() == 4){
+					 baseDTO.setMessage(new StringBuilder("Advance Number "+ advDTO.getAdvanceNumber()+" has been rejected\n."));
+				 }
+				 
+			 }else {
+				 baseDTO=new BaseDTO();
+				 baseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+			 }
+		}
+		catch(Exception e){
+			baseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+		}
+		return baseDTO;
 	}
 }

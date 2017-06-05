@@ -26,8 +26,17 @@ public class AdvanceDTO extends BaseDTO {
 	@JsonIgnore
 	private VoucherStatusDTO voucherStatusDTO;
 	
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
+	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO employeeDTO;
 	
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
+	@JsonIdentityReference(alwaysAsId=true)
+	private EmployeeDTO pendingAtEmployeeDTO;
+	
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
+	@JsonIdentityReference(alwaysAsId=true)
+	private EmployeeDTO approvedByEmployeeDTO;
 
 	public Long getAdvanceDetailId() {
 		return advanceDetailId;
@@ -74,7 +83,7 @@ public class AdvanceDTO extends BaseDTO {
 	public EventDTO getEventDTO() {
 		return eventDTO;
 	}
-
+	@JsonIgnore
 	public void setEventDTO(EventDTO eventDTO) {
 		this.eventDTO = eventDTO;
 		this.eventId=eventDTO.getEventId();
@@ -104,7 +113,7 @@ public class AdvanceDTO extends BaseDTO {
 	public EmployeeDTO getEmployeeDTO() {
 		return employeeDTO;
 	}
-
+	@JsonIgnore
 	public void setEmployeeDTO(EmployeeDTO employeeDTO) {
 		this.employeeDTO = employeeDTO;
 	}
@@ -115,6 +124,22 @@ public class AdvanceDTO extends BaseDTO {
 
 	public void setAdvanceNumber(String advanceNumber) {
 		this.advanceNumber = advanceNumber;
+	}
+
+	public EmployeeDTO getPendingAtEmployeeDTO() {
+		return pendingAtEmployeeDTO;
+	}
+	@JsonIgnore
+	public void setPendingAtEmployeeDTO(EmployeeDTO pendingAtEmployeeDTO) {
+		this.pendingAtEmployeeDTO = pendingAtEmployeeDTO;
+	}
+
+	public EmployeeDTO getApprovedByEmployeeDTO() {
+		return approvedByEmployeeDTO;
+	}
+	@JsonIgnore
+	public void setApprovedByEmployeeDTO(EmployeeDTO approvedByEmployeeDTO) {
+		this.approvedByEmployeeDTO = approvedByEmployeeDTO;
 	}
 	
 }

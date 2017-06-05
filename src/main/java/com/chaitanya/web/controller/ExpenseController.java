@@ -129,26 +129,31 @@ public class ExpenseController {
 		StringBuilder message= new StringBuilder();
 		BaseDTO baseDTO= null;
 		
-		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
-		for(ExpenseHeaderDTO expenseHeaderDTO:expenseHeaderDTOList){
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			
-			 expenseHeaderDTO.setApprovedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
-			 
-		     baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
-			 if(Validation.validateForSuccessStatus(baseDTO)){
-				 ExpenseHeaderDTO expHeaderDTO=(ExpenseHeaderDTO)baseDTO;
-				 if(expenseHeaderDTO.getVoucherStatusId() == 3){
-					 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been approved\n.");
+			for(ExpenseHeaderDTO expenseHeaderDTO:expenseHeaderDTOList){
+				
+				 expenseHeaderDTO.setApprovedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+				 
+			     baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
+				 if(Validation.validateForSuccessStatus(baseDTO)){
+					 ExpenseHeaderDTO expHeaderDTO=(ExpenseHeaderDTO)baseDTO;
+					 if(expenseHeaderDTO.getVoucherStatusId() == 3){
+						 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been approved\n.");
+					 }
+					 else if(expenseHeaderDTO.getVoucherStatusId() == 4){
+						 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been rejected\n.");
+					 }
 				 }
-				 else if(expenseHeaderDTO.getVoucherStatusId() == 4){
-					 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been rejected\n.");
+				 else{
+					 message.append(ApplicationConstant.BUSSINESS_FAILURE);
 				 }
-			 }
-			 else{
-				 message.append(ApplicationConstant.SYSTEM_FAILURE);
-			 }
-			 baseDTO.setMessage(message);
+				 baseDTO.setMessage(message);
+			}
+		}
+		catch(Exception e){
+			baseDTO.setMessage(message.append(ApplicationConstant.SYSTEM_FAILURE));
 		}
 
 		return baseDTO;

@@ -26,8 +26,6 @@ import com.chaitanya.jpa.AdvanceProcessInstanceJPA;
 import com.chaitanya.jpa.ApprovalFlowJPA;
 import com.chaitanya.jpa.DepartmentHeadJPA;
 import com.chaitanya.jpa.EmployeeJPA;
-import com.chaitanya.jpa.ExpenseHeaderJPA;
-import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Validation;
 
@@ -206,7 +204,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 				if(Validation.validateForNullObject(approvalEmployeeDTO)){
 					EmployeeJPA approveBy = new EmployeeJPA();
 					approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-					processInstanceJPA.setPendingAt(approveBy);
+					processInstanceJPA.setApprovedBy(approveBy);
 				}
 				
 				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
@@ -291,6 +289,15 @@ public class AdvanceDAO implements IAdvanceDAO{
 
 		return advanceJPAList;
 	
+	}
+
+	@Override
+	public AdvanceJPA approveRejectAdvance(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		AdvanceJPA advanceJPA = (AdvanceJPA) session.get(AdvanceJPA.class, advanceDTO.getAdvanceDetailId());
+														
+		return advanceJPA;
 	}
 
 }

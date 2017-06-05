@@ -18,11 +18,11 @@ import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.employee.convertor.EmployeeConvertor;
 import com.chaitanya.event.convertor.EventConvertor;
-import com.chaitanya.expense.convertor.ExpenseConvertor;
-import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
-import com.chaitanya.jpa.ExpenseHeaderJPA;
+import com.chaitanya.jpa.AdvanceProcessInstanceJPA;
+import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Validation;
 
 @Service("advanceService")
@@ -200,5 +200,71 @@ public class AdvanceService implements IAdvanceService{
 		}
 		logger.debug("AdvanceService: getAdvanceToBeApprove-End");
 		return  advanceDTOList;
+	}
+
+
+	@Override
+	public BaseDTO approveRejectAdvance(BaseDTO baseDTO) {
+		logger.debug("AdvanceService: approveRejectAdvance-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			AdvanceJPA advanceJPA =advanceDAO.approveRejectAdvance(advanceDTO);
+			Integer statusID= advanceJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId();
+			
+			VoucherStatusJPA voucherStatusJPA= new VoucherStatusJPA();
+			
+			if(Validation.validateForNullObject(advanceJPA)){
+				if(advanceDTO.getVoucherStatusId() == 3){// Approved
+					// Set Voucher Status in ExpenseHEader
+					voucherStatusJPA.setVoucherStatusId(statusID+2);
+					advanceJPA.setVoucherStatusJPA(voucherStatusJPA);
+					advanceDAO.updateProcessInstance(advanceJPA,advanceJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId(),advanceDTO.getApprovedByEmployeeDTO());
+					
+				}
+				else if(advanceDTO.getVoucherStatusId() == 4){//Rejected
+					voucherStatusJPA.setVoucherStatusId(statusID+3);
+					advanceJPA.setVoucherStatusJPA(voucherStatusJPA);
+					
+					AdvanceProcessInstanceJPA processInstanceJPA = advanceJPA.getProcessInstanceJPA();
+					if(! Validation.validateForNullObject(processInstanceJPA)){
+						processInstanceJPA= new AdvanceProcessInstanceJPA();
+					}
+					
+					EmployeeJPA pendingAt = new EmployeeJPA();
+					pendingAt.setEmployeeId(advanceJPA.getEmployeeJPA().getEmployeeId());
+					processInstanceJPA.setPendingAt(pendingAt);
+					
+					EmployeeJPA approveBy = new EmployeeJPA();
+					approveBy.setEmployeeId(advanceDTO.getApprovedByEmployeeDTO().getEmployeeId());
+					processInstanceJPA.setPendingAt(approveBy);
+					
+					VoucherStatusJPA voucherStatus = new VoucherStatusJPA();
+					voucherStatus.setVoucherStatusId(1);
+					processInstanceJPA.setVoucherStatusJPA(voucherStatus);
+					
+					processInstanceJPA.setAdvanceJPA(advanceJPA);
+					advanceJPA.setProcessInstanceJPA(processInstanceJPA);
+				}
+				
+				// Set Process History
+				AdvanceProcessHistoryJPA processHistoryJPA = new AdvanceProcessHistoryJPA();
+				processHistoryJPA.setVoucherStatusJPA(voucherStatusJPA);
+				processHistoryJPA.setAdvanceJPA(advanceJPA);
+				List<AdvanceProcessHistoryJPA> processHistoryJPAList= new ArrayList<AdvanceProcessHistoryJPA>();
+				processHistoryJPAList.add(processHistoryJPA);
+				advanceJPA.setProcessHistoryJPA(processHistoryJPAList);
+				
+				
+				baseDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("AdvanceService: approveRejectAdvance-End");
+		return  baseDTO;
 	}
 }

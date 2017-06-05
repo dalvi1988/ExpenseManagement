@@ -207,7 +207,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				if(Validation.validateForNullObject(approvalEmployeeDTO)){
 					EmployeeJPA approveBy = new EmployeeJPA();
 					approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-					processInstanceJPA.setPendingAt(approveBy);
+					processInstanceJPA.setApprovedBy(approveBy);
 				}
 				
 				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();

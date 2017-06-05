@@ -39,7 +39,7 @@ public class ExpenseService implements IExpenseService{
 	private Logger logger= LoggerFactory.getLogger(ExpenseService.class);
 	
 
-	private void validateExpenseMasterDTO(BaseDTO baseDTO) {
+	private void validateExpenseDTO(BaseDTO baseDTO) {
 		if( baseDTO == null  || !(baseDTO instanceof ExpenseHeaderDTO)){
 			throw new IllegalArgumentException("Object expected of ExpenseHeaderDTO type.");
 		}
@@ -50,7 +50,7 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException {
 		logger.debug("ExpenseService: addExpense-Start");
-		validateExpenseMasterDTO(baseDTO);
+		validateExpenseDTO(baseDTO);
 		
 		ExpenseHeaderDTO expenseHeaderDTO = (ExpenseHeaderDTO)baseDTO;
 		ExpenseHeaderJPA expenseHeaderJPA = ExpenseConvertor.setExpenseHeaderDTOToJPA(expenseHeaderDTO);
@@ -125,7 +125,7 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ExpenseService: getDraftExpense-Start");
-		validateExpenseMasterDTO(baseDTO);
+		validateExpenseDTO(baseDTO);
 		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
@@ -150,7 +150,7 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public List<ExpenseHeaderDTO> getPendingExpenseList(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ExpenseService: getPendingExpenseList-Start");
-		validateExpenseMasterDTO(baseDTO);
+		validateExpenseDTO(baseDTO);
 		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
@@ -176,7 +176,7 @@ public class ExpenseService implements IExpenseService{
 	public List<ExpenseHeaderDTO> getExpenseToBeApprove(BaseDTO baseDTO) {
 
 		logger.debug("ExpenseService: getExpenseToBeApprove-Start");
-		validateExpenseMasterDTO(baseDTO);
+		validateExpenseDTO(baseDTO);
 		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		try{
@@ -211,7 +211,7 @@ public class ExpenseService implements IExpenseService{
 	public List<ExpenseDetailDTO> getExpenseDetailsByHeaderId(BaseDTO baseDTO) {
 
 		logger.debug("ExpenseService: getExpenseDetailsByHeaderId-Start");
-		validateExpenseMasterDTO(baseDTO);
+		validateExpenseDTO(baseDTO);
 		
 		List<ExpenseDetailDTO> expenseDetailDTOList= null;
 		try{
@@ -246,7 +246,7 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public BaseDTO getExpense(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ExpenseService: getExpense-Start");
-		validateExpenseMasterDTO(baseDTO);
+		validateExpenseDTO(baseDTO);
 		
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
@@ -274,7 +274,7 @@ public class ExpenseService implements IExpenseService{
 	@Override
 	public BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException, ParseException {
 		logger.debug("ExpenseService: approveRejectExpenses-Start");
-		validateExpenseMasterDTO(baseDTO);
+		validateExpenseDTO(baseDTO);
 		
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
