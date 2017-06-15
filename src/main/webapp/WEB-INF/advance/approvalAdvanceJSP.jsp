@@ -99,7 +99,23 @@
                        rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
                    rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
                    rowData.voucherStatusId = 4;
-                   submitDetails(rowData,rowIndx);
+                   $( "#dialog-confirm" ).dialog({
+             	      resizable: false,
+             	      height: "auto",
+             	      width: 400,
+             	      modal: true,
+             	      buttons: {
+             	        "Continue": function() {
+             	        	rowData.rejectionComment=$("#comment").val();
+             	        	submitDetails(rowData,rowIndx);
+             	          $( this ).dialog( "close" );
+             	        },
+             	        Cancel: function() {
+             	          $( this ).dialog( "close" );
+             	        }
+             	      }
+             	 });
+                   
                });
                //edit button
                $grid.find("button.approve_btn").button({ icons: { primary: 'ui-icon-check'} })
@@ -119,11 +135,19 @@
        var $grid = $("#grid_filter").pqGrid(obj);
    });
    
-   
+  
 
 </script>
 </head>
 <body>
   <div id="grid_filter" style="margin:5px auto;"></div>
+  
+  <div id="dialog-confirm" title="Rejection Comment">
+    <fieldset>
+      <label for="name">Please enter rejection comments:</label>
+      <input type="text" name="comment" id="comment" class="text ui-widget-content ui-corner-all">
+    </fieldset>
+  </div>
+	
 </body>
 </html>

@@ -17,6 +17,7 @@ public class AdvanceDTO extends BaseDTO {
 	private Double amount;
 	private Boolean isEvent;
 	private Integer eventId;
+	private String rejectionComment;
 	
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="eventName")
 	@JsonIdentityReference(alwaysAsId=true)
@@ -140,6 +141,14 @@ public class AdvanceDTO extends BaseDTO {
 	@JsonIgnore
 	public void setApprovedByEmployeeDTO(EmployeeDTO approvedByEmployeeDTO) {
 		this.approvedByEmployeeDTO = approvedByEmployeeDTO;
+	}
+
+	public String getRejectionComment() {
+		return rejectionComment;
+	}
+
+	public void setRejectionComment(String rejectionComment) {
+		this.rejectionComment = rejectionComment;
 	}
 	
 }
