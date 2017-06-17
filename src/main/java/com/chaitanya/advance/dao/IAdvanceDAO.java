@@ -23,4 +23,6 @@ public interface IAdvanceDAO {
 	List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO);
 
 	AdvanceJPA approveRejectAdvance(AdvanceDTO advanceDTO);
+	
+	List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO);
 }

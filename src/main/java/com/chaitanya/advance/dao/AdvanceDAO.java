@@ -26,6 +26,8 @@ import com.chaitanya.jpa.AdvanceProcessInstanceJPA;
 import com.chaitanya.jpa.ApprovalFlowJPA;
 import com.chaitanya.jpa.DepartmentHeadJPA;
 import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.jpa.ExpenseHeaderJPA;
+import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Validation;
 
@@ -274,6 +276,25 @@ public class AdvanceDAO implements IAdvanceDAO{
 
 	@Override
 	public List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)
+									.add(Restrictions.eq("pendingAt.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+									.setProjection(Projections.property("advanceJPA.advanceDetailId"));
+		
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+												.setFetchMode("employeeJPA",FetchMode.JOIN)
+												.add(Subqueries.propertyIn("advanceDetailId", subquery))
+												.list();
+														
+
+		return advanceJPAList;
+	
+	}
+	
+	@Override
+	public List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)

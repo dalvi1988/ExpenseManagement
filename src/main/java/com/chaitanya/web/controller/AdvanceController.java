@@ -1,7 +1,6 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -204,5 +202,24 @@ public class AdvanceController {
 			baseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 		return baseDTO;
+	}
+	@RequestMapping(value="/paymentAdvance",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getAdvancePaymentPage() throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper= new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			advanceDTOList=advanceService.getAdvanceForPayment(advanceDTO);
+			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/paymentAdvanceJSP");
+		}
+		catch(Exception e){
+			logger.error("AdvanceController: getAdvancePaymentPage",e);
+			model.setViewName("others/505");
+		}
+		return model;
 	}
 }

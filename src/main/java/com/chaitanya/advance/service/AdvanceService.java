@@ -168,41 +168,35 @@ public class AdvanceService implements IAdvanceService{
 
 
 	@Override
-	public List<AdvanceDTO> getAdvanceToBeApprove(BaseDTO baseDTO) {
+	public List<AdvanceDTO> getAdvanceToBeApprove(BaseDTO baseDTO) throws ParseException {
 
 		logger.debug("AdvanceService: getAdvanceToBeApprove-Start");
 		validateAdvanceDTO(baseDTO);
 		
 		List<AdvanceDTO> advanceDTOList= null;
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
-				List<AdvanceJPA> advanceJPAList =advanceDAO.getAdvanceToBeApprove(advanceDTO);
-				if(Validation.validateForNullObject(advanceJPAList)){
-					advanceDTOList= new ArrayList<AdvanceDTO>();
-					for(AdvanceJPA expenseHeaderJPA: advanceJPAList){
-						AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA);
-						if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
-							advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
-						}
-						advanceDTOList.add(advDTO);
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getAdvanceToBeApprove(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA expenseHeaderJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+						advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
 					}
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+					advanceDTOList.add(advDTO);
 				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("AdvanceService: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		logger.debug("AdvanceService: getAdvanceToBeApprove-End");
 		return  advanceDTOList;
 	}
-
-
+	
+	
 	@Override
 	public BaseDTO approveRejectAdvance(BaseDTO baseDTO) {
 		logger.debug("AdvanceService: approveRejectAdvance-Start");
@@ -266,5 +260,34 @@ public class AdvanceService implements IAdvanceService{
 		}
 		logger.debug("AdvanceService: approveRejectAdvance-End");
 		return  baseDTO;
+	}
+	@Override
+	public List<AdvanceDTO> getAdvanceForPayment(BaseDTO baseDTO) throws ParseException {
+
+		logger.debug("AdvanceService: getAdvanceForPayment-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getAdvanceForPayment(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA expenseHeaderJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+						advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+					}
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+	
+		logger.debug("AdvanceService: getAdvanceForPayment-End");
+		return  advanceDTOList;
 	}
 }
