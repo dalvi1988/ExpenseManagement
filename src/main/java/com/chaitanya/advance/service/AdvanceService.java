@@ -50,7 +50,7 @@ public class AdvanceService implements IAdvanceService{
 				advanceJPA=advanceDAO.saveUpdateAdvance(advanceJPA);
 				
 				//Create process instance if voucher not saved as draft.
-				if(advanceJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
+				if(advanceJPA.getVoucherStatusJPA().getVoucherStatusId() != 0){
 					if(! Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
 						String voucherNumber = advanceDAO.generateAdvanceNumber(advanceJPA);
 						advanceJPA.setAdvanceNumber(voucherNumber);
@@ -218,7 +218,7 @@ public class AdvanceService implements IAdvanceService{
 					
 				}
 				else if(advanceDTO.getVoucherStatusId() == 4){//Rejected
-					voucherStatusJPA.setVoucherStatusId(statusID+3);
+					voucherStatusJPA.setVoucherStatusId(2);
 					advanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 					
 					AdvanceProcessInstanceJPA processInstanceJPA = advanceJPA.getProcessInstanceJPA();
@@ -232,10 +232,10 @@ public class AdvanceService implements IAdvanceService{
 					
 					EmployeeJPA approveBy = new EmployeeJPA();
 					approveBy.setEmployeeId(advanceDTO.getApprovedByEmployeeDTO().getEmployeeId());
-					processInstanceJPA.setPendingAt(approveBy);
+					processInstanceJPA.setApprovedBy(approveBy);
 					
 					VoucherStatusJPA voucherStatus = new VoucherStatusJPA();
-					voucherStatus.setVoucherStatusId(1);
+					voucherStatus.setVoucherStatusId(statusID+1);
 					processInstanceJPA.setVoucherStatusJPA(voucherStatus);
 					
 					processInstanceJPA.setAdvanceJPA(advanceJPA);
@@ -246,6 +246,12 @@ public class AdvanceService implements IAdvanceService{
 				AdvanceProcessHistoryJPA processHistoryJPA = new AdvanceProcessHistoryJPA();
 				processHistoryJPA.setVoucherStatusJPA(voucherStatusJPA);
 				processHistoryJPA.setAdvanceJPA(advanceJPA);
+				
+				EmployeeJPA approveBy = new EmployeeJPA();
+				approveBy.setEmployeeId(advanceDTO.getApprovedByEmployeeDTO().getEmployeeId());
+				processHistoryJPA.setProcessedBy(approveBy);
+				
+				processHistoryJPA.setComment(advanceDTO.getRejectionComment());
 				List<AdvanceProcessHistoryJPA> processHistoryJPAList= new ArrayList<AdvanceProcessHistoryJPA>();
 				processHistoryJPAList.add(processHistoryJPA);
 				advanceJPA.setProcessHistoryJPA(processHistoryJPAList);
@@ -290,4 +296,35 @@ public class AdvanceService implements IAdvanceService{
 		logger.debug("AdvanceService: getAdvanceForPayment-End");
 		return  advanceDTOList;
 	}
+	
+	
+	@Override
+	public List<AdvanceDTO> getRejectedAdvanceList(BaseDTO baseDTO) {
+		logger.debug("AdvanceService: getPendingAdvanceList-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getRejectedAdvanceList(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
+						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					}
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("AdvanceService: getPendingAdvanceList-End");
+		return  advanceDTOList;
+	}
+
 }

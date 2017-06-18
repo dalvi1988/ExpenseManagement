@@ -122,6 +122,11 @@
 	        $('.content').load('pendingAdvance');
 	     });
 	    
+	    $('.rejectedAdvance').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('rejectedAdvance');
+	     });
+	    
 	    $('.createExpense').click();
 	    
 	});
@@ -221,6 +226,7 @@
             <li><a href="#" class="requestAdvance"><i class="fa fa-circle-o"></i>Request Advance</a></li>
             <li><a href="#" class="draftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
             <li><a href="#" class="pendingAdvance"><i class="fa fa-circle-o"></i>Pending Advance</a></li>
+            <li><a href="#" class="rejectedAdvance"><i class="fa fa-circle-o"></i>Rejected Advance</a></li>
           </ul>
         </li>
         

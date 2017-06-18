@@ -1,6 +1,7 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -88,7 +90,7 @@ public class AdvanceController {
 			BaseDTO baseDTO=advanceService.saveAdvance(receivedAdvanceDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){
 				toBeSentEventDTO=(AdvanceDTO)baseDTO;
-				if(receivedAdvanceDTO.getVoucherStatusId() == 2){
+				if(receivedAdvanceDTO.getVoucherStatusId() == 1){
 					toBeSentEventDTO.setMessage(new StringBuilder("Your advance number: "+ toBeSentEventDTO.getAdvanceNumber()+"  has beed send for approval."));
 				}
 				else{
@@ -218,6 +220,31 @@ public class AdvanceController {
 		}
 		catch(Exception e){
 			logger.error("AdvanceController: getAdvancePaymentPage",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/rejectedAdvance",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getRejectedAdvance() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 advanceDTOList = advanceService.getRejectedAdvanceList(advanceDTO);
+			}
+			
+			model.addObject("advanceList", mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/rejectedAdvanceJSP");
+		}
+		catch(Exception e){
+			logger.error("AdvanceController: getRejectedAdvance",e);
 			model.setViewName("others/505");
 		}
 		return model;

@@ -26,8 +26,6 @@ import com.chaitanya.jpa.AdvanceProcessInstanceJPA;
 import com.chaitanya.jpa.ApprovalFlowJPA;
 import com.chaitanya.jpa.DepartmentHeadJPA;
 import com.chaitanya.jpa.EmployeeJPA;
-import com.chaitanya.jpa.ExpenseHeaderJPA;
-import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Validation;
 
@@ -111,7 +109,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 		Long level = null;
 		String levelInfo = null;
 		
-		if(currentVoucerStatus == 2){
+		if(currentVoucerStatus == 1){
 			statusId=11;
 			level = functionalApprovalFlow.getLevel1();
 			levelInfo = "Functional Level1";
@@ -156,7 +154,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 			
 			EmployeeJPA approveBy = new EmployeeJPA();
 			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-			processInstanceJPA.setPendingAt(approveBy);
+			processInstanceJPA.setApprovedBy(approveBy);
 		
 			
 			VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
@@ -246,7 +244,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
 		        .createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
 				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
-				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
+				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(0)))
 				.list();
 		return advanceJPAList;
 	}
@@ -319,6 +317,20 @@ public class AdvanceDAO implements IAdvanceDAO{
 		AdvanceJPA advanceJPA = (AdvanceJPA) session.get(AdvanceJPA.class, advanceDTO.getAdvanceDetailId());
 														
 		return advanceJPA;
+	}
+	
+	@Override
+	public List<AdvanceJPA> getRejectedAdvanceList(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={12,22,32,42,52,62,72,82,92,102,112,122,132,142,152};
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+				.createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
+				.list();
+		return advanceJPAList;
 	}
 
 }

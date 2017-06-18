@@ -21,7 +21,6 @@
          	    data: JSON.stringify(rowData),
          	 
          	    success: function(data) { 
-         	    	debugger;
          	    	if(data.serviceStatus=="SUCCESS"){
          	    		$(".alert").addClass("alert-success").text(data.message).show();
          	    		$grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
