@@ -3,8 +3,6 @@ package com.chaitanya.advance.convertor;
 import java.text.ParseException;
 
 import com.chaitanya.advance.model.AdvanceDTO;
-import com.chaitanya.employee.convertor.EmployeeConvertor;
-import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
@@ -29,18 +27,6 @@ public class AdvanceConvertor {
 				EventDTO eventDTO=new EventDTO();
 				eventDTO.setEventId(advanceJPA.getEventJPA().getEventId());
 				advanceDTO.setEventDTO(eventDTO);
-			}
-			if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA())){
-				if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getPendingAt())){
-					EmployeeDTO pendingAtEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getPendingAt());
-					advanceDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
-				}
-				
-				if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getProcessedBy())){
-					EmployeeDTO approvedByEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getProcessedBy());
-					advanceDTO.setProcessedByEmployeeDTO(approvedByEmployeeDTO);
-				}
-				advanceDTO.setRejectionComment(advanceJPA.getProcessInstanceJPA().getComment());
 			}
 			
 			if(Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){

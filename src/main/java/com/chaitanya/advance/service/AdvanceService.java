@@ -17,6 +17,7 @@ import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.employee.convertor.EmployeeConvertor;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.event.convertor.EventConvertor;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
@@ -153,6 +154,18 @@ public class AdvanceService implements IAdvanceService{
 					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
 						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
 					}
+					if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA())){
+						if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getPendingAt())){
+							EmployeeDTO pendingAtEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getPendingAt());
+							advDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+						}
+						
+						if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getProcessedBy())){
+							EmployeeDTO approvedByEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getProcessedBy());
+							advDTO.setProcessedByEmployeeDTO(approvedByEmployeeDTO);
+						}
+						advDTO.setRejectionComment(advanceJPA.getProcessInstanceJPA().getComment());
+					}
 					advanceDTOList.add(advDTO);
 				}
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
@@ -179,10 +192,22 @@ public class AdvanceService implements IAdvanceService{
 			List<AdvanceJPA> advanceJPAList =advanceDAO.getAdvanceToBeApprove(advanceDTO);
 			if(Validation.validateForNullObject(advanceJPAList)){
 				advanceDTOList= new ArrayList<AdvanceDTO>();
-				for(AdvanceJPA expenseHeaderJPA: advanceJPAList){
-					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA);
-					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
-						advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+					if(Validation.validateForNullObject(advanceJPA.getEmployeeJPA())){
+						advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getEmployeeJPA()));
+					}
+					if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA())){
+						if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getPendingAt())){
+							EmployeeDTO pendingAtEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getPendingAt());
+							advDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+						}
+						
+						if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getProcessedBy())){
+							EmployeeDTO approvedByEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getProcessedBy());
+							advDTO.setProcessedByEmployeeDTO(approvedByEmployeeDTO);
+						}
+						advDTO.setRejectionComment(advanceJPA.getProcessInstanceJPA().getComment());
 					}
 					advanceDTOList.add(advDTO);
 				}
@@ -315,6 +340,18 @@ public class AdvanceService implements IAdvanceService{
 					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
 					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
 						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					}
+					if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA())){
+						if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getPendingAt())){
+							EmployeeDTO pendingAtEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getPendingAt());
+							advDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+						}
+						
+						if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getProcessedBy())){
+							EmployeeDTO approvedByEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getProcessedBy());
+							advDTO.setProcessedByEmployeeDTO(approvedByEmployeeDTO);
+						}
+						advDTO.setRejectionComment(advanceJPA.getProcessInstanceJPA().getComment());
 					}
 					advanceDTOList.add(advDTO);
 				}

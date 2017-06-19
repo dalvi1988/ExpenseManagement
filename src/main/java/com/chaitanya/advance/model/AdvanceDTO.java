@@ -7,6 +7,8 @@ import com.chaitanya.utility.model.VoucherStatusDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 public class AdvanceDTO extends BaseDTO {
@@ -31,10 +33,12 @@ public class AdvanceDTO extends BaseDTO {
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO employeeDTO;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO pendingAtEmployeeDTO;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO approvedByEmployeeDTO;
@@ -130,7 +134,6 @@ public class AdvanceDTO extends BaseDTO {
 	public EmployeeDTO getPendingAtEmployeeDTO() {
 		return pendingAtEmployeeDTO;
 	}
-	@JsonIgnore
 	public void setPendingAtEmployeeDTO(EmployeeDTO pendingAtEmployeeDTO) {
 		this.pendingAtEmployeeDTO = pendingAtEmployeeDTO;
 	}
@@ -138,7 +141,6 @@ public class AdvanceDTO extends BaseDTO {
 	public EmployeeDTO getProcessedByEmployeeDTO() {
 		return approvedByEmployeeDTO;
 	}
-	@JsonIgnore
 	public void setProcessedByEmployeeDTO(EmployeeDTO processedByEmployeeDTO) {
 		this.approvedByEmployeeDTO = processedByEmployeeDTO;
 	}
