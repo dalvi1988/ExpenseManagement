@@ -16,8 +16,6 @@
       
        //define colModel
        var colM = [
-		
-       { title: "Created Date", minWidth: 130, dataIndx: "createdDate", dataType:"String"},
        { title: "Purpose", width: 100, dataIndx: "purpose",
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
        },

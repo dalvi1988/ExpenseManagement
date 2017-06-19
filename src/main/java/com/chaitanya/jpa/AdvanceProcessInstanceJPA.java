@@ -30,8 +30,11 @@ public class AdvanceProcessInstanceJPA {
 	private EmployeeJPA pendingAt;
 	
 	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="approved_by")
-	private EmployeeJPA approvedBy;
+	@JoinColumn(name="processed_by")
+	private EmployeeJPA processedBy;
+	
+	@Column(name="comments")
+	private String comment;
 
 	public Long getProcessInstanceId() {
 		return processInstanceId;
@@ -58,12 +61,12 @@ public class AdvanceProcessInstanceJPA {
 		this.pendingAt = pendingAt;
 	}
 
-	public EmployeeJPA getApprovedBy() {
-		return approvedBy;
+	public EmployeeJPA getProcessedBy() {
+		return processedBy;
 	}
 
-	public void setApprovedBy(EmployeeJPA approvedBy) {
-		this.approvedBy = approvedBy;
+	public void setProcessedBy(EmployeeJPA processedBy) {
+		this.processedBy = processedBy;
 	}
 	
 	public AdvanceJPA getAdvanceJPA() {
@@ -72,5 +75,13 @@ public class AdvanceProcessInstanceJPA {
 
 	public void setAdvanceJPA(AdvanceJPA advanceJPA) {
 		this.advanceJPA = advanceJPA;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 }

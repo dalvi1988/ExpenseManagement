@@ -6,7 +6,7 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2017-05-29T21:28:03.058+0530")
+@Generated(value="Dali", date="2017-06-19T10:53:59.412+0530")
 @StaticMetamodel(AdvanceJPA.class)
 public class AdvanceJPA_ {
 	public static volatile SingularAttribute<AdvanceJPA, Long> advanceDetailId;
@@ -19,7 +19,6 @@ public class AdvanceJPA_ {
 	public static volatile ListAttribute<AdvanceJPA, AdvanceProcessHistoryJPA> processHistoryJPA;
 	public static volatile SingularAttribute<AdvanceJPA, AdvanceProcessInstanceJPA> processInstanceJPA;
 	public static volatile SingularAttribute<AdvanceJPA, EventJPA> eventJPA;
-	public static volatile SingularAttribute<AdvanceJPA, Calendar> date;
 	public static volatile SingularAttribute<AdvanceJPA, Long> createdBy;
 	public static volatile SingularAttribute<AdvanceJPA, Long> modifiedBy;
 	public static volatile SingularAttribute<AdvanceJPA, Calendar> createdDate;

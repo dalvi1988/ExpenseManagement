@@ -38,7 +38,6 @@
 	   }
 	   
        var colM = [
-    	   { title: "Created Date", minWidth: 130, dataIndx: "createdDate", dataType:"String"},
            { title: "Purpose", width: 100, dataIndx: "purpose",
                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
            },
@@ -48,7 +47,7 @@
            { title: "Amount", width: 100, dataIndx: "amount", align: "center"},
            { title: "For Event", width: 100, dataIndx: "eventDTO", },
            { title: "", dataIndx: "advanceDetailId",hidden:true},
-           { title: "Previously Approved By", minWidth: 100, dataIndx: "approvedByEmployeeDTO" },
+           { title: "Previously Approved By", minWidth: 100, dataIndx: "processedByEmployeeDTO" },
            { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
                return "<button type='button' class='approve_btn'>Approve</button>\
                    <button type='button' class='reject_btn'>Reject</button>";
@@ -141,7 +140,7 @@
 <body>
   <div id="grid_filter" style="margin:5px auto;"></div>
   
-  <div id="dialog-confirm" title="Rejection Comment">
+  <div id="dialog-confirm" style="display: none" title="Rejection Comment">
     <fieldset>
       <label for="name">Please enter rejection comments:</label>
       <input type="text" name="comment" id="comment" class="text ui-widget-content ui-corner-all">

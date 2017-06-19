@@ -61,9 +61,6 @@ public class AdvanceJPA  {
 	@JoinColumn(name = "event_id")
 	private EventJPA eventJPA;
 	
-	@Column(name="date")
-	private Calendar date;
-	
 	@Column(name="created_by")
 	private Long createdBy;
 	
@@ -82,14 +79,6 @@ public class AdvanceJPA  {
 
 	public void setVoucherStatusJPA(VoucherStatusJPA voucherStatusJPA) {
 		this.voucherStatusJPA = voucherStatusJPA;
-	}
-
-	public Calendar getDate() {
-		return date;
-	}
-
-	public void setDate(Calendar date) {
-		this.date = date;
 	}
 
 	public Long getAdvanceDetailId() {

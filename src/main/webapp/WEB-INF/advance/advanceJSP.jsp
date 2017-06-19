@@ -73,11 +73,12 @@
   
   <div class="form-group"> 
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="button" class="btn btn-default" onclick="submitData(0)">Save as Draft</button>
-      <button type="button" class="btn btn-default" onclick="submitData(1)">Send for Approval</button>
+      <button type="button" class="btn btn-default" onclick="submitData(1)">Save as Draft</button>
+      <button type="button" class="btn btn-default" onclick="submitData(2)">Send for Approval</button>
     </div>
   </div>
   <form:hidden id="voucherStatusId" path="voucherStatusId"></form:hidden>  
+  <form:hidden path="advanceDetailId"></form:hidden>  
 </form:form>
 </body>
 </html>

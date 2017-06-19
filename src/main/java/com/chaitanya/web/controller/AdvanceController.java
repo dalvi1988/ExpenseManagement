@@ -90,7 +90,7 @@ public class AdvanceController {
 			BaseDTO baseDTO=advanceService.saveAdvance(receivedAdvanceDTO);
 			if(Validation.validateForSuccessStatus(baseDTO)){
 				toBeSentEventDTO=(AdvanceDTO)baseDTO;
-				if(receivedAdvanceDTO.getVoucherStatusId() == 1){
+				if(receivedAdvanceDTO.getVoucherStatusId() != 1){
 					toBeSentEventDTO.setMessage(new StringBuilder("Your advance number: "+ toBeSentEventDTO.getAdvanceNumber()+"  has beed send for approval."));
 				}
 				else{
@@ -183,7 +183,7 @@ public class AdvanceController {
 		BaseDTO baseDTO= null;
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			 advanceDTO.setApprovedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			 advanceDTO.setProcessedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
 			 
 		     baseDTO=advanceService.approveRejectAdvance(advanceDTO);
 			 if(Validation.validateForSuccessStatus(baseDTO)){
@@ -197,10 +197,11 @@ public class AdvanceController {
 				 
 			 }else {
 				 baseDTO=new BaseDTO();
-				 baseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+				 baseDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
 			 }
 		}
 		catch(Exception e){
+			logger.error("AdvanceController: approveRejectExpenses",e);
 			baseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 		return baseDTO;

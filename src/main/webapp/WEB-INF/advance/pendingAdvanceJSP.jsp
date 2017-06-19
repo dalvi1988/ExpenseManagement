@@ -17,7 +17,6 @@
        //define colModel
        var colM = [
 		
-       { title: "Created Date", minWidth: 130, dataIndx: "createdDate", dataType:"String"},
        { title: "Purpose", width: 100, dataIndx: "purpose",
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
        },
@@ -26,6 +25,8 @@
        }, 
        { title: "Amount", width: 100, dataIndx: "amount", align: "center"},
        { title: "For Event", width: 100, dataIndx: "eventDTO", },
+       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
+       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO" },
        { title: "", dataIndx: "advanceDetailId",hidden:true},
 		];
        //define dataModel

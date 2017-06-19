@@ -1,5 +1,6 @@
 package com.chaitanya.advance.dao;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.ParameterMode;
@@ -27,6 +28,7 @@ import com.chaitanya.jpa.ApprovalFlowJPA;
 import com.chaitanya.jpa.DepartmentHeadJPA;
 import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 
 @Repository
@@ -109,7 +111,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 		Long level = null;
 		String levelInfo = null;
 		
-		if(currentVoucerStatus == 1){
+		if(currentVoucerStatus == 2){
 			statusId=11;
 			level = functionalApprovalFlow.getLevel1();
 			levelInfo = "Functional Level1";
@@ -141,7 +143,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 			levelInfo = "Finance Level3";
 		}
 		else if(currentVoucerStatus == 131){
-			statusId=3;
+			statusId=4;
 			
 			AdvanceProcessInstanceJPA processInstanceJPA = advanceJPA.getProcessInstanceJPA();
 			if(! Validation.validateForNullObject(processInstanceJPA)){
@@ -154,7 +156,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 			
 			EmployeeJPA approveBy = new EmployeeJPA();
 			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-			processInstanceJPA.setApprovedBy(approveBy);
+			processInstanceJPA.setProcessedBy(approveBy);
 		
 			
 			VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
@@ -162,6 +164,9 @@ public class AdvanceDAO implements IAdvanceDAO{
 			processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 			
 			processInstanceJPA.setAdvanceJPA(advanceJPA);
+			
+			processInstanceJPA.setComment("");
+			
 			advanceJPA.setProcessInstanceJPA(processInstanceJPA);
 		}
 			
@@ -204,7 +209,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 				if(Validation.validateForNullObject(approvalEmployeeDTO)){
 					EmployeeJPA approveBy = new EmployeeJPA();
 					approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-					processInstanceJPA.setApprovedBy(approveBy);
+					processInstanceJPA.setProcessedBy(approveBy);
 				}
 				
 				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
@@ -212,6 +217,9 @@ public class AdvanceDAO implements IAdvanceDAO{
 				processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 				
 				processInstanceJPA.setAdvanceJPA(advanceJPA);
+				
+				processInstanceJPA.setComment("");
+				
 				advanceJPA.setProcessInstanceJPA(processInstanceJPA);
 			}
 		}
@@ -233,7 +241,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 
 		ProcedureOutputs procedureResult=query.getOutputs();
 		String voucherNumber= (String) procedureResult.getOutputParameterValue("voucherNumber");
-		voucherNumber="Advance/"+advanceJPA.getPurpose()+"/"+voucherNumber;
+		voucherNumber="Advance/"+Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormat)+"/"+voucherNumber;
 		return voucherNumber;
 	}
 
@@ -244,7 +252,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
 		        .createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
 				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
-				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(0)))
+				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
 				.list();
 		return advanceJPAList;
 	}
@@ -322,7 +330,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 	@Override
 	public List<AdvanceJPA> getRejectedAdvanceList(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		Object voucherId[]={12,22,32,42,52,62,72,82,92,102,112,122,132,142,152};
+		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
 				.createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)

@@ -17,7 +17,6 @@
        //define colModel
        var colM = [
 		
-       { title: "Created Date", minWidth: 130, dataIndx: "createdDate", dataType:"String"},
        { title: "Purpose", width: 100, dataIndx: "purpose",
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
        },
@@ -26,7 +25,11 @@
        }, 
        { title: "Amount", width: 100, dataIndx: "amount", align: "center"},
        { title: "For Event", width: 100, dataIndx: "eventDTO", },
+       { title: "Rejection Comment", width: 100, dataIndx: "rejectionComment", },
        { title: "", dataIndx: "advanceDetailId",hidden:true},
+       { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {
+        	return "<button type='button' class='edit_btn' >Edit</button>";
+      }},
 		];
        //define dataModel
        var dataModel = {
@@ -48,10 +51,24 @@
            editable: false,
            selectionModel: { type: 'cell' },
            filterModel: { on: true, mode: "AND", header: true },
-           title: "Pending Advance Vouchers",
+           title: "Rejected Vouchers",
            resizable: true,
            numberCell: { show: false },
-           columnBorders: true
+           columnBorders: true,           
+	       refresh: function(){
+	    	    $("#grid_filter").find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+	           .unbind("click")
+	           .bind("click", function (evt) {
+	        	     var $tr = $(this).closest("tr");
+	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+	                 var rowIndx = obj.rowIndx;
+	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
+	        	     $("#advanceDetailId").val(rowData.advanceDetailId);
+           	    	 $( this ).parent().addClass("active")
+         	         $('.content').load('advance?advanceDetailId='+rowData.advanceDetailId);
+	                 //$("#form").submit();
+	           }); 
+	       }
        };
 
        var $grid = $("#grid_filter").pqGrid(obj);
@@ -62,6 +79,7 @@
 <body>
   <form id="form" action="expense" method="post">
   	<div id="grid_filter" style="margin: auto;"></div>
+  	<input name="advanceDetailId" id="advanceDetailId" type="text" hidden/>
   </form>
        
 </body>

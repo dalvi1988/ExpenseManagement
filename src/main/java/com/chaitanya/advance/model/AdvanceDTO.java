@@ -135,12 +135,12 @@ public class AdvanceDTO extends BaseDTO {
 		this.pendingAtEmployeeDTO = pendingAtEmployeeDTO;
 	}
 
-	public EmployeeDTO getApprovedByEmployeeDTO() {
+	public EmployeeDTO getProcessedByEmployeeDTO() {
 		return approvedByEmployeeDTO;
 	}
 	@JsonIgnore
-	public void setApprovedByEmployeeDTO(EmployeeDTO approvedByEmployeeDTO) {
-		this.approvedByEmployeeDTO = approvedByEmployeeDTO;
+	public void setProcessedByEmployeeDTO(EmployeeDTO processedByEmployeeDTO) {
+		this.approvedByEmployeeDTO = processedByEmployeeDTO;
 	}
 
 	public String getRejectionComment() {

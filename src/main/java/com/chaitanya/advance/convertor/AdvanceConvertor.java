@@ -3,6 +3,8 @@ package com.chaitanya.advance.convertor;
 import java.text.ParseException;
 
 import com.chaitanya.advance.model.AdvanceDTO;
+import com.chaitanya.employee.convertor.EmployeeConvertor;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
@@ -14,7 +16,7 @@ import com.chaitanya.utility.Validation;
 
 public class AdvanceConvertor {
 	
-	public static AdvanceDTO setAdvanceJPAtoDTO(AdvanceJPA advanceJPA){
+	public static AdvanceDTO setAdvanceJPAtoDTO(AdvanceJPA advanceJPA) throws ParseException{
 		AdvanceDTO advanceDTO=null;
 		if(Validation.validateForNullObject(advanceJPA)){
 			advanceDTO=new AdvanceDTO(); 
@@ -27,6 +29,18 @@ public class AdvanceConvertor {
 				EventDTO eventDTO=new EventDTO();
 				eventDTO.setEventId(advanceJPA.getEventJPA().getEventId());
 				advanceDTO.setEventDTO(eventDTO);
+			}
+			if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA())){
+				if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getPendingAt())){
+					EmployeeDTO pendingAtEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getPendingAt());
+					advanceDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+				}
+				
+				if(Validation.validateForNullObject(advanceJPA.getProcessInstanceJPA().getProcessedBy())){
+					EmployeeDTO approvedByEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getProcessInstanceJPA().getProcessedBy());
+					advanceDTO.setProcessedByEmployeeDTO(approvedByEmployeeDTO);
+				}
+				advanceDTO.setRejectionComment(advanceJPA.getProcessInstanceJPA().getComment());
 			}
 			
 			if(Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
@@ -85,7 +99,6 @@ public class AdvanceConvertor {
 			}
 			if(Validation.validateForNullObject(advanceDTO.getCreatedDate())){
 				advanceJPA.setCreatedDate(Convertor.stringToCalendar(advanceDTO.getCreatedDate(),Convertor.dateFormatWithTime));
-				advanceJPA.setDate(Convertor.stringToCalendar(advanceDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(advanceDTO.getModifiedDate())){
 				advanceJPA.setModifiedDate(Convertor.stringToCalendar(advanceDTO.getModifiedDate(),Convertor.dateFormatWithTime));
