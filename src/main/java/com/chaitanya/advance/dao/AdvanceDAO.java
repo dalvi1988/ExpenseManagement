@@ -283,9 +283,11 @@ public class AdvanceDAO implements IAdvanceDAO{
 	@Override
 	public List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
 		
 		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)
 									.add(Restrictions.eq("pendingAt.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+									.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
 									.setProjection(Projections.property("advanceJPA.advanceDetailId"));
 		
 		@SuppressWarnings("unchecked")

@@ -41,7 +41,7 @@ public class AdvanceDTO extends BaseDTO {
 	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
-	private EmployeeDTO approvedByEmployeeDTO;
+	private EmployeeDTO processedByEmployeeDTO;
 
 	public Long getAdvanceDetailId() {
 		return advanceDetailId;
@@ -139,10 +139,10 @@ public class AdvanceDTO extends BaseDTO {
 	}
 
 	public EmployeeDTO getProcessedByEmployeeDTO() {
-		return approvedByEmployeeDTO;
+		return processedByEmployeeDTO;
 	}
 	public void setProcessedByEmployeeDTO(EmployeeDTO processedByEmployeeDTO) {
-		this.approvedByEmployeeDTO = processedByEmployeeDTO;
+		this.processedByEmployeeDTO = processedByEmployeeDTO;
 	}
 
 	public String getRejectionComment() {
