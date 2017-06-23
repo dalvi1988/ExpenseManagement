@@ -20,9 +20,12 @@
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
 		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
 	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center"},
-	       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
-	       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO" },
+	       { title: "Rejected By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
+	       { title: "Rejection Comment", minWidth: 100, dataIndx: "rejectionComment" },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
+	       { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {
+        	return "<button type='button' class='edit_btn' >Edit</button>";
+      }}
 		];
        //define dataModel
        var dataModel = {
@@ -43,10 +46,24 @@
            pageModel: { type: "local", rPP: 10 },
            editable: false,
            selectionModel: {type: 'row', mode: 'single'},
-           title: "Pending Expense Vouchers",
+           title: "Rejected Expense Vouchers",
            resizable: true,
            numberCell: { show: false },
-           columnBorders: true,           
+           columnBorders: true,       
+           refresh: function(){
+	    	    $("#grid_filter").find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+	           .unbind("click")
+	           .bind("click", function (evt) {
+	        	     var $tr = $(this).closest("tr");
+	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+	                 var rowIndx = obj.rowIndx;
+	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
+	        	     $("#expenseHeaderId").val(rowData.expenseHeaderId);
+           	    	 $( this ).parent().addClass("active")
+         	         $('.content').load('expense?expenseHeaderId='+rowData.expenseHeaderId);
+	                 //$("#form").submit();
+	           }); 
+	       }    
        };
 
        var $grid = $("#grid_filter").pqGrid(obj);
@@ -56,5 +73,6 @@
 </head>
 <body>
   	<div id="grid_filter" style="margin: auto;"></div>
+  	<input name="expenseHeaderId" id="expenseHeaderId" type="text" hidden/>
 </body>
 </html>

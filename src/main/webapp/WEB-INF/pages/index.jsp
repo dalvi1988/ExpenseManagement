@@ -101,6 +101,10 @@
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('pendingExpense');
 	     });
+	    $('.rejectedExpense').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('rejectedExpense');
+	     });
 	    
 	    $('.eventMaster').click(function(){
 	    	$( this ).parent().addClass("active")

@@ -144,7 +144,7 @@ public class ExpenseDAO implements IExpenseDAO{
 			levelInfo = "Finance Level3";
 		}
 		else if(currentVoucerStatus == 131){
-			statusId=3;
+			statusId=4;
 			
 			ProcessInstanceJPA processInstanceJPA = expenseHeaderJPA.getProcessInstanceJPA();
 			if(! Validation.validateForNullObject(processInstanceJPA)){
@@ -157,7 +157,7 @@ public class ExpenseDAO implements IExpenseDAO{
 			
 			EmployeeJPA approveBy = new EmployeeJPA();
 			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-			processInstanceJPA.setPendingAt(approveBy);
+			processInstanceJPA.setProcessedBy(approveBy);
 		
 			
 			VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
@@ -165,6 +165,9 @@ public class ExpenseDAO implements IExpenseDAO{
 			processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 			
 			processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+			
+			processInstanceJPA.setComment("");
+			
 			expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
 		}
 			
@@ -207,7 +210,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				if(Validation.validateForNullObject(approvalEmployeeDTO)){
 					EmployeeJPA approveBy = new EmployeeJPA();
 					approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-					processInstanceJPA.setApprovedBy(approveBy);
+					processInstanceJPA.setProcessedBy(approveBy);
 				}
 				
 				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
@@ -215,13 +218,34 @@ public class ExpenseDAO implements IExpenseDAO{
 				processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 				
 				processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+				
+				processInstanceJPA.setComment("");
+				
 				expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
 			}
 		}
-		else{
+		else if(currentVoucerStatus != 131){
 			System.out.println(levelInfo +" not available.");
 			getApprovalOfLevel(statusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA,approvalEmployeeDTO, session);
 		}
+	}
+	
+	@Override
+	public String generateVoucherNumber(ExpenseHeaderDTO expenseHeaderDTO) {
+	
+		Session session = sessionFactory.getCurrentSession();
+		ProcedureCall query =  session.createStoredProcedureCall("voucher_number");
+				query.registerParameter(
+			        "module", String.class, ParameterMode.IN).bindValue("EMPLOYEE_EXPENSE");
+				query.registerParameter(
+				        "companyId", Integer.class, ParameterMode.IN).bindValue(expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId());
+				query.registerParameter(
+			        "voucherNumber", String.class, ParameterMode.OUT);
+
+		ProcedureOutputs procedureResult=query.getOutputs();
+		String voucherNumber= (String) procedureResult.getOutputParameterValue("voucherNumber");
+		voucherNumber="Voucher/"+expenseHeaderDTO.getStartDate()+"-"+expenseHeaderDTO.getEndDate()+"/"+voucherNumber;
+		return voucherNumber;
 	}
 
 	@Override
@@ -233,6 +257,15 @@ public class ExpenseDAO implements IExpenseDAO{
 				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
 				.list();
 		return expsensHeaderList;
+	}
+	
+	@Override
+	public ExpenseHeaderJPA getExpense(ExpenseHeaderDTO expenseHeaderDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		ExpenseHeaderJPA expsensHeaderJPA= (ExpenseHeaderJPA) session.createCriteria(ExpenseHeaderJPA.class)
+												.add(Restrictions.eq("expenseHeaderId",expenseHeaderDTO.getExpenseHeaderId() ))
+												.uniqueResult();
+		return expsensHeaderJPA;
 	}
 	
 	@Override
@@ -248,27 +281,21 @@ public class ExpenseDAO implements IExpenseDAO{
 		return expsensHeaderJPAList;
 	}
 	
-
-	@Override
-	public ExpenseHeaderJPA getExpense(ExpenseHeaderDTO expenseHeaderDTO) {
-		Session session = sessionFactory.getCurrentSession();
-		ExpenseHeaderJPA expsensHeaderJPA= (ExpenseHeaderJPA) session.createCriteria(ExpenseHeaderJPA.class)
-												.add(Restrictions.eq("expenseHeaderId",expenseHeaderDTO.getExpenseHeaderId() ))
-												.uniqueResult();
-		return expsensHeaderJPA;
-	}
-	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExpenseHeaderJPA> getExpenseToBeApprove(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
 		
 		DetachedCriteria subquery = DetachedCriteria.forClass(ProcessInstanceJPA.class)
 									.add(Restrictions.eq("pendingAt.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+									.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
 									.setProjection(Projections.property("expenseHeaderJPA.expenseHeaderId"));
 		
+		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+												.setFetchMode("eventJPA",FetchMode.JOIN)
 												.setFetchMode("employeeJPA",FetchMode.JOIN)
+												.setFetchMode("advanceJPA",FetchMode.JOIN)
 												.add(Subqueries.propertyIn("expenseHeaderId", subquery))
 												.list();
 														
@@ -276,6 +303,39 @@ public class ExpenseDAO implements IExpenseDAO{
 		return expsensHeaderJPAList;
 	}
 	
+	@Override
+	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		ExpenseHeaderJPA expenseHeaderJPA = (ExpenseHeaderJPA) session.get(ExpenseHeaderJPA.class, expenseHeaderDTO.getExpenseHeaderId());
+														
+		return expenseHeaderJPA;
+	}
+	
+
+	@Override
+	public List<ExpenseHeaderJPA> getRejectedExpenseList(ExpenseHeaderDTO expenseHeaderDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
+		@SuppressWarnings("unchecked")
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
+				.list();
+		return expsensHeaderJPAList;
+	}
+	
+	@Override
+	public ExpenseHeaderJPA persistExpense(ExpenseHeaderJPA expenseHeaderJPA)
+			throws IOException {
+		Session session = sessionFactory.getCurrentSession();
+		session.merge(expenseHeaderJPA);
+		
+		return expenseHeaderJPA;
+	}
+	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExpenseDetailJPA> getExpenseDetailsByHeaderId(ExpenseHeaderDTO expenseHeaderDTO) {
@@ -288,39 +348,4 @@ public class ExpenseDAO implements IExpenseDAO{
 														
 		return expsensDetailJPAList;
 	}
-	
-	@Override
-	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO) {
-		Session session = sessionFactory.getCurrentSession();
-		
-		ExpenseHeaderJPA expenseHeaderJPA = (ExpenseHeaderJPA) session.get(ExpenseHeaderJPA.class, expenseHeaderDTO.getExpenseHeaderId());
-														
-		return expenseHeaderJPA;
-	}
-
-	@Override
-	public String generateVoucherNumber(ExpenseHeaderDTO expenseHeaderDTO) {
-	
-		Session session = sessionFactory.getCurrentSession();
-		ProcedureCall query =  session.createStoredProcedureCall("voucher_number");
-				query.registerParameter(
-			        "module", String.class, ParameterMode.IN).bindValue("EMPLOYEE_EXPENSE");
-				query.registerParameter(
-			        "voucherNumber", String.class, ParameterMode.OUT);
-
-		ProcedureOutputs procedureResult=query.getOutputs();
-		String voucherNumber= (String) procedureResult.getOutputParameterValue("voucherNumber");
-		voucherNumber="Voucher/"+expenseHeaderDTO.getStartDate()+"-"+expenseHeaderDTO.getEndDate()+"/"+voucherNumber;
-		return voucherNumber;
-	}
-
-	@Override
-	public ExpenseHeaderJPA persistExpense(ExpenseHeaderJPA expenseHeaderJPA)
-			throws IOException {
-		Session session = sessionFactory.getCurrentSession();
-		session.merge(expenseHeaderJPA);
-		
-		return expenseHeaderJPA;
-	}
-
 }

@@ -2,14 +2,18 @@ package com.chaitanya.expense.model;
 
 import java.util.List;
 
+import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.event.model.EventDTO;
+import com.chaitanya.utility.Validation;
 import com.chaitanya.utility.model.VoucherStatusDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 public class ExpenseHeaderDTO extends BaseDTO{
 
@@ -18,6 +22,7 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private Long expenseHeaderId;
 	
 	private String expenseType; 
+	
 	private String voucherNumber;
 	
 	private Double totalAmount;
@@ -27,42 +32,49 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private VoucherStatusDTO voucherStatusDTO;
 
 	private Integer eventId;
-	@JsonIgnore
+	
+	@JsonProperty(access = Access.READ_ONLY)
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="eventName")
+	@JsonIdentityReference(alwaysAsId=true)
 	private EventDTO eventDTO;
 	
 	private String startDate;
 	
 	private String endDate;
 	
-	private String title;
+	private Long advanceDetailId;
 	
-	public Double getTotalAmount() {
-		return totalAmount;
-	}
-
-	public void setTotalAmount(Double totalAmount) {
-		this.totalAmount = totalAmount;
-	}
-
+	@JsonProperty(access = Access.READ_ONLY)
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="advanceNumber")
+	@JsonIdentityReference(alwaysAsId=true)
+	private AdvanceDTO advanceDTO;
+	
+	private String rejectionComment;
+	
 	private String purpose;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO employeeDTO;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO pendingAtEmployeeDTO;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
-	private EmployeeDTO approvedByEmployeeDTO;
+	private EmployeeDTO processedByEmployeeDTO;
 	
 	private List<ExpenseDetailDTO> addedExpenseDetailsDTOList;
 	
 	private List<ExpenseDetailDTO> updatedExpenseDetailsDTOList;
 
 	private List<ExpenseDetailDTO> deletedExpenseDetailsDTOList;
+	
+	private Double advanceAmount;
 
 	public Long getExpenseHeaderId() {
 		return expenseHeaderId;
@@ -86,14 +98,6 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getPurpose() {
@@ -173,12 +177,12 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		this.pendingAtEmployeeDTO = pendingAtEmployeeDTO;
 	}
 
-	public EmployeeDTO getApprovedByEmployeeDTO() {
-		return approvedByEmployeeDTO;
+	public String getExpenseType() {
+		return expenseType;
 	}
 
-	public void setApprovedByEmployeeDTO(EmployeeDTO approvedByEmployeeDTO) {
-		this.approvedByEmployeeDTO = approvedByEmployeeDTO;
+	public void setExpenseType(String expenseType) {
+		this.expenseType = expenseType;
 	}
 
 	public Integer getEventId() {
@@ -200,15 +204,58 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		this.eventDTO = eventDTO;
 		this.eventId=eventDTO.getEventId();
 	}
-
-	public String getExpenseType() {
-		return expenseType;
-	}
-
-	public void setExpenseType(String expenseType) {
-		this.expenseType = expenseType;
-	}
-
-
 	
+	public Long getAdvanceDetailId() {
+		return advanceDetailId;
+	}
+
+	public void setAdvanceDetailId(Long advanceDetailId) {
+		this.advanceDetailId = advanceDetailId;
+		AdvanceDTO advanceDTO=new AdvanceDTO();
+		advanceDTO.setAdvanceDetailId(advanceDetailId);
+		this.setAdvanceDTO(advanceDTO);
+	}
+
+	public AdvanceDTO getAdvanceDTO() {
+		return advanceDTO;
+	}
+
+	public void setAdvanceDTO(AdvanceDTO advanceDTO) {
+		this.advanceDTO = advanceDTO;
+		this.advanceDetailId=advanceDTO.getAdvanceDetailId();
+		this.advanceAmount = advanceDTO.getAmount();
+	}
+
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
+	public String getRejectionComment() {
+		return rejectionComment;
+	}
+
+	public void setRejectionComment(String rejectionComment) {
+		this.rejectionComment = rejectionComment;
+	}
+
+	public EmployeeDTO getProcessedByEmployeeDTO() {
+		return processedByEmployeeDTO;
+	}
+
+	public void setProcessedByEmployeeDTO(EmployeeDTO processedByEmployeeDTO) {
+		this.processedByEmployeeDTO = processedByEmployeeDTO;
+	}
+
+	public Double getAdvanceAmount() {
+		return advanceAmount;
+	}
+
+	public void setAdvanceAmount(Double advanceAmount) {
+		this.advanceAmount = advanceAmount;
+	}
+
 }

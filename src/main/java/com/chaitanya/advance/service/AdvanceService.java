@@ -366,4 +366,31 @@ public class AdvanceService implements IAdvanceService{
 		return  advanceDTOList;
 	}
 
+
+	@Override
+	public List<AdvanceDTO> getApprovedAdvanceByEmp(BaseDTO baseDTO) throws ParseException {
+
+		logger.debug("AdvanceService: getApprovedAdvanceByEmp-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getApprovedAdvanceByEmp(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("AdvanceService: getApprovedAdvanceByEmp-End");
+		return  advanceDTOList;
+	}
+
 }

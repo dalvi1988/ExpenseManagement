@@ -24,5 +24,7 @@ public interface IAdvanceService {
 
 	List<AdvanceDTO> getRejectedAdvanceList(BaseDTO baseDTO) throws ParseException;
 
+	List<AdvanceDTO> getApprovedAdvanceByEmp(BaseDTO baseDTO) throws ParseException;
+
 
 }

@@ -16,19 +16,26 @@
       
        //define colModel
        var colM = [
-		
-       { title: "Title", width: 100, dataIndx: "title",
-           filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
-       },
-       
        { title: "Voucher Number", width: 120, dataIndx: "voucherNumber",
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
        }, 
+        { title: "For Event", width: 150, dataIndx: "eventDTO" },
        { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String",
        },
 	   { title: "End Date", minWidth: 190, dataIndx: "endDate"},
        { title: "Purpose", width: 100, dataIndx: "purpose", align: "center"},
-       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center"},
+       { title: "Total Amount", width: 85, align: "right", dataType: "float", dataIndx: "totalAmount",
+        	   render: function (ui) {                        
+                   var cellData = ui.cellData;
+                   if (cellData != null) {
+                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+                   }
+                   else {
+                       return "";
+                   }
+               }
+		   },
+       
        { title: "", dataIndx: "expenseHeaderId",hidden:true},
        { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {
         	return "<button type='button' class='edit_btn' >Edit</button>";
@@ -52,7 +59,7 @@
            hwrap: false,
            pageModel: { type: "local", rPP: 10 },
            editable: false,
-           selectionModel: { type: 'cell' },
+           selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},    
            filterModel: { on: true, mode: "AND", header: true },
            title: "Saved Expense Vouchers",
            resizable: true,

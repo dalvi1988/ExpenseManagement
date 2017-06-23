@@ -168,6 +168,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 			processInstanceJPA.setComment("");
 			
 			advanceJPA.setProcessInstanceJPA(processInstanceJPA);
+			
 		}
 			
 		if(Validation.validateForNullObject(level)){
@@ -223,7 +224,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 				advanceJPA.setProcessInstanceJPA(processInstanceJPA);
 			}
 		}
-		else{
+		else if(currentVoucerStatus != 131){
 			System.out.println(levelInfo +" not available.");
 			getApprovalOfLevel(statusId,advanceJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA,approvalEmployeeDTO, session);
 		}
@@ -245,6 +246,8 @@ public class AdvanceDAO implements IAdvanceDAO{
 		return voucherNumber;
 	}
 
+	
+	
 	@Override
 	public List<AdvanceJPA> getDraftAdvanceList(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
@@ -302,25 +305,6 @@ public class AdvanceDAO implements IAdvanceDAO{
 	}
 	
 	@Override
-	public List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO) {
-		Session session = sessionFactory.getCurrentSession();
-		
-		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)
-									.add(Restrictions.eq("pendingAt.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
-									.setProjection(Projections.property("advanceJPA.advanceDetailId"));
-		
-		@SuppressWarnings("unchecked")
-		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
-												.setFetchMode("employeeJPA",FetchMode.JOIN)
-												.add(Subqueries.propertyIn("advanceDetailId", subquery))
-												.list();
-														
-
-		return advanceJPAList;
-	
-	}
-
-	@Override
 	public AdvanceJPA approveRejectAdvance(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -341,6 +325,37 @@ public class AdvanceDAO implements IAdvanceDAO{
 				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
 				.list();
 		return advanceJPAList;
+	}
+
+	@Override
+	public List<AdvanceJPA> getApprovedAdvanceByEmp(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(4)))
+				.list();
+		return advanceJPAList;
+	}
+	
+	@Override
+	public List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)
+									.add(Restrictions.eq("pendingAt.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+									.setProjection(Projections.property("advanceJPA.advanceDetailId"));
+		
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+												.setFetchMode("employeeJPA",FetchMode.JOIN)
+												.add(Subqueries.propertyIn("advanceDetailId", subquery))
+												.list();
+														
+
+		return advanceJPAList;
+	
 	}
 
 }

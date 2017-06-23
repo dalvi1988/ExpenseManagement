@@ -6,14 +6,14 @@ public class CompanyDTO extends BaseDTO {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Long companyId;
+	private Integer companyId;
 	private String companyCode;
 	private String companyName;
 	
-	public Long getCompanyId() {
+	public Integer getCompanyId() {
 		return companyId;
 	}
-	public void setCompanyId(Long companyId) {
+	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
 	public String getCompanyCode() {

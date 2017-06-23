@@ -16,7 +16,7 @@ public class CompanyJPA{
 	
 	@Id @GeneratedValue
 	@Column(name="company_id")
-	private Long companyId;
+	private Integer companyId;
 	
 	@Column(name="company_code",unique=true,nullable=false)
 	private String companyCode;
@@ -42,10 +42,10 @@ public class CompanyJPA{
 	@Column(name="status",nullable=false)
 	private Character status;
 	
-	public Long getCompanyId() {
+	public Integer getCompanyId() {
 		return companyId;
 	}
-	public void setCompanyId(Long companyId) {
+	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
 	public String getCompanyCode() {

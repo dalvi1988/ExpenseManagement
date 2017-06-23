@@ -25,7 +25,8 @@
        }, 
        { title: "Amount", width: 100, dataIndx: "amount", align: "center"},
        { title: "For Event", width: 100, dataIndx: "eventDTO", },
-       { title: "Rejection Comment", width: 100, dataIndx: "rejectionComment", },
+       { title: "Rejected By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
+       { title: "Rejection Comment", width: 100, dataIndx: "rejectionComment"},
        { title: "", dataIndx: "advanceDetailId",hidden:true},
        { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {
         	return "<button type='button' class='edit_btn' >Edit</button>";

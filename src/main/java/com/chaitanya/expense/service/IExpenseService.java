@@ -24,4 +24,6 @@ public interface IExpenseService {
 
 	List<ExpenseHeaderDTO> getPendingExpenseList(BaseDTO baseDTO) throws ParseException;
 
+	List<ExpenseHeaderDTO> getRejectedExpenseList(BaseDTO baseDTO) throws ParseException;
+
 }

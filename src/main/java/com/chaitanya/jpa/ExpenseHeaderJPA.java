@@ -27,6 +27,9 @@ public class ExpenseHeaderJPA {
 	@Column(name="expense_header_id")
 	private Long expenseHeaderId;
 	
+	@Column(name="expense_type")
+	private String expenseType;
+	
 	@Column(name="voucher_number")
 	private String voucherNumber;
 	
@@ -49,6 +52,14 @@ public class ExpenseHeaderJPA {
 	@JoinColumn(name = "employee_id")
 	private EmployeeJPA employeeJPA;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "advance_id")
+	private AdvanceJPA advanceJPA;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "event_id")
+	private EventJPA eventJPA;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "voucher_status")
 	private VoucherStatusJPA voucherStatusJPA;
@@ -58,9 +69,6 @@ public class ExpenseHeaderJPA {
 		
 	@Column(name="end_date")
 	private Calendar endDate;
-	
-	@Column(name="title")
-	private String title;
 	
 	@Column(name="purpose")
 	private String purpose;
@@ -99,14 +107,6 @@ public class ExpenseHeaderJPA {
 
 	public void setEndDate(Calendar endDate) {
 		this.endDate = endDate;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getPurpose() {
@@ -195,6 +195,30 @@ public class ExpenseHeaderJPA {
 
 	public void setModifiedDate(Calendar modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public AdvanceJPA getAdvanceJPA() {
+		return advanceJPA;
+	}
+
+	public void setAdvanceJPA(AdvanceJPA advanceJPA) {
+		this.advanceJPA = advanceJPA;
+	}
+
+	public String getExpenseType() {
+		return expenseType;
+	}
+
+	public void setExpenseType(String expenseType) {
+		this.expenseType = expenseType;
+	}
+
+	public EventJPA getEventJPA() {
+		return eventJPA;
+	}
+
+	public void setEventJPA(EventJPA eventJPA) {
+		this.eventJPA = eventJPA;
 	}
 
 }

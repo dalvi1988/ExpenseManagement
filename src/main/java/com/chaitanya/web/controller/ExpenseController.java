@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.advance.service.IAdvanceService;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.event.model.EventDTO;
@@ -84,6 +85,11 @@ public class ExpenseController {
 		List<EventDTO> eventDTOList = eventService.findAllUnderCompany(eventDTO);
 		model.addObject("eventList", eventDTOList);
 		
+		AdvanceDTO advanceDTO= new AdvanceDTO();
+		advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+		List<AdvanceDTO> advanceDTOList= advanceService.getApprovedAdvanceByEmp(advanceDTO);
+		model.addObject("advanceList", mapper.writeValueAsString(advanceDTOList));
+		
 		expenseCategoryDTOList = expenseCategoryService.findAll();
 		model.addObject("expenseDetailList", mapper.writeValueAsString(expenseHeaderDTO.getAddedExpenseDetailsDTOList()));
 		model.addObject("expenseCategoryList", mapper.writeValueAsString(expenseCategoryDTOList));
@@ -125,35 +131,31 @@ public class ExpenseController {
 	}
 	
 	@RequestMapping(value="/approveRejectExpense",method=RequestMethod.POST)
-	public @ResponseBody BaseDTO approveRejectExpenses(@RequestBody List<ExpenseHeaderDTO> expenseHeaderDTOList) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
-		StringBuilder message= new StringBuilder();
+	public @ResponseBody BaseDTO approveRejectExpenses(@RequestBody ExpenseHeaderDTO expenseHeaderDTO) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 		BaseDTO baseDTO= null;
 		
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			
-			for(ExpenseHeaderDTO expenseHeaderDTO:expenseHeaderDTOList){
 				
-				 expenseHeaderDTO.setApprovedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
-				 
-			     baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
-				 if(Validation.validateForSuccessStatus(baseDTO)){
-					 ExpenseHeaderDTO expHeaderDTO=(ExpenseHeaderDTO)baseDTO;
-					 if(expenseHeaderDTO.getVoucherStatusId() == 3){
-						 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been approved\n.");
-					 }
-					 else if(expenseHeaderDTO.getVoucherStatusId() == 4){
-						 message.append("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been rejected\n.");
-					 }
+			 expenseHeaderDTO.setProcessedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			 
+		     baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
+			 if(Validation.validateForSuccessStatus(baseDTO)){
+				 ExpenseHeaderDTO expHeaderDTO=(ExpenseHeaderDTO)baseDTO;
+				 if(expenseHeaderDTO.getVoucherStatusId() == 3){
+					 baseDTO.setMessage(new StringBuilder("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been approved\n."));
 				 }
-				 else{
-					 message.append(ApplicationConstant.BUSSINESS_FAILURE);
+				 else if(expenseHeaderDTO.getVoucherStatusId() == 4){
+					 baseDTO.setMessage(new StringBuilder("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been rejected\n."));
 				 }
-				 baseDTO.setMessage(message);
-			}
+			 }
+			 else{
+				 baseDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE) );
+			 }
 		}
 		catch(Exception e){
-			baseDTO.setMessage(message.append(ApplicationConstant.SYSTEM_FAILURE));
+			baseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 
 		return baseDTO;
@@ -267,6 +269,31 @@ public class ExpenseController {
 		}
 		catch(Exception e){
 			logger.error("ExpenseController: getPendingExpense",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/rejectedExpense",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getRejectedExpense() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 expenseHeaderDTOList = expenseService.getRejectedExpenseList(expenseHeaderDTO);
+			}
+			
+			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
+			model.setViewName("expense/rejectedExpensesJSP");
+		}
+		catch(Exception e){
+			logger.error("ExpenseController: getRejectedExpense",e);
 			model.setViewName("others/505");
 		}
 		return model;

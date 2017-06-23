@@ -5,17 +5,18 @@ import java.text.ParseException;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.chaitanya.employee.convertor.EmployeeConvertor;
-import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
+import com.chaitanya.jpa.AdvanceJPA;
 import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.jpa.EventJPA;
 import com.chaitanya.jpa.ExpenseCategoryJPA;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
 
@@ -27,21 +28,11 @@ public class ExpenseConvertor {
 		if(Validation.validateForNullObject(expenseHeaderJPA)){
 			expenseHeaderDTO=new ExpenseHeaderDTO(); 
 			expenseHeaderDTO.setExpenseHeaderId(expenseHeaderJPA.getExpenseHeaderId());
+			expenseHeaderDTO.setExpenseType(expenseHeaderJPA.getExpenseType());
 			expenseHeaderDTO.setStartDate(Convertor.calendartoString(expenseHeaderJPA.getStartDate(),Convertor.dateFormat));
 			expenseHeaderDTO.setEndDate(Convertor.calendartoString(expenseHeaderJPA.getEndDate(),Convertor.dateFormat));
-			expenseHeaderDTO.setTitle(expenseHeaderJPA.getTitle());
 			expenseHeaderDTO.setPurpose(expenseHeaderJPA.getPurpose());
-			if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA())){
-				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt())){
-					EmployeeDTO pendingAtEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt());
-					expenseHeaderDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
-				}
-				
-				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getApprovedBy())){
-					EmployeeDTO approvedByEmployeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getApprovedBy());
-					expenseHeaderDTO.setApprovedByEmployeeDTO(approvedByEmployeeDTO);
-				}
-			}
+			
 			if(Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
 				expenseHeaderDTO.setVoucherNumber(expenseHeaderJPA.getVoucherNumber());
 			}
@@ -89,6 +80,26 @@ public class ExpenseConvertor {
 			employeeJPA.setEmployeeId(expenseHeaderDTO.getEmployeeDTO().getEmployeeId());
 			expenseHeaderJPA.setEmployeeJPA(employeeJPA);
 			
+			if(Validation.validateForNullObject(expenseHeaderDTO.getAdvanceDTO())){
+				if(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId() != -1){
+					AdvanceJPA advanceJPA=new AdvanceJPA();
+					advanceJPA.setAdvanceDetailId(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId());
+					expenseHeaderJPA.setAdvanceJPA(advanceJPA);
+				}
+			}
+			
+			if(Validation.validateForEmptyString(expenseHeaderDTO.getExpenseType())){
+				if(expenseHeaderDTO.getExpenseType().equalsIgnoreCase(ApplicationConstant.EXPENSE_TYPE_EVENT)){
+					EventJPA eventJPA=new EventJPA();
+					eventJPA.setEventId(expenseHeaderDTO.getEventDTO().getEventId());
+					expenseHeaderJPA.setEventJPA(eventJPA);
+					expenseHeaderJPA.setExpenseType(ApplicationConstant.EXPENSE_TYPE_EVENT);
+				}
+				else{
+					expenseHeaderJPA.setExpenseType(ApplicationConstant.EXPENSE_TYPE_EMP);
+				}
+			}
+			
 			VoucherStatusJPA voucherStatusJPA=new VoucherStatusJPA();
 			voucherStatusJPA.setVoucherStatusId(expenseHeaderDTO.getVoucherStatusDTO().getVoucherStatusId());
 			expenseHeaderJPA.setVoucherStatusJPA(voucherStatusJPA);
@@ -96,7 +107,6 @@ public class ExpenseConvertor {
 			expenseHeaderJPA.setStartDate(Convertor.stringToCalendar(expenseHeaderDTO.getStartDate(),Convertor.dateFormat));
 			expenseHeaderJPA.setEndDate(Convertor.stringToCalendar(expenseHeaderDTO.getEndDate(),Convertor.dateFormat));
 			expenseHeaderJPA.setPurpose(expenseHeaderDTO.getPurpose());
-			expenseHeaderJPA.setTitle(expenseHeaderDTO.getTitle());
 			
 			if(Validation.validateForZero(expenseHeaderDTO.getModifiedBy())){
 				expenseHeaderJPA.setModifiedBy(expenseHeaderDTO.getModifiedBy());

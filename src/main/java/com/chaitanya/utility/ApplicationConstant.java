@@ -18,5 +18,9 @@ public class ApplicationConstant {
 	public static final String BRANCH_FLOW="BranchFlow";
 	
 	public static final String PASSWORD_SENT="Your new  password has been sent to your mail id.";
+	
+	public static final String EXPENSE_TYPE_EMP = "EmployeeExpense";
+	
+	public static final String EXPENSE_TYPE_EVENT = "EventExpense";
 
 }

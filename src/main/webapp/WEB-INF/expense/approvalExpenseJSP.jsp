@@ -13,7 +13,7 @@
    
    $(function () {
 	   
-	   function submitDetails(rowData){
+	   function submitDetails(rowData,rowIndx){
 		   $.ajax($.extend({}, ajaxObj, { 
              	context: $gridMain,
          	    url: "approveRejectExpense", 
@@ -23,31 +23,52 @@
          	    success: function(data) { 
          	    	if(data.serviceStatus=="SUCCESS"){
          	    		$(".alert").addClass("alert-success").text(data.message).show();
-         	    		 $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
+         	    		 $gridMain.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
          	    	}
          	    	else{
          	    		$(".alert").addClass("alert-danger").text(data.message).show();
-         	    		$grid.pqGrid("rollback");
+         	    		$gridMain.pqGrid("rollback");
          	    	}
          	    	
          	    },
          	    error:function(data) {
-         	    	alert("error")
+         	    	$(".alert").addClass("alert-danger").text(data.message).show();
          	    }
 		   }));
 	   }
 	   
        var colM = [
-		   { title: "", dataIndx: "state", width: 20, minWidth:20, align: "center", type:'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable:false },
            { title: "", minWidth: 27, width: 27, type: "detail", resizable: false },
-           { title: "Voucher Number",minWidth:250, dataIndx: "voucherNumber" },
-           { title: "Employee Name", minWidth: 100, dataIndx: "employeeDTO" },
-           { title: "Title", width: 120, dataIndx: "title" },
+           { title: "Voucher Number",width:150, dataIndx: "voucherNumber" },
+           { title: "For Event", width: 150, dataIndx: "eventDTO" },
+           { title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
+           { title: "Purpose", width: 160, dataIndx: "purpose" },
            { title: "Start Date", width: 100, dataIndx: "startDate" },
 		   { title: "End Date", width: 100, dataIndx: "endDate"},
-           { title: "Total Amount", width: 100, align: "right", dataType: "float", dataIndx: "totalAmount" },
-           { title: "Previously Approved By", minWidth: 100, dataIndx: "approvedByEmployeeDTO" },
-           { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
+           { title: "Total Amount", width: 85, align: "right", dataType: "float", dataIndx: "totalAmount",
+        	   render: function (ui) {                        
+                   var cellData = ui.cellData;
+                   if (cellData != null) {
+                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+                   }
+                   else {
+                       return "";
+                   }
+               }
+		   },
+		   { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",
+        	   render: function (ui) {                        
+                   var cellData = ui.cellData;
+                   if (cellData != null) {
+                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+                   }
+                   else {
+                       return "";
+                   }
+               }
+		   },
+           { title: "Previously Approved By", width: 120, dataIndx: "processedByEmployeeDTO" },
+           { title: "", editable: false, minWidth: 180,width: 180, sortable: false, render: function (ui) {
                return "<button type='button' class='approve_btn'>Approve</button>\
                    <button type='button' class='reject_btn'>Reject</button>";
                }
@@ -78,9 +99,7 @@
            dataModel: dataModel,
            virtualX: true, virtualY: true,
            editable: false,
-           colModel: colM,
-           wrap: false,
-           hwrap: false,  
+           colModel: colM, 
            rowBorders: true,
            scrollModel: {
                autoFit: true
@@ -89,8 +108,8 @@
            numberCell: { show: false },
            title: "<b>Vouchers For Approval</b>",                        
            resizable: true,
-           freezeCols: 1,   
-           selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},  
+           freezeCols: 1, 
+            selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},    
            detailModel: {
                cache: true,
                collapseIcon: "ui-icon-plus",
@@ -102,17 +121,6 @@
                        $grid = $("<div></div>").pqGrid( detailobj ); //init the detail grid.
 
                    return $grid;
-               }
-           },
-           selectChange: function (evt, ui) {
-               console.log('selectChange', ui);
-               if( ui.rows.length == 0){
-					$("#approveSelected").prop( "disabled", true );
-					$("#rejectSelected").prop( "disabled", true );
-			   }
-               else{
-            	   $("#approveSelected").prop( "disabled", false );
-					$("#rejectSelected").prop( "disabled", false );
                }
            },
            refresh: function() {
@@ -128,7 +136,22 @@
                        rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
                    rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
                    rowData.voucherStatusId = 4;
-                   submitDetails(rowData);
+                   $( "#dialog-confirm" ).dialog({
+             	      resizable: false,
+             	      height: "auto",
+             	      width: 400,
+             	      modal: true,
+             	      buttons: {
+             	        "Continue": function() {
+             	        	rowData.rejectionComment=$("#comment").val();
+             	        	submitDetails(rowData,rowIndx);
+             	          $( this ).dialog( "close" );
+             	        },
+             	        Cancel: function() {
+             	          $( this ).dialog( "close" );
+             	        }
+             	      }
+             	 });
                });
                //edit button
                $grid.find("button.approve_btn").button({ icons: { primary: 'ui-icon-check'} })
@@ -139,7 +162,7 @@
                        rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
                        rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
                    rowData.voucherStatusId = 3;
-                   submitDetails(rowData);
+                   submitDetails(rowData,rowIndx);
                });
 
                $("#approveSelected").prop( "disabled", true );
@@ -204,5 +227,11 @@
 </head>
 <body>
   <div id="grid_md" style="margin:5px auto;"></div>
+  <div id="dialog-confirm" style="display: none" title="Rejection Comment">
+    <fieldset>
+      <label for="name">Please enter rejection comments:</label>
+      <input type="text" name="comment" id="comment" class="text ui-widget-content ui-corner-all">
+    </fieldset>
+  </div>
 </body>
 </html>

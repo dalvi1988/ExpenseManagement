@@ -14,15 +14,17 @@
 
 var expenseDetailList=${expenseDetailList};
 var expenseCategoryList =${expenseCategoryList};
+var advanceList =${advanceList};
 var $summary = "";
-var totalData;;
+var totalData,settlementData;
 $(function () {
 	
 		//calculate sum of 3rd and 4th column.
 	function calculateSummary() {
 		var arrayData=[];
 			var revenueTotal = 0,
-			profitTotal = 0;
+			profitTotal = 0,
+			advanceAmount=$("#advanceAmount").val();
 			arrayData = $grid? $grid.pqGrid( "option" , "dataModel.data" ): expenseDetailList;
 		    if(arrayData != null){
 			    for (var i = 0; i < arrayData.length; i++) {
@@ -30,8 +32,11 @@ $(function () {
 			        revenueTotal += parseFloat(row["amount"]);
 			    }
 		    }
-		
-		    totalData = { description: "<b>Total</b>",  amount: revenueTotal ,receipt:"", delButton:"", pq_rowcls: 'green' };
+		    totalData = { description: "<b>Total Amount</b>",  amount: revenueTotal ,receipt:"", delButton:"", pq_rowcls: 'green' };
+		    if($("input[name='isAdvance']:checked").val() == "on"){
+			    settlementData = { description: "<b>Pending Settment Amount</b>",  amount: revenueTotal-advanceAmount,receipt:"", delButton:"", pq_rowcls: 'green' };
+		    	
+		    }
 
 	}
 	
@@ -184,11 +189,6 @@ $(function () {
 			return false;
 		}else if($("#endDate").val() ==""){
 			$("#dialog").text("End Date can not be empty.");
-			$("#dialog").dialog();
-			return false;
-		}
-		else if($("#title").val().length <= 4){
-			$("#dialog").text("Title should be more than 4 character");
 			$("#dialog").dialog();
 			return false;
 		}
@@ -546,19 +546,118 @@ $(function () {
                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            }
        });
-       var data = [totalData]; //JSON (array of objects)
+       var data;
+       if($("input[name='isAdvance']:checked").val() == "on"){
+       		data = [totalData,settlementData]; //JSON (array of objects)
+       }
+       else{
+    	   data = [totalData];
+       }
        var obj1 = { data: data, $cont: $summary }
        $(this).pqGrid("createTable", obj1);  
    }
     var $grid = $("#grid_editing").pqGrid(obj);
   //get instance of the grid.
     var grid = $grid.data("paramqueryPqGrid");
-    addNewRow();         
+    addNewRow(); 
+    
+   
+    $(".expenseType").change(function () {
+    	 if($("input[name='expenseType']:checked").val()=="EmployeeExpense"){
+    		 $(".eventTab").hide();
+    	 }
+    	 else{
+    		 $(".eventTab").show();
+    	 }
+    	 $("input[name='isAdvance']:checkbox").prop('checked', false);
+    	 $('#advanceDetailId').val("-1");
+    	 $('#advanceAmount').val("");
+    	 $(".advanceTab").hide();
+    	 changedAdvance();
+    });
+    
+    $("#isAdvance").change(function () {
+    	var flag=false;
+    	if($("input[name='isAdvance']:checked").val()=="on"){
+    		$(".advanceTab").show();
+    	}
+    	else{
+    		$(".advanceTab").hide();
+    	}
+    	$('#advanceDetailId').empty();
+    	$('#advanceDetailId').append($('<option>', {
+    		    value: "-1",
+    		    text: "--Select Advance--",
+    	}));
+    	
+	   	 if($("input[name='expenseType']:checked").val()=="EmployeeExpense"){
+	   		for(var i=0;i<advanceList.length;i++){
+		   		if(advanceList[i].isEvent == false){
+		   			 $('#advanceDetailId').append($('<option>', {
+		   				    value: advanceList[i].advanceDetailId,
+		   				    text: advanceList[i].advanceNumber,
+		   			}));
+	   			}
+   			 }
+	   	 }
+	   	 else if($("input[name='expenseType']:checked").val()=="EventExpense"){
+	   		 if($('#eventId').val()==-1){
+	   			$("#dialog").text("Please first select event for which you filling expense.");
+				$("#dialog").dialog();
+				$("input[name='isAdvance']:checkbox").prop('checked', false);
+		    	$(".advanceTab").hide();
+	   		 }
+	   		 else{
+	   			for(var i=0;i<advanceList.length;i++){
+	   				
+			   		 if(advanceList[i].isEvent == true && advanceList[i].eventId==$('#eventId').val()){
+			   			 $('#advanceDetailId').append($('<option>', {
+			   				    value: advanceList[i].advanceDetailId,
+			   				    text: advanceList[i].advanceNumber,
+			   			}));
+		  			 }
+	   			}
+	   		 }
+	   	 }
+
+   });
+    
+    $("#eventId").change(function () {
+    	$('#advanceDetailId').empty();
+    	$('#advanceDetailId').append($('<option>', {
+    		    value: "-1",
+    		    text: "--Select Advance--",
+    	}));
+    	for(var i=0;i<advanceList.length;i++){
+	    	if(advanceList[i].isEvent == true && advanceList[i].eventId==$('#eventId').val()){
+	  			 $('#advanceDetailId').append($('<option>', {
+	  				    value: advanceList[i].advanceDetailId,
+	  				    text: advanceList[i].advanceNumber,
+	  			}));
+			}
+    	}
+   });
+    
 });
 
-function toggler(divId) {
-    $("." + divId).toggle();
+
+function changedAdvance(){
+	if($('#advanceDetailId').val()!=-1){
+		for(var i=0;i<advanceList.length;i++){
+			if( advanceList[i].advanceDetailId==$('#advanceDetailId').val()){
+				 $('#advanceAmountSpan').text(advanceList[i].amount);
+				 $('#advanceAmount').val(advanceList[i].amount);
+				 $('#advancePurposeSpan').text(advanceList[i].purpose);
+			}
+		}
+	}
+	else{
+		 $('#advanceAmountSpan').text("");
+		 $('#advancePurposeSpan').text("");
+		 $('#advanceAmount').val("");
+	}
 }
+
 </script>
 </head>
 <body>
@@ -566,26 +665,26 @@ function toggler(divId) {
  	    <div class=" container" id="headerToolbar" >
 			  <div class="col-xs-6">			 
 	 	    	 <div class="form-group row">
-					 <label class="col-sm-4"><form:radiobutton  path="expenseType" onclick="toggler('eventTab');" value="EmployeeExpense"/>Employee Expense</label>
-					 <label class="col-sm-4"><form:radiobutton  path="expenseType" onclick="toggler('eventTab');" value="EventExpense"/>Event Expense</label>
+					 <label class="col-sm-4"><form:radiobutton class="expenseType" path="expenseType" value="EmployeeExpense"/>Employee Expense</label>
+					 <label class="col-sm-4"><form:radiobutton class="expenseType" path="expenseType" value="EventExpense"/>Event Expense</label>
 				 </div>
 				 <br/>
 			 	 <div class="form-group row">
-			        <label class="col-sm-1" for="startDate">Start Date</label>
-			        <div class="col-sm-4"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
+			        <label class="col-sm-2" for="startDate">Start Date</label>
+			        <div class="col-sm-3"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
 					 
-			        <label class="col-sm-1" for="endDate">End Date</label>
-			        <div class="col-sm-4"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
+			        <label class="col-sm-2" for="endDate">End Date</label>
+			        <div class="col-sm-3"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
 			    </div>
 			    <br/>
 			    
 			    <div class="form-group row">
-			       <label class="col-sm-1" for="endDate">Purpose</label>
-			      <div class="col-sm-4"><form:input path="purpose" class="form-control input-sm" /></div>
+			       <label class="col-sm-2" for="purpose">Purpose</label>
+			      <div class="col-sm-3"><form:input path="purpose" class="form-control input-sm" /></div>
 			      
 			      <div class="eventTab" style="display: none">
 				       <label class="col-sm-1" for="eventId">Event</label>
-				       <div class="col-sm-4">
+				       <div class="col-sm-3">
 					      <form:select class="form-control col-sm-4" path="eventId" >
 				  			<form:option value="-1" label="--- Select Event ---" />
 						  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
@@ -598,25 +697,29 @@ function toggler(divId) {
 			   <div class="col-xs-4 panel panel-primary">
 			   		<h1 class="panel-heading">Advance Details</h1> 
 			   		<div class="form-group row panel-heading">
-			   			<input type="checkbox" onchange="toggler('advanceTab');">Do you want to settle against advance?
+			   			<input type="checkbox" name="isAdvance" id="isAdvance" >Do you want to settle against advance?
 			   		</div>
 			   		<div class="advanceTab" style="display: none">
 			   			<div class="form-group row">
-					       <label class="col-sm-4" for="eventId">Select Advance:</label>
+					       <label class="col-sm-4" for="advanceDetailId">Select Advance:</label>
 					       <div class="col-sm-5">
-						      <form:select class="form-control col-sm-4" path="eventId" >
-					  			<form:option value="-1" label="--- Select Advance ---" />
-							  	<form:options items="${eventList}" itemValue="eventId" itemLabel="eventName"/>
+						      <form:select class="form-control col-sm-4" onchange="changedAdvance();" path="advanceDetailId" >
 							  </form:select>
+							  
 						   </div>
 					   </div>
 					   <br/>
 					   <div class="form-group row">
-					        <label class="col-sm-2" for="startDate">Amount</label>
-					        <div class="col-sm-2"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
+					        <label class="col-sm-2">Amount</label>
+					        <div class="col-sm-2">
+					        	<span id="advanceAmountSpan" style="color:blue;font-weight:bold"></span>
+					        	<input type="hidden" id="advanceAmount" name="advanceAmount" class="form-control input-sm" />
+					        </div>
 							 
-					        <label class="col-sm-2" for="endDate">Purpose</label>
-					        <div class="col-sm-5"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
+					        <label class="col-sm-2">Purpose</label>
+					        <div class="col-sm-5">
+					        	<span id="advancePurposeSpan" style="color:blue;font-weight:bold"></span>
+					        </div>
 					   </div>
 				  </div>
 			   </div>
@@ -627,7 +730,6 @@ function toggler(divId) {
  		<div id="filesDiv" style="border: medium; display: none;"></div>
  		<form:hidden id="voucherStatusId" path="voucherStatusId"></form:hidden>  
  		<form:hidden path="expenseHeaderId"></form:hidden>
- 		<form:hidden path="title" value="hidden"></form:hidden>
     </form:form>
     
     <div id="dialog" style="display: none" title="Validation failure"></div>
