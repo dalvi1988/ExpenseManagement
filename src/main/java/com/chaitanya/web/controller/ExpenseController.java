@@ -274,7 +274,7 @@ public class ExpenseController {
 		return model;
 	}
 	
-	@RequestMapping(value="/pendingExpense",method=RequestMethod.GET)
+	@RequestMapping(value="/pendingAtPaymentDeskExpense",method=RequestMethod.GET)
 	public @ResponseBody ModelAndView getPendingAtPaymentDesk() throws JsonGenerationException, JsonMappingException, IOException{
 		
 		ModelAndView model=new ModelAndView();
@@ -290,10 +290,10 @@ public class ExpenseController {
 			}
 			
 			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
-			model.setViewName("expense/pendingExpensesJSP");
+			model.setViewName("expense/pendingAtPaymentDeskExpenseJSP");
 		}
 		catch(Exception e){
-			logger.error("ExpenseController: getPendingExpense",e);
+			logger.error("ExpenseController: pendingAtPaymentDeskExpense",e);
 			model.setViewName("others/505");
 		}
 		return model;

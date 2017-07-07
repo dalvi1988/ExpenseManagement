@@ -131,6 +131,10 @@
 	        $('.content').load('rejectedAdvance');
 	     });
 	    
+	     $('.pendingAtPaymentDesk').click(function(){
+		    	$( this ).parent().addClass("active")
+		        $('.content').load('pendingAtPaymentDeskExpense');
+		     });
 	    $('.createExpense').click();
 	    
 	});
@@ -215,7 +219,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
-            <li><a href="#" class="paymentDeskExpense"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
+            <li><a href="#" class="pendingAtPaymentDesk"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
           </ul>
         </li>
         
