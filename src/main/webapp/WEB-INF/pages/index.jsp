@@ -270,6 +270,23 @@
           </a>
         </li>
         
+        <sec:authorize access="hasAnyRole('ADMIN_ROLE')" var="isAuthorizeAny">
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i>
+            <span>Payment Desk</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="paymentExpense"><i class="fa fa-circle-o"></i> Expense Voucher</a></li>
+            <li><a href="#" class="paymentAdvance"><i class="fa fa-circle-o"></i> Advance Voucher</a></li>
+            
+          </ul>
+        </li>
+        </sec:authorize>
+        
         <sec:authorize access="hasAnyRole('SUPER_ADMIN')" var="isAuthorizeAny">
          <li class="treeview">
           <a href="#">
