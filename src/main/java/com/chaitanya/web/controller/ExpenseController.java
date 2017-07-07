@@ -274,6 +274,31 @@ public class ExpenseController {
 		return model;
 	}
 	
+	@RequestMapping(value="/pendingExpense",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPendingAtPaymentDesk() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 expenseHeaderDTOList = expenseService.getPendingAtPaymentDeskList(expenseHeaderDTO);
+			}
+			
+			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
+			model.setViewName("expense/pendingExpensesJSP");
+		}
+		catch(Exception e){
+			logger.error("ExpenseController: getPendingExpense",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
 	@RequestMapping(value="/rejectedExpense",method=RequestMethod.GET)
 	public @ResponseBody ModelAndView getRejectedExpense() throws JsonGenerationException, JsonMappingException, IOException{
 		
