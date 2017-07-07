@@ -137,6 +137,12 @@ public class ExpenseService implements IExpenseService{
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
 					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEventJPA())){
+						expHeaderDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(expenseHeaderJPA.getEventJPA()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+					}
 					expenseHeaderDTOList.add(expHeaderDTO);
 				}
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
@@ -306,6 +312,12 @@ public class ExpenseService implements IExpenseService{
 			ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.getExpense(expenseHeaderDTO);
 			if(Validation.validateForNullObject(expenseHeaderJPA)){
 				expenseHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+				if(Validation.validateForNullObject(expenseHeaderJPA.getEventJPA())){
+					expenseHeaderDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(expenseHeaderJPA.getEventJPA()));
+				}
+				if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+					expenseHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+				}
 				List<ExpenseDetailDTO> expenseDetailDTOList= new ArrayList<ExpenseDetailDTO>();
 				
 				for(ExpenseDetailJPA expenseDetailJPA: expenseHeaderJPA.getExpenseDetailJPA()){

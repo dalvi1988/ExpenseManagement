@@ -20,6 +20,7 @@
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
        }, 
         { title: "For Event", width: 150, dataIndx: "eventDTO" },
+        { title: "Advance Number", width: 150, dataIndx: "advanceDTO" },
        { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String",
        },
 	   { title: "End Date", minWidth: 190, dataIndx: "endDate"},

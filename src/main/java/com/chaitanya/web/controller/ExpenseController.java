@@ -194,7 +194,7 @@ public class ExpenseController {
 				    mapper.readValue(updateList, new TypeReference<List<ExpenseDetailDTO>>(){});
 			for(int i=0; i< updatedExpenseDetailDTOList.size(); i++){
 				ExpenseDetailDTO expenseDetailDTO=updatedExpenseDetailDTOList.get(i);
-				MultipartFile receipt=addedFiles.get(i);
+				MultipartFile receipt=updatedFiles.get(i);
 				expenseDetailDTO.setReceipt(receipt);
 			}
 			

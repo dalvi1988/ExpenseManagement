@@ -17,6 +17,7 @@ var expenseCategoryList =${expenseCategoryList};
 var advanceList =${advanceList};
 var $summary = "";
 var totalData,settlementData;
+var grid;
 $(function () {
 	
 		//calculate sum of 3rd and 4th column.
@@ -419,7 +420,7 @@ $(function () {
             		}
                 }
             },
-            { title: "Description", width: 200, dataType: "String", align: "left", dataIndx: "description"},
+            { title: "Description", width: 220, dataType: "String", align: "left", dataIndx: "description"},
             { title: "Unit", width: 50, dataType: "integer", align: "right", dataIndx: "unit",
             	editable: function(ui){
             		if(typeof ui.rowData != "undefined" ){
@@ -433,7 +434,7 @@ $(function () {
             		}
                 }
             },
-            { title: "Amount", width: 100, dataType: "float", align: "right", dataIndx: "amount",
+            { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",
                 validations: [{ type: 'gt', value: 0.5, msg: "should be > 0.5"}],
                 render: function (ui) {                        
                     var cellData = ui.cellData;
@@ -512,7 +513,6 @@ $(function () {
         }
     };
     obj.refresh= function () {
-    	
 	   	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
 	   		 debugger;
 	   		 var $tr = $(this).closest("tr");
@@ -546,6 +546,7 @@ $(function () {
                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            }
        });
+       calculateSummary();
        var data;
        if($("input[name='isAdvance']:checked").val() == "on"){
        		data = [totalData,settlementData]; //JSON (array of objects)
@@ -556,12 +557,8 @@ $(function () {
        var obj1 = { data: data, $cont: $summary }
        $(this).pqGrid("createTable", obj1);  
    }
-    var $grid = $("#grid_editing").pqGrid(obj);
-  //get instance of the grid.
-    var grid = $grid.data("paramqueryPqGrid");
-    addNewRow(); 
-    
    
+    
     $(".expenseType").change(function () {
     	 if($("input[name='expenseType']:checked").val()=="EmployeeExpense"){
     		 $(".eventTab").hide();
@@ -570,13 +567,14 @@ $(function () {
     		 $(".eventTab").show();
     	 }
     	 $("input[name='isAdvance']:checkbox").prop('checked', false);
-    	 $('#advanceDetailId').val("-1");
+    	 $('#advanceSelect').val("-1");
     	 $('#advanceAmount').val("");
     	 $(".advanceTab").hide();
     	 changedAdvance();
     });
     
     $("#isAdvance").change(function () {
+    	
     	var flag=false;
     	if($("input[name='isAdvance']:checked").val()=="on"){
     		$(".advanceTab").show();
@@ -584,8 +582,8 @@ $(function () {
     	else{
     		$(".advanceTab").hide();
     	}
-    	$('#advanceDetailId').empty();
-    	$('#advanceDetailId').append($('<option>', {
+    	$('#advanceSelect').empty();
+    	$('#advanceSelect').append($('<option>', {
     		    value: "-1",
     		    text: "--Select Advance--",
     	}));
@@ -593,7 +591,7 @@ $(function () {
 	   	 if($("input[name='expenseType']:checked").val()=="EmployeeExpense"){
 	   		for(var i=0;i<advanceList.length;i++){
 		   		if(advanceList[i].isEvent == false){
-		   			 $('#advanceDetailId').append($('<option>', {
+		   			 $('#advanceSelect').append($('<option>', {
 		   				    value: advanceList[i].advanceDetailId,
 		   				    text: advanceList[i].advanceNumber,
 		   			}));
@@ -611,7 +609,7 @@ $(function () {
 	   			for(var i=0;i<advanceList.length;i++){
 	   				
 			   		 if(advanceList[i].isEvent == true && advanceList[i].eventId==$('#eventId').val()){
-			   			 $('#advanceDetailId').append($('<option>', {
+			   			 $('#advanceSelect').append($('<option>', {
 			   				    value: advanceList[i].advanceDetailId,
 			   				    text: advanceList[i].advanceNumber,
 			   			}));
@@ -619,35 +617,61 @@ $(function () {
 	   			}
 	   		 }
 	   	 }
-
    });
     
     $("#eventId").change(function () {
-    	$('#advanceDetailId').empty();
-    	$('#advanceDetailId').append($('<option>', {
+    	$('#advanceSelect').empty();
+    	$('#advanceSelect').append($('<option>', {
     		    value: "-1",
     		    text: "--Select Advance--",
     	}));
     	for(var i=0;i<advanceList.length;i++){
 	    	if(advanceList[i].isEvent == true && advanceList[i].eventId==$('#eventId').val()){
-	  			 $('#advanceDetailId').append($('<option>', {
+	  			 $('#advanceSelect').append($('<option>', {
 	  				    value: advanceList[i].advanceDetailId,
-	  				    text: advanceList[i].advanceNumber,
+	  				    text: advanceList[i].advanceNumber
 	  			}));
 			}
     	}
    });
     
+    
+    
+    var $grid;
+    
+    if($('#advanceDetailId').val() != "" && $('#advanceDetailId').val() != null){
+    	
+    	$(".expenseType").change();
+    	$("#eventId").change();
+    	 $("#isAdvance").change();
+    	
+    	$("input[name='isAdvance']:checkbox").prop('checked', true);
+    	$(".advanceTab").show();
+    	$('#advanceSelect').val(""+$('#advanceDetailId').val());
+    	
+    	changedAdvance();
+    	$grid = $("#grid_editing").pqGrid(obj);
+    }
+    else{
+    	$grid = $("#grid_editing").pqGrid(obj);
+    	addNewRow(); 
+    }
+    
+    
+    //get instance of the grid.
+     grid = $grid.pqGrid( "getInstance" ).grid; 
+    
 });
 
-
 function changedAdvance(){
-	if($('#advanceDetailId').val()!=-1){
+	if($('#advanceSelect').val()!=-1 || $('#advanceSelect').val()!=null){
 		for(var i=0;i<advanceList.length;i++){
-			if( advanceList[i].advanceDetailId==$('#advanceDetailId').val()){
+			if( advanceList[i].advanceDetailId==$('#advanceSelect').val()){
 				 $('#advanceAmountSpan').text(advanceList[i].amount);
 				 $('#advanceAmount').val(advanceList[i].amount);
 				 $('#advancePurposeSpan').text(advanceList[i].purpose);
+				 $('#advanceDetailId').val(""+$('#advanceSelect').val())
+				 break;
 			}
 		}
 	}
@@ -655,7 +679,9 @@ function changedAdvance(){
 		 $('#advanceAmountSpan').text("");
 		 $('#advancePurposeSpan').text("");
 		 $('#advanceAmount').val("");
+		 
 	}
+	grid.refresh();
 }
 
 </script>
@@ -701,11 +727,11 @@ function changedAdvance(){
 			   		</div>
 			   		<div class="advanceTab" style="display: none">
 			   			<div class="form-group row">
-					       <label class="col-sm-4" for="advanceDetailId">Select Advance:</label>
+					       <label class="col-sm-4" for="advanceSelect">Select Advance:</label>
 					       <div class="col-sm-5">
-						      <form:select class="form-control col-sm-4" onchange="changedAdvance();" path="advanceDetailId" >
-							  </form:select>
-							  
+						      <select class="form-control col-sm-4" onchange="changedAdvance();" id="advanceSelect" >
+							  </select>
+							  <form:hidden id="advanceDetailId" path="advanceDetailId"></form:hidden>  
 						   </div>
 					   </div>
 					   <br/>
