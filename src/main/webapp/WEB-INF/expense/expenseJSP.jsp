@@ -639,18 +639,21 @@ $(function () {
     
     var $grid;
     
-    if($('#advanceDetailId').val() != "" && $('#advanceDetailId').val() != null){
-    	
+    if($('#expenseHeaderId').val() != "" && $('#expenseHeaderId').val() != null){
+    		
     	$(".expenseType").change();
     	$("#eventId").change();
-    	 $("#isAdvance").change();
     	
-    	$("input[name='isAdvance']:checkbox").prop('checked', true);
-    	$(".advanceTab").show();
+    	$("#isAdvance").change();
+    	if($('#advanceDetailId').val() != "" && $('#advanceDetailId').val() != null){
+	    	$("input[name='isAdvance']:checkbox").prop('checked', true);
+    		$(".advanceTab").show();
+    	}
     	$('#advanceSelect').val(""+$('#advanceDetailId').val());
     	
     	changedAdvance();
-    	$grid = $("#grid_editing").pqGrid(obj);
+    	
+	    $grid = $("#grid_editing").pqGrid(obj);
     }
     else{
     	$grid = $("#grid_editing").pqGrid(obj);
