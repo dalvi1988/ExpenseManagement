@@ -253,7 +253,8 @@ public class ExpenseDAO implements IExpenseDAO{
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderList= session.createCriteria(ExpenseHeaderJPA.class)
-				.add(Restrictions.eq("employeeJPA.branchJPA.companyId",expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()))
+				.setFetchMode("advanceJPA",FetchMode.JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
 				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
 				.list();
 		return expsensHeaderList;
