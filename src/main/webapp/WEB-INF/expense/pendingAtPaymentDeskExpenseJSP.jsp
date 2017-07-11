@@ -19,9 +19,18 @@
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
 		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
-	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center"},
+	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "right",
+	    	   render: function (ui) {                        
+                   var cellData = ui.cellData;
+                   if (cellData != null) {
+                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+                   }
+                   else {
+                       return "";
+                   }
+               }
+		   },
 	       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
-	       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO" },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
 		];
        //define dataModel
