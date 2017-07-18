@@ -7,7 +7,17 @@
  <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
  <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
  <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
-    
+
+<style type="text/css">
+div.pq-grid tr td.disabled{    
+    text-shadow: 0 1px 0 #fff;
+    background:#ddd;
+    border:0;
+}
+tr td.beige{        
+    background:beige;
+}
+</style>
 
 <script type="text/javascript">
 
@@ -40,7 +50,21 @@ $(function () {
 		    }
 
 	}
-	
+	function disableFieldRenderer(ui) {
+        var grid = $(this).pqGrid('getInstance').grid,
+            rowData = ui.rowData,
+            rowIndx = ui.rowIndx,
+            dataIndx = ui.dataIndx;
+
+        if (grid.isEditableCell({ rowIndx: rowIndx, dataIndx: dataIndx }) == false) {
+            //inject disabled class into read only cells.                
+            grid.addClass({ rowIndx: rowIndx, dataIndx: dataIndx, cls: 'disabled' });
+        }
+        else {
+            grid.removeClass({ rowIndx: rowIndx, dataIndx: dataIndx, cls: 'disabled' });
+        }
+    };
+    
 	function resetDate(){
         var data =  grid.pqGrid("option", "dataModel.data");
         if(data !=null){
@@ -73,16 +97,25 @@ $(function () {
             if(data.row.locationRequired == false){
             	rowData.fromLocation="";
             	rowData.toLocation="";
-            	
+            	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'fromLocation', cls: 'disabled'} );
+            	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'toLocation', cls: 'disabled'} );
+            }
+            else{
+            	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'fromLocation', cls: 'disabled'} );
+            	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'toLocation', cls: 'disabled'} );
             }
             rowData.unitRequired = data.row.unitRequired;
             if(data.row.unitRequired == false){
             	rowData.unit="";
+            	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
+            }
+            else{
+            	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
             }
             rowData.amountPerUnit= data.row.amount; 
             
             rowData.expenseCategoryId =data.value;
-            $grid.pqGrid("refresh");
+           // $grid.pqGrid("refresh");
         };
         //initialize the editor
         $inp.autocomplete({
@@ -388,6 +421,19 @@ $(function () {
                 	for (var i = 0; i < expenseCategoryList.length; i++) {
              	        if(expenseCategoryList[i].expenseCategoryId == ui.rowData.expenseCategoryId){
                         	ui.rowData.expenseCategoryName=expenseCategoryList[i].expenseName;
+                        	if(expenseCategoryList[i].locationRequired == true){
+                        		ui.rowData.locationRequired=true;
+                        	}
+                        	else{
+                        		ui.rowData.locationRequired=false;
+                        	}
+                        	
+                        	if(expenseCategoryList[i].unitRequired== true){
+                        		ui.rowData.unitRequired=true;
+                        	}
+                        	else{
+                        		ui.rowData.unitRequired=false;
+                        	}
                          	return ""+expenseCategoryList[i].expenseName;
                         }
              	    }
@@ -396,43 +442,55 @@ $(function () {
             },
             { title: "Location From", width: 140, dataType: "string", align: "left", dataIndx: "fromLocation",
             	editable: function(ui){
-            		if(typeof ui.rowData != "undefined" ){
-						if(ui.rowData['locationRequired'] == true)  
+            		debugger;
+            		if(typeof ui.rowData != "undefined" && ui.rowData != null && ui.rowData['locationRequired'] != null){
+						if(ui.rowData['locationRequired'] == true){ 
 							return true;
-						else 
+						}
+						else {
 							return false;
+						}
             		}
             		else{
+            			//$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'fromLocation', cls: 'disabled'} );	
             			return false;
             		}
-                }
+                },
+                render: disableFieldRenderer
             },
             { title: "Location To", width: 140, dataType: "String", align: "left", dataIndx: "toLocation",
             	editable: function(ui){
-            		if(typeof ui.rowData != "undefined" ){
-						if(ui.rowData['locationRequired'] == true)  
+            		if(typeof ui.rowData != "undefined" && ui.rowData != null && ui.rowData['locationRequired'] != null){
+						if(ui.rowData['locationRequired'] == true){  
 							return true;
-						else 
+						}
+						else{ 
 							return false;
+						}
             		}
             		else{
             			return false;
             		}
-                }
+                },
+                render: disableFieldRenderer
+            	
             },
             { title: "Description", width: 220, dataType: "String", align: "left", dataIndx: "description"},
             { title: "Unit", width: 50, dataType: "integer", align: "right", dataIndx: "unit",
             	editable: function(ui){
-            		if(typeof ui.rowData != "undefined" ){
-						if(ui.rowData['unitRequired'] == true)  
+            		if(typeof ui.rowData != "undefined"  && ui.rowData != null && ui.rowData['unitRequired'] != null){
+						if(ui.rowData['unitRequired'] == true){ 
 							return true;
-						else 
+						}
+						else {
 							return false;
+						}
             		}
             		else{
             			return false;
             		}
-                }
+                },
+                render: disableFieldRenderer
             },
             { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",
                 validations: [{ type: 'gt', value: 0.5, msg: "should be > 0.5"}],
@@ -504,13 +562,13 @@ $(function () {
 	            obj.refresh.call(this);
         	}
         },
-        cellBeforeSave: function (evt, ui) {
+       /*  cellBeforeSave: function (evt, ui) {
         	var cd = ui.newVal;
             if (cd == "") {
                 return false;
             }
             
-        }
+        } */
     };
     obj.refresh= function () {
 	   	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
@@ -659,7 +717,6 @@ $(function () {
     	$grid = $("#grid_editing").pqGrid(obj);
     	addNewRow(); 
     }
-    
     
     //get instance of the grid.
      grid = $grid.pqGrid( "getInstance" ).grid; 
