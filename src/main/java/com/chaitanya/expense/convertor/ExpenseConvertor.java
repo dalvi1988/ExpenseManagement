@@ -80,7 +80,7 @@ public class ExpenseConvertor {
 			employeeJPA.setEmployeeId(expenseHeaderDTO.getEmployeeDTO().getEmployeeId());
 			expenseHeaderJPA.setEmployeeJPA(employeeJPA);
 			
-			if(Validation.validateForNullObject(expenseHeaderDTO.getAdvanceDTO())){
+			if(Validation.validateForNullObject(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId())){
 				if(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId() != -1){
 					AdvanceJPA advanceJPA=new AdvanceJPA();
 					advanceJPA.setAdvanceDetailId(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId());

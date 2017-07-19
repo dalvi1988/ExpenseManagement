@@ -207,9 +207,6 @@ $(function () {
 	}
 	
 	function addNewRow(){
-		/* if(validateComponent() == false){
-			return false;
-		} */
 		
 		var rowData = {date:$("#startDate").val(), locationRequired :false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
@@ -430,6 +427,7 @@ $(function () {
                         	
                         	if(expenseCategoryList[i].unitRequired== true){
                         		ui.rowData.unitRequired=true;
+                        		ui.rowData.amountPerUnit= expenseCategoryList[i].amount;
                         	}
                         	else{
                         		ui.rowData.unitRequired=false;
@@ -442,7 +440,6 @@ $(function () {
             },
             { title: "Location From", width: 140, dataType: "string", align: "left", dataIndx: "fromLocation",
             	editable: function(ui){
-            		debugger;
             		if(typeof ui.rowData != "undefined" && ui.rowData != null && ui.rowData['locationRequired'] != null){
 						if(ui.rowData['locationRequired'] == true){ 
 							return true;
@@ -477,6 +474,16 @@ $(function () {
             },
             { title: "Description", width: 220, dataType: "String", align: "left", dataIndx: "description"},
             { title: "Unit", width: 50, dataType: "integer", align: "right", dataIndx: "unit",
+               editor: {
+            	   init: function(ui){
+                 	   ui.$cell.change(function(){
+                 		  var $inp = ui.$cell.find("input");
+                 		   ui.rowData['amount']=ui.rowData['amountPerUnit'] * $inp.val();
+                 		   
+                 		   $grid.pqGrid( "refreshCell", { rowIndx: ui.rowIndx, dataIndx: 'amount' } );
+                 	   });
+                   }
+               },
             	editable: function(ui){
             		if(typeof ui.rowData != "undefined"  && ui.rowData != null && ui.rowData['unitRequired'] != null){
 						if(ui.rowData['unitRequired'] == true){ 
@@ -557,7 +564,7 @@ $(function () {
             calculateSummary();
         },
         cellSave : function (evt, ui) {
-        	if(ui.dataIndx == "amount"){
+        	if(ui.dataIndx == "amount" || ui.dataIndx == "unit"){
 	            calculateSummary();
 	            obj.refresh.call(this);
         	}
