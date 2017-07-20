@@ -70,6 +70,7 @@
 	    	    $("#grid_filter").find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
 	           .unbind("click")
 	           .bind("click", function (evt) {
+	        	   $(".alert").hide();
 	        	     var $tr = $(this).closest("tr");
 	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
 	                 var rowIndx = obj.rowIndx;

@@ -12,7 +12,7 @@ public interface IAdvanceDAO {
 	void updateProcessInstance(AdvanceJPA advanceJPA, int voucherStatusId,
 			EmployeeDTO employeeDTO);
 
-	String generateAdvanceNumber(AdvanceJPA advanceJPA);
+	String generateAdvanceNumber(AdvanceDTO advanceDTO);
 
 	List<AdvanceJPA> getDraftAdvanceList(AdvanceDTO advanceDTO);
 
@@ -29,4 +29,5 @@ public interface IAdvanceDAO {
 	List<AdvanceJPA> getRejectedAdvanceList(AdvanceDTO advanceDTO);
 
 	List<AdvanceJPA> getApprovedAdvanceByEmp(AdvanceDTO advanceDTO);
+
 }

@@ -29,7 +29,7 @@
       	    	
       	    },
       	    error:function(data) {
-      	    	alert("error")
+      	    	$(".alert").addClass("alert-danger").text(data.message).show();
       	    }
 		   });
 	}

@@ -231,12 +231,14 @@ public class AdvanceDAO implements IAdvanceDAO{
 	}
 
 	@Override
-	public String generateAdvanceNumber(AdvanceJPA advanceJPA) {
+	public String generateAdvanceNumber(AdvanceDTO advanceDTO) {
 	
 		Session session = sessionFactory.getCurrentSession();
 		ProcedureCall query =  session.createStoredProcedureCall("voucher_number");
 				query.registerParameter(
 			        "module", String.class, ParameterMode.IN).bindValue("ADVANCE_EXPENSE");
+				query.registerParameter(
+				        "companyId", Integer.class, ParameterMode.IN).bindValue(advanceDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId());
 				query.registerParameter(
 			        "voucherNumber", String.class, ParameterMode.OUT);
 

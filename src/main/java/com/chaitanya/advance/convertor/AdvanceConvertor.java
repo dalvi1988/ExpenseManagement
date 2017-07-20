@@ -94,7 +94,7 @@ public class AdvanceConvertor {
 		return advanceJPA;
 	}
 	
-	public static AdvanceProcessHistoryJPA setExpenseHeaderJPAtoProcessHistoryJPA(AdvanceJPA advanceJPA){
+	public static AdvanceProcessHistoryJPA setAdvanceJPAtoProcessHistoryJPA(AdvanceJPA advanceJPA){
 		AdvanceProcessHistoryJPA processHistoryJPA=null;
 		
 		if(Validation.validateForNullObject(advanceJPA)){

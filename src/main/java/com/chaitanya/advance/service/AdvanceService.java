@@ -40,9 +40,10 @@ public class AdvanceService implements IAdvanceService{
 		logger.debug("AdvanceService: saveAdvance-Start");
 		validateAdvanceDTO(baseDTO);
 		try{
-			AdvanceJPA advanceJPA=AdvanceConvertor.setAdvanceDTOToJPA((AdvanceDTO)baseDTO);
+			AdvanceDTO advanceDTO=(AdvanceDTO)baseDTO;
+			AdvanceJPA advanceJPA=AdvanceConvertor.setAdvanceDTOToJPA(advanceDTO);
 			if (Validation.validateForNullObject(advanceJPA)) {
-				AdvanceProcessHistoryJPA processHistoryJPA = AdvanceConvertor.setExpenseHeaderJPAtoProcessHistoryJPA(advanceJPA);
+				AdvanceProcessHistoryJPA processHistoryJPA = AdvanceConvertor.setAdvanceJPAtoProcessHistoryJPA(advanceJPA);
 				processHistoryJPA.setAdvanceJPA(advanceJPA);
 				List<AdvanceProcessHistoryJPA> processHistoryJPAList= new ArrayList<AdvanceProcessHistoryJPA>();
 				processHistoryJPAList.add(processHistoryJPA);
@@ -53,7 +54,7 @@ public class AdvanceService implements IAdvanceService{
 				//Create process instance if voucher not saved as draft.
 				if(advanceJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
 					if(! Validation.validateForEmptyString(advanceJPA.getAdvanceNumber())){
-						String voucherNumber = advanceDAO.generateAdvanceNumber(advanceJPA);
+						String voucherNumber = advanceDAO.generateAdvanceNumber(advanceDTO);
 						advanceJPA.setAdvanceNumber(voucherNumber);
 					}
 					else{
