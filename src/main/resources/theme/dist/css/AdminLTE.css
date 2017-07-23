@@ -12,7 +12,7 @@
  */
 html,
 body {
-  height: 100%;
+  height: 100% !important;
 }
 .layout-boxed html,
 .layout-boxed body {
@@ -26,7 +26,7 @@ body {
 }
 /* Layout */
 .wrapper {
-  height: 100%;
+  height: 100% !important;
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
@@ -94,15 +94,19 @@ body {
 }
 .content-wrapper,
 .right-side {
-  min-height: 100%;
+  height: 100%;
   background-color: #ecf0f5;
   z-index: 800;
+  padding-top: 70px;
 }
 .main-footer {
   background: #fff;
   padding: 15px;
   color: #444;
   border-top: 1px solid #d2d6de;
+  position:fixed;
+  width:100%;
+  bottom:0;
 }
 /* Fixed layout */
 .fixed .main-header,
@@ -148,6 +152,9 @@ body.hold-transition .main-header .logo {
   margin-left: auto;
   padding-left: 15px;
   padding-right: 15px;
+  padding-bottom: 45px;
+  height: 100%;
+  overflow-y: auto;
 }
 /* H1 - H6 font */
 h1,
@@ -190,9 +197,10 @@ a:focus {
  * ----------------------
  */
 .main-header {
-  position: relative;
   max-height: 100px;
   z-index: 1030;
+  position:fixed;
+  width:100%;
 }
 .main-header .navbar {
   -webkit-transition: margin-left 0.3s ease-in-out;
@@ -414,7 +422,7 @@ a:focus {
  */
 .main-sidebar,
 .left-side {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   padding-top: 50px;

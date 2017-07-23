@@ -17,6 +17,9 @@
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
+ 	
+ 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet">
+ 	<!-- <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet"> -->
   
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href=<spring:url value="/theme/bootstrap/css/bootstrap.min.css"/> />
@@ -25,7 +28,7 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href=<spring:url value="/theme/dist/css/AdminLTE.min.css"/> />
+  <link rel="stylesheet" href=<spring:url value="/theme/dist/css/AdminLTE.css"/> />
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href=<spring:url value="/theme/dist/css/skins/skin-blue.min.css"/> />
@@ -134,8 +137,13 @@
 	     $('.pendingAtPaymentDesk').click(function(){
 		    	$( this ).parent().addClass("active")
 		        $('.content').load('pendingAtPaymentDeskExpense');
-		     });
-	    $('.createExpense').click();
+		 });
+	     
+	     $('.employeeDashboard').click(function(){
+		    	$( this ).parent().addClass("active")
+		        $('.content').load('employeeDashboard');
+		 });
+	    $('.employeeDashboard').click();
 	    
 	});
 	function logout(){
@@ -143,8 +151,8 @@
     }
 	</script>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+<body class="hold-transition skin-blue sidebar-mini" style="height:100%">
+<div class="wrapper" style="height:100%">
 
   <header class="main-header">
     <!-- Logo -->
@@ -197,6 +205,12 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
+        
+        <li>
+          <a href="#" class="employeeDashboard">
+            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+          </a>
+        </li>
         
         <li>
           <a href="#" class="createExpense">
@@ -341,7 +355,7 @@
 
     <!-- Main content -->
     <section class="content">
-    <div class="overlay" width="100%">
+    <div class="overlay" >
         <i class="fa fa-refresh fa-spin"></i>
       </div>
     </section>
@@ -384,6 +398,10 @@
 <script type="text/javascript" src=<spring:url value="/theme/plugins/slimScroll/jquery.slimscroll.min.js"/> ></script>
 <!-- FastClick -->
 <script type="text/javascript" src=<spring:url value="/theme/plugins/fastclick/fastclick.js"/> ></script>
+<!-- ChartJS 1.0.1 -->
+<!-- <script type="text/javascript" src=<spring:url value="/theme/plugins/chartjs/Chart.min.js"/> ></script> -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
 <!-- AdminLTE App -->
 <script type="text/javascript" src=<spring:url value="/theme/dist/js/app.min.js"/> ></script>
 </body>

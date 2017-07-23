@@ -112,6 +112,7 @@ $(function () {
             else{
             	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
             }
+            $grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'amount', cls: 'disabled'} );
             rowData.amountPerUnit= data.row.amount; 
             
             rowData.expenseCategoryId =data.value;
@@ -210,6 +211,7 @@ $(function () {
 		
 		var rowData = {date:$("#startDate").val(), locationRequired :false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
+        $grid.pqGrid( "addClass", {rowIndx: rowIndx, dataIndx: 'amount', cls: 'disabled'} );
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
 	}
 	
