@@ -62,7 +62,6 @@ com\chaitanya\company\dao\CompanyDAO.class
 com\chaitanya\jpa\ExpenseHeaderJPA_.class
 com\chaitanya\config\core\SpringMvcInitializer.class
 com\chaitanya\company\dao\ICompanyDAO.class
-com\chaitanya\ajax\AjaxResponse.class
 com\chaitanya\web\controller\ExpenseController.class
 com\chaitanya\employee\model\EmployeeDTO.class
 com\chaitanya\web\controller\EmployeeController.class
