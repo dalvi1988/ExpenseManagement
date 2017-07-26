@@ -25,17 +25,14 @@ public class DashboardService implements IDashboardService{
 	private Logger logger= LoggerFactory.getLogger(DashboardService.class);
 
 	@Override
-	public BaseDTO totalAmountGroupByMonth(BaseDTO baseDTO) throws ParseException {
+	public List<DashboardDTO> totalAmountGroupByMonth(BaseDTO baseDTO) throws ParseException {
 		logger.debug("DashboardService: totalAmountGroupByMonth-Start");
 		validateDashboardDTO(baseDTO);
+		List<DashboardDTO> list=null;
 		try{
 			DashboardDTO dashboardDTO=(DashboardDTO)baseDTO;
 			if (Validation.validateForNullObject(dashboardDTO)) {
-				List list=dashboardDAO.totalAmountGroupByMonth(dashboardDTO);
-				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				list=dashboardDAO.totalAmountGroupByMonth(dashboardDTO);
 			}
 		}
 		catch(DataIntegrityViolationException e){
@@ -44,7 +41,7 @@ public class DashboardService implements IDashboardService{
 			logger.error("DashboardService: Exception",e);
 		}
 		logger.debug("DashboardService: totalAmountGroupByMonth-End");
-		return baseDTO;
+		return list;
 	}
 	
 	private void validateDashboardDTO(BaseDTO baseDTO) {

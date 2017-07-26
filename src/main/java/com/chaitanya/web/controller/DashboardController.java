@@ -1,6 +1,7 @@
 package com.chaitanya.web.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,8 @@ public class DashboardController {
 			DashboardDTO dashboardDTO= new DashboardDTO();
 			EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
 			dashboardDTO.setEmployeeDTO(employeeDTO);
-			BaseDTO branchDTOList = dashboardService.totalAmountGroupByMonth(dashboardDTO);
-			model.addObject("branchList", mapper.writeValueAsString(branchDTOList));
+			List<DashboardDTO> dashboardDTOList = dashboardService.totalAmountGroupByMonth(dashboardDTO);
+			model.addObject("dashboardDTOList", mapper.writeValueAsString(dashboardDTOList));
 			model.setViewName("dashboard/employeeDashboardJSP");
 		}
 		catch(Exception e){
