@@ -199,8 +199,9 @@ canvas {
 <script>
 
 $(document).ready(function(){
+	alert("branchList"+${branchList})
 	var data = {
-			  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+			  labels: ${branchList},
 			  datasets: [{
 			    label: "Dataset #1",
 			    backgroundColor: "rgba(255,99,132,0.2)",
