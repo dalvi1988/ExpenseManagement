@@ -52,7 +52,7 @@
            pageModel: { type: "local", rPP: 10 },
            editable: false,
            selectionModel: {type: 'row', mode: 'single'},
-           title: "Expenses Pending at Paymnet Desk",
+           title: "Pending At Payment Desk",
            resizable: true,
            numberCell: { show: false },
            columnBorders: true,           

@@ -274,7 +274,32 @@ public class ExpenseController {
 		return model;
 	}
 	
-	@RequestMapping(value="/pendingAtPaymentDeskExpense",method=RequestMethod.GET)
+	@RequestMapping(value="/paymentDeskExpenses",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPaymentDeskExpenseList() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 expenseHeaderDTOList = expenseService.getPendingAtPaymentDeskList(expenseHeaderDTO);
+			}
+			
+			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
+			model.setViewName("expense/paymentDeskExpenseJSP");
+		}
+		catch(Exception e){
+			logger.error("ExpenseController: paymentDeskExpenseList",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/pendingDeskExpenses",method=RequestMethod.GET)
 	public @ResponseBody ModelAndView getPendingAtPaymentDesk() throws JsonGenerationException, JsonMappingException, IOException{
 		
 		ModelAndView model=new ModelAndView();
@@ -290,10 +315,10 @@ public class ExpenseController {
 			}
 			
 			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
-			model.setViewName("expense/pendingAtPaymentDeskExpenseJSP");
+			model.setViewName("expense/pendingPaymentExpenseJSP");
 		}
 		catch(Exception e){
-			logger.error("ExpenseController: pendingAtPaymentDeskExpense",e);
+			logger.error("ExpenseController: getPendingAtPaymentDesk",e);
 			model.setViewName("others/505");
 		}
 		return model;

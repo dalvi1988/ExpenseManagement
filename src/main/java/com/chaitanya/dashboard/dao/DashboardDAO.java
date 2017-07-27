@@ -6,6 +6,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.DoubleType;
 import org.hibernate.type.StringType;
@@ -34,8 +36,11 @@ public class DashboardDAO implements IDashboardDAO{
                       "label", "amount"}, new Type[] { StringType.INSTANCE
                       		,DoubleType.INSTANCE }));
       
-	  	list = (List<DashboardDTO>) session.createCriteria(ExpenseDetailJPA.class)       
+	  	list = (List<DashboardDTO>) session.createCriteria(ExpenseDetailJPA.class)    
 						.setProjection(projection)
+						.createAlias("expenseHeaderJPA", "expenseHeaderJPA",JoinType.INNER_JOIN)
+						.createAlias("expenseHeaderJPA.employeeJPA", "employeeJPA",JoinType.INNER_JOIN)
+						.add(Restrictions.eq("employeeJPA.employeeId", dashboardDTO.getEmployeeDTO().getEmployeeId()))
 						 .setResultTransformer(new AliasToBeanResultTransformer(DashboardDTO.class))
 						.list();
 		return list;

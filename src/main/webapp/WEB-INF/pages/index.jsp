@@ -136,13 +136,20 @@
 	    
 	     $('.pendingAtPaymentDesk').click(function(){
 		    	$( this ).parent().addClass("active")
-		        $('.content').load('pendingAtPaymentDeskExpense');
+		        $('.content').load('pendingDeskExpenses');
+		 });
+	     
+	     $('.expenseForApproval').click(function(){
+		    	$( this ).parent().addClass("active")
+		        $('.content').load('paymentDeskExpenses');
 		 });
 	     
 	     $('.employeeDashboard').click(function(){
 		    	$( this ).parent().addClass("active")
 		        $('.content').load('employeeDashboard');
 		 });
+	     
+	    
 	    $('.employeeDashboard').click();
 	    
 	});
@@ -278,8 +285,8 @@
         </li>
         </sec:authorize>
          <li>
-          <a href="#" class="voucherForApproval">
-            <i class="fa fa-calendar"></i> <span>Voucher For Approval</span>
+          <a href="#" class="expenseForApproval">
+            <i class="fa fa-calendar"></i> <span>Expense For Approval</span>
           </a>
         </li>
         <li>

@@ -199,17 +199,20 @@ canvas {
 <script>
 
 $(document).ready(function(){
-	alert("branchList"+${branchList})
+	var dashboardDTOList= ${dashboardDTOList}
+	var label = Object.keys(dashboardDTOList).map(function(k) { return dashboardDTOList[k].label });
+	var amount = Object.keys(dashboardDTOList).map(function(k) { return dashboardDTOList[k].amount });
+	
 	var data = {
-			  labels: ${branchList},
+			  labels: label,
 			  datasets: [{
-			    label: "Dataset #1",
+			    label: "Total Approved Amount Per Month",
 			    backgroundColor: "rgba(255,99,132,0.2)",
 			    borderColor: "rgba(255,99,132,1)",
 			    borderWidth: 2,
 			    hoverBackgroundColor: "rgba(255,99,132,0.4)",
 			    hoverBorderColor: "rgba(255,99,132,1)",
-			    data: [65, 59, 20, 81, 56, 55, 40],
+			    data: amount,
 			  }]
 			};
 
