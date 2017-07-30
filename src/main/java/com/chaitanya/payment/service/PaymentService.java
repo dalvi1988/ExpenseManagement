@@ -17,7 +17,7 @@ import com.chaitanya.payment.dao.IPaymentDAO;
 import com.chaitanya.payment.model.PaymentDTO;
 import com.chaitanya.utility.Validation;
 
-@Service("branchService")
+@Service("paymentService")
 @Transactional(rollbackFor=Exception.class)
 public class PaymentService implements IPaymentService{
 	@Autowired
@@ -34,10 +34,18 @@ public class PaymentService implements IPaymentService{
 			PaymentJPA paymentJPA=PaymentConvertor.setPaymentDTOToJPA((PaymentDTO)baseDTO);
 			if (Validation.validateForNullObject(paymentJPA)) {
 				paymentJPA=paymentDAO.makePayment(paymentJPA);
-				if(Validation.validateForNullObject(paymentJPA)){
-					//baseDTO=BranchConvertor.setBranchJPAtoDTO(paymentJPA);
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				if(Validation.validateForNullObject(paymentJPA.getPaymentDetailId())){
+					if(paymentJPA.getModuleName().equals("Expense")){
+						int updateCount=paymentDAO.updateProcessInstance(paymentJPA);
+						if(updateCount ==1){
+							
+						}
+						else{
+							baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+						}
+					}
 				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 			else{
 				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);

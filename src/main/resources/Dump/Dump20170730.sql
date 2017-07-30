@@ -25,19 +25,30 @@ DROP TABLE IF EXISTS `advance_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `advance_details` (
-  `advance_details_id` bigint(10) NOT NULL,
+  `advance_details_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `employee_id` bigint(10) NOT NULL,
+  `advance_number` varchar(50) DEFAULT NULL,
   `amount` double NOT NULL,
   `purpose` varchar(45) NOT NULL,
-  `isEvent` char(1) NOT NULL,
-  `eventId` int(11) DEFAULT NULL,
+  `is_event` char(1) NOT NULL,
+  `event_id` int(11) DEFAULT NULL,
   `voucher_status_id` int(11) DEFAULT NULL,
-  `date` datetime DEFAULT NULL,
+  `created_by` bigint(10) DEFAULT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `modified_by` bigint(10) DEFAULT NULL,
+  `modified_date` datetime DEFAULT NULL,
   PRIMARY KEY (`advance_details_id`),
-  KEY `event_id_adv_details_idx` (`eventId`),
+  KEY `event_id_adv_details_idx` (`event_id`),
   KEY `voucher_id_adv_details_idx` (`voucher_status_id`),
-  CONSTRAINT `event_id_adv_details` FOREIGN KEY (`eventId`) REFERENCES `event_details` (`event_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  KEY `created_by_adv_details_idx` (`created_by`),
+  KEY `modified_by_adv_details_idx` (`modified_by`),
+  KEY `emp_id_adv_details_idx` (`employee_id`),
+  CONSTRAINT `created_by_adv_details` FOREIGN KEY (`created_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `emp_id_adv_details` FOREIGN KEY (`employee_id`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `event_id_adv_details` FOREIGN KEY (`event_id`) REFERENCES `event_details` (`event_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `modified_by_adv_details` FOREIGN KEY (`modified_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `voucher_id_adv_details` FOREIGN KEY (`voucher_status_id`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,7 +57,78 @@ CREATE TABLE `advance_details` (
 
 LOCK TABLES `advance_details` WRITE;
 /*!40000 ALTER TABLE `advance_details` DISABLE KEYS */;
+INSERT INTO `advance_details` VALUES (22,1,'Advance/asdfASDF/8',333,'asdfASDF','N',NULL,3,NULL,NULL,1,'2017-06-19 10:34:39'),(23,1,NULL,23123,'ASDasd','N',NULL,1,1,'2017-06-19 10:46:16',NULL,NULL),(24,1,'Advance/19-June-2017/9',565,'sdfasdfasd','N',NULL,3,NULL,NULL,1,'2017-06-19 10:58:05'),(25,1,'Advance/19-June-2017/10',3433,'asdfasd','N',NULL,132,1,'2017-06-19 18:19:01',NULL,NULL),(26,1,'Advance/23-June-2017/11',2000,'askdjf','N',NULL,132,1,'2017-06-23 19:50:54',NULL,NULL),(27,1,'Advance/23-June-2017/12',32321,'ASDf','Y',5,132,1,'2017-06-23 19:51:03',NULL,NULL),(28,1,'Advance/23-June-2017/13',23423,'dsfasdf','Y',5,132,1,'2017-06-23 19:51:11',NULL,NULL),(29,1,'Advance/23-June-2017/14',2432,'Test1','N',NULL,132,1,'2017-06-23 19:51:23',NULL,NULL);
 /*!40000 ALTER TABLE `advance_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `advance_process_history`
+--
+
+DROP TABLE IF EXISTS `advance_process_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `advance_process_history` (
+  `process_history_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `advance_detail_id` bigint(10) NOT NULL,
+  `voucher_status_id` int(11) DEFAULT NULL,
+  `processed_by` bigint(10) DEFAULT NULL COMMENT 'Approved/rejected by ',
+  `processed_date` datetime DEFAULT NULL,
+  `comments` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`process_history_id`),
+  KEY `advance_id_adv_process_hist_idx` (`advance_detail_id`),
+  KEY `voucher_status_adv_process_hist_idx` (`voucher_status_id`),
+  KEY `process_by_adv_process_hist_idx` (`processed_by`),
+  CONSTRAINT `advance_id_adv_process_hist` FOREIGN KEY (`advance_detail_id`) REFERENCES `advance_details` (`advance_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `process_by_adv_process_hist` FOREIGN KEY (`processed_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `voucher_status_adv_process_hist` FOREIGN KEY (`voucher_status_id`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `advance_process_history`
+--
+
+LOCK TABLES `advance_process_history` WRITE;
+/*!40000 ALTER TABLE `advance_process_history` DISABLE KEYS */;
+INSERT INTO `advance_process_history` VALUES (1,22,1,1,'2017-06-19 10:34:34',NULL),(2,22,2,1,NULL,NULL),(3,22,3,19,NULL,'ADFA'),(4,23,1,1,'2017-06-19 10:46:16',NULL),(5,24,1,1,'2017-06-19 10:57:46',NULL),(6,24,2,1,NULL,NULL),(7,24,3,19,NULL,'asdfas'),(8,25,2,1,'2017-06-19 18:19:01',NULL),(9,25,12,19,NULL,''),(10,25,22,4,NULL,''),(11,25,112,8,NULL,''),(12,25,122,2,NULL,''),(13,25,132,3,NULL,''),(14,26,2,1,'2017-06-23 19:50:54',NULL),(15,27,2,1,'2017-06-23 19:51:03',NULL),(16,28,2,1,'2017-06-23 19:51:11',NULL),(17,29,2,1,'2017-06-23 19:51:23',NULL),(18,26,12,19,NULL,''),(19,27,12,19,NULL,''),(20,28,12,19,NULL,''),(21,29,12,19,NULL,''),(22,26,22,4,NULL,''),(23,27,22,4,NULL,''),(24,29,22,4,NULL,''),(25,28,22,4,NULL,''),(26,26,112,8,NULL,''),(27,27,112,8,NULL,''),(28,29,112,8,NULL,''),(29,28,112,8,NULL,''),(30,26,122,2,NULL,''),(31,27,122,2,NULL,''),(32,29,122,2,NULL,''),(33,28,122,2,NULL,''),(34,26,132,3,NULL,''),(35,27,132,3,NULL,''),(36,28,132,3,NULL,''),(37,29,132,3,NULL,'');
+/*!40000 ALTER TABLE `advance_process_history` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `advance_process_instance`
+--
+
+DROP TABLE IF EXISTS `advance_process_instance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `advance_process_instance` (
+  `process_instance_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `advance_detail_id` bigint(10) NOT NULL,
+  `voucher_status_id` int(5) NOT NULL,
+  `pending_at` bigint(10) DEFAULT NULL,
+  `processed_by` bigint(10) DEFAULT NULL,
+  `comments` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`process_instance_id`),
+  KEY `adv_id_adv_process_inst_idx` (`advance_detail_id`),
+  KEY `voucher_status_adv_process_inst_idx` (`voucher_status_id`),
+  KEY `pending_at_adv_process_inst_idx` (`pending_at`),
+  KEY `approved_by_adv_process_inst_idx` (`processed_by`),
+  CONSTRAINT `adv_id_adv_process_inst` FOREIGN KEY (`advance_detail_id`) REFERENCES `advance_details` (`advance_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `approved_by_adv_process_inst` FOREIGN KEY (`processed_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `pending_at_adv_process_inst` FOREIGN KEY (`pending_at`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `voucher_status_adv_process_inst` FOREIGN KEY (`voucher_status_id`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `advance_process_instance`
+--
+
+LOCK TABLES `advance_process_instance` WRITE;
+/*!40000 ALTER TABLE `advance_process_instance` DISABLE KEYS */;
+INSERT INTO `advance_process_instance` VALUES (1,22,13,1,19,'asdfa'),(2,24,13,1,19,'asdfas'),(3,25,4,1,3,''),(4,26,4,1,3,''),(5,27,4,1,3,''),(6,28,4,1,3,''),(7,29,4,1,3,'');
+/*!40000 ALTER TABLE `advance_process_instance` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -347,7 +429,7 @@ CREATE TABLE `expense_details` (
   KEY `exp_header_exp_detail_idx` (`expense_header_id`),
   CONSTRAINT `exp_category_exp_detail` FOREIGN KEY (`expense_category_id`) REFERENCES `expense_category` (`expense_category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `exp_header_exp_detail` FOREIGN KEY (`expense_header_id`) REFERENCES `expense_header` (`expense_header_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -356,7 +438,7 @@ CREATE TABLE `expense_details` (
 
 LOCK TABLES `expense_details` WRITE;
 /*!40000 ALTER TABLE `expense_details` DISABLE KEYS */;
-INSERT INTO `expense_details` VALUES (1,28,1,'2017-05-02','','','meeting',20,50,'avatar5.png'),(5,32,2,'2017-05-02','office','vashi','Office Meeting',NULL,120,NULL),(6,33,1,'2017-05-03','','','Meting',4,500,NULL),(7,34,2,'2017-05-19','sdf','afsdf','dsaf',NULL,500,NULL);
+INSERT INTO `expense_details` VALUES (11,43,1,'2017-06-29','','','33',NULL,33,NULL),(12,45,1,'2017-06-30','','','ASDF',3,333,NULL),(14,47,1,'2017-06-30','','','33',3,33,NULL),(15,48,1,'2017-07-19','','','kajskdfj',6,300,NULL),(16,48,3,'2017-07-19','sjdfkj','kjdsfsk','kljsdlkf',NULL,50,NULL);
 /*!40000 ALTER TABLE `expense_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -369,19 +451,31 @@ DROP TABLE IF EXISTS `expense_header`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `expense_header` (
   `expense_header_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `expense_type` varchar(20) NOT NULL,
   `voucher_number` varchar(50) DEFAULT NULL,
   `employee_id` bigint(10) NOT NULL,
+  `advance_id` bigint(10) DEFAULT NULL,
+  `event_id` int(11) DEFAULT NULL,
   `voucher_status` int(11) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `title` varchar(45) NOT NULL,
   `purpose` varchar(100) NOT NULL,
+  `created_by` bigint(10) DEFAULT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `modified_by` bigint(10) DEFAULT NULL,
+  `modified_date` datetime DEFAULT NULL,
   PRIMARY KEY (`expense_header_id`),
   KEY `emp_id_expe_header_idx` (`employee_id`),
   KEY `voucher_status_exp_header_idx` (`voucher_status`),
+  KEY `advance_id_exp_header_idx` (`advance_id`),
+  KEY `event_id_exp_header_idx` (`event_id`),
+  CONSTRAINT `advance_id_exp_header` FOREIGN KEY (`advance_id`) REFERENCES `advance_details` (`advance_details_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `created_by_exp_header` FOREIGN KEY (`employee_id`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `emp_id_expe_header` FOREIGN KEY (`employee_id`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `event_id_exp_header` FOREIGN KEY (`event_id`) REFERENCES `event_details` (`event_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `modified_by_exp_header` FOREIGN KEY (`employee_id`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `voucher_status_exp_header` FOREIGN KEY (`voucher_status`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -390,7 +484,7 @@ CREATE TABLE `expense_header` (
 
 LOCK TABLES `expense_header` WRITE;
 /*!40000 ALTER TABLE `expense_header` DISABLE KEYS */;
-INSERT INTO `expense_header` VALUES (28,'Voucher/02-May-2017-02-May-2017/16',1,23,'2017-05-02','2017-05-02','Test11','Test1'),(32,'Voucher/02-May-2017-02-May-2017/17',1,123,'2017-05-02','2017-05-02','DAily Expense','Daily Expense'),(33,NULL,1,1,'2017-05-02','2017-05-03','Test2','dTesd'),(34,NULL,1,1,'2017-05-19','2017-05-19','testing','ateadfa');
+INSERT INTO `expense_header` VALUES (43,'EmployeeExpense','Voucher/29-June-2017-29-June-2017/18',1,25,NULL,132,'2017-06-29','2017-06-29','asdfsd',1,'2017-06-29 15:44:21',NULL,NULL),(45,'EventExpense','Voucher/30-June-2017-30-June-2017/19',1,NULL,5,132,'2017-06-30','2017-06-30','asdAASDF',1,'2017-06-30 11:19:18',NULL,NULL),(47,'EmployeeExpense','Voucher/30-June-2017-30-June-2017/20',1,NULL,NULL,132,'2017-06-30','2017-06-30','safds',1,'2017-06-30 11:45:27',NULL,NULL),(48,'EmployeeExpense',NULL,1,NULL,NULL,1,'2017-07-19','2017-07-19','Client Meetin',NULL,NULL,1,'2017-07-19 21:42:35');
 /*!40000 ALTER TABLE `expense_header` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -482,6 +576,36 @@ INSERT INTO `login_details` VALUES (1,'chaitanya@gmail.com','$2a$10$/bJ9Q8VDazT5
 UNLOCK TABLES;
 
 --
+-- Table structure for table `payment_details`
+--
+
+DROP TABLE IF EXISTS `payment_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `payment_details` (
+  `payment_detail_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `module_name` varchar(45) NOT NULL,
+  `voucher_id` bigint(10) NOT NULL,
+  `paid_by` bigint(10) NOT NULL,
+  `amount` double NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`payment_detail_id`),
+  KEY `paid_by_payment_idx` (`paid_by`),
+  CONSTRAINT `paid_by_payment` FOREIGN KEY (`paid_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payment_details`
+--
+
+LOCK TABLES `payment_details` WRITE;
+/*!40000 ALTER TABLE `payment_details` DISABLE KEYS */;
+INSERT INTO `payment_details` VALUES (1,'Expense',47,1,33,'2017-07-30 19:22:54'),(2,'Expense',47,1,33,'2017-07-30 21:11:22'),(3,'Expense',47,1,33,'2017-07-30 21:12:04'),(4,'Expense',47,1,33,'2017-07-30 21:13:10'),(9,'Expense',47,1,33,'2017-07-30 21:55:40'),(10,'Expense',47,1,33,'2017-07-30 21:57:05');
+/*!40000 ALTER TABLE `payment_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `process_history`
 --
 
@@ -497,8 +621,12 @@ CREATE TABLE `process_history` (
   `comments` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`process_history_id`),
   KEY `process_inst_id_process_hist_idx` (`expense_header_id`),
-  CONSTRAINT `expense_header_process_hist` FOREIGN KEY (`expense_header_id`) REFERENCES `expense_header` (`expense_header_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+  KEY `voucher_status_process_hist_idx` (`voucher_status_id`),
+  KEY `process_by_process_hist_idx` (`processed_by`),
+  CONSTRAINT `expense_header_process_hist` FOREIGN KEY (`expense_header_id`) REFERENCES `expense_header` (`expense_header_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `process_by_process_hist` FOREIGN KEY (`processed_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `voucher_status_process_hist` FOREIGN KEY (`voucher_status_id`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -507,7 +635,7 @@ CREATE TABLE `process_history` (
 
 LOCK TABLES `process_history` WRITE;
 /*!40000 ALTER TABLE `process_history` DISABLE KEYS */;
-INSERT INTO `process_history` VALUES (1,28,2,1,NULL,NULL),(8,28,13,NULL,NULL,NULL),(12,32,2,1,NULL,NULL),(13,32,13,NULL,NULL,NULL),(20,32,23,NULL,NULL,NULL),(22,32,23,NULL,NULL,NULL),(23,32,113,NULL,NULL,NULL),(24,32,123,NULL,NULL,NULL),(26,28,23,NULL,NULL,NULL),(27,28,23,NULL,NULL,NULL),(28,33,1,1,NULL,NULL),(29,34,1,1,NULL,NULL);
+INSERT INTO `process_history` VALUES (8,43,2,1,'2017-06-29 15:44:21',NULL),(9,45,2,1,'2017-06-30 11:19:18',NULL),(11,47,2,1,'2017-06-30 11:45:27',NULL),(12,45,12,19,NULL,NULL),(13,43,12,19,NULL,NULL),(14,47,12,19,NULL,NULL),(15,45,22,4,NULL,NULL),(16,43,22,4,NULL,NULL),(17,47,22,4,NULL,NULL),(18,45,112,8,NULL,NULL),(19,43,112,8,NULL,NULL),(20,47,112,8,NULL,NULL),(21,45,122,2,NULL,NULL),(22,43,122,2,NULL,NULL),(23,47,122,2,NULL,NULL),(24,45,132,3,NULL,NULL),(25,43,132,3,NULL,NULL),(26,47,132,3,NULL,NULL),(27,48,1,1,'2017-07-19 21:42:11',NULL),(28,48,1,1,NULL,NULL);
 /*!40000 ALTER TABLE `process_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -519,17 +647,22 @@ DROP TABLE IF EXISTS `process_instance`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `process_instance` (
-  `process_instance_id` bigint(10) NOT NULL,
+  `process_instance_id` bigint(10) NOT NULL AUTO_INCREMENT,
   `expense_header_id` bigint(10) NOT NULL,
   `voucher_status_id` int(5) NOT NULL,
-  `pending_at` bigint(10) NOT NULL,
-  `approved_by` bigint(10) DEFAULT NULL,
+  `pending_at` bigint(10) DEFAULT NULL,
+  `processed_by` bigint(10) DEFAULT NULL,
+  `comments` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`process_instance_id`),
   KEY `pending_at_process_inst_idx` (`pending_at`),
   KEY `voucher_status_process_inst_idx` (`voucher_status_id`),
+  KEY `exp_header_process_inst_idx` (`expense_header_id`),
+  KEY `processed_by_process_inst_idx` (`processed_by`),
+  CONSTRAINT `exp_header_process_inst` FOREIGN KEY (`expense_header_id`) REFERENCES `expense_header` (`expense_header_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `pending_at_process_inst` FOREIGN KEY (`pending_at`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `processed_by_process_inst` FOREIGN KEY (`processed_by`) REFERENCES `employee_details` (`employee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `voucher_status_process_inst` FOREIGN KEY (`voucher_status_id`) REFERENCES `voucher_status` (`voucher_status_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -538,7 +671,7 @@ CREATE TABLE `process_instance` (
 
 LOCK TABLES `process_instance` WRITE;
 /*!40000 ALTER TABLE `process_instance` DISABLE KEYS */;
-INSERT INTO `process_instance` VALUES (7,28,111,8,3),(9,32,131,3,8);
+INSERT INTO `process_instance` VALUES (1,43,4,1,3,''),(2,45,4,1,3,''),(3,47,5,NULL,1,'');
 /*!40000 ALTER TABLE `process_instance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -579,7 +712,10 @@ DROP TABLE IF EXISTS `voucher_identification`;
 CREATE TABLE `voucher_identification` (
   `module` varchar(20) NOT NULL,
   `voucher_number` int(11) NOT NULL,
-  PRIMARY KEY (`module`,`voucher_number`)
+  `company_id` int(11) NOT NULL,
+  PRIMARY KEY (`module`,`voucher_number`),
+  KEY `company_id_voucher_identfy_idx` (`company_id`),
+  CONSTRAINT `company_id_voucher_identfy` FOREIGN KEY (`company_id`) REFERENCES `company_details` (`company_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -589,7 +725,7 @@ CREATE TABLE `voucher_identification` (
 
 LOCK TABLES `voucher_identification` WRITE;
 /*!40000 ALTER TABLE `voucher_identification` DISABLE KEYS */;
-INSERT INTO `voucher_identification` VALUES ('EMPLOYEE_EXPENSE',17);
+INSERT INTO `voucher_identification` VALUES ('ADVANCE_EXPENSE',14,1),('EMPLOYEE_EXPENSE',20,1);
 /*!40000 ALTER TABLE `voucher_identification` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -615,7 +751,7 @@ CREATE TABLE `voucher_status` (
 
 LOCK TABLES `voucher_status` WRITE;
 /*!40000 ALTER TABLE `voucher_status` DISABLE KEYS */;
-INSERT INTO `voucher_status` VALUES (1,'Save As Draft','Send For Approval',NULL),(2,'Send For Approval','Send For Approval',NULL),(3,'Completely Approved','Completely Approved',NULL),(4,'Paid','Paid',NULL),(11,'Pending At 1st Level','Pending At 1st Level',NULL),(12,'Rejected At 1st Level','Rejected At 1st Level',NULL),(13,'Approved At 1st Level','Approved At 1st Level',NULL),(21,'Pending At 2nd Level','Pending At 2nd Level',NULL),(22,'Rejected At 2nd Level','Rejected At 2nd Level',NULL),(23,'Approved At 2nd Level','Approved At 2nd Level',NULL),(31,'Pending At 3rd Level','Pending At 3rd Level',NULL),(32,'Rejected At 3rd Level','Rejected At 3rd Level',NULL),(33,'Approved At 3rd Level','Approved At 3rd Level',NULL),(111,'Fin Pending At 1st Level','Fin Pending At 1st Level',NULL),(112,'Fin Rejected At 1st Level','Fin Rejected At 1st Level',NULL),(113,'Fin Appoved At 1st Level','Fin Appoved At 1st Level',NULL),(121,'Fin Pending At 2nd Level','Fin Pending At 2nd Level',NULL),(122,'Fin Rejected At 2nd Level','Fin Rejected At 2nd Level',NULL),(123,'Fin Appoved At 2nd Level','Fin Appoved At 2nd Level',NULL),(131,'Fin Pending At 3rd Level','Fin Pending At 3rd Level',NULL),(132,'Fin Rejected At 3rd Level','Fin Rejected At 3rd Level',NULL),(133,'Fin Appoved At 3rd Level','Fin Appoved At 3rd Level',NULL);
+INSERT INTO `voucher_status` VALUES (1,'Save As Draft','Save As Draft',NULL),(2,'Send For Approval','Send For Approval',NULL),(3,'Rejected','Rejected',NULL),(4,'Completely Approved','Completely Approved',NULL),(5,'Paid','Paid',NULL),(11,'Pending At 1st Level','Pending At 1st Level',NULL),(12,'Approved At 1st Level','Approved At 1st Level',NULL),(13,'Rejected At 1st Level','Rejected At 1st Level',NULL),(21,'Pending At 2nd Level','Pending At 2nd Level',NULL),(22,'Approved At 2nd Level','Approved At 2nd Level',NULL),(23,'Rejected At 2nd Level','Rejected At 2nd Level',NULL),(31,'Pending At 3rd Level','Pending At 3rd Level',NULL),(32,'Approved At 3rd Level','Approved At 3rd Level',NULL),(33,'Rejected At 3rd Level','Rejected At 3rd Level',NULL),(111,'Fin Pending At 1st Level','Fin Pending At 1st Level',NULL),(112,'Fin Appoved At 1st Level','Fin Appoved At 1st Level',NULL),(113,'Fin Rejected At 1st Level','Fin Rejected At 1st Level',NULL),(121,'Fin Pending At 2nd Level','Fin Pending At 2nd Level',NULL),(122,'Fin Appoved At 2nd Level','Fin Appoved At 2nd Level',NULL),(123,'Fin Rejected At 2nd Level','Fin Rejected At 2nd Level',NULL),(131,'Fin Pending At 3rd Level','Fin Pending At 3rd Level',NULL),(132,'Fin Appoved At 3rd Level','Fin Appoved At 3rd Level',NULL),(133,'Fin Rejected At 3rd Level','Fin Rejected At 3rd Level',NULL);
 /*!40000 ALTER TABLE `voucher_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -630,24 +766,25 @@ UNLOCK TABLES;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `voucher_number`(
 IN moduleName varchar(20), 
+IN companyId int,
 OUT voucherNumber varchar(30)
 )
 BEGIN
     DECLARE number int;
     
-    set @number=(select voucher_number from voucher_identification where module like moduleName);
+    set @number=(select voucher_number from voucher_identification where module like moduleName and company_id=companyId);
 
 	SELECT @number;
 	if(@number is null) then
         set @number=1;
-		insert into voucher_identification values(moduleName,@number);
+		insert into voucher_identification values(moduleName,@number,companyId);
 	else
         set @number=(@number+1);
-		update voucher_identification set voucher_number=@number where module= moduleName;
+		update voucher_identification set voucher_number=@number where module= moduleName and company_id=companyId;
 	end if;
     
     set voucherNumber = @number;
@@ -668,4 +805,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-05-25 20:10:04
+-- Dump completed on 2017-07-30 22:00:26

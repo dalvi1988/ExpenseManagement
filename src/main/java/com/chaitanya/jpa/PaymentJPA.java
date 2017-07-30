@@ -22,7 +22,7 @@ public class PaymentJPA {
 	@Column(name="module_name")
 	private String moduleName;
 	
-	@Column(name="voucherId")
+	@Column(name="voucher_id")
 	private String voucherId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

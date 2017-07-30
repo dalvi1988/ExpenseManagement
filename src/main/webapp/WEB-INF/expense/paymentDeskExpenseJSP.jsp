@@ -15,7 +15,7 @@
    $(function () {
        //define colModel
        var colM = [
-			{ title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
+		   { title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
 	       { title: "Purpose", width: 100, dataIndx: "purpose"},
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
@@ -43,21 +43,24 @@
                }
 		   },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
+	       { title: "", dataIndx: "payAmount",hidden:true},
 	       { title: "", editable: false, minWidth: 100, sortable: false, render: function (ui) {
 	    	   if( ui.rowData.advanceAmount !=null){
 		    	   if(ui.rowData.advanceAmount == ui.rowData.totalAmount){
-		    		   return "<button type='button' class='pay_btn' style='background:yellow; color: white'>Pay "+0+"</button>";
+		    		   ui.rowData.amount=0;
+		    		   return "<button type='button' class='pay_btn' style='background:yellow; color: white'>Pay "+ui.rowData.amount+"</button>";
 		    	   }
 		    	   else if(ui.rowData.advanceAmount > ui.rowData.totalAmount){
-		    		   var amount=ui.rowData.advanceAmount - ui.rowData.totalAmount
-		        		return "<button type='button' class='pay_btn' style='background:#48DD11; color: white' >Receive "+amount+"</button>";
+		    		   ui.rowData.amount=ui.rowData.advanceAmount - ui.rowData.totalAmount
+		        		return "<button type='button' class='pay_btn' style='background:#48DD11; color: white' >Receive "+ui.rowData.amount+"</button>";
 		    	   }
 		    	   else if(ui.rowData.advanceAmount < ui.rowData.totalAmount){
-		    		   var amount= ui.rowData.totalAmount -ui.rowData.advanceAmount;
-		        		return "<button type='button' class='pay_btn' style='background:red; color: white'>Pay "+amount+"</button>";
+		    		   ui.rowData.amount= ui.rowData.totalAmount -ui.rowData.advanceAmount;
+		        		return "<button type='button' class='pay_btn' style='background:red; color: white'>Pay "+ui.rowData.amount+"</button>";
 		    	   }
 	       	  }
 	    	   else{
+	    		   ui.rowData.amount=ui.rowData.totalAmount;
 	        		return "<button type='button' class='pay_btn' style='background:red; color: white' >Pay "+ui.rowData.totalAmount+"</button>";
 	    	   }
 	      }}
@@ -93,10 +96,29 @@
 	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
 	                 var rowIndx = obj.rowIndx;
 	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
-	        	     $("#expenseHeaderId").val(rowData.expenseHeaderId);
-          	    	 $( this ).parent().addClass("active")
-        	         $('.content').load('expense?expenseHeaderId='+rowData.expenseHeaderId);
-	                 //$("#form").submit();
+	        	     rowData.moduleName="Expense";
+	                 rowData.voucherId=rowData.expenseHeaderId;
+	                 $.ajax($.extend({}, ajaxObj, { 
+	                  	context: $grid,
+	              	    url: "makePayment", 
+	              	    type: 'POST', 
+	              	    data: JSON.stringify(rowData),
+	              	 
+	              	    success: function(data) { 
+	              	    	if(data.serviceStatus=="SUCCESS"){
+	              	    		$(".alert").addClass("alert-success").text(data.message).show();
+	              	    		 $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
+	              	    	}
+	              	    	else{
+	              	    		$(".alert").addClass("alert-danger").text(data.message).show();
+	              	    		$grid.pqGrid("rollback");
+	              	    	}
+	              	    	
+	              	    },
+	              	    error:function(data) {
+	              	    	$(".alert").addClass("alert-danger").text(data.message).show();
+	              	    }
+	     		   }));
 	           }); 
 	       }
        };

@@ -5,4 +5,6 @@ import com.chaitanya.jpa.PaymentJPA;
 public interface IPaymentDAO {
 	public PaymentJPA makePayment(PaymentJPA paymentJPA);
 
+	public int updateProcessInstance(PaymentJPA paymentJPA);
+
 }

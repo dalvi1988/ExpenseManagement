@@ -29,7 +29,7 @@ public class PaymentController {
 	
 	private Logger logger= LoggerFactory.getLogger(PaymentController.class);
 	
-	@RequestMapping(value="/payment", method=RequestMethod.POST)
+	@RequestMapping(value="/makePayment", method=RequestMethod.POST)
 	public @ResponseBody PaymentDTO makePayment(@RequestBody PaymentDTO receivedPaymentDTO){
 		PaymentDTO toBeSentPaymentDTO=null;
 		try{
@@ -42,11 +42,7 @@ public class PaymentController {
 				BaseDTO baseDTO=paymentService.makePayment(receivedPaymentDTO);
 				if(Validation.validateForSuccessStatus(baseDTO)){
 					toBeSentPaymentDTO=(PaymentDTO)baseDTO;
-					if(receivedPaymentDTO.getCommand().equals(Command.ADD)){
-						toBeSentPaymentDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
-					}
-					else
-						toBeSentPaymentDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
+					toBeSentPaymentDTO.setMessage(new StringBuilder(ApplicationConstant.PAYMENT));
 				}
 				else if(Validation.validateForBusinessFailureStatus(baseDTO)){
 					toBeSentPaymentDTO=receivedPaymentDTO;
