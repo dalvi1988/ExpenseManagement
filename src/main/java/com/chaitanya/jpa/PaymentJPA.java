@@ -23,7 +23,7 @@ public class PaymentJPA {
 	private String moduleName;
 	
 	@Column(name="voucher_id")
-	private String voucherId;
+	private Long voucherId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "paid_by")
@@ -50,15 +50,6 @@ public class PaymentJPA {
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
-
-	public String getVoucherId() {
-		return voucherId;
-	}
-
-	public void setVoucherId(String voucherId) {
-		this.voucherId = voucherId;
-	}
-
 	public EmployeeJPA getPaidByEmployeeJPA() {
 		return paidByEmployeeJPA;
 	}
@@ -81,6 +72,14 @@ public class PaymentJPA {
 
 	public void setAmount(Double amount) {
 		this.amount = amount;
+	}
+
+	public Long getVoucherId() {
+		return voucherId;
+	}
+
+	public void setVoucherId(Long voucherId) {
+		this.voucherId = voucherId;
 	}
 		
 }

@@ -7,4 +7,6 @@ public interface IPaymentDAO {
 
 	public int updateProcessInstance(PaymentJPA paymentJPA);
 
+	public void updateProcessHistory(PaymentJPA paymentJPA);
+
 }

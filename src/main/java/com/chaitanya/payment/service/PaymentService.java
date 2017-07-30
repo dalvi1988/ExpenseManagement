@@ -35,14 +35,17 @@ public class PaymentService implements IPaymentService{
 			if (Validation.validateForNullObject(paymentJPA)) {
 				paymentJPA=paymentDAO.makePayment(paymentJPA);
 				if(Validation.validateForNullObject(paymentJPA.getPaymentDetailId())){
-					if(paymentJPA.getModuleName().equals("Expense")){
-						int updateCount=paymentDAO.updateProcessInstance(paymentJPA);
-						if(updateCount ==1){
-							
+					int updateCount=paymentDAO.updateProcessInstance(paymentJPA);
+					if(updateCount ==1){
+						if(paymentJPA.equals("Expense")){
+							paymentDAO.updateProcessHistory(paymentJPA);
 						}
 						else{
-							baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+							//paymentDAO.updateAdvanceProcessInstanceHistory(paymentJPA);
 						}
+					}
+					else{
+						baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 					}
 				}
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);

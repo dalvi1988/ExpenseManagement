@@ -6,7 +6,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.chaitanya.jpa.EmployeeJPA;
+import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.PaymentJPA;
+import com.chaitanya.jpa.ProcessHistoryJPA;
+import com.chaitanya.jpa.VoucherStatusJPA;
 
 @Repository
 public class PaymentDAO implements IPaymentDAO{
@@ -23,11 +27,32 @@ public class PaymentDAO implements IPaymentDAO{
 
 	@Override
 	public int updateProcessInstance(PaymentJPA paymentJPA) {
-		String hql = "update ProcessInstanceJPA set pendingAt=null, processedBy=:processedBy, voucherStatusJPA=5 where expenseHeaderJPA.expenseHeaderId = :expenseHeaderId";
+		String hql = "update "+paymentJPA.getModuleName()=="Expense"?"ProcessInstanceJPA":"AdvanceProcessInstanceJPA"+" set pendingAt=null, processedBy=:processedBy, voucherStatusJPA=5 where expenseHeaderJPA.expenseHeaderId = :expenseHeaderId";
 	    Query query =sessionFactory.getCurrentSession().createQuery(hql);
 	    query.setLong("processedBy",paymentJPA.getPaidByEmployeeJPA().getEmployeeId());
-	    query.setString("expenseHeaderId",paymentJPA.getVoucherId());
+	    query.setLong("expenseHeaderId",paymentJPA.getVoucherId());
 	    return query.executeUpdate();
+		
+	}
+
+	@Override
+	public void updateProcessHistory(PaymentJPA paymentJPA) {
+		ProcessHistoryJPA processHistoryJPA =new ProcessHistoryJPA();
+		
+		ExpenseHeaderJPA expenseHeaderJPA=new ExpenseHeaderJPA();
+		expenseHeaderJPA.setExpenseHeaderId(paymentJPA.getVoucherId());
+		processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+		
+		VoucherStatusJPA voucherStatusJPA =new VoucherStatusJPA();
+		voucherStatusJPA.setVoucherStatusId(5);
+		processHistoryJPA.setVoucherStatusJPA(voucherStatusJPA);
+		
+	    processHistoryJPA.setProcessedBy(paymentJPA.getPaidByEmployeeJPA());
+	   
+		processHistoryJPA.setProcessDate(paymentJPA.getDate());
+		
+		Session session=sessionFactory.getCurrentSession();
+		session.save(processHistoryJPA);
 		
 	}
 
