@@ -80,7 +80,7 @@
 	        $('.content').load('approvalFlow');
 	     });
 	    
-	    $('.voucherForApproval').click(function(){
+	    $('.expenseForApproval').click(function(){
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('toBeApproveExpense');
 	     });
@@ -138,8 +138,8 @@
 		    	$( this ).parent().addClass("active")
 		        $('.content').load('pendingDeskExpenses');
 		 });
-	     
-	     $('.expenseForApproval').click(function(){
+	    
+	     $('.paymentExpense').click(function(){
 		    	$( this ).parent().addClass("active")
 		        $('.content').load('paymentDeskExpenses');
 		 });

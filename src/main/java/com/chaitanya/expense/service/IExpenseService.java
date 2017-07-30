@@ -28,4 +28,6 @@ public interface IExpenseService {
 
 	List<ExpenseHeaderDTO> getPendingAtPaymentDeskList(BaseDTO baseDTO)throws ParseException;
 
+	BaseDTO payExpenses(BaseDTO baseDTO) throws IOException, ParseException;
+
 }

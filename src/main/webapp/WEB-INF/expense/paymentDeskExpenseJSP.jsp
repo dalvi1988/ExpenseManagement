@@ -15,6 +15,7 @@
    $(function () {
        //define colModel
        var colM = [
+			{ title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
 	       { title: "Purpose", width: 100, dataIndx: "purpose"},
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
@@ -30,10 +31,35 @@
                    }
                }
 		   },
-	       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
+		   { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",
+        	   render: function (ui) {                        
+                   var cellData = ui.cellData;
+                   if (cellData != null) {
+                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+                   }
+                   else {
+                       return "";
+                   }
+               }
+		   },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
-	       { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {
-	        	return "<button type='button' class='edit_btn' >Pay</button>";
+	       { title: "", editable: false, minWidth: 100, sortable: false, render: function (ui) {
+	    	   if( ui.rowData.advanceAmount !=null){
+		    	   if(ui.rowData.advanceAmount == ui.rowData.totalAmount){
+		    		   return "<button type='button' class='pay_btn' style='background:yellow; color: white'>Pay "+0+"</button>";
+		    	   }
+		    	   else if(ui.rowData.advanceAmount > ui.rowData.totalAmount){
+		    		   var amount=ui.rowData.advanceAmount - ui.rowData.totalAmount
+		        		return "<button type='button' class='pay_btn' style='background:#48DD11; color: white' >Receive "+amount+"</button>";
+		    	   }
+		    	   else if(ui.rowData.advanceAmount < ui.rowData.totalAmount){
+		    		   var amount= ui.rowData.totalAmount -ui.rowData.advanceAmount;
+		        		return "<button type='button' class='pay_btn' style='background:red; color: white'>Pay "+amount+"</button>";
+		    	   }
+	       	  }
+	    	   else{
+	        		return "<button type='button' class='pay_btn' style='background:red; color: white' >Pay "+ui.rowData.totalAmount+"</button>";
+	    	   }
 	      }}
 		];
        //define dataModel
@@ -58,7 +84,21 @@
            title: "Excpens Voucher Payment Desk",
            resizable: true,
            numberCell: { show: false },
-           columnBorders: true,           
+           columnBorders: true,   
+           refresh: function(){
+	    	    $("#grid_filter").find("button.pay_btn").button({ icons: { primary: 'ui-icon-check'}})
+	           .unbind("click")
+	           .bind("click", function (evt) {
+	        	     var $tr = $(this).closest("tr");
+	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+	                 var rowIndx = obj.rowIndx;
+	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
+	        	     $("#expenseHeaderId").val(rowData.expenseHeaderId);
+          	    	 $( this ).parent().addClass("active")
+        	         $('.content').load('expense?expenseHeaderId='+rowData.expenseHeaderId);
+	                 //$("#form").submit();
+	           }); 
+	       }
        };
 
        var $grid = $("#grid_filter").pqGrid(obj);

@@ -15,6 +15,7 @@
    $(function () {
        //define colModel
        var colM = [
+			{ title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
 	       { title: "Purpose", width: 100, dataIndx: "purpose"},
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
@@ -30,7 +31,17 @@
                    }
                }
 		   },
-	       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
+		   { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",
+        	   render: function (ui) {                        
+                   var cellData = ui.cellData;
+                   if (cellData != null) {
+                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+                   }
+                   else {
+                       return "";
+                   }
+               }
+		   },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
 		];
        //define dataModel

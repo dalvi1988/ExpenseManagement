@@ -35,4 +35,6 @@ public interface IExpenseDAO {
 
 	public List<ExpenseHeaderJPA> getPendingAtPaymentDeskList(ExpenseHeaderDTO expenseHeaderDTO);
 
+	public ExpenseHeaderJPA payExpenses(ExpenseHeaderDTO expenseHeaderDTO);
+
 }
