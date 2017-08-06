@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.PaymentJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
@@ -27,7 +26,8 @@ public class PaymentDAO implements IPaymentDAO{
 
 	@Override
 	public int updateProcessInstance(PaymentJPA paymentJPA) {
-		String hql = "update "+paymentJPA.getModuleName()=="Expense"?"ProcessInstanceJPA":"AdvanceProcessInstanceJPA"+" set pendingAt=null, processedBy=:processedBy, voucherStatusJPA=5 where expenseHeaderJPA.expenseHeaderId = :expenseHeaderId";
+		String module=paymentJPA.getModuleName().equals("Expense")?"ProcessInstanceJPA":"AdvanceProcessInstanceJPA";
+		String hql = "update "+module+" set pendingAt=null, processedBy=:processedBy, voucherStatusJPA=5 where expenseHeaderJPA.expenseHeaderId = :expenseHeaderId";
 	    Query query =sessionFactory.getCurrentSession().createQuery(hql);
 	    query.setLong("processedBy",paymentJPA.getPaidByEmployeeJPA().getEmployeeId());
 	    query.setLong("expenseHeaderId",paymentJPA.getVoucherId());

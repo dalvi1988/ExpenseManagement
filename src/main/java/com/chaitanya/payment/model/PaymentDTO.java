@@ -9,7 +9,7 @@ public class PaymentDTO extends BaseDTO {
 	
 	private Long paymentDetailId;
 	private String moduleName;
-	private String voucherId;
+	private Long voucherId;
 	private EmployeeDTO paidByEmployeeDTO;
 	private String date;
 	private Double amount;
@@ -26,10 +26,10 @@ public class PaymentDTO extends BaseDTO {
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
-	public String getVoucherId() {
+	public Long getVoucherId() {
 		return voucherId;
 	}
-	public void setVoucherId(String voucherId) {
+	public void setVoucherId(Long voucherId) {
 		this.voucherId = voucherId;
 	}
 	public EmployeeDTO getPaidByEmployeeDTO() {

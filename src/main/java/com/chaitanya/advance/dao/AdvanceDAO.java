@@ -307,7 +307,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 	}
 	
 	@Override
-	public AdvanceJPA approveRejectAdvance(AdvanceDTO advanceDTO) {
+	public AdvanceJPA getAdvanceById(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		AdvanceJPA advanceJPA = (AdvanceJPA) session.get(AdvanceJPA.class, advanceDTO.getAdvanceDetailId());
@@ -336,7 +336,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
 				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
-				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(4)))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(5)))
 				.list();
 		return advanceJPAList;
 	}

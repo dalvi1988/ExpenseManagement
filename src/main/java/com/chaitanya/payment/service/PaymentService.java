@@ -37,7 +37,7 @@ public class PaymentService implements IPaymentService{
 				if(Validation.validateForNullObject(paymentJPA.getPaymentDetailId())){
 					int updateCount=paymentDAO.updateProcessInstance(paymentJPA);
 					if(updateCount ==1){
-						if(paymentJPA.equals("Expense")){
+						if(paymentJPA.getModuleName().equals("Expense")){
 							paymentDAO.updateProcessHistory(paymentJPA);
 						}
 						else{

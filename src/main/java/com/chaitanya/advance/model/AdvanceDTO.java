@@ -21,6 +21,7 @@ public class AdvanceDTO extends BaseDTO {
 	private Integer eventId;
 	private String rejectionComment;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="eventName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private EventDTO eventDTO;
@@ -88,7 +89,7 @@ public class AdvanceDTO extends BaseDTO {
 	public EventDTO getEventDTO() {
 		return eventDTO;
 	}
-	@JsonIgnore
+	
 	public void setEventDTO(EventDTO eventDTO) {
 		this.eventDTO = eventDTO;
 		this.eventId=eventDTO.getEventId();

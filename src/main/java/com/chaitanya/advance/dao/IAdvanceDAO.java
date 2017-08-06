@@ -22,7 +22,7 @@ public interface IAdvanceDAO {
 
 	List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO);
 
-	AdvanceJPA approveRejectAdvance(AdvanceDTO advanceDTO);
+	AdvanceJPA getAdvanceById(AdvanceDTO advanceDTO);
 	
 	List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO);
 

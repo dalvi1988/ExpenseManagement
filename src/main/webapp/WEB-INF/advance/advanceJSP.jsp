@@ -7,6 +7,13 @@
 <title>Advance Master</title>
 
 <script type="text/javascript">
+	$(function () {
+		if($("input[name='isEvent']:checked").val()){
+    		$("#eventDiv").show();
+    	}	
+	});
+	
+	
 	function toggler(divId) {
 	    $("#" + divId).toggle();
 	}

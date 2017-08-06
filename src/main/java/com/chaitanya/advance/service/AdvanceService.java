@@ -61,8 +61,6 @@ public class AdvanceService implements IAdvanceService{
 						advanceJPA.setAdvanceNumber(advanceJPA.getAdvanceNumber()+"*");
 					}
 					advanceDAO.updateProcessInstance(advanceJPA,advanceJPA.getVoucherStatusJPA().getVoucherStatusId(),null);
-				}
-				if(Validation.validateForNullObject(advanceJPA)){
 					baseDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
@@ -230,7 +228,7 @@ public class AdvanceService implements IAdvanceService{
 		
 		if (Validation.validateForNullObject(baseDTO)) {
 			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
-			AdvanceJPA advanceJPA =advanceDAO.approveRejectAdvance(advanceDTO);
+			AdvanceJPA advanceJPA =advanceDAO.getAdvanceById(advanceDTO);
 			Integer statusID= advanceJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId();
 			
 			VoucherStatusJPA voucherStatusJPA= new VoucherStatusJPA();
