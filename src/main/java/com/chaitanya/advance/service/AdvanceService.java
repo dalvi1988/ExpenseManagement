@@ -305,10 +305,13 @@ public class AdvanceService implements IAdvanceService{
 			List<AdvanceJPA> advanceJPAList =advanceDAO.getAdvanceForPayment(advanceDTO);
 			if(Validation.validateForNullObject(advanceJPAList)){
 				advanceDTOList= new ArrayList<AdvanceDTO>();
-				for(AdvanceJPA expenseHeaderJPA: advanceJPAList){
-					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA);
-					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
-						advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+					if(Validation.validateForNullObject(advanceJPA.getEmployeeJPA())){
+						advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(advanceJPA.getEmployeeJPA()));
+					}
+					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
+						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
 					}
 					advanceDTOList.add(advDTO);
 				}

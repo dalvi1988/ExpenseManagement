@@ -37,19 +37,28 @@
 	   }
 	   
        var colM = [
-    	   { title: "Created Date", minWidth: 130, dataIndx: "createdDate", dataType:"String"},
+    	   { title: "Employee Name", minWidth: 130, dataIndx: "employeeDTO", dataType:"String"},
            { title: "Purpose", width: 100, dataIndx: "purpose",
                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
            },
            { title: "Advance Number", width: 120, dataIndx: "advanceNumber",
                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
            }, 
-           { title: "Amount", width: 100, dataIndx: "amount", align: "center"},
+           { title: "Amount", width: 100, dataIndx: "amount", align: "right",
+        	   render: function (ui) {                        
+                   var cellData = ui.cellData;
+                   if (cellData != null) {
+                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+                   }
+                   else {
+                       return "";
+                   }
+               }
+           },
            { title: "For Event", width: 100, dataIndx: "eventDTO", },
            { title: "", dataIndx: "advanceDetailId",hidden:true},
-           { title: "Previously Approved By", minWidth: 100, dataIndx: "approvedByEmployeeDTO" },
            { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
-               return "<button type='button' class='pay_btn'>Pay</button>";
+               return "<button type='button' class='pay_btn' style='background:red; color: white'>Pay "+ui.rowData.amount+"</button>";
                }
            }
        ];
@@ -72,14 +81,12 @@
            editable: false,
            selectionModel: { type: 'cell' },
            filterModel: { on: true, mode: "AND", header: true },
-           title: "Saved Advance Vouchers",
            resizable: true,
            numberCell: { show: false },
            columnBorders: true,
            numberCell: { show: false },
-           title: "<b>Vouchers For Approval</b>",                        
+           title: "<b>Advances For Payment</b>",                        
            resizable: true,
-           freezeCols: 1,   
            selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},
            
            refresh: function() {
@@ -89,7 +96,33 @@
                $grid.find("button.pay_btn").button({ icons: { primary: 'ui-icon-check'} })
                .unbind("click")
                .bind("click", function (evt) {
-                   
+            	   var $tr = $(this).closest("tr");
+	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
+	                 var rowIndx = obj.rowIndx;
+	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
+	        	     rowData.moduleName="Advance";
+	                 rowData.voucherId=rowData.advanceDetailId;
+	                 $.ajax($.extend({}, ajaxObj, { 
+	                  	context: $grid,
+	              	    url: "makePayment", 
+	              	    type: 'POST', 
+	              	    data: JSON.stringify(rowData),
+	              	 
+	              	    success: function(data) { 
+	              	    	if(data.serviceStatus=="SUCCESS"){
+	              	    		$(".alert").addClass("alert-success").text(data.message).show();
+	              	    		 $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
+	              	    	}
+	              	    	else{
+	              	    		$(".alert").addClass("alert-danger").text(data.message).show();
+	              	    		$grid.pqGrid("rollback");
+	              	    	}
+	              	    	
+	              	    },
+	              	    error:function(data) {
+	              	    	$(".alert").addClass("alert-danger").text(data.message).show();
+	              	    }
+	     		   }));
                  
                });
 

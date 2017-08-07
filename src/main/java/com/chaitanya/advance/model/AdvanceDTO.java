@@ -30,6 +30,7 @@ public class AdvanceDTO extends BaseDTO {
 	@JsonIgnore
 	private VoucherStatusDTO voucherStatusDTO;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO employeeDTO;
@@ -119,7 +120,6 @@ public class AdvanceDTO extends BaseDTO {
 	public EmployeeDTO getEmployeeDTO() {
 		return employeeDTO;
 	}
-	@JsonIgnore
 	public void setEmployeeDTO(EmployeeDTO employeeDTO) {
 		this.employeeDTO = employeeDTO;
 	}

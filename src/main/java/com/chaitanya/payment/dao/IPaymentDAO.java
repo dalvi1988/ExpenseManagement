@@ -9,4 +9,6 @@ public interface IPaymentDAO {
 
 	public void updateProcessHistory(PaymentJPA paymentJPA);
 
+	public void updateAdvanceProcessHistory(PaymentJPA paymentJPA);
+
 }

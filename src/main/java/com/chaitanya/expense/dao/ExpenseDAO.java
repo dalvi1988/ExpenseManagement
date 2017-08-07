@@ -366,4 +366,16 @@ public class ExpenseDAO implements IExpenseDAO{
 														
 		return expsensDetailJPAList;
 	}
+	
+	@Override
+	public List<ExpenseHeaderJPA> getPaidExpenseList(ExpenseHeaderDTO expenseHeaderDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
+				.list();
+		return expsensHeaderJPAList;
+	}
 }

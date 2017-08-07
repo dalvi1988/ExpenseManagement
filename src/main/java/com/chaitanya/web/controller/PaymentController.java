@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chaitanya.base.BaseDTO;
-import com.chaitanya.base.BaseDTO.Command;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.payment.model.PaymentDTO;
 import com.chaitanya.payment.service.IPaymentService;

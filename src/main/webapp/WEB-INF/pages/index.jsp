@@ -108,6 +108,10 @@
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('rejectedExpense');
 	     });
+	    $('.paidExpenses').click(function(){
+	    	$( this ).parent().addClass("active")
+	        $('.content').load('paidExpense');
+	     });
 	    
 	    $('.eventMaster').click(function(){
 	    	$( this ).parent().addClass("active")
@@ -142,6 +146,11 @@
 	     $('.paymentExpense').click(function(){
 		    	$( this ).parent().addClass("active")
 		        $('.content').load('paymentDeskExpenses');
+		 });
+	     
+	     $('.paymentAdvance').click(function(){
+		    	$( this ).parent().addClass("active")
+		        $('.content').load('paymentAdvance');
 		 });
 	     
 	     $('.employeeDashboard').click(function(){
@@ -241,6 +250,7 @@
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
             <li><a href="#" class="pendingAtPaymentDesk"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
+            <li><a href="#" class="paidExpenses"><i class="fa fa-circle-o"></i>Paid Expenses</a></li>
           </ul>
         </li>
         

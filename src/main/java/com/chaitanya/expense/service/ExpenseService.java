@@ -445,75 +445,32 @@ public class ExpenseService implements IExpenseService{
 	
 	
 	@Override
-	public BaseDTO payExpenses(BaseDTO baseDTO) throws IOException, ParseException {
-		logger.debug("ExpenseService: payExpenses-Start");
+	public List<ExpenseHeaderDTO> getPaidExpenseList(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: getPaidExpenseList-Start");
 		validateExpenseDTO(baseDTO);
 		
+		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.payExpenses(expenseHeaderDTO);
-			Integer statusID= expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId();
-			
-			VoucherStatusJPA voucherStatusJPA= new VoucherStatusJPA();
-			
-			if(Validation.validateForNullObject(expenseHeaderJPA)){
-				if(expenseHeaderDTO.getVoucherStatusId() == 3){// Approved
-					// Set Voucher Status in ExpenseHEader
-					voucherStatusJPA.setVoucherStatusId(statusID+1);
-					expenseHeaderJPA.setVoucherStatusJPA(voucherStatusJPA);
-					expenseDAO.updateProcessInstance(expenseHeaderJPA,expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId(),expenseHeaderDTO.getProcessedByEmployeeDTO());
-					
-				}
-				else if(expenseHeaderDTO.getVoucherStatusId() == 4){//Rejected
-					voucherStatusJPA.setVoucherStatusId(3);
-					expenseHeaderJPA.setVoucherStatusJPA(voucherStatusJPA);
-					
-					ProcessInstanceJPA processInstanceJPA = expenseHeaderJPA.getProcessInstanceJPA();
-					if(! Validation.validateForNullObject(processInstanceJPA)){
-						processInstanceJPA= new ProcessInstanceJPA();
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPaidExpenseList(expenseHeaderDTO);
+			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
 					}
-					
-					EmployeeJPA pendingAt = new EmployeeJPA();
-					pendingAt.setEmployeeId(expenseHeaderJPA.getEmployeeJPA().getEmployeeId());
-					processInstanceJPA.setPendingAt(pendingAt);
-					
-					EmployeeJPA approveBy = new EmployeeJPA();
-					approveBy.setEmployeeId(expenseHeaderDTO.getProcessedByEmployeeDTO().getEmployeeId());
-					processInstanceJPA.setProcessedBy(approveBy);
-					
-					VoucherStatusJPA voucherStatus = new VoucherStatusJPA();
-					voucherStatus.setVoucherStatusId(statusID+2);
-					processInstanceJPA.setVoucherStatusJPA(voucherStatus);
-					
-					processInstanceJPA.setComment(expenseHeaderDTO.getRejectionComment());
-					
-					processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
-					expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
+					expenseHeaderDTOList.add(expHeaderDTO);
 				}
-				
-				// Set Process History
-				ProcessHistoryJPA processHistoryJPA = new ProcessHistoryJPA();
-				processHistoryJPA.setVoucherStatusJPA(voucherStatusJPA);
-				processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
-				
-				EmployeeJPA approveBy = new EmployeeJPA();
-				approveBy.setEmployeeId(expenseHeaderDTO.getProcessedByEmployeeDTO().getEmployeeId());
-				processHistoryJPA.setProcessedBy(approveBy);
-				
-				processHistoryJPA.setComment(expenseHeaderDTO.getRejectionComment());
-				List<ProcessHistoryJPA> processHistoryJPAList= new ArrayList<ProcessHistoryJPA>();
-				processHistoryJPAList.add(processHistoryJPA);
-				expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
-				
-				
-				baseDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
 		else{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
-		logger.debug("ExpenseService: payExpenses-End");
-		return  baseDTO;
+		
+		logger.debug("ExpenseService: getPaidExpenseList-End");
+		return  expenseHeaderDTOList;
 	}
+	
 }

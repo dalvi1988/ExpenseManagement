@@ -342,22 +342,14 @@ public class AdvanceDAO implements IAdvanceDAO{
 	}
 	
 	@Override
-	public List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO) {
-		Session session = sessionFactory.getCurrentSession();
-		
-		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)
-									.add(Restrictions.eq("pendingAt.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
-									.setProjection(Projections.property("advanceJPA.advanceDetailId"));
-		
+	public List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO) {Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
-												.setFetchMode("employeeJPA",FetchMode.JOIN)
-												.add(Subqueries.propertyIn("advanceDetailId", subquery))
-												.list();
-														
-
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(4)))
+				.list();
 		return advanceJPAList;
-	
 	}
 
 }

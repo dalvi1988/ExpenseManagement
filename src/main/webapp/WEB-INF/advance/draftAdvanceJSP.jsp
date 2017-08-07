@@ -22,7 +22,17 @@
        { title: "Advance Number", width: 120, dataIndx: "advanceNumber",
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
        }, 
-       { title: "Amount", width: 100, dataIndx: "amount", align: "center"},
+       { title: "Amount", width: 100, dataIndx: "amount", align: "right",
+    	   render: function (ui) {                        
+               var cellData = ui.cellData;
+               if (cellData != null) {
+                   return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
+               }
+               else {
+                   return "";
+               }
+           }
+       },
        { title: "For Event", width: 100, dataIndx: "eventDTO", },
        { title: "", dataIndx: "advanceDetailId",hidden:true},
        { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {

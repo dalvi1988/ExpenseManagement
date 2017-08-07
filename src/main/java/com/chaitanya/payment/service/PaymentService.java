@@ -41,7 +41,7 @@ public class PaymentService implements IPaymentService{
 							paymentDAO.updateProcessHistory(paymentJPA);
 						}
 						else{
-							//paymentDAO.updateAdvanceProcessInstanceHistory(paymentJPA);
+							paymentDAO.updateAdvanceProcessHistory(paymentJPA);
 						}
 					}
 					else{
