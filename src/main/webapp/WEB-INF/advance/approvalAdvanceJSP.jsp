@@ -38,6 +38,7 @@
 	   }
 	   
        var colM = [
+			{ title: "Employee Name", minWidth: 130, dataIndx: "employeeDTO", dataType:"String"},
            { title: "Purpose", width: 100, dataIndx: "purpose",
                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
            },
