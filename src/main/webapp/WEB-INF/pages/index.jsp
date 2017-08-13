@@ -159,7 +159,7 @@
 		 });
 	     
 	    
-	    $('.paymentExpense').click();
+	    $('.employeeDashboard').click();
 	    
 	});
 	function logout(){
@@ -284,7 +284,7 @@
             <li><a href="#" class="departmentMaster"><i class="fa fa-circle-o"></i> Department Master</a></li>
             <li><a href="#" class="branchMaster"><i class="fa fa-circle-o"></i> Branch Master</a></li>
             <li><a href="#" class="eventMaster"><i class="fa fa-circle-o"></i> Event Master</a></li>
-            
+            <li><a href="#" class="expenseCategoryMaster"><i class="fa fa-circle-o"></i> Expense Category Master</a></li>
             
           </ul>
         </li>
@@ -334,7 +334,6 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="#" class="companyMaster"><i class="fa fa-circle-o"></i> Country Master</a></li>
-             <li><a href="#" class="expenseCategoryMaster"><i class="fa fa-circle-o"></i> Expense Category Master</a></li>
           </ul>
         </li>
         </sec:authorize>
