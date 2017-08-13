@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
@@ -33,7 +35,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RestController
+@Controller
 public class ApprovalFlowController {
 	
 	@Autowired
@@ -45,27 +47,36 @@ public class ApprovalFlowController {
 	@Autowired
 	IApprovalFlowService approvalService;
 	
+	private Logger logger= LoggerFactory.getLogger(ApprovalFlowController.class);
+	
 	@RequestMapping(value="/approvalFlow",method=RequestMethod.GET)
 	public ModelAndView getFunctionalFlow() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 		ModelAndView model=new ModelAndView();
-		ObjectMapper mapper = new ObjectMapper();
-		List<EmployeeDTO> employeeDTOList=null;
-		List<DepartmentDTO> departmentDTOList=null;
-		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
-		if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
-			employeeDTOList=new ArrayList<EmployeeDTO>();
-			EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
-			if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
-				employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
-				Utility.addLevelsToEmployeeDTO(employeeDTOList);
-				departmentDTOList=departmentService.findAll();
-			}
+		try{
+			ObjectMapper mapper = new ObjectMapper();
+			List<EmployeeDTO> employeeDTOList=null;
+			List<DepartmentDTO> departmentDTOList=null;
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			
-			model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
-			model.addObject("departmentList", mapper.writeValueAsString(departmentDTOList));
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				employeeDTOList=new ArrayList<EmployeeDTO>();
+				EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
+				if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
+					employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
+					Utility.addLevelsToEmployeeDTO(employeeDTOList);
+					departmentDTOList=departmentService.findAll();
+				}
+				
+				model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
+				model.addObject("departmentList", mapper.writeValueAsString(departmentDTOList));
+				model.setViewName("approvalflow/approvalFlowJSP");
+			}
 		}
-		model.setViewName("approvalflow/approvalFlowJSP");
+		catch(Exception e){
+			logger.error("ApprovalFlowController: getFunctionalFlow",e);
+			model.setViewName("others/505");
+		}
+		
 		return model;
 	}
 	
@@ -128,33 +139,36 @@ public class ApprovalFlowController {
 	@RequestMapping(value="/addFunctionalFlow",method={RequestMethod.POST})
 	public @ResponseBody ApprovalFlowDTO addFunctionalFlow(@RequestBody ApprovalFlowDTO receivedApprovalFlowDTO){
 		ApprovalFlowDTO toBeSentApprovalFlowDTO=null;
-		if(Validation.validateForNullObject(receivedApprovalFlowDTO)){
-			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if(!Validation.validateForNullObject(receivedApprovalFlowDTO.getFlowId())){
-				receivedApprovalFlowDTO.setCommand(Command.ADD);
-				receivedApprovalFlowDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-				receivedApprovalFlowDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
-			}
-			
-			BaseDTO baseDTO=approvalService.addFunctionalFlow(receivedApprovalFlowDTO);
-			if(Validation.validateForSuccessStatus(baseDTO)){
-				toBeSentApprovalFlowDTO=(ApprovalFlowDTO)baseDTO;
-				if(receivedApprovalFlowDTO.getCommand().equals(Command.ADD)){
-					toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
+		try{
+			if(Validation.validateForNullObject(receivedApprovalFlowDTO)){
+				LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				if(!Validation.validateForNullObject(receivedApprovalFlowDTO.getFlowId())){
+					receivedApprovalFlowDTO.setCommand(Command.ADD);
+					receivedApprovalFlowDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+					receivedApprovalFlowDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 				}
-				else
-					toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
+				
+				BaseDTO baseDTO=approvalService.addFunctionalFlow(receivedApprovalFlowDTO);
+				if(Validation.validateForSuccessStatus(baseDTO)){
+					toBeSentApprovalFlowDTO=(ApprovalFlowDTO)baseDTO;
+					if(receivedApprovalFlowDTO.getCommand().equals(Command.ADD)){
+						toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
+					}
+					else
+						toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
+				}
+				else if(Validation.validateForBusinessFailureStatus(baseDTO)){
+					toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
+					toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
+				}
 			}
-			else if(Validation.validateForSystemFailureStatus(baseDTO)){
+			else{
 				toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
 				toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 			}
-			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
-				toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
-				toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
-			}
 		}
-		else{
+		catch(Exception e){
+			logger.error("ApprovalFlowController: addFunctionalFlow",e);
 			toBeSentApprovalFlowDTO=receivedApprovalFlowDTO;
 			toBeSentApprovalFlowDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}

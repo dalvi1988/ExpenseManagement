@@ -8,7 +8,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
@@ -16,7 +15,6 @@ import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.jpa.ApprovalFlowJPA;
 
 @Repository
-@Transactional
 public class ApprovalFlowDAO implements IApprovalFlowDAO{
 
 	@Autowired

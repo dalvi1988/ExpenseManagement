@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.chaitanya.expenseCategory.model.ExpenseCategoryDTO;
 import com.chaitanya.jpa.ExpenseCategoryJPA;
 
 @Repository
-@Transactional
 public class ExpenseCategoryDAO implements IExpenseCategoryDAO{
 
 	@Autowired
@@ -25,11 +25,12 @@ public class ExpenseCategoryDAO implements IExpenseCategoryDAO{
 	}
 
 	@Override
-	public List<ExpenseCategoryJPA> findAll() {
+	public List<ExpenseCategoryJPA> findExpenseCategoryByCompany(ExpenseCategoryDTO expenseCategoryDTO) {
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<ExpenseCategoryJPA> expenseCategoryList=(List<ExpenseCategoryJPA>)session.createCriteria(ExpenseCategoryJPA.class)
-				.list();
+													.add(Restrictions.eq("companyJPA.companyId", expenseCategoryDTO.getCompanyDTO().getCompanyId()))
+													.list();
 		return expenseCategoryList;
 	}
 

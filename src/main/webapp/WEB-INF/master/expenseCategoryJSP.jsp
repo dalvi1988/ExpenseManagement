@@ -132,6 +132,7 @@
               jsonToBeSend["status"] = rowData.status;
               jsonToBeSend["locationRequired"] = rowData.locationRequired;
               jsonToBeSend["unitRequired"] = rowData.unitRequired;
+              jsonToBeSend["limitIncrease"] = rowData.limitIncrease;
               jsonToBeSend["amount"] = rowData.amount;
               url = "addExpenseCategory";
               
@@ -158,6 +159,7 @@
 	                       rowData.expenseCategoryId= data.expenseCategoryId;
 	                    } 
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
 	          	    	$grid.pqGrid("commit");
 	          	    	$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
@@ -268,7 +270,7 @@
                        	
                       }
                   },
-                  { title: "Amount Per Unit", width: 100, dataType: "float", align: "right", dataIndx: "amount",
+                  { title: "Amount", width: 100, dataType: "float", align: "right", dataIndx: "amount",
                       validations: [
                           //{ type: 'gt', value: 0, msg: "should be > 0" },
                           { type: function(ui){
@@ -284,14 +286,28 @@
                           	 }
                           }
                       ],
-	               	  editable: function(ui){
-							if(ui.rowData['unitRequired'] == true)  
+	               	  
+                      render: function (ui) {
+                    	  if(ui.rowData['unitRequired'] == true)  
+								return ""+parseFloat(ui.cellData).toFixed(2)+ " per Unit";
+							else 
+								return ""+parseFloat(ui.cellData).toFixed(2);
+                      }
+                  },
+                  { title: "Amount Limit Increased?", width: 130, dataType: "bool", align: "center", dataIndx: "limitIncrease",
+                	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
+                	  editor: { type: "checkbox", style: "margin:3px 5px;"},
+                	  editable: function(ui){
+                		  debugger;
+							if(ui.rowData['amount'] != null)  
 								return true;
 							else 
 								return false;
 	                  },
                       render: function (ui) {
-                          return ""+parseFloat(ui.cellData).toFixed(2);
+                          if(ui.cellData == true) return "Yes";
+                          else return "No";
+                       	
                       }
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",

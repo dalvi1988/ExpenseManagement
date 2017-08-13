@@ -90,7 +90,10 @@ public class ExpenseController {
 		List<AdvanceDTO> advanceDTOList= advanceService.getApprovedAdvanceByEmp(advanceDTO);
 		model.addObject("advanceList", mapper.writeValueAsString(advanceDTOList));
 		
-		expenseCategoryDTOList = expenseCategoryService.findAll();
+		ExpenseCategoryDTO expenseCategoryDTO=new ExpenseCategoryDTO();
+		expenseCategoryDTO.setCompanyDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO());
+		expenseCategoryDTOList = expenseCategoryService.findExpenseCategoryByCompany(expenseCategoryDTO);
+		
 		model.addObject("expenseDetailList", mapper.writeValueAsString(expenseHeaderDTO.getAddedExpenseDetailsDTOList()));
 		model.addObject("expenseCategoryList", mapper.writeValueAsString(expenseCategoryDTOList));
 		model.addObject("ExpenseHeaderDTO", expenseHeaderDTO);

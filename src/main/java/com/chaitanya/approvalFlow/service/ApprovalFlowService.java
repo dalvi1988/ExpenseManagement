@@ -1,5 +1,6 @@
 package com.chaitanya.approvalFlow.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.approvalFlow.convertor.ApprovalFlowConvertor;
 import com.chaitanya.approvalFlow.dao.IApprovalFlowDAO;
@@ -19,6 +21,7 @@ import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Validation;
 
 @Service("ApprovalFlowService")
+@Transactional(rollbackFor=Exception.class)
 public class ApprovalFlowService implements IApprovalFlowService {
 
 	@Autowired
@@ -26,40 +29,34 @@ public class ApprovalFlowService implements IApprovalFlowService {
 	
 	private Logger logger= LoggerFactory.getLogger(ApprovalFlowService.class);
 
-	private boolean validateApprovalFlowDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof ApprovalFlowDTO);
+	private void validateApprovalFlowDTO(BaseDTO baseDTO) {
+		if( baseDTO == null  || !(baseDTO instanceof ApprovalFlowDTO)){
+			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
+		}
 	}
 	
 	@Override
 	public List<ApprovalFlowDTO> findFunctionalFlowUnderBranch(BaseDTO baseDTO) {
 		logger.debug("ApprovalFlowService: findFunctionalFlowUnderBranch-Start");
 		
-		if(validateApprovalFlowDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
-		}
+		validateApprovalFlowDTO(baseDTO);
 		
 		List<ApprovalFlowDTO> approvalFlowDTOList= null;
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
-				List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findFunctionalFlowUnderBranch(approvalFlowDTO.getBranchDTO());
-				if(Validation.validateForNullObject(approvalFlowJPAList)){
-					approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
-					for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
-						ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
-						approvalFlowDTOList.add(deptHeadDTO);
-					}
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		if (Validation.validateForNullObject(baseDTO)) {
+			ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
+			List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findFunctionalFlowUnderBranch(approvalFlowDTO.getBranchDTO());
+			if(Validation.validateForNullObject(approvalFlowJPAList)){
+				approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
+				for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
+					ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
+					approvalFlowDTOList.add(deptHeadDTO);
 				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			}  
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("Department Service: Exception",e);
-		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}  
 		logger.debug("ApprovalFlowService: findFunctionalFlowUnderBranch-End");
 		return  approvalFlowDTOList;
 	}
@@ -68,31 +65,23 @@ public class ApprovalFlowService implements IApprovalFlowService {
 	public List<ApprovalFlowDTO> findFinanceFlowUnderBranch(BaseDTO baseDTO) {
 		logger.debug("ApprovalFlowService: findFinanceFlowUnderBranch-Start");
 		
-		if(validateApprovalFlowDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
-		}
+		validateApprovalFlowDTO(baseDTO);
 		
 		List<ApprovalFlowDTO> approvalFlowDTOList= null;
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
-				List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findFinanceFlowUnderBranch(approvalFlowDTO.getBranchDTO());
-				if(Validation.validateForNullObject(approvalFlowJPAList)){
-					approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
-					for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
-						ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
-						approvalFlowDTOList.add(deptHeadDTO);
-					}
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		if (Validation.validateForNullObject(baseDTO)) {
+			ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
+			List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findFinanceFlowUnderBranch(approvalFlowDTO.getBranchDTO());
+			if(Validation.validateForNullObject(approvalFlowJPAList)){
+				approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
+				for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
+					ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
+					approvalFlowDTOList.add(deptHeadDTO);
 				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("Department Service: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		logger.debug("ApprovalFlowService: findFinanceFlowUnderBranch-End");
 		return  approvalFlowDTOList;
@@ -102,32 +91,25 @@ public class ApprovalFlowService implements IApprovalFlowService {
 	public List<ApprovalFlowDTO> findBranchFlowUnderBranch(BaseDTO baseDTO) {
 		logger.debug("ApprovalFlowService: findBranchFlowUnderBranch-Start");
 		
-		if(validateApprovalFlowDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
-		}
+		validateApprovalFlowDTO(baseDTO);
 		
 		List<ApprovalFlowDTO> approvalFlowDTOList= null;
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
-				List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findBranchFlowUnderBranch(approvalFlowDTO.getBranchDTO());
-				if(Validation.validateForNullObject(approvalFlowJPAList)){
-					approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
-					for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
-						ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
-						approvalFlowDTOList.add(deptHeadDTO);
-					}
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		if (Validation.validateForNullObject(baseDTO)) {
+			ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;;
+			List<ApprovalFlowJPA> approvalFlowJPAList =approvalFlowDAO.findBranchFlowUnderBranch(approvalFlowDTO.getBranchDTO());
+			if(Validation.validateForNullObject(approvalFlowJPAList)){
+				approvalFlowDTOList= new ArrayList<ApprovalFlowDTO>();
+				for(ApprovalFlowJPA approvalFlowJPA: approvalFlowJPAList){
+					ApprovalFlowDTO deptHeadDTO=ApprovalFlowConvertor.setApprovalFlowJPAToDTO(approvalFlowJPA);
+					approvalFlowDTOList.add(deptHeadDTO);
 				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("Department Service: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
+		
 		logger.debug("ApprovalFlowService: findBranchFlowUnderBranch-End");
 		return  approvalFlowDTOList;
 	}
@@ -136,39 +118,31 @@ public class ApprovalFlowService implements IApprovalFlowService {
 	public BaseDTO deactivateFunctionalFlow(BaseDTO baseDTO){
 		logger.debug("ApprovalFlowService: deactivateFunctionalFlow-Start");
 		
-		if(validateApprovalFlowDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
-		}
+		validateApprovalFlowDTO(baseDTO);
+		
 		ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO) baseDTO;
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				Integer result =approvalFlowDAO.deactivateFunctionalFlow(approvalFlowDTO);
-				
-				if(result == 1){
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
-				}
-				else{
-					baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-				}
+		if (Validation.validateForNullObject(baseDTO)) {
+			Integer result =approvalFlowDAO.deactivateFunctionalFlow(approvalFlowDTO);
+			
+			if(result == 1){
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 			else{
 				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("Department Service: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		logger.debug("ApprovalFlowService: deactivateFunctionalFlow-End");
 		return  baseDTO;
 	}
 
 	@Override
-	public BaseDTO addFunctionalFlow(BaseDTO baseDTO) {
+	public BaseDTO addFunctionalFlow(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ApprovalFlowService: addFunctionalFlow-Start");
-		if(validateApprovalFlowDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of ApprovalFlowDTO type.");
-		}
+		
+		validateApprovalFlowDTO(baseDTO);
 		
 		try{
 			ApprovalFlowDTO approvalFlowDTO=(ApprovalFlowDTO)baseDTO;
@@ -202,10 +176,6 @@ public class ApprovalFlowService implements IApprovalFlowService {
 		catch(DataIntegrityViolationException e){
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("ApprovalFlowService: Exception",e);
-		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			logger.error("ApprovalFlowService: Exception",e);
 		}
 		logger.debug("ApprovalFlowService: addFunctionalFlow-End");

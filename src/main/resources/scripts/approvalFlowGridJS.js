@@ -783,7 +783,6 @@ function addRow($grid, gridName) {
             $tr.find("button.fin_edit_btn").click();
         }
         else if(gridName == "FunctionalFlow"){
-        	alert("here")
         	//simulate click on edit button.
             $tr.find("button.edit_btn").click();
         }

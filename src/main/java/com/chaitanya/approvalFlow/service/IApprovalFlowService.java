@@ -1,5 +1,6 @@
 package com.chaitanya.approvalFlow.service;
 
+import java.text.ParseException;
 import java.util.List;
 
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
@@ -11,7 +12,7 @@ public interface IApprovalFlowService {
 
 	BaseDTO deactivateFunctionalFlow(BaseDTO baseDTO);
 
-	BaseDTO addFunctionalFlow(BaseDTO baseDTO);
+	BaseDTO addFunctionalFlow(BaseDTO baseDTO) throws ParseException;
 
 	List<ApprovalFlowDTO> findFinanceFlowUnderBranch(BaseDTO baseDTO);
 

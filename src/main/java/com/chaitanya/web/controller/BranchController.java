@@ -102,7 +102,9 @@ public class BranchController {
 		}
 		catch(Exception e){
 			logger.error("BranchController: addBranch",e);
+			toBeSentBranchDTO=receivedBranchDTO;
 			toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+			
 		}
 		return toBeSentBranchDTO;
 	}

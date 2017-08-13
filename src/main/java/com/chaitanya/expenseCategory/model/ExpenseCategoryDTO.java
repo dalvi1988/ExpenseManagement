@@ -1,11 +1,14 @@
 package com.chaitanya.expenseCategory.model;
 
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.company.model.CompanyDTO;
 
 public class ExpenseCategoryDTO extends BaseDTO {
 	private static final long serialVersionUID = 1L;
 
 	private Long expenseCategoryId;
+	
+	private CompanyDTO companyDTO;
 	
 	private String expenseName;
 		
@@ -14,8 +17,10 @@ public class ExpenseCategoryDTO extends BaseDTO {
 	private Boolean locationRequired;
 	
     private Boolean unitRequired;
-	
+    
 	private Double amount;
+	
+	private Boolean limitIncrease;
 	
 	private Boolean status;
 
@@ -74,4 +79,21 @@ public class ExpenseCategoryDTO extends BaseDTO {
 	public void setStatus(Boolean status) {
 		this.status = status;
 	}
+
+	public Boolean getLimitIncrease() {
+		return limitIncrease;
+	}
+
+	public void setLimitIncrease(Boolean limitIncrease) {
+		this.limitIncrease = limitIncrease;
+	}
+
+	public CompanyDTO getCompanyDTO() {
+		return companyDTO;
+	}
+
+	public void setCompanyDTO(CompanyDTO companyDTO) {
+		this.companyDTO = companyDTO;
+	}
+
 }

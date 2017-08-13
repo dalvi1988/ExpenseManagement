@@ -30,7 +30,7 @@ public class BranchService implements IBranchService{
 	@Override
 	public List<BranchDTO> findAllBranchUnderCompany(BaseDTO baseDTO) {
 		logger.debug("BranchService: findAllBranchUnderCompany-Start");
-		validateBranchMasterDTO(baseDTO);
+		validateBranchDTO(baseDTO);
 		
 		BranchDTO branchDTO=(BranchDTO)baseDTO;
 		List<BranchJPA> branchList=branchDAO.findAllBranchUnderCompany(branchDTO.getCompanyDTO());
@@ -51,7 +51,7 @@ public class BranchService implements IBranchService{
 	@Override
 	public BaseDTO addBranch(BaseDTO baseDTO) throws ParseException {
 		logger.debug("BranchService: addBranch-Start");
-		validateBranchMasterDTO(baseDTO);
+		validateBranchDTO(baseDTO);
 		try{
 			BranchJPA branchJPA=BranchConvertor.setBranchDTOToJPA((BranchDTO)baseDTO);
 			if (Validation.validateForNullObject(branchJPA)) {
@@ -68,13 +68,13 @@ public class BranchService implements IBranchService{
 		catch(DataIntegrityViolationException e){
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("Branch Service: Exception",e);
+			logger.error("BranchService: Exception",e);
 		}
 		logger.debug("BranchService: addBranch-End");
 		return baseDTO;
 	}
 	
-	private void validateBranchMasterDTO(BaseDTO baseDTO) {
+	private void validateBranchDTO(BaseDTO baseDTO) {
 		if( baseDTO == null  || !(baseDTO instanceof BranchDTO)){
 			throw new IllegalArgumentException("Object expected of BranchDTO type.");
 		}

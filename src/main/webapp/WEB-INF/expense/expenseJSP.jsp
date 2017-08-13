@@ -40,7 +40,8 @@ $(function () {
 		    if(arrayData != null){
 			    for (var i = 0; i < arrayData.length; i++) {
 			        var row = arrayData[i];
-			        revenueTotal += parseFloat(row["amount"]);
+			        if(row["amount"] != null)
+			        	revenueTotal += parseFloat(row["amount"]);
 			    }
 		    }
 		    totalData = { description: "<b>Total Amount</b>",  amount: revenueTotal ,receipt:"", delButton:"", pq_rowcls: 'green' };
@@ -105,6 +106,7 @@ $(function () {
             	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'toLocation', cls: 'disabled'} );
             }
             rowData.unitRequired = data.row.unitRequired;
+            rowData.limitIncrease = data.row.limitIncrease;
             if(data.row.unitRequired == false){
             	rowData.unit="";
             	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
@@ -112,7 +114,7 @@ $(function () {
             else{
             	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
             }
-            $grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'amount', cls: 'disabled'} );
+            //$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'amount', cls: 'disabled'} );
             rowData.amountPerUnit= data.row.amount; 
             
             rowData.expenseCategoryId =data.value;
@@ -211,7 +213,7 @@ $(function () {
 		
 		var rowData = {date:$("#startDate").val(), locationRequired :false,unitRequired:false }; //empty row
         var rowIndx = $grid.pqGrid("addRow", { rowData: rowData });
-        $grid.pqGrid( "addClass", {rowIndx: rowIndx, dataIndx: 'amount', cls: 'disabled'} );
+        //$grid.pqGrid( "addClass", {rowIndx: rowIndx, dataIndx: 'amount', cls: 'disabled'} );
         $grid.pqGrid("goToPage", { rowIndx: rowIndx });
 	}
 	
@@ -376,6 +378,7 @@ $(function () {
             { title: "Location Required", dataType: "boolean", dataIndx: "locationRequired",hidden: true },
             { title: "Unit Required", dataType: "boolean", dataIndx: "unitRequired", hidden: true },
             { title: "Amount Per Unit", dataType: "integer", dataIndx: "amountPerUnit", hidden: true },
+            { title: "Limit Increase", dataType: "boolean", dataIndx: "limitIncrease", hidden: true },
             { title: "Date", width: "160", dataIndx: "date",
 		        editor: {
 		            type: 'textbox',
@@ -502,7 +505,30 @@ $(function () {
                 render: disableFieldRenderer
             },
             { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",
-                validations: [{ type: 'gt', value: 0.5, msg: "should be > 0.5"}],
+            	 validations: [
+                      { type: function (ui) {
+                          var value = ui.value;
+                          
+                          if(ui.rowData['limitIncrease'] == false){
+                        	 if(ui.rowData['unitRequired'] == true){
+                        		 var expectedAmmount= ui.rowData['amountPerUnit']*ui.rowData['unit'];
+                        		 if(value> expectedAmmount){
+                        			 ui.msg="Amount can not exceed "+expectedAmmount;
+                        			 return false;
+                        		 }
+
+                        	 }
+                        	 else{
+                        		 var expectedAmmount= ui.rowData['amountPerUnit'];
+                        		 if(value> expectedAmmount){
+                        			 ui.msg="Amount can not exceed "+expectedAmmount;
+                        			 return false;
+                        		 }
+                        	 }
+                          }
+                      }, icon: 'ui-icon-info'
+                      }
+                ],
                 render: function (ui) {                        
                     var cellData = ui.cellData;
                     if (cellData != null) {
@@ -511,7 +537,25 @@ $(function () {
                     else {
                         return "";
                     }
-                }
+                },
+                editable: function(ui){
+                	debugger;
+            		if(typeof ui.rowData != "undefined"  && ui.rowData != null && ui.rowData['unitRequired'] != null){
+						if(ui.rowData['unitRequired'] == true && (typeof ui.rowData['unit'] != "undefined" && ui.rowData['unit'] != null) ){ 
+							return true;
+						}
+						else if(ui.rowData['unitRequired'] == false){
+							return true;
+						}
+						else {
+							return false;
+						}
+            		}
+            		else{
+            			return true;
+            		}
+                },
+                
             },
             { title: "Receipt/Document",editable:false, dataIndx: "receipt", minWidth: 200, sortable: false, 
 
