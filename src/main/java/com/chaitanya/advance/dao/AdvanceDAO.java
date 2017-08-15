@@ -150,9 +150,9 @@ public class AdvanceDAO implements IAdvanceDAO{
 				processInstanceJPA= new AdvanceProcessInstanceJPA();
 			}
 			
-			EmployeeJPA pendingAt = new EmployeeJPA();
+			/*EmployeeJPA pendingAt = new EmployeeJPA();
 			pendingAt.setEmployeeId(advanceJPA.getEmployeeJPA().getEmployeeId());
-			processInstanceJPA.setPendingAt(pendingAt);
+			processInstanceJPA.setPendingAt(pendingAt);*/
 			
 			EmployeeJPA approveBy = new EmployeeJPA();
 			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
@@ -288,7 +288,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 	@Override
 	public List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
+		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};//Rejected List
 		
 		DetachedCriteria subquery = DetachedCriteria.forClass(AdvanceProcessInstanceJPA.class)
 									.add(Restrictions.eq("pendingAt.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))

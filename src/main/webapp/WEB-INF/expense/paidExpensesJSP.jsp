@@ -62,7 +62,7 @@
            pageModel: { type: "local", rPP: 10 },
            editable: false,
            selectionModel: {type: 'row', mode: 'single'},
-           title: "Pending Expense Vouchers",
+           title: "Paid Expense Vouchers",
            resizable: true,
            numberCell: { show: false },
            columnBorders: true,           

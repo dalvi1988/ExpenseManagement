@@ -151,9 +151,9 @@ public class ExpenseDAO implements IExpenseDAO{
 				processInstanceJPA= new ProcessInstanceJPA();
 			}
 			
-			EmployeeJPA pendingAt = new EmployeeJPA();
+			/*EmployeeJPA pendingAt = new EmployeeJPA();
 			pendingAt.setEmployeeId(expenseHeaderJPA.getEmployeeJPA().getEmployeeId());
-			processInstanceJPA.setPendingAt(pendingAt);
+			processInstanceJPA.setPendingAt(pendingAt);*/
 			
 			EmployeeJPA approveBy = new EmployeeJPA();
 			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());

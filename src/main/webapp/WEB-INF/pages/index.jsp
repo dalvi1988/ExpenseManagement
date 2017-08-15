@@ -28,7 +28,7 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href=<spring:url value="/theme/dist/css/AdminLTE.css"/> />
+  <link rel="stylesheet" href=<spring:url value="/theme/dist/css/AdminLTE.min.css"/> />
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href=<spring:url value="/theme/dist/css/skins/skin-blue.min.css"/> />
@@ -42,6 +42,7 @@
 	$(document).ready(function(){
 		
 		$('a').click(function() {
+			$('.overlay').show();
 			$(".alert").hide();
 		});
 		
@@ -126,6 +127,7 @@
 	    $('.draftAdvance').click(function(){
 	    	$( this ).parent().addClass("active")
 	        $('.content').load('viewDraftAdvance');
+	    	$('.overlay').hide();
 	     });
 	    
 	    $('.pendingAdvance').click(function(){
@@ -151,11 +153,15 @@
 	     $('.paymentAdvance').click(function(){
 		    	$( this ).parent().addClass("active")
 		        $('.content').load('paymentAdvance');
+		    	$('.overlay').hide();
 		 });
 	     
 	     $('.employeeDashboard').click(function(){
+	    	 $('.overlay').show();
 		    	$( this ).parent().addClass("active")
 		        $('.content').load('employeeDashboard');
+		    	$('.overlay').hide();
+		        
 		 });
 	     
 	    
@@ -364,18 +370,20 @@
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div class="content-wrapper box">
     <div class="alert alert-dismissible " style="display: none" >
            
     </div>
 
     <!-- Main content -->
-    <section class="content">
+    <section class=" content">
+    
+    </section>
+     
+    <!-- /.content -->
     <div class="overlay" >
         <i class="fa fa-refresh fa-spin"></i>
       </div>
-    </section>
-    <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
   

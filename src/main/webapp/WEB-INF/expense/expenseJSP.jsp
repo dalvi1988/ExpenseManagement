@@ -520,9 +520,11 @@ $(function () {
                         	 }
                         	 else{
                         		 var expectedAmmount= ui.rowData['amountPerUnit'];
-                        		 if(value> expectedAmmount){
-                        			 ui.msg="Amount can not exceed "+expectedAmmount;
-                        			 return false;
+                        		 if( ui.rowData['amountPerUnit'] != null){
+	                        		 if(value> expectedAmmount){
+	                        			 ui.msg="Amount can not exceed "+expectedAmmount;
+	                        			 return false;
+	                        		 }
                         		 }
                         	 }
                           }

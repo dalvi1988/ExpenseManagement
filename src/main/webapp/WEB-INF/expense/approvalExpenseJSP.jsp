@@ -203,7 +203,7 @@
                },
                colModel: [
                    { title: "Expense Detail Id", width: 80, dataIndx: "expenseDetailId", hidden:true},
-                   { title: "Expense Name", width: 80, dataIndx: "expenseCategoryDTO" },
+                   { title: "Expense Name", width: 200, dataIndx: "expenseCategoryDTO" },
                    { title: "To Location", width: 200, dataIndx: "toLocation" },
                    { title: "From Location", width: 200, dataIndx: "fromLocation" },
 		           { title: "Unit Price", width: "80", align: "center", dataIndx: "unit", dataType: "float"},

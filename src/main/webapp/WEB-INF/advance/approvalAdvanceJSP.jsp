@@ -86,13 +86,11 @@
            editable: false,
            selectionModel: { type: 'cell' },
            filterModel: { on: true, mode: "AND", header: true },
-           title: "Saved Advance Vouchers",
            resizable: true,
            numberCell: { show: false },
            columnBorders: true, 
-          
            numberCell: { show: false },
-           title: "<b>Vouchers For Approval</b>",                        
+           title: "<b>Advance For Approval</b>",                        
            resizable: true,
            selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},
            refresh: function() {

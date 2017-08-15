@@ -7,12 +7,16 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExpenseDetailDTO {
 	private Long expenseDetailId;
 	private Long expenseCategoryId;
+	
+	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="expenseName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private ExpenseCategoryDTO expenseCategoryDTO;
@@ -77,7 +81,6 @@ public class ExpenseDetailDTO {
 		ExpenseCategoryDTO expenseCategoryDTO=new ExpenseCategoryDTO();
 		expenseCategoryDTO.setExpenseCategoryId(this.expenseCategoryId);
 	}
-	@JsonIgnore
 	public ExpenseCategoryDTO getExpenseCategoryDTO() {
 		return expenseCategoryDTO;
 	}
