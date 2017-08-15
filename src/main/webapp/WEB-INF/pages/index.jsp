@@ -217,8 +217,8 @@
       <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
         <span class="sr-only">Toggle navigation</span>
       </a>
-
       <form:form action="logout" method="post" id="logoutForm">
+      
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
          <!-- User Account: style can be found in dropdown.less -->
@@ -247,8 +247,8 @@
           <img src="theme/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p><sec:authentication property="principal.loginDTO.employeeDTO.fullName" /></p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+          <h4><sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.companyDTO.companyName" /></h4>
+          <h5>(<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchName" />)</h5>
         </div>
       </div>
       <!-- sidebar menu: : style can be found in sidebar.less -->
@@ -313,7 +313,6 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="#" class="employeeMaster"><i class="fa fa-circle-o"></i> Employee Master</a></li>
-            <li><a href="#" class="departmentHeadMaster"><i class="fa fa-circle-o"></i> Department Head Master</a></li>
             <li><a href="#" class="departmentMaster"><i class="fa fa-circle-o"></i> Department Master</a></li>
             <li><a href="#" class="branchMaster"><i class="fa fa-circle-o"></i> Branch Master</a></li>
             <li><a href="#" class="eventMaster"><i class="fa fa-circle-o"></i> Event Master</a></li>
@@ -367,6 +366,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="#" class="companyMaster"><i class="fa fa-circle-o"></i> Company Master</a></li>
+            <li><a href="#" class="departmentHeadMaster"><i class="fa fa-circle-o"></i> Department Head Master</a></li>
           </ul>
         </li>
         </sec:authorize>

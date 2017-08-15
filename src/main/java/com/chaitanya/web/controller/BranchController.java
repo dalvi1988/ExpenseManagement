@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.Command;
+import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.branch.service.IBranchService;
 import com.chaitanya.company.model.CompanyDTO;
@@ -103,6 +104,7 @@ public class BranchController {
 		catch(Exception e){
 			logger.error("BranchController: addBranch",e);
 			toBeSentBranchDTO=receivedBranchDTO;
+			toBeSentBranchDTO.setServiceStatus(ServiceStatus.FAILURE);
 			toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 			
 		}

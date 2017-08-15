@@ -299,7 +299,7 @@
                 	  editor: { type: "checkbox", style: "margin:3px 5px;"},
                 	  editable: function(ui){
                 		  debugger;
-							if(ui.rowData['amount'] != null)  
+							if(typeof ui.rowData!= "undefined" && ui.rowData['amount'] != null )  
 								return true;
 							else 
 								return false;

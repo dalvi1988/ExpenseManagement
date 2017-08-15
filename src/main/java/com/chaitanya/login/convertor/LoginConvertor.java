@@ -27,10 +27,12 @@ public class LoginConvertor {
 				if(Validation.validateForNullObject(login.getEmployeeJPA().getBranchJPA())){
 					BranchDTO branchDTO=new BranchDTO();
 					branchDTO.setBranchId(login.getEmployeeJPA().getBranchJPA().getBranchId());
+					branchDTO.setBranchName(login.getEmployeeJPA().getBranchJPA().getBranchName());
 					if(Validation.validateForNullObject(login.getEmployeeJPA().getBranchJPA().getCompanyJPA()))
 					{
 						CompanyDTO companyDTO=new CompanyDTO();
 						companyDTO.setCompanyId(login.getEmployeeJPA().getBranchJPA().getCompanyJPA().getCompanyId());
+						companyDTO.setCompanyName(login.getEmployeeJPA().getBranchJPA().getCompanyJPA().getCompanyName());
 						branchDTO.setCompanyDTO(companyDTO);
 					}
 					employeeDTO.setBranchDTO(branchDTO);
