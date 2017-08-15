@@ -366,7 +366,7 @@
 
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="companyMaster"><i class="fa fa-circle-o"></i> Country Master</a></li>
+            <li><a href="#" class="companyMaster"><i class="fa fa-circle-o"></i> Company Master</a></li>
           </ul>
         </li>
         </sec:authorize>
@@ -397,6 +397,7 @@
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
+  
   <div class="box content-wrapper">
     <div class="alert alert-dismissible " style="display: none" >
            
@@ -411,8 +412,7 @@
         <i class="fa fa-refresh fa-spin"></i>
       </div>
     <!-- /.content -->
-    
-  </div>
+    </div>
   <!-- /.content-wrapper -->
   
   <footer class="main-footer">

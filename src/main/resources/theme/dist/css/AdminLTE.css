@@ -1557,9 +1557,9 @@ a:focus {
  * --------------
  */
 .box {
-  position: relative;
+ /*  position: relative; */
   border-radius: 3px;
-  background: #ffffff;
+  /* background: #ffffff; */
   border-top: 3px solid #d2d6de;
   margin-bottom: 20px;
  /*  width: 100%; */
