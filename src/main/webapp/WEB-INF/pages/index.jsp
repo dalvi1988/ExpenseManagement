@@ -28,7 +28,7 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href=<spring:url value="/theme/dist/css/AdminLTE.min.css"/> />
+  <link rel="stylesheet" href=<spring:url value="/theme/dist/css/AdminLTE.css"/> />
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href=<spring:url value="/theme/dist/css/skins/skin-blue.min.css"/> />
@@ -42,132 +42,159 @@
 	$(document).ready(function(){
 		
 		$('a').click(function() {
-			$('.overlay').show();
+			//$('.overlay').show();
 			$(".alert").hide();
 		});
 		
 	    $('.branchMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('branch');
+	    	loadPage("branch");
 	     });
 	    
 	    $('.employeeMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('employee');
+	    	loadPage("employee");
 	     });
 	    
 	    $('.companyMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('company');
+	    	loadPage("company");
 	     });
 	    
 	    $('.departmentHeadMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('departmentHead');
+	    	loadPage("departmentHead");
 	     });
 	    
 	    $('.departmentMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('department');
+	    	loadPage("department");
 	     });
 	    
 	    $('.expenseCategoryMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('expenseCategory');
+	    	loadPage("expenseCategory");
 	     });
 	    
 	    $('.approvalFlowMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('approvalFlow');
+	    	loadPage("approvalFlow");
 	     });
 	    
 	    $('.expenseForApproval').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('toBeApproveExpense');
+	    	loadPage("toBeApproveExpense");
 	     });
 	    
 	    $('.advanceForApproval').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('toBeApproveAdvance');
+	    	loadPage("toBeApproveAdvance");
 	     });
 	    
 	    $('.createExpense').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('expense');
+	    	loadPage("expense");
 	     });
 	    
 	    $('.draftExpense').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('viewDraftExpense');
+	    	loadPage("viewDraftExpense");
 	     });
 	    
 	    $('.pendingExpense').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('pendingExpense');
+	    	loadPage("pendingExpense");
 	     });
+	    
 	    $('.rejectedExpense').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('rejectedExpense');
+	    	loadPage("rejectedExpense");
 	     });
+	    
 	    $('.paidExpenses').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('paidExpense');
+	    	loadPage("paidExpense");
 	     });
 	    
 	    $('.eventMaster').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('event');
+	    	loadPage("event");
 	     });
 	    
 	    $('.requestAdvance').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('advance');
+	    	loadPage("advance");
 	     });
 	    
 	    $('.draftAdvance').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('viewDraftAdvance');
-	    	$('.overlay').hide();
+	    	loadPage("viewDraftAdvance");
 	     });
 	    
 	    $('.pendingAdvance').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('pendingAdvance');
+	    	loadPage("pendingAdvance");
 	     });
 	    
 	    $('.rejectedAdvance').click(function(){
+	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
-	        $('.content').load('rejectedAdvance');
+	    	loadPage("rejectedAdvance");
 	     });
 	    
 	     $('.pendingAtPaymentDesk').click(function(){
+	    	 $('.overlay').show();
 		    	$( this ).parent().addClass("active")
-		        $('.content').load('pendingDeskExpenses');
+		    	loadPage("pendingDeskExpenses");
 		 });
 	    
 	     $('.paymentExpense').click(function(){
+	    	 $('.overlay').show();
 		    	$( this ).parent().addClass("active")
-		        $('.content').load('paymentDeskExpenses');
+		    	loadPage("paymentDeskExpenses");
 		 });
 	     
 	     $('.paymentAdvance').click(function(){
+	    	 $('.overlay').show();
 		    	$( this ).parent().addClass("active")
-		        $('.content').load('paymentAdvance');
-		    	$('.overlay').hide();
+		    	loadPage("paymentAdvance");
 		 });
 	     
 	     $('.employeeDashboard').click(function(){
-	    	 $('.overlay').show();
-		    	$( this ).parent().addClass("active")
-		        $('.content').load('employeeDashboard');
-		    	$('.overlay').hide();
-		        
+	    	  $('.overlay').show();
+		      $( this ).parent().addClass("active")
+		      loadPage("employeeDashboard");
 		 });
 	     
 	    
 	    $('.employeeDashboard').click();
 	    
 	});
+	
+	function loadPage(pageName){
+		$('.content').load(pageName,function( response, status, xhr ) {
+        	$('.overlay').hide();
+		});
+	}
+	
 	function logout(){
     	document.getElementById("logoutForm").submit();
     }
@@ -370,7 +397,7 @@
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper box">
+  <div class="box content-wrapper">
     <div class="alert alert-dismissible " style="display: none" >
            
     </div>
@@ -380,10 +407,11 @@
     
     </section>
      
-    <!-- /.content -->
-    <div class="overlay" >
+     <div class="overlay" >
         <i class="fa fa-refresh fa-spin"></i>
       </div>
+    <!-- /.content -->
+    
   </div>
   <!-- /.content-wrapper -->
   
