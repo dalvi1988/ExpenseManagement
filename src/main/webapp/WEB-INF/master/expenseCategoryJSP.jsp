@@ -32,7 +32,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { expenseCategoryId:"", status:true}; //empty row template
+           var rowData = { expenseCategoryId:"", status:true,unitRequired :false, amount:""}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });

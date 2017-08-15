@@ -62,8 +62,8 @@ public class AdvanceService implements IAdvanceService{
 					}
 					advanceDAO.updateProcessInstance(advanceJPA,advanceJPA.getVoucherStatusJPA().getVoucherStatusId(),null);
 					baseDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 			else{
 				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
