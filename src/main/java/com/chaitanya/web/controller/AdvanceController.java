@@ -206,8 +206,8 @@ public class AdvanceController {
 		}
 		return baseDTO;
 	}
-	@RequestMapping(value="/paymentAdvance",method=RequestMethod.GET)
-	public @ResponseBody ModelAndView getAdvancePaymentPage() throws JsonGenerationException, JsonMappingException, IOException{
+	@RequestMapping(value="/paymentDeskAdvance",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPaymentDeskAdvanceList() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper= new ObjectMapper();
 		try{
@@ -215,12 +215,37 @@ public class AdvanceController {
 			List<AdvanceDTO> advanceDTOList=null;
 			AdvanceDTO advanceDTO=new AdvanceDTO();
 			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
-			advanceDTOList=advanceService.getAdvanceForPayment(advanceDTO);
+			advanceDTOList=advanceService.getPaymentDeskAdvances(advanceDTO);
 			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
 			model.setViewName("advance/paymentAdvanceJSP");
 		}
 		catch(Exception e){
-			logger.error("AdvanceController: getAdvancePaymentPage",e);
+			logger.error("AdvanceController: getPaymentDeskAdvanceList",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/pendingAdvanceAtPaymentDesk",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPendingAdvancesAtPaymentDesk() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 advanceDTOList = advanceService.getPendingAdvancesAtPaymentDesk(advanceDTO);
+			}
+			
+			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/pendingPaymentAdvanceJSP");
+		}
+		catch(Exception e){
+			logger.error("AdvanceController: getPendingAdvanceAtPaymentDesk",e);
 			model.setViewName("others/505");
 		}
 		return model;
@@ -246,6 +271,31 @@ public class AdvanceController {
 		}
 		catch(Exception e){
 			logger.error("AdvanceController: getRejectedAdvance",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/paidAdvances",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPaidAdvances() throws JsonGenerationException, JsonMappingException, IOException{
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 advanceDTOList = advanceService.getPaidAdvances(advanceDTO);
+			}
+			
+			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/paidAdvances");
+		}
+		catch(Exception e){
+			logger.error("AdvanceController: getPaidAdvances",e);
 			model.setViewName("others/505");
 		}
 		return model;

@@ -279,7 +279,7 @@ public class ExpenseController {
 	}
 	
 	@RequestMapping(value="/paymentDeskExpenses",method=RequestMethod.GET)
-	public @ResponseBody ModelAndView getPaymentDeskExpenseList() throws JsonGenerationException, JsonMappingException, IOException{
+	public @ResponseBody ModelAndView getPaymentDeskExpense() throws JsonGenerationException, JsonMappingException, IOException{
 		
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
@@ -290,7 +290,7 @@ public class ExpenseController {
 			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
 			
 			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
-				 expenseHeaderDTOList = expenseService.getPendingAtPaymentDeskList(expenseHeaderDTO);
+				 expenseHeaderDTOList = expenseService.getPaymentDeskExpense(expenseHeaderDTO);
 			}
 			
 			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
@@ -303,8 +303,8 @@ public class ExpenseController {
 		return model;
 	}
 	
-	@RequestMapping(value="/pendingDeskExpenses",method=RequestMethod.GET)
-	public @ResponseBody ModelAndView getPendingAtPaymentDesk() throws JsonGenerationException, JsonMappingException, IOException{
+	@RequestMapping(value="/pendingExpensesAtPaymentDesk",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getPendingExpensesAtPaymentDesk() throws JsonGenerationException, JsonMappingException, IOException{
 		
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
@@ -315,14 +315,14 @@ public class ExpenseController {
 			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
 			
 			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
-				 expenseHeaderDTOList = expenseService.getPendingAtPaymentDeskList(expenseHeaderDTO);
+				 expenseHeaderDTOList = expenseService.getPendingExpensesAtPaymentDesk(expenseHeaderDTO);
 			}
 			
 			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
 			model.setViewName("expense/pendingPaymentExpenseJSP");
 		}
 		catch(Exception e){
-			logger.error("ExpenseController: getPendingAtPaymentDesk",e);
+			logger.error("ExpenseController: pendingExpensesAtPaymentDesk",e);
 			model.setViewName("others/505");
 		}
 		return model;

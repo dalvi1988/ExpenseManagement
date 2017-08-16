@@ -33,8 +33,10 @@ public interface IExpenseDAO {
 
 	public List<ExpenseHeaderJPA> getRejectedExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
 
-	public List<ExpenseHeaderJPA> getPendingAtPaymentDeskList(ExpenseHeaderDTO expenseHeaderDTO);
+	public List<ExpenseHeaderJPA> getPendingExpensesAtPaymentDesk(ExpenseHeaderDTO expenseHeaderDTO);
 
 	public List<ExpenseHeaderJPA> getPaidExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
+
+	List<ExpenseHeaderJPA> getPaymentDeskExpense(ExpenseHeaderDTO expenseHeaderDTO);
 
 }

@@ -341,12 +341,43 @@ public class AdvanceDAO implements IAdvanceDAO{
 		return advanceJPAList;
 	}
 	
+	/**
+	 * Fetch list of advances of login employee
+	 */
 	@Override
-	public List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO) {Session session = sessionFactory.getCurrentSession();
+	public List<AdvanceJPA> getPendingAdvancesAtPaymentDesk(AdvanceDTO advanceDTO) {Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
 				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(4)))
+				.list();
+		return advanceJPAList;
+	}
+	
+	@Override
+	public List<AdvanceJPA> getPaidAdvances(AdvanceDTO advanceDTO) {Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(5)))
+				.list();
+		return advanceJPAList;
+	}
+	
+	/**
+	 * Fetch List of advances pending for payment of all employee under company
+	 */
+	@Override
+	public List<AdvanceJPA> getPaymentDeskAdvances(AdvanceDTO advanceDTO) {Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA", "employeeJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA.branchJPA", "branchJPA",JoinType.INNER_JOIN)
+				.createAlias("branchJPA.companyJPA", "companyJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("companyJPA.companyId",advanceDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()))
 				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(4)))
 				.list();
 		return advanceJPAList;

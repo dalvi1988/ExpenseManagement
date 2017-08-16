@@ -20,11 +20,15 @@ public interface IAdvanceService {
 	
 	BaseDTO approveRejectAdvance(BaseDTO baseDTO) throws ParseException;
 
-	List<AdvanceDTO> getAdvanceForPayment(BaseDTO baseDTO) throws ParseException;
+	List<AdvanceDTO> getPendingAdvancesAtPaymentDesk(BaseDTO baseDTO) throws ParseException;
 
 	List<AdvanceDTO> getRejectedAdvanceList(BaseDTO baseDTO) throws ParseException;
 
 	List<AdvanceDTO> getApprovedAdvanceByEmp(BaseDTO baseDTO) throws ParseException;
+
+	List<AdvanceDTO> getPaymentDeskAdvances(BaseDTO baseDTO) throws ParseException;
+
+	List<AdvanceDTO> getPaidAdvances(BaseDTO baseDTO) throws ParseException;
 
 
 }

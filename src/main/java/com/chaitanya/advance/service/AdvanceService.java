@@ -294,15 +294,77 @@ public class AdvanceService implements IAdvanceService{
 		return  baseDTO;
 	}
 	@Override
-	public List<AdvanceDTO> getAdvanceForPayment(BaseDTO baseDTO) throws ParseException {
+	public List<AdvanceDTO> getPendingAdvancesAtPaymentDesk(BaseDTO baseDTO) throws ParseException {
 
-		logger.debug("AdvanceService: getAdvanceForPayment-Start");
+		logger.debug("AdvanceService: getPendingAdvancesAtPaymentDesk-Start");
 		validateAdvanceDTO(baseDTO);
 		
 		List<AdvanceDTO> advanceDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
-			List<AdvanceJPA> advanceJPAList =advanceDAO.getAdvanceForPayment(advanceDTO);
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getPendingAdvancesAtPaymentDesk(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+
+					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
+						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					}
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+	
+		logger.debug("AdvanceService: getPendingAdvancesAtPaymentDesk-End");
+		return  advanceDTOList;
+	}
+	
+	@Override
+	public List<AdvanceDTO> getPaidAdvances(BaseDTO baseDTO) throws ParseException {
+
+		logger.debug("AdvanceService: getPendingAdvancesAtPaymentDesk-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getPaidAdvances(advanceDTO);
+			if(Validation.validateForNullObject(advanceJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceJPA advanceJPA: advanceJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(advanceJPA);
+
+					if(Validation.validateForNullObject(advanceJPA.getEventJPA())){
+						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(advanceJPA.getEventJPA()));
+					}
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+	
+		logger.debug("AdvanceService: getPendingAdvancesAtPaymentDesk-End");
+		return  advanceDTOList;
+	}
+	
+	@Override
+	public List<AdvanceDTO> getPaymentDeskAdvances(BaseDTO baseDTO) throws ParseException {
+
+		logger.debug("AdvanceService: getPaymentDeskAdvances-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getPaymentDeskAdvances(advanceDTO);
 			if(Validation.validateForNullObject(advanceJPAList)){
 				advanceDTOList= new ArrayList<AdvanceDTO>();
 				for(AdvanceJPA advanceJPA: advanceJPAList){
@@ -322,10 +384,9 @@ public class AdvanceService implements IAdvanceService{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 	
-		logger.debug("AdvanceService: getAdvanceForPayment-End");
+		logger.debug("AdvanceService: getPaymentDeskAdvances-End");
 		return  advanceDTOList;
 	}
-	
 	
 	@Override
 	public List<AdvanceDTO> getRejectedAdvanceList(BaseDTO baseDTO) throws ParseException {

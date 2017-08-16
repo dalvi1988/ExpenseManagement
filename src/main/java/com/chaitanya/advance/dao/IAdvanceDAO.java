@@ -24,10 +24,14 @@ public interface IAdvanceDAO {
 
 	AdvanceJPA getAdvanceById(AdvanceDTO advanceDTO);
 	
-	List<AdvanceJPA> getAdvanceForPayment(AdvanceDTO advanceDTO);
+	List<AdvanceJPA> getPendingAdvancesAtPaymentDesk(AdvanceDTO advanceDTO);
 
 	List<AdvanceJPA> getRejectedAdvanceList(AdvanceDTO advanceDTO);
 
 	List<AdvanceJPA> getApprovedAdvanceByEmp(AdvanceDTO advanceDTO);
+
+	List<AdvanceJPA> getPaymentDeskAdvances(AdvanceDTO advanceDTO);
+
+	List<AdvanceJPA> getPaidAdvances(AdvanceDTO advanceDTO);
 
 }

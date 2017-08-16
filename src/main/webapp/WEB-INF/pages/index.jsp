@@ -129,6 +129,11 @@
 	    	$( this ).parent().addClass("active")
 	    	loadPage("paidExpense");
 	     });
+	    $('.paidAdvances').click(function(){
+	    	$('.overlay').show();
+	    	$( this ).parent().addClass("active")
+	    	loadPage("paidAdvances");
+	     });
 	    
 	    $('.eventMaster').click(function(){
 	    	$('.overlay').show();
@@ -160,10 +165,16 @@
 	    	loadPage("rejectedAdvance");
 	     });
 	    
-	     $('.pendingAtPaymentDesk').click(function(){
+	     $('.pendingExpensesAtPaymentDesk').click(function(){
 	    	 $('.overlay').show();
 		    	$( this ).parent().addClass("active")
-		    	loadPage("pendingDeskExpenses");
+		    	loadPage("pendingExpensesAtPaymentDesk");
+		 });
+	     
+	     $('.pendingAdvanceAtPaymentDesk').click(function(){
+	    	 $('.overlay').show();
+		    	$( this ).parent().addClass("active")
+		    	loadPage("pendingAdvanceAtPaymentDesk");
 		 });
 	    
 	     $('.paymentExpense').click(function(){
@@ -175,7 +186,7 @@
 	     $('.paymentAdvance').click(function(){
 	    	 $('.overlay').show();
 		    	$( this ).parent().addClass("active")
-		    	loadPage("paymentAdvance");
+		    	loadPage("paymentDeskAdvance");
 		 });
 	     
 	     $('.employeeDashboard').click(function(){
@@ -282,7 +293,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
-            <li><a href="#" class="pendingAtPaymentDesk"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
+            <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
             <li><a href="#" class="paidExpenses"><i class="fa fa-circle-o"></i>Paid Expenses</a></li>
           </ul>
         </li>
@@ -299,6 +310,8 @@
             <li><a href="#" class="draftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
             <li><a href="#" class="pendingAdvance"><i class="fa fa-circle-o"></i>Pending Advance</a></li>
             <li><a href="#" class="rejectedAdvance"><i class="fa fa-circle-o"></i>Rejected Advance</a></li>
+            <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Advances at Payment Desk</a></li>
+            <li><a href="#" class="paidAdvances"><i class="fa fa-circle-o"></i>Paid Advances</a></li>
           </ul>
         </li>
         

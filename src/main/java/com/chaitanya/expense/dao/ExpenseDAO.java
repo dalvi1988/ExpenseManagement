@@ -284,7 +284,23 @@ public class ExpenseDAO implements IExpenseDAO{
 	}
 	
 	@Override
-	public List<ExpenseHeaderJPA> getPendingAtPaymentDeskList(ExpenseHeaderDTO expenseHeaderDTO) {
+	public List<ExpenseHeaderJPA> getPendingExpensesAtPaymentDesk(ExpenseHeaderDTO expenseHeaderDTO) {
+		// TODO	Get voucher whose status is 4 of current company
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA", "employeeJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA.branchJPA", "branchJPA",JoinType.INNER_JOIN)
+				.createAlias("branchJPA.companyJPA", "companyJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 4))
+				.list();
+		return expsensHeaderJPAList;
+	}
+	
+	@Override
+	public List<ExpenseHeaderJPA> getPaymentDeskExpense(ExpenseHeaderDTO expenseHeaderDTO) {
 		// TODO	Get voucher whose status is 4 of current company
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")

@@ -15,7 +15,6 @@
    $(function () {
        //define colModel
        var colM = [
-			{ title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
 	       { title: "Purpose", width: 100, dataIndx: "purpose"},
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
@@ -63,7 +62,7 @@
            pageModel: { type: "local", rPP: 10 },
            editable: false,
            selectionModel: {type: 'row', mode: 'single'},
-           title: "Pending At Payment Desk",
+           title: "Pending Expense Voucher At Payment Desk",
            resizable: true,
            numberCell: { show: false },
            columnBorders: true,           

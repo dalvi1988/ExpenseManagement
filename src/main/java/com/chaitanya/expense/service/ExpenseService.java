@@ -190,14 +190,45 @@ public class ExpenseService implements IExpenseService{
 	}
 	
 	@Override
-	public List<ExpenseHeaderDTO> getPendingAtPaymentDeskList(BaseDTO baseDTO) throws ParseException {
-		logger.debug("ExpenseService: getPendingAtPaymentDeskList-Start");
+	public List<ExpenseHeaderDTO> getPendingExpensesAtPaymentDesk(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: getPendingExpensesAtPaymentDesk-Start");
 		validateExpenseDTO(baseDTO);
 		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPendingAtPaymentDeskList(expenseHeaderDTO);
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPendingExpensesAtPaymentDesk(expenseHeaderDTO);
+			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA())){
+						if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+							expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+						}
+					}
+					expenseHeaderDTOList.add(expHeaderDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: getPendingExpensesAtPaymentDesk-End");
+		return  expenseHeaderDTOList;
+	}
+	
+	@Override
+	public List<ExpenseHeaderDTO> getPaymentDeskExpense(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: getPendingExpensesAtPaymentDesk-Start");
+		validateExpenseDTO(baseDTO);
+		
+		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPaymentDeskExpense(expenseHeaderDTO);
 			if(Validation.validateForNullObject(expenseHeaderJPAList)){
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
@@ -219,7 +250,7 @@ public class ExpenseService implements IExpenseService{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		
-		logger.debug("ExpenseService: getPendingExpenseList-End");
+		logger.debug("ExpenseService: getPendingExpensesAtPaymentDesk-End");
 		return  expenseHeaderDTOList;
 	}
 	
