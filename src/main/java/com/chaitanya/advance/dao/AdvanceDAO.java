@@ -151,8 +151,8 @@ public class AdvanceDAO implements IAdvanceDAO{
 			}
 			
 			/*EmployeeJPA pendingAt = new EmployeeJPA();
-			pendingAt.setEmployeeId(advanceJPA.getEmployeeJPA().getEmployeeId());
-			processInstanceJPA.setPendingAt(pendingAt);*/
+			pendingAt.setEmployeeId(advanceJPA.getEmployeeJPA().getEmployeeId());*/
+			processInstanceJPA.setPendingAt(null);
 			
 			EmployeeJPA approveBy = new EmployeeJPA();
 			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
