@@ -126,10 +126,12 @@ var getFunctionalGrid = function( rowData ){
                },
                { title: "Level1 Approval", dataIndx: "level1", width: 100, 
             	   editable: function(ui){
-						if(ui.rowData['noOfLevel'] >= 1)  
-							return true;
-						else 
-							return false;
+            		   if(typeof ui.rowData != "undefined"){
+							if(ui.rowData['noOfLevel'] >= 1)  
+								return true;
+							else 
+								return false;
+            		   }
                    },
                	  editor: {                    
                          type: "select",
@@ -151,10 +153,12 @@ var getFunctionalGrid = function( rowData ){
                },
                { title: "Level2 Approval", dataIndx: "level2", width: 100,
             	   editable: function(ui){
-						if(ui.rowData['noOfLevel'] >= 2)  
-							return true;
-						else 
-							return false;
+            		   if(typeof ui.rowData != "undefined"){
+							if(ui.rowData['noOfLevel'] >= 2)  
+								return true;
+							else 
+								return false;
+            		   }
                    },
                    editor: {                    
                        type: "select",
@@ -176,10 +180,12 @@ var getFunctionalGrid = function( rowData ){
                }, 
                { title: "Level3 Approval", dataIndx: "level3", width: 100, 
             	   editable: function(ui){
-						if(ui.rowData['noOfLevel'] >= 3)  
-							return true;
-						else 
-							return false;
+            		   if(typeof ui.rowData != "undefined"){
+							if(ui.rowData['noOfLevel'] >= 3)  
+								return true;
+							else 
+								return false;
+            		   }
                    },
                    editor: {                    
                        type: "select",
@@ -358,10 +364,12 @@ var getFinanceGrid = function( rowData ){
             },
             { title: "Level1 Approval", dataIndx: "level1", width: 100, 
          	   editable: function(ui){
+         		   if(typeof ui.rowData != "undefined"){
 						if(ui.rowData['noOfLevel'] >= 1)  
 							return true;
 						else 
 							return false;
+         		   }
                 },
             	  editor: {                    
                       type: "select",
@@ -383,10 +391,13 @@ var getFinanceGrid = function( rowData ){
             },
             { title: "Level2 Approval", dataIndx: "level2", width: 100,
          	   editable: function(ui){
+         		  if(typeof ui.rowData != "undefined"){
 						if(ui.rowData['noOfLevel'] >= 2)  
 							return true;
 						else 
 							return false;
+         		  }
+						
                 },
                 editor: {                    
                     type: "select",
@@ -408,10 +419,12 @@ var getFinanceGrid = function( rowData ){
             }, 
             { title: "Level3 Approval", dataIndx: "level3", width: 100, 
          	   editable: function(ui){
+         		  if(typeof ui.rowData != "undefined"){
 						if(ui.rowData['noOfLevel'] >= 3)  
 							return true;
 						else 
 							return false;
+         		  }
                 },
                 editor: {                    
                     type: "select",
@@ -587,10 +600,12 @@ var getBranchGrid = function( rowData ){
             },
             { title: "Level1 Approval", dataIndx: "level1", width: 100, 
          	   editable: function(ui){
+         		  if(typeof ui.rowData != "undefined"){
 						if(ui.rowData['noOfLevel'] >= 1)  
 							return true;
 						else 
 							return false;
+         		  }
                 },
             	  editor: {                    
                       type: "select",
@@ -612,10 +627,12 @@ var getBranchGrid = function( rowData ){
             },
             { title: "Level2 Approval", dataIndx: "level2", width: 100,
          	   editable: function(ui){
+         		  if(typeof ui.rowData != "undefined"){
 						if(ui.rowData['noOfLevel'] >= 2)  
 							return true;
 						else 
 							return false;
+         		  }
                 },
                 editor: {                    
                     type: "select",
@@ -637,10 +654,12 @@ var getBranchGrid = function( rowData ){
             }, 
             { title: "Level3 Approval", dataIndx: "level3", width: 100, 
          	   editable: function(ui){
+         		  if(typeof ui.rowData != "undefined"){
 						if(ui.rowData['noOfLevel'] >= 3)  
 							return true;
 						else 
 							return false;
+         		  }
                 },
                 editor: {                    
                     type: "select",
