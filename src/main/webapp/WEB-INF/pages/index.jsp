@@ -36,7 +36,13 @@
   <link rel="stylesheet" href=<spring:url value="/theme/plugins/iCheck/flat/blue.css"/> />
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href=<spring:url value="/theme/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css"/> />
-
+<style type="text/css">
+.ui-state-error, .ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {
+    border: 1px solid #cd0a0a/*{borderColorError}*/;
+    background: #fef1ec/*{bgColorError};url(images/ui-bg_glass_95_fef1ec_1x400.png)/*{bgImgUrlError}; 50%/*{bgErrorXPos}*/ 50%/*{bgErrorYPos}*/repeat-x/*{bgErrorRepeat}*/;
+    color: #c71010;
+}
+</style>
 	<script>
 	
 	$(document).ready(function(){
