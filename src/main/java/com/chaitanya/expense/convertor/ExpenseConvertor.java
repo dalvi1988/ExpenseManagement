@@ -76,6 +76,8 @@ public class ExpenseConvertor {
 			expenseHeaderJPA=new ExpenseHeaderJPA();
 			expenseHeaderJPA.setExpenseHeaderId(expenseHeaderDTO.getExpenseHeaderId());
 			
+			expenseHeaderJPA.setVoucherNumber(expenseHeaderDTO.getVoucherNumber());
+			
 			EmployeeJPA employeeJPA=new EmployeeJPA();
 			employeeJPA.setEmployeeId(expenseHeaderDTO.getEmployeeDTO().getEmployeeId());
 			expenseHeaderJPA.setEmployeeJPA(employeeJPA);

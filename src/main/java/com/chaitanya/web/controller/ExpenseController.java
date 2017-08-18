@@ -108,16 +108,44 @@ public class ExpenseController {
 		return model;
 	}
 	
+	@RequestMapping(value="/processedByMeExpense",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getApprovedByMeExpensePage() throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+		model.setViewName("expense/processedByMeExpenseJSP");
+		return model;
+	}
+	
 	@RequestMapping(value="/toBeApproveExpenseList",method=RequestMethod.POST)
 	public @ResponseBody String getExpenseHeaderListForApproval() throws JsonGenerationException, JsonMappingException, IOException{
 		ObjectMapper mapper= new ObjectMapper();
-		
-		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
-		ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
-		expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
-		expenseHeaderDTOList=expenseService.getExpenseToBeApprove(expenseHeaderDTO);
-
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			expenseHeaderDTOList=expenseService.getExpenseToBeApprove(expenseHeaderDTO);
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return "{\"data\":"+mapper.writeValueAsString(expenseHeaderDTOList)+"}";
+	}
+	
+	@RequestMapping(value="/processedByMeExpenseList",method=RequestMethod.POST)
+	public @ResponseBody String getProcessedByMeExpenses() throws JsonGenerationException, JsonMappingException, IOException{
+		ObjectMapper mapper= new ObjectMapper();
+		List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			expenseHeaderDTOList=expenseService.getProcessedByMeExpense(expenseHeaderDTO);
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
 		return "{\"data\":"+mapper.writeValueAsString(expenseHeaderDTOList)+"}";
 	}
 	

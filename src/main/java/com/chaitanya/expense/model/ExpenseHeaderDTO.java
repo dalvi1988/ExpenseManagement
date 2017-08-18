@@ -74,6 +74,8 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private List<ExpenseDetailDTO> deletedExpenseDetailsDTOList;
 	
 	private Double advanceAmount;
+	
+	private String processedDate;
 
 	public Long getExpenseHeaderId() {
 		return expenseHeaderId;
@@ -255,6 +257,14 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setAdvanceAmount(Double advanceAmount) {
 		this.advanceAmount = advanceAmount;
+	}
+
+	public String getProcessedDate() {
+		return processedDate;
+	}
+
+	public void setProcessedDate(String processedDate) {
+		this.processedDate = processedDate;
 	}
 
 }

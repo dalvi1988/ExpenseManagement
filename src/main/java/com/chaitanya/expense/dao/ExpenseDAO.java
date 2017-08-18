@@ -338,6 +338,28 @@ public class ExpenseDAO implements IExpenseDAO{
 	}
 	
 	@Override
+	public List<ProcessHistoryJPA> getProcessedByMeExpense(ExpenseHeaderDTO expenseHeaderDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		//Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
+		
+		/*DetachedCriteria subquery = DetachedCriteria.forClass(ProcessHistoryJPA.class)
+									.add(Restrictions.eq("processedBy.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+									//.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
+									.setProjection(Projections.property("expenseHeaderJPA.expenseHeaderId"));*/
+		
+		@SuppressWarnings("unchecked")
+		List<ProcessHistoryJPA> processHistoryJPAList= session.createCriteria(ProcessHistoryJPA.class)
+												/*.setFetchMode("eventJPA",FetchMode.JOIN)
+												.setFetchMode("employeeJPA",FetchMode.JOIN)
+												.setFetchMode("advanceJPA",FetchMode.JOIN)*/
+												.add(Restrictions.eq("processedBy.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+												.list();
+														
+
+		return processHistoryJPAList;
+	}
+	
+	@Override
 	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		

@@ -7,6 +7,7 @@ import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
+import com.chaitanya.jpa.ProcessHistoryJPA;
 
 public interface IExpenseDAO {
 
@@ -37,6 +38,8 @@ public interface IExpenseDAO {
 
 	public List<ExpenseHeaderJPA> getPaidExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
 
-	List<ExpenseHeaderJPA> getPaymentDeskExpense(ExpenseHeaderDTO expenseHeaderDTO);
+	public List<ExpenseHeaderJPA> getPaymentDeskExpense(ExpenseHeaderDTO expenseHeaderDTO);
+
+	public List<ProcessHistoryJPA> getProcessedByMeExpense(ExpenseHeaderDTO expenseHeaderDTO);
 
 }

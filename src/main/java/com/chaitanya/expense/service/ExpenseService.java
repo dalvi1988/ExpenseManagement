@@ -28,6 +28,7 @@ import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
 import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.FTPUtility;
 import com.chaitanya.utility.Validation;
 
@@ -51,7 +52,7 @@ public class ExpenseService implements IExpenseService{
 	
 	@Override
 	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException {
-		logger.debug("ExpenseService: addExpense-Start");
+		logger.debug("ExpenseService: saveUpdateExpense-Start");
 		validateExpenseDTO(baseDTO);
 		
 		ExpenseHeaderDTO expenseHeaderDTO = (ExpenseHeaderDTO)baseDTO;
@@ -100,7 +101,7 @@ public class ExpenseService implements IExpenseService{
 		else{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
-		logger.debug("ExpenseService: addExpense-End");
+		logger.debug("ExpenseService: saveUpdateExpense-End");
 		return baseDTO;
 	}
 
@@ -274,6 +275,8 @@ public class ExpenseService implements IExpenseService{
 						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())){
 							expHeaderDTO.setProcessedByEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy()));
 						}
+						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getComment()))
+							expHeaderDTO.setRejectionComment(expenseHeaderJPA.getProcessInstanceJPA().getComment());
 					}
 					expenseHeaderDTOList.add(expHeaderDTO);
 				}
@@ -288,46 +291,86 @@ public class ExpenseService implements IExpenseService{
 		return  expenseHeaderDTOList;
 	}
 	@Override
-	public List<ExpenseHeaderDTO> getExpenseToBeApprove(BaseDTO baseDTO) {
+	public List<ExpenseHeaderDTO> getExpenseToBeApprove(BaseDTO baseDTO) throws ParseException {
 
 		logger.debug("ExpenseService: getExpenseToBeApprove-Start");
 		validateExpenseDTO(baseDTO);
 		
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
-		try{
-			if (Validation.validateForNullObject(baseDTO)) {
-				ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-				List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getExpenseToBeApprove(expenseHeaderDTO);
-				if(Validation.validateForNullObject(expenseHeaderJPAList)){
-					expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
-					for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
-						ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
-						if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
-							expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
-						}
-						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())){
-							expHeaderDTO.setProcessedByEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy()));
-						}
-						if(Validation.validateForNullObject(expenseHeaderJPA.getEventJPA())){
-							expHeaderDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(expenseHeaderJPA.getEventJPA()));
-						}
-						if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
-							expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
-						}
-						expenseHeaderDTOList.add(expHeaderDTO);
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getExpenseToBeApprove(expenseHeaderDTO);
+			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+						expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
 					}
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())){
+						expHeaderDTO.setProcessedByEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEventJPA())){
+						expHeaderDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(expenseHeaderJPA.getEventJPA()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+					}
+					expenseHeaderDTOList.add(expHeaderDTO);
 				}
-			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("ExpenseService: Exception",e);
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
+
 		logger.debug("ExpenseService: getExpenseToBeApprove-End");
+		return  expenseHeaderDTOList;
+	}
+	
+	@Override
+	public List<ExpenseHeaderDTO> getProcessedByMeExpense(BaseDTO baseDTO) throws ParseException {
+
+		logger.debug("ExpenseService: getProcessedByMeExpense-Start");
+		validateExpenseDTO(baseDTO);
+		
+		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			List<ProcessHistoryJPA> expenseHeaderJPAList =expenseDAO.getProcessedByMeExpense(expenseHeaderDTO);
+			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+				for(ProcessHistoryJPA processHistoryJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(processHistoryJPA.getExpenseHeaderJPA());
+					/*if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+						expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())){
+						expHeaderDTO.setProcessedByEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEventJPA())){
+						expHeaderDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(expenseHeaderJPA.getEventJPA()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+					}*/
+					if(Validation.validateForNullObject(processHistoryJPA.getProcessDate()))
+						expHeaderDTO.setProcessedDate(Convertor.calendartoString(processHistoryJPA.getProcessDate(),Convertor.dateFormatWithTime));
+					
+					if(Validation.validateForNullObject(processHistoryJPA.getComment()))
+						expHeaderDTO.setRejectionComment(processHistoryJPA.getComment());
+						
+					expenseHeaderDTOList.add(expHeaderDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: getProcessedByMeExpense-End");
 		return  expenseHeaderDTOList;
 	}
 	
@@ -457,9 +500,12 @@ public class ExpenseService implements IExpenseService{
 				approveBy.setEmployeeId(expenseHeaderDTO.getProcessedByEmployeeDTO().getEmployeeId());
 				processHistoryJPA.setProcessedBy(approveBy);
 				
+				processHistoryJPA.setProcessDate(expenseHeaderJPA.getModifiedDate());
+				
 				processHistoryJPA.setComment(expenseHeaderDTO.getRejectionComment());
 				List<ProcessHistoryJPA> processHistoryJPAList= new ArrayList<ProcessHistoryJPA>();
 				processHistoryJPAList.add(processHistoryJPA);
+				
 				expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
 				
 				
