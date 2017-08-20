@@ -9,7 +9,6 @@ import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.utility.model.VoucherStatusDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -27,7 +26,10 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private Double totalAmount;
 	
 	private Integer voucherStatusId;
-	@JsonIgnore
+	
+	@JsonProperty(access = Access.READ_ONLY)
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="voucherStatus")
+	@JsonIdentityReference(alwaysAsId=true)
 	private VoucherStatusDTO voucherStatusDTO;
 
 	private Integer eventId;
@@ -42,6 +44,8 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private String endDate;
 	
 	private Long advanceDetailId;
+	
+	private Long processInstanceId;
 	
 	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="advanceNumber")
@@ -156,7 +160,6 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		return voucherStatusDTO;
 	}
 
-	@JsonIgnore
 	public void setVoucherStatusDTO(VoucherStatusDTO voucherStatusDTO) {
 		this.voucherStatusDTO = voucherStatusDTO;
 		this.voucherStatusId=voucherStatusDTO.getVoucherStatusId();
@@ -265,6 +268,14 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setProcessedDate(String processedDate) {
 		this.processedDate = processedDate;
+	}
+
+	public Long getProcessInstanceId() {
+		return processInstanceId;
+	}
+
+	public void setProcessInstanceId(Long processInstanceId) {
+		this.processInstanceId = processInstanceId;
 	}
 
 }

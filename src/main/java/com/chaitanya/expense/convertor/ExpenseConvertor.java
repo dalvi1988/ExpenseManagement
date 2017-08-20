@@ -15,6 +15,7 @@ import com.chaitanya.jpa.ExpenseCategoryJPA;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
+import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
@@ -100,6 +101,12 @@ public class ExpenseConvertor {
 				else{
 					expenseHeaderJPA.setExpenseType(ApplicationConstant.EXPENSE_TYPE_EMP);
 				}
+			}
+			
+			if(Validation.validateForNullObject(expenseHeaderDTO.getProcessInstanceId())){
+				ProcessInstanceJPA processInstanceJPA=new ProcessInstanceJPA();
+				processInstanceJPA.setProcessInstanceId(expenseHeaderDTO.getProcessInstanceId());
+				expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
 			}
 			
 			VoucherStatusJPA voucherStatusJPA=new VoucherStatusJPA();

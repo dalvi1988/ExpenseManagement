@@ -42,4 +42,6 @@ public interface IExpenseDAO {
 
 	public List<ProcessHistoryJPA> getProcessedByMeExpense(ExpenseHeaderDTO expenseHeaderDTO);
 
+	void deleteExpenseDetail(ExpenseDetailJPA expenseDetailJPA);
+
 }

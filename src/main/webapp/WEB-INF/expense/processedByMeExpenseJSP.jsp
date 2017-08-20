@@ -45,6 +45,7 @@
            { title: "Purpose", width: 160, dataIndx: "purpose" },
            { title: "Start Date", width: 100, dataIndx: "startDate" },
 		   { title: "End Date", width: 100, dataIndx: "endDate"},
+		   { title: "Voucher Status", width: 100, dataIndx: "voucherStatusDTO"},
            { title: "Total Amount", width: 85, align: "right", dataType: "float", dataIndx: "totalAmount",
         	   render: function (ui) {                        
                    var cellData = ui.cellData;
@@ -102,7 +103,7 @@
            },
           
            numberCell: { show: false },
-           title: "<b>Vouchers For Approval</b>",                        
+           title: "<b>Processed By Me Expense Voucher</b>",                        
            resizable: true,
            freezeCols: 1, 
             selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},    

@@ -16,15 +16,16 @@
       
        //define colModel
        var colM = [
-       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber",
+      /*  { title: "Voucher Number", width: 120, dataIndx: "voucherNumber",
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
-       }, 
-        { title: "For Event", width: 150, dataIndx: "eventDTO" },
-        { title: "Advance Number", width: 150, dataIndx: "advanceDTO" },
+       },  */
+        
        { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String",
        },
 	   { title: "End Date", minWidth: 190, dataIndx: "endDate"},
        { title: "Purpose", width: 100, dataIndx: "purpose", align: "center"},
+       { title: "For Event", width: 150, dataIndx: "eventDTO" },
+       { title: "Advance Number", width: 150, dataIndx: "advanceDTO" },
        { title: "Total Amount", width: 85, align: "right", dataType: "float", dataIndx: "totalAmount",
         	   render: function (ui) {                        
                    var cellData = ui.cellData;

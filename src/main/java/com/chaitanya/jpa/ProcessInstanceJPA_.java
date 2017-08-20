@@ -4,7 +4,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2017-06-29T15:19:47.572+0530")
+@Generated(value="Dali", date="2017-08-20T18:57:28.167+0530")
 @StaticMetamodel(ProcessInstanceJPA.class)
 public class ProcessInstanceJPA_ {
 	public static volatile SingularAttribute<ProcessInstanceJPA, Long> processInstanceId;

@@ -875,6 +875,7 @@ function changedAdvance(){
  		<form:hidden path="createdDate"></form:hidden>
  		<form:hidden path="createdBy"></form:hidden>
  		<form:hidden path="voucherNumber"></form:hidden>
+ 		<form:hidden path="processInstanceId"></form:hidden>
     </form:form>
     
     <div id="dialog" style="display: none" title="Validation failure"></div>

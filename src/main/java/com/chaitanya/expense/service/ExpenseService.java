@@ -31,6 +31,7 @@ import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.FTPUtility;
 import com.chaitanya.utility.Validation;
+import com.chaitanya.utility.model.VoucherStatusDTO;
 
 @Service("expenseService")
 @Transactional(rollbackFor=Exception.class)
@@ -57,6 +58,7 @@ public class ExpenseService implements IExpenseService{
 		
 		ExpenseHeaderDTO expenseHeaderDTO = (ExpenseHeaderDTO)baseDTO;
 		ExpenseHeaderJPA expenseHeaderJPA = ExpenseConvertor.setExpenseHeaderDTOToJPA(expenseHeaderDTO);
+		//expenseHeaderJPA=expenseDAO.getExpense(expenseHeaderDTO);
 		List<ExpenseDetailJPA> expenseDetailJPAList=new ArrayList<>();
 		
 		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
@@ -70,6 +72,7 @@ public class ExpenseService implements IExpenseService{
 			expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 			expenseDetailJPAList.add(expenseDetailJPA);
 		}
+		
 		expenseHeaderJPA.setExpenseDetailJPA(expenseDetailJPAList);
 		
 		ProcessHistoryJPA processHistoryJPA = ExpenseConvertor.setExpenseHeaderJPAtoProcessHistoryJPA(expenseHeaderJPA);
@@ -79,8 +82,14 @@ public class ExpenseService implements IExpenseService{
 		expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
 		
 		if (Validation.validateForNullObject(expenseHeaderJPA)) {
-			expenseHeaderJPA = expenseDAO.saveUpdateExpense(expenseHeaderJPA);
+			expenseDAO.saveUpdateExpense(expenseHeaderJPA);
 			
+			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getDeletedExpenseDetailsDTOList()){
+				ExpenseDetailJPA expenseDetailJPA= new ExpenseDetailJPA();
+				expenseDetailJPA.setExpenseDetailId(expenseDetailDTO.getExpenseDetailId());
+				expenseDAO.deleteExpenseDetail(expenseDetailJPA);
+			}
+
 			//Create process instance if voucher not saved as draft.
 			if(expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId() != 1){
 				if(! Validation.validateForEmptyString(expenseHeaderJPA.getVoucherNumber())){
@@ -343,7 +352,14 @@ public class ExpenseService implements IExpenseService{
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 				for(ProcessHistoryJPA processHistoryJPA: expenseHeaderJPAList){
 					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(processHistoryJPA.getExpenseHeaderJPA());
-					/*if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+					ExpenseHeaderJPA expenseHeaderJPA=processHistoryJPA.getExpenseHeaderJPA();
+					
+					if(Validation.validateForNullObject(processHistoryJPA.getVoucherStatusJPA())){
+						VoucherStatusDTO voucherStatusDTO = Convertor.setVoucherStatusJPAToDTO(processHistoryJPA.getVoucherStatusJPA());
+						expHeaderDTO.setVoucherStatusDTO(voucherStatusDTO);
+					}
+					
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
 						expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
 					}
 					if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())){
@@ -354,7 +370,7 @@ public class ExpenseService implements IExpenseService{
 					}
 					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
 						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
-					}*/
+					}
 					if(Validation.validateForNullObject(processHistoryJPA.getProcessDate()))
 						expHeaderDTO.setProcessedDate(Convertor.calendartoString(processHistoryJPA.getProcessDate(),Convertor.dateFormatWithTime));
 					
@@ -420,8 +436,12 @@ public class ExpenseService implements IExpenseService{
 			ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.getExpense(expenseHeaderDTO);
 			if(Validation.validateForNullObject(expenseHeaderJPA)){
 				expenseHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+				
 				if(Validation.validateForNullObject(expenseHeaderJPA.getEventJPA())){
 					expenseHeaderDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(expenseHeaderJPA.getEventJPA()));
+				}
+				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA())){
+					expenseHeaderDTO.setProcessInstanceId(expenseHeaderJPA.getProcessInstanceJPA().getProcessInstanceId());
 				}
 				if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
 					expenseHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));

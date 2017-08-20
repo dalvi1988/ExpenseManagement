@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.model.VoucherStatusDTO;
+
 public class Convertor {
 	
 	
@@ -47,6 +50,13 @@ public class Convertor {
 		}
 		return foramttedDate;
 		
+	}
+	
+	public static VoucherStatusDTO setVoucherStatusJPAToDTO(VoucherStatusJPA voucherStatusJPA){
+		VoucherStatusDTO voucherStatusDTO=new VoucherStatusDTO();
+		voucherStatusDTO.setVoucherStatusId(voucherStatusJPA.getVoucherStatusId());
+		voucherStatusDTO.setVoucherStatus(voucherStatusJPA.getVoucherStatus());
+		return voucherStatusDTO;
 	}
 	
 }

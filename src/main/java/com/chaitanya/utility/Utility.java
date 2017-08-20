@@ -5,6 +5,8 @@ import java.security.SecureRandom;
 import java.util.List;
 
 import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.model.VoucherStatusDTO;
 
 public class Utility {
 
@@ -35,5 +37,6 @@ public class Utility {
 		     return new BigInteger(50, random).toString(32);
 		  }
 	}
+	
 	  
 }

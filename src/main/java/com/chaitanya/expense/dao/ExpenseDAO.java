@@ -51,7 +51,6 @@ public class ExpenseDAO implements IExpenseDAO{
 		Session session = sessionFactory.getCurrentSession();
 		
 		// Get Employee details by id
-		
 		EmployeeJPA employeeJPA= (EmployeeJPA) session.get(EmployeeJPA.class,expenseHeaderJPA.getEmployeeJPA().getEmployeeId());
 		
 		Criterion deptCriterion= Restrictions.or(
@@ -64,6 +63,7 @@ public class ExpenseDAO implements IExpenseDAO{
 												.add(deptCriterion)
 												.add(Restrictions.eq("status", 'Y'))
 												.list();
+		
 		
 		ApprovalFlowJPA functionalFlowJPA=null;
 		ApprovalFlowJPA branchFlowJPA=null;
@@ -102,7 +102,6 @@ public class ExpenseDAO implements IExpenseDAO{
 			System.out.println("Executing branch flow.");
 	    	getApprovalOfLevel(currentVoucherStatus,expenseHeaderJPA,branchFlowJPA, financeFlowJPA, employeeJPA,approvalEmployeeDTO, session);
 		}
-		
 		
 	}
 	
@@ -340,7 +339,7 @@ public class ExpenseDAO implements IExpenseDAO{
 	@Override
 	public List<ProcessHistoryJPA> getProcessedByMeExpense(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		//Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
+		Object voucherId[]={1,2};
 		
 		/*DetachedCriteria subquery = DetachedCriteria.forClass(ProcessHistoryJPA.class)
 									.add(Restrictions.eq("processedBy.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
@@ -352,6 +351,7 @@ public class ExpenseDAO implements IExpenseDAO{
 												/*.setFetchMode("eventJPA",FetchMode.JOIN)
 												.setFetchMode("employeeJPA",FetchMode.JOIN)
 												.setFetchMode("advanceJPA",FetchMode.JOIN)*/
+				.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
 												.add(Restrictions.eq("processedBy.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
 												.list();
 														
@@ -415,5 +415,11 @@ public class ExpenseDAO implements IExpenseDAO{
 				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
 				.list();
 		return expsensHeaderJPAList;
+	}
+
+	@Override
+	public void deleteExpenseDetail(ExpenseDetailJPA expenseDetailJPA) {
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(expenseDetailJPA);
 	}
 }
