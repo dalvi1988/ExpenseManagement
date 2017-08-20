@@ -513,7 +513,9 @@ public class ExpenseService implements IExpenseService{
 				
 				// Set Process History
 				ProcessHistoryJPA processHistoryJPA = new ProcessHistoryJPA();
-				processHistoryJPA.setVoucherStatusJPA(voucherStatusJPA);
+				VoucherStatusJPA voucherStatus = new VoucherStatusJPA();
+				voucherStatus.setVoucherStatusId(statusID+2);
+				processHistoryJPA.setVoucherStatusJPA(voucherStatus);
 				processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 				
 				EmployeeJPA approveBy = new EmployeeJPA();
