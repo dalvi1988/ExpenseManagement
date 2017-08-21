@@ -47,7 +47,7 @@
            hwrap: false,
            pageModel: { type: "local", rPP: 10 },
            editable: false,
-           selectionModel: { type: 'cell' },
+           selectionModel: {type: 'row', mode: 'single'},
            filterModel: { on: true, mode: "AND", header: true },
            title: "Saved Advance Vouchers",
            resizable: true,

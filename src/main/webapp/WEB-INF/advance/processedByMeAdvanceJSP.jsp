@@ -75,7 +75,7 @@
            hwrap: false,
            pageModel: { type: "local", rPP: 10 },
            editable: false,
-           selectionModel: { type: 'cell' },
+           selectionModel: {type: 'row', mode: 'single'},
            filterModel: { on: true, mode: "AND", header: true },
            resizable: true,
            numberCell: { show: false },
@@ -83,7 +83,6 @@
            numberCell: { show: false },
            title: "<b>Processed By Me Advances</b>",                        
            resizable: true,
-           selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},
            
        };
 

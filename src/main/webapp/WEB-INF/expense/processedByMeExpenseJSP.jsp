@@ -90,7 +90,7 @@
            title: "<b>Processed By Me Expense Voucher</b>",                        
            resizable: true,
            freezeCols: 1, 
-            selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},    
+           selectionModel: {type: 'row', mode: 'single'},
            detailModel: {
                cache: true,
                collapseIcon: "ui-icon-plus",
@@ -148,6 +148,7 @@
                editable: false,              
                flexHeight: true,
                flexWidth: true,
+               selectionModel: {type: 'row', mode: 'single'},
                numberCell: { show: false },
                title: "Expense Details",
                showTop: false,
