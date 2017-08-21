@@ -353,10 +353,10 @@ public class ExpenseService implements IExpenseService{
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			List<ProcessHistoryJPA> expenseHeaderJPAList =expenseDAO.getProcessedByMeExpense(expenseHeaderDTO);
-			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+			List<ProcessHistoryJPA> processHistoryJPAList =expenseDAO.getProcessedByMeExpense(expenseHeaderDTO);
+			if(Validation.validateForNullObject(processHistoryJPAList)){
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
-				for(ProcessHistoryJPA processHistoryJPA: expenseHeaderJPAList){
+				for(ProcessHistoryJPA processHistoryJPA: processHistoryJPAList){
 					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(processHistoryJPA.getExpenseHeaderJPA());
 					ExpenseHeaderJPA expenseHeaderJPA=processHistoryJPA.getExpenseHeaderJPA();
 					

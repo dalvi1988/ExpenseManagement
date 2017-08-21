@@ -178,6 +178,26 @@ public class AdvanceController {
 		return model;
 	}
 	
+	@RequestMapping(value="/processedByMeAdvances",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getProcessedByMeAdvances() throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper= new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<AdvanceDTO> advanceDTOList=null;
+			AdvanceDTO advanceDTO=new AdvanceDTO();
+			advanceDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			advanceDTOList=advanceService.getProcessedByMeAdvances(advanceDTO);
+			model.addObject("advanceList",mapper.writeValueAsString(advanceDTOList));
+			model.setViewName("advance/processedByMeAdvanceJSP");
+		}
+		catch(Exception e){
+			logger.error("AdvanceController: getAdvanceApprovalPage",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
 	@RequestMapping(value="/approveRejectAdvance",method=RequestMethod.POST)
 	public @ResponseBody BaseDTO approveRejectExpenses(@RequestBody AdvanceDTO advanceDTO) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 		BaseDTO baseDTO= null;

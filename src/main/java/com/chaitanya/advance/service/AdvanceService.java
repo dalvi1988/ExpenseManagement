@@ -24,7 +24,9 @@ import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
 import com.chaitanya.jpa.AdvanceProcessInstanceJPA;
 import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
+import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
+import com.chaitanya.utility.model.VoucherStatusDTO;
 
 @Service("advanceService")
 @Transactional(rollbackFor=Exception.class)
@@ -217,6 +219,47 @@ public class AdvanceService implements IAdvanceService{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 		logger.debug("AdvanceService: getAdvanceToBeApprove-End");
+		return  advanceDTOList;
+	}
+	
+	@Override
+	public List<AdvanceDTO> getProcessedByMeAdvances(BaseDTO baseDTO) throws ParseException {
+
+		logger.debug("AdvanceService: getProcessedByMeAdvances-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		List<AdvanceDTO> advanceDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			List<AdvanceProcessHistoryJPA> processHistoryJPAList =advanceDAO.getProcessedByMeAdvances(advanceDTO);
+			if(Validation.validateForNullObject(processHistoryJPAList)){
+				advanceDTOList= new ArrayList<AdvanceDTO>();
+				for(AdvanceProcessHistoryJPA processHistoryJPA: processHistoryJPAList){
+					AdvanceDTO advDTO=AdvanceConvertor.setAdvanceJPAtoDTO(processHistoryJPA.getAdvanceJPA());
+					if(Validation.validateForNullObject(processHistoryJPA.getAdvanceJPA().getEmployeeJPA())){
+						advDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(processHistoryJPA.getAdvanceJPA().getEmployeeJPA()));
+					}
+					if(Validation.validateForNullObject(processHistoryJPA.getProcessDate()))
+						advDTO.setProcessedDate(Convertor.calendartoString(processHistoryJPA.getProcessDate(),Convertor.dateFormatWithTime));
+					
+					if(Validation.validateForNullObject(processHistoryJPA.getAdvanceJPA().getEventJPA())){
+						advDTO.setEventDTO(EventConvertor.setEventJPAtoDTO(processHistoryJPA.getAdvanceJPA().getEventJPA()));
+					}
+					if(Validation.validateForNullObject(processHistoryJPA.getVoucherStatusJPA())){
+						VoucherStatusDTO voucherStatusDTO = Convertor.setVoucherStatusJPAToDTO(processHistoryJPA.getVoucherStatusJPA());
+						advDTO.setVoucherStatusDTO(voucherStatusDTO);
+					}
+					if(Validation.validateForNullObject(processHistoryJPA.getComment()))
+						advDTO.setRejectionComment(processHistoryJPA.getComment());
+					advanceDTOList.add(advDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("AdvanceService: getProcessedByMeAdvances-End");
 		return  advanceDTOList;
 	}
 	

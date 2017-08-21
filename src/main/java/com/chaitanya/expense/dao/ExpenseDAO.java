@@ -340,18 +340,11 @@ public class ExpenseDAO implements IExpenseDAO{
 	public List<ProcessHistoryJPA> getProcessedByMeExpense(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		Object voucherId[]={1,2};
-		
-		/*DetachedCriteria subquery = DetachedCriteria.forClass(ProcessHistoryJPA.class)
-									.add(Restrictions.eq("processedBy.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
-									//.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
-									.setProjection(Projections.property("expenseHeaderJPA.expenseHeaderId"));*/
-		
+				
 		@SuppressWarnings("unchecked")
 		List<ProcessHistoryJPA> processHistoryJPAList= session.createCriteria(ProcessHistoryJPA.class)
-												/*.setFetchMode("eventJPA",FetchMode.JOIN)
-												.setFetchMode("employeeJPA",FetchMode.JOIN)
-												.setFetchMode("advanceJPA",FetchMode.JOIN)*/
-				.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
+
+												.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
 												.add(Restrictions.eq("processedBy.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
 												.list();
 														

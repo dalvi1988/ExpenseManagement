@@ -27,7 +27,10 @@ public class AdvanceDTO extends BaseDTO {
 	private EventDTO eventDTO;
 	
 	private Integer voucherStatusId;
-	@JsonIgnore
+	
+	@JsonProperty(access = Access.READ_ONLY)
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="voucherStatus")
+	@JsonIdentityReference(alwaysAsId=true)
 	private VoucherStatusDTO voucherStatusDTO;
 	
 	@JsonProperty(access = Access.READ_ONLY)
@@ -44,6 +47,8 @@ public class AdvanceDTO extends BaseDTO {
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
 	private EmployeeDTO processedByEmployeeDTO;
+	
+	private String processedDate;
 
 	public Long getAdvanceDetailId() {
 		return advanceDetailId;
@@ -111,7 +116,6 @@ public class AdvanceDTO extends BaseDTO {
 		return voucherStatusDTO;
 	}
 
-	@JsonIgnore
 	public void setVoucherStatusDTO(VoucherStatusDTO voucherStatusDTO) {
 		this.voucherStatusDTO = voucherStatusDTO;
 		this.voucherStatusId=voucherStatusDTO.getVoucherStatusId();
@@ -152,6 +156,14 @@ public class AdvanceDTO extends BaseDTO {
 
 	public void setRejectionComment(String rejectionComment) {
 		this.rejectionComment = rejectionComment;
+	}
+
+	public String getProcessedDate() {
+		return processedDate;
+	}
+
+	public void setProcessedDate(String processedDate) {
+		this.processedDate = processedDate;
 	}
 	
 }
