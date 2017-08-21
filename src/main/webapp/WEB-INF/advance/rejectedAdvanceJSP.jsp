@@ -23,17 +23,7 @@
        { title: "Advance Number", width: 120, dataIndx: "advanceNumber",
            filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
        }, 
-       { title: "Amount", width: 100, dataIndx: "amount", align: "right",
-    	   render: function (ui) {                        
-               var cellData = ui.cellData;
-               if (cellData != null) {
-                   return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
-               }
-               else {
-                   return "";
-               }
-           }
-       },
+       { title: "Amount", width: 100, dataIndx: "amount", align: "right",render: amountRenderer},
        { title: "For Event", width: 100, dataIndx: "eventDTO", },
        { title: "Rejected By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
        { title: "Rejection Comment", width: 100, dataIndx: "rejectionComment"},

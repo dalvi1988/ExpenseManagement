@@ -142,6 +142,11 @@
 		    	loadPage("processedByMeExpense");
 		     });
 	     
+	     $('.processedByMeAdvance').click(function(){
+		    	$('.overlay').show();
+		    	$( this ).parent().addClass("active")
+		    	loadPage("processedByMeAdvances");
+		     });
 	    $('.paidAdvances').click(function(){
 	    	$('.overlay').show();
 	    	$( this ).parent().addClass("active")
@@ -326,6 +331,7 @@
             <li><a href="#" class="rejectedAdvance"><i class="fa fa-circle-o"></i>Rejected Advance</a></li>
             <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Advances at Payment Desk</a></li>
             <li><a href="#" class="paidAdvances"><i class="fa fa-circle-o"></i>Paid Advances</a></li>
+            <li><a href="#" class="processedByMeAdvance"><i class="fa fa-circle-o"></i>Processed Advances By Me</a></li>
           </ul>
         </li>
         

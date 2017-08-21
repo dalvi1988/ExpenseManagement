@@ -307,6 +307,22 @@ public class AdvanceDAO implements IAdvanceDAO{
 	}
 	
 	@Override
+	public List<AdvanceProcessHistoryJPA> getProcessedByMeAdvances(AdvanceDTO advanceDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={1,2};//Draft and Send For Approval
+				
+		@SuppressWarnings("unchecked")
+		List<AdvanceProcessHistoryJPA> advanceJPAList= session.createCriteria(AdvanceProcessHistoryJPA.class)
+												.add(Restrictions.not(Restrictions.in("voucherStatusJPA.voucherStatusId", voucherId)))
+												.add(Restrictions.eq("processedBy.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+												.list();
+														
+
+		return advanceJPAList;
+	
+	}
+	
+	@Override
 	public AdvanceJPA getAdvanceById(AdvanceDTO advanceDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		

@@ -39,7 +39,7 @@
 	   
        var colM = [
            { title: "", minWidth: 27, width: 27, type: "detail", resizable: false },
-           { title: "Voucher Number",width:150, dataIndx: "voucherNumber" },
+           { title: "Voucher Number",width:130, dataIndx: "voucherNumber" },
            { title: "For Event", width: 130, dataIndx: "eventDTO" },
            { title: "Employee Name", width: 120, dataIndx: "employeeDTO",
         	   filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
@@ -50,7 +50,7 @@
 		   { title: "Voucher Status", width: 100, dataIndx: "voucherStatusDTO"},
            { title: "Total Amount", width: 85, align: "right", dataType: "float", dataIndx: "totalAmount",render: amountRenderer },
 		   { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",render: amountRenderer},
-           { title: "Processed Date", width: 170, dataIndx: "processedDate",
+           { title: "Processed Date", width: 200, dataIndx: "processedDate",
 			   filter: { type: 'textbox', condition: "between", init: pqDatePicker, listeners: ['change'] },
            }
           

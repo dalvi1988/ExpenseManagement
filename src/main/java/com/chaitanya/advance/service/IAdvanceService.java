@@ -30,5 +30,7 @@ public interface IAdvanceService {
 
 	List<AdvanceDTO> getPaidAdvances(BaseDTO baseDTO) throws ParseException;
 
+	List<AdvanceDTO> getProcessedByMeAdvances(BaseDTO baseDTO) throws ParseException;
+
 
 }

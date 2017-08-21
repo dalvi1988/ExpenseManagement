@@ -5,6 +5,7 @@ import java.util.List;
 import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.AdvanceJPA;
+import com.chaitanya.jpa.AdvanceProcessHistoryJPA;
 
 public interface IAdvanceDAO {
 	AdvanceJPA saveUpdateAdvance(AdvanceJPA branchJPA);
@@ -33,5 +34,7 @@ public interface IAdvanceDAO {
 	List<AdvanceJPA> getPaymentDeskAdvances(AdvanceDTO advanceDTO);
 
 	List<AdvanceJPA> getPaidAdvances(AdvanceDTO advanceDTO);
+
+	List<AdvanceProcessHistoryJPA> getProcessedByMeAdvances(AdvanceDTO advanceDTO);
 
 }

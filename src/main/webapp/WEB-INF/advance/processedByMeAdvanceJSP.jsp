@@ -38,22 +38,23 @@
 	   }
 	   
        var colM = [
-			{ title: "Employee Name", minWidth: 130, dataIndx: "employeeDTO", dataType:"String"},
+			{ title: "Employee Name", minWidth: 130, dataIndx: "employeeDTO", dataType:"String",
+				filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
+			},
            { title: "Purpose", width: 100, dataIndx: "purpose",
                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] },
            },
            { title: "Advance Number", width: 120, dataIndx: "advanceNumber",
                filter: { type: 'textbox', condition: 'begin', listeners: ['keyup'] }
            }, 
-           { title: "Amount", width: 100, dataIndx: "amount", align: "right",render: amountRenderer},
+           { title: "Amount", width: 100, dataIndx: "amount", align: "right", render: amountRenderer },
            { title: "For Event", width: 100, dataIndx: "eventDTO", },
+           { title: "Voucher Status", width: 100, dataIndx: "voucherStatusDTO"},
            { title: "", dataIndx: "advanceDetailId",hidden:true},
-           { title: "Previously Approved By", minWidth: 100, dataIndx: "processedByEmployeeDTO" },
-           { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
-               return "<button type='button' class='approve_btn'>Approve</button>\
-                   <button type='button' class='reject_btn'>Reject</button>";
-               }
+           { title: "Processed Date", minWidth: 200, dataIndx: "processedDate",
+        	   filter: { type: 'textbox', condition: "between", init: pqDatePicker, listeners: ['change'] },
            }
+           
        ];
 
        var dataModel = {
@@ -80,52 +81,9 @@
            numberCell: { show: false },
            columnBorders: true, 
            numberCell: { show: false },
-           title: "<b>Advance For Approval</b>",                        
+           title: "<b>Processed By Me Advances</b>",                        
            resizable: true,
            selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},
-           refresh: function() {
-        	 //debugger;
-               var $grid = $(this);
-
-               //delete button
-               $grid.find("button.reject_btn").button({ icons: { primary: 'ui-icon-closethick'} })
-               .unbind("click")
-               .bind("click", function (evt) {
-                   
-                   var $tr = $(this).closest("tr"),
-                       rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
-                   rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
-                   rowData.voucherStatusId = 4;
-                   $( "#dialog-confirm" ).dialog({
-             	      resizable: false,
-             	      height: "auto",
-             	      width: 400,
-             	      modal: true,
-             	      buttons: {
-             	        "Continue": function() {
-             	        	rowData.rejectionComment=$("#comment").val();
-             	        	submitDetails(rowData,rowIndx);
-             	          $( this ).dialog( "close" );
-             	        },
-             	        Cancel: function() {
-             	          $( this ).dialog( "close" );
-             	        }
-             	      }
-             	 });
-                   
-               });
-               //edit button
-               $grid.find("button.approve_btn").button({ icons: { primary: 'ui-icon-check'} })
-               .unbind("click")
-               .bind("click", function (evt) {
-                   
-                   var $tr = $(this).closest("tr"),
-                       rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
-                       rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
-                   rowData.voucherStatusId = 3;
-                   submitDetails(rowData,rowIndx);
-               });
-           }
            
        };
 
