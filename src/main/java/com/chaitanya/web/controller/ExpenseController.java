@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -403,6 +404,17 @@ public class ExpenseController {
 			logger.error("ExpenseController: getPaidExpense",e);
 			model.setViewName("others/505");
 		}
+		return model;
+	}
+	@RequestMapping(value="/getReceipt",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView getReceipt(HttpResponse response) throws JsonGenerationException, JsonMappingException, IOException{
+		ModelAndView model=new ModelAndView();
+
+	    response.AddHeader("content-disposition", "attachment;filename=" + "grid.png");
+	    response.ContentType = "application/octet-stream";;
+	    response.BinaryWrite(File);
+	    response.End();
+		model.setViewName("expense/processedByMeExpenseJSP");
 		return model;
 	}
 }

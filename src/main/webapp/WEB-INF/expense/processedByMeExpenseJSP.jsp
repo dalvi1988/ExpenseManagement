@@ -148,7 +148,6 @@
                editable: false,              
                flexHeight: true,
                flexWidth: true,
-               selectionModel: {type: 'row', mode: 'single'},
                numberCell: { show: false },
                title: "Expense Details",
                showTop: false,

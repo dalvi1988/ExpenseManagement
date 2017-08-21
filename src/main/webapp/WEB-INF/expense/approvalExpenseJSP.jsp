@@ -192,7 +192,12 @@
                    { title: "From Location", width: 200, dataIndx: "fromLocation" },
 		           { title: "Unit Price", width: "80", align: "center", dataIndx: "unit", dataType: "float"},
 		           { title: "Amount", align: "center", width: 85, dataIndx: "amount", dataType: "float"},
-		           { title: "Receipt", width: 200, dataIndx: "receipt" }
+		           { title: "Receipt", width: 200, dataIndx: "fileName", 
+		        	   render: function(ui){
+		        		   return "<a href='https://docs.google.com/viewer?embedded=true&url=http%3A%2F%2Fhomepages.inf.ed.ac.uk%2Fneilb%2FTestWordDoc.doc' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        	   }
+		        	   
+		           }
 		        ],
                editable: false,              
                flexHeight: true,

@@ -52,7 +52,7 @@ public class ExpenseService implements IExpenseService{
 
 	
 	@Override
-	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException {
+	public BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws Exception {
 		logger.debug("ExpenseService: saveUpdateExpense-Start");
 		validateExpenseDTO(baseDTO);
 		
@@ -114,7 +114,7 @@ public class ExpenseService implements IExpenseService{
 		return baseDTO;
 	}
 
-	private void addUpdateDeleteAttachment(ExpenseHeaderDTO expenseHeaderDTO,Long expenseHeaderId) throws IllegalStateException, IOException {
+	private void addUpdateDeleteAttachment(ExpenseHeaderDTO expenseHeaderDTO,Long expenseHeaderId) throws Exception {
 		
 		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
 			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
@@ -577,5 +577,7 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: getPaidExpenseList-End");
 		return  expenseHeaderDTOList;
 	}
+	
+	
 	
 }

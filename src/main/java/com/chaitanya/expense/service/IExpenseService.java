@@ -10,7 +10,7 @@ import com.chaitanya.expense.model.ExpenseHeaderDTO;
 
 public interface IExpenseService {
 
-	BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException;
+	BaseDTO saveUpdateExpense(BaseDTO baseDTO) throws ParseException, IOException, Exception;
 
 	List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) throws ParseException;
 

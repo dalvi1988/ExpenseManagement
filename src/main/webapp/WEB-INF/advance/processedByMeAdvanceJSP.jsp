@@ -75,7 +75,6 @@
            hwrap: false,
            pageModel: { type: "local", rPP: 10 },
            editable: false,
-           selectionModel: {type: 'row', mode: 'single'},
            filterModel: { on: true, mode: "AND", header: true },
            resizable: true,
            numberCell: { show: false },
