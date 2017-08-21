@@ -504,7 +504,7 @@ $(function () {
                 },
                 render: disableFieldRenderer
             },
-            { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",
+            { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",render:amountRenderer
             	 validations: [
                       { type: function (ui) {
                           var value = ui.value;
@@ -531,15 +531,7 @@ $(function () {
                       }, icon: 'ui-icon-info'
                       }
                 ],
-                render: function (ui) {                        
-                    var cellData = ui.cellData;
-                    if (cellData != null) {
-                        return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
-                    }
-                    else {
-                        return "";
-                    }
-                },
+                
                 editable: function(ui){
                 	debugger;
             		if(typeof ui.rowData != "undefined"  && ui.rowData != null && ui.rowData['unitRequired'] != null){

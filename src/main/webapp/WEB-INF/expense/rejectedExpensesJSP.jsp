@@ -19,8 +19,8 @@
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
 		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
-	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center"},
-	       { title: "Rejected By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
+	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center",render: amountRenderer},
+	       { title: "Rejected By", minWidth: 120, dataIndx: "processedByEmployeeDTO",render:voucherStatusRenderer },
 	       { title: "Rejection Comment", minWidth: 100, dataIndx: "rejectionComment" },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
 	       { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {

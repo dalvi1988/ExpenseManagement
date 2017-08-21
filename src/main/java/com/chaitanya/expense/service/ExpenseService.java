@@ -185,6 +185,9 @@ public class ExpenseService implements IExpenseService{
 						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())){
 							expHeaderDTO.setProcessedByEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy()));
 						}
+						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA())){
+							expHeaderDTO.setVoucherStatusDTO(Convertor.setVoucherStatusJPAToDTO(expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA()));
+						}
 					}
 					expenseHeaderDTOList.add(expHeaderDTO);
 				}
@@ -283,6 +286,9 @@ public class ExpenseService implements IExpenseService{
 						}
 						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())){
 							expHeaderDTO.setProcessedByEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy()));
+						}
+						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA())){
+							expHeaderDTO.setVoucherStatusDTO(Convertor.setVoucherStatusJPAToDTO(expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA()));
 						}
 						if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getComment()))
 							expHeaderDTO.setRejectionComment(expenseHeaderJPA.getProcessInstanceJPA().getComment());

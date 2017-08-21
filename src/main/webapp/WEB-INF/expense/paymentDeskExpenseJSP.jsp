@@ -20,28 +20,8 @@
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
 		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
-	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "right",
-	    	   render: function (ui) {                        
-                   var cellData = ui.cellData;
-                   if (cellData != null) {
-                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
-                   }
-                   else {
-                       return "";
-                   }
-               }
-		   },
-		   { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",
-        	   render: function (ui) {                        
-                   var cellData = ui.cellData;
-                   if (cellData != null) {
-                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
-                   }
-                   else {
-                       return "";
-                   }
-               }
-		   },
+	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "right",render: amountRenderer},
+		   { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",render: amountRenderer },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
 	       { title: "", dataIndx: "payAmount",hidden:true},
 	       { title: "", editable: false, minWidth: 100, sortable: false, render: function (ui) {

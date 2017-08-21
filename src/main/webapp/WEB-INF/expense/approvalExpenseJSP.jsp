@@ -46,26 +46,10 @@
            { title: "Start Date", width: 100, dataIndx: "startDate" },
 		   { title: "End Date", width: 100, dataIndx: "endDate"},
            { title: "Total Amount", width: 85, align: "right", dataType: "float", dataIndx: "totalAmount",
-        	   render: function (ui) {                        
-                   var cellData = ui.cellData;
-                   if (cellData != null) {
-                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
-                   }
-                   else {
-                       return "";
-                   }
-               }
+        	   render: amountRenderer
 		   },
 		   { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",
-        	   render: function (ui) {                        
-                   var cellData = ui.cellData;
-                   if (cellData != null) {
-                       return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
-                   }
-                   else {
-                       return "";
-                   }
-               }
+        	   render: amountRenderer
 		   },
            { title: "Previously Approved By", width: 120, dataIndx: "processedByEmployeeDTO" },
            { title: "", editable: false, minWidth: 180,width: 180, sortable: false, render: function (ui) {

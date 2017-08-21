@@ -19,9 +19,9 @@
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
 	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
 		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
-	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center"},
+	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center", render: amountRenderer},
 	       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
-	       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO" },
+	       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO",render: voucherStatusRenderer },
 	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
 		];
        //define dataModel
