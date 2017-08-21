@@ -504,7 +504,7 @@ $(function () {
                 },
                 render: disableFieldRenderer
             },
-            { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",render:amountRenderer
+            { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",render:amountRenderer,
             	 validations: [
                       { type: function (ui) {
                           var value = ui.value;
