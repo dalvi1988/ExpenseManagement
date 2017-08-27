@@ -1,6 +1,8 @@
 package com.chaitanya.web.controller;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
@@ -9,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +42,7 @@ import com.chaitanya.expenseCategory.service.IExpenseCategoryService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
+import com.chaitanya.utility.FTPUtility;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -406,15 +412,28 @@ public class ExpenseController {
 		}
 		return model;
 	}
-	@RequestMapping(value="/getReceipt",method=RequestMethod.GET)
-	public @ResponseBody ModelAndView getReceipt(HttpResponse response) throws JsonGenerationException, JsonMappingException, IOException{
-		ModelAndView model=new ModelAndView();
 
-	    response.AddHeader("content-disposition", "attachment;filename=" + "grid.png");
-	    response.ContentType = "application/octet-stream";;
-	    response.BinaryWrite(File);
-	    response.End();
-		model.setViewName("expense/processedByMeExpenseJSP");
-		return model;
+	
+	@RequestMapping(value="/getFile", method = RequestMethod.GET)
+	public void getFile(String fileName, String voucherId,
+	    HttpServletResponse response) {
+	    try {
+	    	response.setContentType("application/octet-stream");
+	    	// set headers for the response
+	        String headerKey = "Content-Disposition";
+	        String headerValue = String.format("attachment; filename=\"%s\"",
+	        		fileName);
+	        response.setHeader(headerKey, headerValue);
+	        
+	      // get your file as InputStream
+	      InputStream	inputStream =FTPUtility.retriveFile("Attachment/"+voucherId+"/"+fileName);
+	      // copy it to response's OutputStream
+	      IOUtils.copy(inputStream, response.getOutputStream());
+	      response.flushBuffer();
+	    } catch (IOException ex) {
+	      logger.error("Error writing file to output stream. Filename was '{}'", ex);
+	      throw new RuntimeException("IOError writing file to output stream");
+	    }
+
 	}
 }

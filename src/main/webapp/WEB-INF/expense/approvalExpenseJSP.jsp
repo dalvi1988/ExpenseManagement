@@ -93,17 +93,17 @@
            title: "<b>Vouchers For Approval</b>",                        
            resizable: true,
            freezeCols: 1, 
-            selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},    
+           selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},    
            detailModel: {
                cache: true,
                collapseIcon: "ui-icon-plus",
                expandIcon: "ui-icon-minus",
                init: function (ui) {
-                   
-                   var rowData = ui.rowData,                        
-                       detailobj = gridDetailModel( $(this), rowData ), //get a copy of gridDetailModel                        
+                   debugger;
+                   var rowData = ui.rowData,  
+                       detailobj = gridDetailModel( $(this), rowData ), //get a copy of gridDetailModel      
                        $grid = $("<div></div>").pqGrid( detailobj ); //init the detail grid.
-
+                       $grid.data( 'expenseHeaderId' , rowData.expenseHeaderId);
                    return $grid;
                }
            },
@@ -150,7 +150,7 @@
                });
 
                $("#approveSelected").prop( "disabled", true );
-				$("#rejectSelected").prop( "disabled", true );
+			   $("#rejectSelected").prop( "disabled", true );
            }
            
        });
@@ -194,7 +194,8 @@
 		           { title: "Amount", align: "center", width: 85, dataIndx: "amount", dataType: "float"},
 		           { title: "Receipt", width: 200, dataIndx: "fileName", 
 		        	   render: function(ui){
-		        		   return "<a href='https://docs.google.com/viewer?embedded=true&url=http%3A%2F%2Fhomepages.inf.ed.ac.uk%2Fneilb%2FTestWordDoc.doc' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        		   return "<a href='https://docs.google.com/viewer?embedded=true&url=getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        		   //return "<a href='getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
 		        	   }
 		        	   
 		           }

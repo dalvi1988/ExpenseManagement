@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketException;
 
 import org.apache.commons.net.ftp.FTP;
@@ -85,24 +86,26 @@ public class FTPUtility {
     	return result;
     }
     
-    public static void retriveFile(String remoteFile, String filePath) throws IOException{
-    	logger.info("FTPUtility: uploadFile-Start");
+    public static InputStream retriveFile(String filePath) throws IOException{
+    	logger.info("FTPUtility: retriveFile-Start");
     	connect();
     	ftpclient.setFileType(FTP.BINARY_FILE_TYPE);
+    	ftpclient.setControlKeepAliveTimeout(30);
     	ftpclient.enterLocalPassiveMode();
+    	InputStream inputStream =null;
     	try  {
-    		FileOutputStream fos = new FileOutputStream(filePath);
     	
-    		ftpclient.retrieveFile(remoteFile, fos);
+    		inputStream =ftpclient.retrieveFileStream(filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
        
-        ftpclient.logout();
-        logger.info("FTPUtility: upload-Start");
+       // ftpclient.logout();
+        logger.info("FTPUtility: retriveFile-end");
+        return inputStream;
     }
     
     public static void main(String[] arg) throws SocketException, IOException{
-    	retriveFile("grid.png","C:\\FTP\\Attachment\\grid.png");
+    	retriveFile("error.txt");
     }
 }
