@@ -28,7 +28,7 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private Integer voucherStatusId;
 	
 	@JsonProperty(access = Access.READ_ONLY)
-	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="voucherStatus")
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="textToDisplay")
 	@JsonIdentityReference(alwaysAsId=true)
 	private VoucherStatusDTO voucherStatusDTO;
 
@@ -55,7 +55,9 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private String rejectionComment;
 	
 	private String purpose;
-	
+
+	private Long employeeId;
+
 	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="fullName")
 	@JsonIdentityReference(alwaysAsId=true)
@@ -143,6 +145,18 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setEmployeeDTO(EmployeeDTO employeeDTO) {
 		this.employeeDTO = employeeDTO;
+		this.employeeId= this.employeeDTO.getEmployeeId();
+	}
+
+	public Long getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(Long employeeId) {
+		this.employeeId = employeeId;
+		EmployeeDTO employeeDTO= new EmployeeDTO();
+		employeeDTO.setEmployeeId(employeeId);
+		this.setEmployeeDTO(employeeDTO);
 	}
 
 	public Integer getVoucherStatusId() {

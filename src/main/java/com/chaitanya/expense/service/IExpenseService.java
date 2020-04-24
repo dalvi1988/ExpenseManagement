@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
+import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
@@ -33,5 +34,7 @@ public interface IExpenseService {
 	List<ExpenseHeaderDTO> getPaymentDeskExpense(BaseDTO baseDTO) throws ParseException;
 
 	List<ExpenseHeaderDTO> getProcessedByMeExpense(BaseDTO baseDTO) throws ParseException;
+
+	List<ApprovalFlowDTO> viewVoucherApprovalFlow(BaseDTO baseDTO) throws ParseException;
 
 }

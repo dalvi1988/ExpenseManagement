@@ -3,6 +3,7 @@ package com.chaitanya.approvalFlow.model;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.department.model.DepartmentDTO;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -27,6 +28,8 @@ public class ApprovalFlowDTO extends BaseDTO {
 	private Integer noOfLevel;
 	
 	private Long level1,level2,level3;
+	
+	private EmployeeDTO level1EmployeeDTO, level2EmployeeDTO, level3EmployeeDTO;
 	
 	public Long getFlowId() {
 		return flowId;
@@ -122,6 +125,30 @@ public class ApprovalFlowDTO extends BaseDTO {
 
 	public void setFlowType(String flowType) {
 		this.flowType = flowType;
+	}
+
+	public EmployeeDTO getLevel1EmployeeDTO() {
+		return level1EmployeeDTO;
+	}
+
+	public void setLevel1EmployeeDTO(EmployeeDTO level1EmployeeDTO) {
+		this.level1EmployeeDTO = level1EmployeeDTO;
+	}
+
+	public EmployeeDTO getLevel2EmployeeDTO() {
+		return level2EmployeeDTO;
+	}
+
+	public void setLevel2EmployeeDTO(EmployeeDTO level2EmployeeDTO) {
+		this.level2EmployeeDTO = level2EmployeeDTO;
+	}
+
+	public EmployeeDTO getLevel3EmployeeDTO() {
+		return level3EmployeeDTO;
+	}
+
+	public void setLevel3EmployeeDTO(EmployeeDTO level3EmployeeDTO) {
+		this.level3EmployeeDTO = level3EmployeeDTO;
 	}
 
 }

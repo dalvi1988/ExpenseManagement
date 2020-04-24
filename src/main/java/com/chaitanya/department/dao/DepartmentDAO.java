@@ -18,12 +18,14 @@ public class DepartmentDAO implements IDepartmentDAO{
 	@Autowired
 	SessionFactory sessionFactory;
 	
+	@Override
 	public DepartmentJPA add(DepartmentJPA department){
 		Session session=sessionFactory.getCurrentSession();
 		session.saveOrUpdate(department);
 		return department;
 	}
 
+	@Override
 	public List<DepartmentJPA> findAll() {
 		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
@@ -31,4 +33,5 @@ public class DepartmentDAO implements IDepartmentDAO{
 				.list();
 		return departmentList;
 	}
+	
 }

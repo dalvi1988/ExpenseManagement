@@ -322,9 +322,8 @@
 
 </script>
 </head>
-<body>
-  <div id="grid_editing" style="margin: auto;">
-</div>
-       
+	<body>
+	  <div id="grid_editing" style="margin: auto;">
+	</div>
 </body>
 </html>

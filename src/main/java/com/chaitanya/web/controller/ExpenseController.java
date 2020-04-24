@@ -1,6 +1,5 @@
 package com.chaitanya.web.controller;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -8,19 +7,19 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +30,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.advance.service.IAdvanceService;
+import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.event.service.IEventService;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
@@ -50,7 +51,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
-@Transactional
 public class ExpenseController {
 	
 	@Autowired
@@ -173,8 +173,7 @@ public class ExpenseController {
 		BaseDTO baseDTO= null;
 		
 		try{
-			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			
+			 LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 				
 			 expenseHeaderDTO.setProcessedByEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
 			 
@@ -434,6 +433,36 @@ public class ExpenseController {
 	      logger.error("Error writing file to output stream. Filename was '{}'", ex);
 	      throw new RuntimeException("IOError writing file to output stream");
 	    }
+
+	}
+	
+	// View Approval Flow for Voucher
+	@RequestMapping(value = "/viewVoucherApprovalFlow", method={RequestMethod.POST,RequestMethod.GET})
+	public ModelAndView viewVoucherApprovalFlow(@RequestParam(value="employeeId",required=false) Long employeeId) {
+
+		ModelAndView model = new ModelAndView();
+		try{
+		// check if user is login
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (!(auth instanceof AnonymousAuthenticationToken)) {
+				UserDetails userDetail = (UserDetails) auth.getPrincipal();
+				model.addObject("username", userDetail.getUsername());
+				ExpenseHeaderDTO expenseHeaderDTO= new ExpenseHeaderDTO();
+				EmployeeDTO employeeDTO= new EmployeeDTO();
+				employeeDTO.setEmployeeId(employeeId);
+				expenseHeaderDTO.setEmployeeDTO(employeeDTO);
+				List<ApprovalFlowDTO> approvalFlowDTOList = expenseService.viewVoucherApprovalFlow(expenseHeaderDTO);
+				
+				model.addObject("approvalFlowList",approvalFlowDTOList);
+			}
+	
+			model.setViewName("expense/viewVoucherApprovalFlowJSP");
+		}catch(Exception e){
+			logger.error("ExpenseController: viewVoucherApprovalFlow",e);
+			model.setViewName("others/505");
+		}
+		
+		return model;
 
 	}
 }

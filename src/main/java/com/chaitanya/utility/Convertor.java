@@ -56,6 +56,7 @@ public class Convertor {
 		VoucherStatusDTO voucherStatusDTO=new VoucherStatusDTO();
 		voucherStatusDTO.setVoucherStatusId(voucherStatusJPA.getVoucherStatusId());
 		voucherStatusDTO.setVoucherStatus(voucherStatusJPA.getVoucherStatus());
+		voucherStatusDTO.setTextToDisplay(voucherStatusJPA.getTextToDisplay());
 		return voucherStatusDTO;
 	}
 	

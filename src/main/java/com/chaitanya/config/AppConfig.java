@@ -38,6 +38,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/scripts/**").addResourceLocations("classpath:/scripts/");
 		registry.addResourceHandler("/grid/**").addResourceLocations("classpath:/grid/");
 		registry.addResourceHandler("/theme/**").addResourceLocations("classpath:/theme/");
+		registry.addResourceHandler("/icon/**").addResourceLocations("classpath:/icon/");
 	}
 	
 	
@@ -68,7 +69,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    
 		ds.setUrl("jdbc:mysql://localhost:3306/test");
 		ds.setUsername("root");
-		ds.setPassword("Nexus@123");
+		ds.setPassword("root");
 	    
 	/*	ds.setUrl("jdbc:mysql://node31131-env-8602550.cloud.cms500.com/test");
 		ds.setUsername("root");

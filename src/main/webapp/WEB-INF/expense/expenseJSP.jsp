@@ -806,7 +806,7 @@ function changedAdvance(){
 			 	 <div class="form-group row">
 			        <label class="col-sm-2" for="startDate">Start Date</label>
 			        <div class="col-sm-3"><form:input path="startDate" class="form-control input-sm" id="startDate"/></div>
-					 
+					 <label class="col-sm-1"></label>
 			        <label class="col-sm-2" for="endDate">End Date</label>
 			        <div class="col-sm-3"><form:input path="endDate" class="form-control input-sm" id="endDate" /></div>
 			    </div>
@@ -815,9 +815,9 @@ function changedAdvance(){
 			    <div class="form-group row">
 			       <label class="col-sm-2" for="purpose">Purpose</label>
 			      <div class="col-sm-3"><form:input path="purpose" class="form-control input-sm" /></div>
-			      
+			      <label class="col-sm-1"></label>
 			      <div class="eventTab" style="display: none">
-				       <label class="col-sm-1" for="eventId">Event</label>
+				       <label class="col-sm-2" for="eventId">Event</label>
 				       <div class="col-sm-3">
 					      <form:select class="form-control col-sm-4" path="eventId" >
 				  			<form:option value="-1" label="--- Select Event ---" />

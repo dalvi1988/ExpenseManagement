@@ -31,6 +31,15 @@ function amountRenderer(ui) {
 };
 
 
+function viewApprovalFlowRenderer(ui) {
+    var grid = $(this).pqGrid('getInstance').grid,
+        rowData = ui.rowData,
+        rowIndx = ui.rowIndx,
+        dataIndx = ui.dataIndx;
+
+    var cellData = ui.cellData;
+    return "<a href='javascript:showApprovalFlow("+ui.cellData+");' >View Approval Flow</a>";
+};
 
 function voucherStatusRenderer(ui) {
     var grid = $(this).pqGrid('getInstance').grid,

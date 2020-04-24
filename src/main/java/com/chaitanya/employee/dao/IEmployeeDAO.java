@@ -16,5 +16,7 @@ public interface IEmployeeDAO {
 
 	EmployeeJPA findEmployeeByEmailId(EmployeeDTO employeeDTO);
 
+	EmployeeJPA getEmployeeByEmployeeID(EmployeeJPA employeeJPA);
+
 	
 }

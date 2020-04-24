@@ -214,7 +214,7 @@
 		 });
 	     
 	    
-	    $('.employeeDashboard').click();
+	    $('.pendingExpense').click();
 	    
 	});
 	

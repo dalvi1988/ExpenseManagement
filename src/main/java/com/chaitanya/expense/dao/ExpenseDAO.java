@@ -9,7 +9,6 @@ import javax.persistence.ParameterMode;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -31,6 +30,7 @@ import com.chaitanya.jpa.ProcessHistoryJPA;
 import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Validation;
+import com.chaitanya.utility.VoucherStatusEnum;
 
 @Repository
 public class ExpenseDAO implements IExpenseDAO{
@@ -46,104 +46,105 @@ public class ExpenseDAO implements IExpenseDAO{
 		return expenseHeaderJPA;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void updateProcessInstance(ExpenseHeaderJPA expenseHeaderJPA, int currentVoucherStatus,EmployeeDTO approvalEmployeeDTO) {
-		Session session = sessionFactory.getCurrentSession();
-		
-		// Get Employee details by id
-		EmployeeJPA employeeJPA= (EmployeeJPA) session.get(EmployeeJPA.class,expenseHeaderJPA.getEmployeeJPA().getEmployeeId());
-		
-		Criterion deptCriterion= Restrictions.or(
-								 Restrictions.eq("departmentJPA.departmentId",employeeJPA.getDepartmentJPA().getDepartmentId()),
-								 Restrictions.isNull("departmentJPA.departmentId")
-								 );
-		
-		List<ApprovalFlowJPA> approvalFlowList = (List<ApprovalFlowJPA>) session.createCriteria(ApprovalFlowJPA.class)
-												.add(Restrictions.eq("branchJPA.branchId", employeeJPA.getBranchJPA().getBranchId()))
-												.add(deptCriterion)
-												.add(Restrictions.eq("status", 'Y'))
-												.list();
-		
-		
-		ApprovalFlowJPA functionalFlowJPA=null;
-		ApprovalFlowJPA branchFlowJPA=null;
-		ApprovalFlowJPA financeFlowJPA=null;
-		
-		boolean functionFlowFlag=false,branchFlowFlag=false,financeFlowFlag=false;
-		
-		if(Validation.validateForNullObject(approvalFlowList)){
-			for(ApprovalFlowJPA approvalFlowJPA:approvalFlowList){
-				if(functionFlowFlag==false && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
-					functionFlowFlag = true;
-					functionalFlowJPA = approvalFlowJPA;
-				}
-				else if(branchFlowFlag==false && approvalFlowJPA.getIsBranchFlow()=='Y' && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && !Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
-					branchFlowFlag = true;
-					branchFlowJPA = approvalFlowJPA;
-				}
-				else if(financeFlowFlag==false && approvalFlowJPA.getIsBranchFlow()=='N' && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && !Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
-					financeFlowFlag = true;
-					financeFlowJPA = approvalFlowJPA;
-				}
-			}
-		}
-		
-		if( financeFlowFlag== false){
-			System.out.println("No finance Worklflow");
-		}
-		else if(functionFlowFlag == false && branchFlowFlag == false){
-			System.out.println("No Functional & Branch Flow Worklflow");
-		}
-		else if(functionFlowFlag == true){
-			System.out.println("Executing function flow.");
-	    	getApprovalOfLevel(currentVoucherStatus,expenseHeaderJPA,functionalFlowJPA,financeFlowJPA, employeeJPA,approvalEmployeeDTO, session);
-		}
-		else if(branchFlowFlag == true){
-			System.out.println("Executing branch flow.");
-	    	getApprovalOfLevel(currentVoucherStatus,expenseHeaderJPA,branchFlowJPA, financeFlowJPA, employeeJPA,approvalEmployeeDTO, session);
-		}
-		
-	}
+//	@SuppressWarnings("unchecked")
+//	public void updateProcessInstance(ExpenseHeaderJPA expenseHeaderJPA, int currentVoucherStatus,EmployeeDTO approvalEmployeeDTO) {
+//		Session session = sessionFactory.getCurrentSession();
+//		
+//		// Get Employee details by id who has created voucher
+//		EmployeeJPA employeeJPA= (EmployeeJPA) session.get(EmployeeJPA.class,expenseHeaderJPA.getEmployeeJPA().getEmployeeId());
+//		
+//		Criterion deptCriterion= Restrictions.or(
+//								 Restrictions.eq("departmentJPA.departmentId",employeeJPA.getDepartmentJPA().getDepartmentId()),
+//								 Restrictions.isNull("departmentJPA.departmentId")
+//								 );
+//		
+//		List<ApprovalFlowJPA> approvalFlowList = (List<ApprovalFlowJPA>) session.createCriteria(ApprovalFlowJPA.class)
+//												.add(Restrictions.eq("branchJPA.branchId", employeeJPA.getBranchJPA().getBranchId()))
+//												.add(deptCriterion)
+//												.add(Restrictions.eq("status", 'Y'))
+//												.list();
+//		
+//		
+//		ApprovalFlowJPA functionalFlowJPA=null;
+//		ApprovalFlowJPA branchFlowJPA=null;
+//		ApprovalFlowJPA financeFlowJPA=null;
+//		
+//		boolean functionFlowFlag=false,branchFlowFlag=false,financeFlowFlag=false;
+//		
+//		if(Validation.validateForNullObject(approvalFlowList)){
+//			for(ApprovalFlowJPA approvalFlowJPA : approvalFlowList){
+//				if(functionFlowFlag==false && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
+//					functionFlowFlag = true;
+//					functionalFlowJPA = approvalFlowJPA;
+//				}
+//				else if(branchFlowFlag==false && approvalFlowJPA.getIsBranchFlow()=='Y' && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && !Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
+//					branchFlowFlag = true;
+//					branchFlowJPA = approvalFlowJPA;
+//				}
+//				else if(financeFlowFlag==false && approvalFlowJPA.getIsBranchFlow()=='N' && Validation.validateForNullObject(approvalFlowJPA.getBranchJPA()) && !Validation.validateForNullObject(approvalFlowJPA.getDepartmentJPA())){
+//					financeFlowFlag = true;
+//					financeFlowJPA = approvalFlowJPA;
+//				}
+//			}
+//		}
+//		
+//		if( financeFlowFlag== false){
+//			System.out.println("No finance Worklflow");
+//		}
+//		else if(functionFlowFlag == false && branchFlowFlag == false){
+//			System.out.println("No Functional & Branch Flow Worklflow");
+//		}
+//		else if(functionFlowFlag == true){
+//			System.out.println("Executing function flow.");
+//	    	getApprovalOfLevel(currentVoucherStatus,expenseHeaderJPA,functionalFlowJPA,financeFlowJPA, employeeJPA,approvalEmployeeDTO, session);
+//		}
+//		else if(branchFlowFlag == true){
+//			System.out.println("Executing branch flow.");
+//	    	getApprovalOfLevel(currentVoucherStatus,expenseHeaderJPA,branchFlowJPA, financeFlowJPA, employeeJPA,approvalEmployeeDTO, session);
+//		}
+//		
+//	}
 	
-	private void getApprovalOfLevel(int currentVoucerStatus, ExpenseHeaderJPA expenseHeaderJPA, ApprovalFlowJPA functionalApprovalFlow, ApprovalFlowJPA financeApprovalFlow, EmployeeJPA employeeJPA,EmployeeDTO approvalEmployeeDTO, Session session){
+	public void updateProcessInstanceByApprovalFlow(int currentVoucerStatus, ExpenseHeaderJPA expenseHeaderJPA, ApprovalFlowJPA functionalApprovalFlow, ApprovalFlowJPA financeApprovalFlow, EmployeeDTO approvalEmployeeDTO){
+		Session session = sessionFactory.getCurrentSession();
+		EmployeeJPA employeeJPA= expenseHeaderJPA.getEmployeeJPA();
 		Long approvalId = null;
-		int statusId=0;
+		int nextStatusId=0;
 		Long level = null;
 		String levelInfo = null;
 		
-		if(currentVoucerStatus == 2){
-			statusId=11;
+		if(currentVoucerStatus == VoucherStatusEnum.SEND_FOR_APPROVAL.getValue()){//2
+			nextStatusId = VoucherStatusEnum.FUNCTIONAL_PENDING_AT_1ST_LEVEL.getValue();
 			level = functionalApprovalFlow.getLevel1();
 			levelInfo = "Functional Level1";
-
 		}
-		else if(currentVoucerStatus == 11){
-			statusId=21;
+		else if(currentVoucerStatus == VoucherStatusEnum.FUNCTIONAL_PENDING_AT_1ST_LEVEL.getValue()){//11
+			nextStatusId = VoucherStatusEnum.FUNCTIONAL_PENDING_AT_2ND_LEVEL.getValue();
 			level = functionalApprovalFlow.getLevel2();
 			levelInfo = "Functional Level2";
 		}
-		else if(currentVoucerStatus == 21){
-			statusId=31;
+		else if(currentVoucerStatus == VoucherStatusEnum.FUNCTIONAL_PENDING_AT_2ND_LEVEL.getValue()){//21
+			nextStatusId = VoucherStatusEnum.FUNCTIONAL_PENDING_AT_3RD_LEVEL.getValue();
 			level = functionalApprovalFlow.getLevel3();
 			levelInfo = "Functional Level3";
 		}
-		else if(currentVoucerStatus == 31){
-			statusId=111;
+		else if(currentVoucerStatus == VoucherStatusEnum.FUNCTIONAL_PENDING_AT_3RD_LEVEL.getValue()){//31 
+			nextStatusId= VoucherStatusEnum.FINANCE_PENDING_AT_1ST_LEVEL.getValue();
 			level = financeApprovalFlow.getLevel1();
 			levelInfo = "Finance Level1";
 		}
-		else if(currentVoucerStatus == 111){
-			statusId=121;
+		else if(currentVoucerStatus ==  VoucherStatusEnum.FINANCE_PENDING_AT_1ST_LEVEL.getValue()){//111
+			nextStatusId = VoucherStatusEnum.FINANCE_PENDING_AT_2ND_LEVEL.getValue();
 			level = financeApprovalFlow.getLevel2();
 			levelInfo = "Finance Level2";
 		}
-		else if(currentVoucerStatus == 121){
-			statusId=131;
+		else if(currentVoucerStatus == VoucherStatusEnum.FINANCE_PENDING_AT_2ND_LEVEL.getValue()){//121
+			nextStatusId = VoucherStatusEnum.FINANCE_PENDING_AT_3RD_LEVEL.getValue();
 			level = financeApprovalFlow.getLevel3();
 			levelInfo = "Finance Level3";
 		}
-		else if(currentVoucerStatus == 131){
-			statusId=4;
+		else if(currentVoucerStatus == VoucherStatusEnum.FINANCE_PENDING_AT_3RD_LEVEL.getValue()){//131
+			nextStatusId=VoucherStatusEnum.COMPLETELY_APPROVED.getValue();
 			
 			ProcessInstanceJPA processInstanceJPA = expenseHeaderJPA.getProcessInstanceJPA();
 			if(! Validation.validateForNullObject(processInstanceJPA)){
@@ -160,7 +161,7 @@ public class ExpenseDAO implements IExpenseDAO{
 		
 			
 			VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
-			voucherStatusJPA.setVoucherStatusId(statusId);
+			voucherStatusJPA.setVoucherStatusId(nextStatusId);
 			processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 			
 			processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
@@ -194,7 +195,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 				processHistoryJPA.setProcessDate(expenseHeaderJPA.getModifiedDate());
 				expenseHeaderJPA.getProcessHistoryJPA().add(processHistoryJPA);
-				getApprovalOfLevel(statusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA,approvalEmployeeDTO, session);
+				updateProcessInstanceByApprovalFlow(nextStatusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow,approvalEmployeeDTO);
 			}
 			else{
 				ProcessInstanceJPA processInstanceJPA = expenseHeaderJPA.getProcessInstanceJPA();
@@ -213,7 +214,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				}
 				
 				VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
-				voucherStatusJPA.setVoucherStatusId(statusId);
+				voucherStatusJPA.setVoucherStatusId(nextStatusId);
 				processInstanceJPA.setVoucherStatusJPA(voucherStatusJPA);
 				
 				processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
@@ -225,7 +226,7 @@ public class ExpenseDAO implements IExpenseDAO{
 		}
 		else if(currentVoucerStatus != 131){
 			System.out.println(levelInfo +" not available.");
-			getApprovalOfLevel(statusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow, employeeJPA,approvalEmployeeDTO, session);
+			updateProcessInstanceByApprovalFlow(nextStatusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow,approvalEmployeeDTO);
 		}
 	}
 	
@@ -353,7 +354,7 @@ public class ExpenseDAO implements IExpenseDAO{
 	}
 	
 	@Override
-	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO) {
+	public ExpenseHeaderJPA getExpenseHeaderById(ExpenseHeaderDTO expenseHeaderDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		ExpenseHeaderJPA expenseHeaderJPA = (ExpenseHeaderJPA) session.get(ExpenseHeaderJPA.class, expenseHeaderDTO.getExpenseHeaderId());

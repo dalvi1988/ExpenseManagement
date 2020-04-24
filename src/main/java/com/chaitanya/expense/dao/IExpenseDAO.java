@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
+import com.chaitanya.jpa.ApprovalFlowJPA;
 import com.chaitanya.jpa.ExpenseDetailJPA;
 import com.chaitanya.jpa.ExpenseHeaderJPA;
 import com.chaitanya.jpa.ProcessHistoryJPA;
@@ -24,9 +25,9 @@ public interface IExpenseDAO {
 
 	public List<ExpenseDetailJPA> getExpenseDetailsByHeaderId(ExpenseHeaderDTO expenseHeaderDTO);
 
-	public ExpenseHeaderJPA approveRejectExpenses(ExpenseHeaderDTO expenseHeaderDTO);
+	public ExpenseHeaderJPA getExpenseHeaderById(ExpenseHeaderDTO expenseHeaderDTO);
 
-	public void updateProcessInstance(ExpenseHeaderJPA expenseHeaderJPA, int currentVoucherStatus, EmployeeDTO approvalEmployeeDTO);
+	public void updateProcessInstanceByApprovalFlow(int currentVoucerStatus, ExpenseHeaderJPA expenseHeaderJPA, ApprovalFlowJPA functionalApprovalFlow, ApprovalFlowJPA financeApprovalFlow, EmployeeDTO approvalEmployeeDTO);
 
 	public String generateVoucherNumber(ExpenseHeaderDTO expenseHeaderDTO);
 
@@ -43,5 +44,6 @@ public interface IExpenseDAO {
 	public List<ProcessHistoryJPA> getProcessedByMeExpense(ExpenseHeaderDTO expenseHeaderDTO);
 
 	void deleteExpenseDetail(ExpenseDetailJPA expenseDetailJPA);
+
 
 }

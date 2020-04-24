@@ -111,7 +111,7 @@
         	 //debugger;
                var $grid = $(this);
 
-               //delete button
+               //Reject button
                $grid.find("button.reject_btn").button({ icons: { primary: 'ui-icon-closethick'} })
                .unbind("click")
                .bind("click", function (evt) {
@@ -137,7 +137,7 @@
              	      }
              	 });
                });
-               //edit button
+               //approve button
                $grid.find("button.approve_btn").button({ icons: { primary: 'ui-icon-check'} })
                .unbind("click")
                .bind("click", function (evt) {

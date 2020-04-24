@@ -11,6 +11,7 @@
 <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
 <script type="text/javascript">
+
    var expenseHeaderList= ${expenseHeaderList};
    $(function () {
        //define colModel
@@ -22,13 +23,14 @@
 	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center", render: amountRenderer},
 	       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
 	       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO",render: voucherStatusRenderer },
-	       { title: "", dataIndx: "expenseHeaderId",hidden:true},
+	       { title: "View Approval Flow", dataIndx: "employeeId", render: viewApprovalFlowRenderer},
+	       { title: "", dataIndx: "expenseHeaderId", hidden:true},
 		];
        //define dataModel
        var dataModel = {
            location: "local",
            sorting: "local",
-           sortIndx: "expenseHeaderId",
+           sortIndx: "totalAmount",
            sortDir: "up",
            data: expenseHeaderList
        }
@@ -52,9 +54,30 @@
        var $grid = $("#grid_filter").pqGrid(obj);
 
    });
+   
+   
+   function showApprovalFlow(val){
+	   $("#dialog-confirm").load("viewVoucherApprovalFlow?employeeId="+val);
+	   
+	   $( "#dialog-confirm" ).dialog({
+		      resizable: false,
+		      height: 500,
+		      width: 1000,
+		      modal: true,
+		      buttons: {
+		        Cancel: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		    });
+   }
 </script>
 </head>
 <body>
   	<div id="grid_filter" style="margin: auto;"></div>
+  	
+  <div id="dialog-confirm" style="display: none" title="Approval Flow">
+    
+  </div>
 </body>
 </html>

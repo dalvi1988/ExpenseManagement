@@ -65,4 +65,14 @@ public class EmployeeDAO implements IEmployeeDAO {
 		return employeeJPA;
 	}
 	
+	@Override
+	public EmployeeJPA getEmployeeByEmployeeID(EmployeeJPA employeeJPA) {
+		Session session=sessionFactory.getCurrentSession();
+		if(Validation.validateForNullObject(employeeJPA)){
+			employeeJPA = (EmployeeJPA) session.get(EmployeeJPA.class,employeeJPA.getEmployeeId());
+		}
+		return employeeJPA;
+	}
+	
+	
 }

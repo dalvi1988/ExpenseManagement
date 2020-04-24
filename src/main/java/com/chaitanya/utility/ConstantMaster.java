@@ -2,11 +2,11 @@ package com.chaitanya.utility;
 
 import java.util.Map;
 
-import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.chaitanya.utility.model.VoucherStatusDTO;
 
-@Scope(value = "singleton")
+@Component
 public class ConstantMaster {
 
 	Map<Integer,VoucherStatusDTO> voucherStatusMap;

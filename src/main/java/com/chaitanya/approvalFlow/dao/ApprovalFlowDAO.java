@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.jpa.ApprovalFlowJPA;
+import com.chaitanya.jpa.EmployeeJPA;
 
 @Repository
 public class ApprovalFlowDAO implements IApprovalFlowDAO{
@@ -147,6 +149,24 @@ public class ApprovalFlowDAO implements IApprovalFlowDAO{
 	
 		return approvalFlowDTO;
 		
+	}
+
+	@Override
+	public List<ApprovalFlowJPA> getEmployeeApprovalFlow(EmployeeJPA employeeJPA) {
+		Session session=sessionFactory.getCurrentSession();
+		
+		Criterion deptCriterion= Restrictions.or(
+				Restrictions.eq("departmentJPA.departmentId",employeeJPA.getDepartmentJPA().getDepartmentId()),
+				 Restrictions.isNull("departmentJPA.departmentId")
+				 );
+
+		@SuppressWarnings("unchecked")
+		List<ApprovalFlowJPA> approvalFlowList = (List<ApprovalFlowJPA>) session.createCriteria(ApprovalFlowJPA.class)
+										.add(Restrictions.eq("branchJPA.branchId", employeeJPA.getBranchJPA().getBranchId()))
+										.add(deptCriterion)
+										.add(Restrictions.eq("status", 'Y'))
+										.list();
+		return approvalFlowList;
 	}
 
 }
