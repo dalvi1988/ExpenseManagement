@@ -37,8 +37,7 @@ function viewApprovalFlowRenderer(ui) {
         rowIndx = ui.rowIndx,
         dataIndx = ui.dataIndx;
 
-    var cellData = ui.cellData;
-    return "<a href='javascript:showApprovalFlow("+ui.cellData+");' >View Approval Flow</a>";
+    return "<a href='javascript:showApprovalFlow("+ui.cellData+","+rowData.expenseHeaderId+");'>View Approval Flow</a>";
 };
 
 function voucherStatusRenderer(ui) {

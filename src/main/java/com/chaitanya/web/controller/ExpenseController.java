@@ -438,7 +438,8 @@ public class ExpenseController {
 	
 	// View Approval Flow for Voucher
 	@RequestMapping(value = "/viewVoucherApprovalFlow", method={RequestMethod.POST,RequestMethod.GET})
-	public ModelAndView viewVoucherApprovalFlow(@RequestParam(value="employeeId",required=false) Long employeeId) {
+	public ModelAndView viewVoucherApprovalFlow(@RequestParam(value="employeeId",required=false) Long employeeId,
+			@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) {
 
 		ModelAndView model = new ModelAndView();
 		try{
@@ -450,6 +451,7 @@ public class ExpenseController {
 				ExpenseHeaderDTO expenseHeaderDTO= new ExpenseHeaderDTO();
 				EmployeeDTO employeeDTO= new EmployeeDTO();
 				employeeDTO.setEmployeeId(employeeId);
+				expenseHeaderDTO.setExpenseHeaderId(expenseHeaderId);
 				expenseHeaderDTO.setEmployeeDTO(employeeDTO);
 				List<ApprovalFlowDTO> approvalFlowDTOList = expenseService.viewVoucherApprovalFlow(expenseHeaderDTO);
 				

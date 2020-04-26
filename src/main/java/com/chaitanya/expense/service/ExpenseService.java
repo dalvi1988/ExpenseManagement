@@ -658,17 +658,16 @@ public class ExpenseService implements IExpenseService{
 		validateExpenseDTO(baseDTO);
 		
 		ExpenseHeaderDTO expenseHeaderDTO =(ExpenseHeaderDTO) baseDTO;
-		EmployeeJPA employeeJPA =new EmployeeJPA();
-		employeeJPA.setEmployeeId(expenseHeaderDTO.getEmployeeDTO().getEmployeeId());
-		EmployeeJPA employeeJPAFromDB= employeeDAO.getEmployeeByEmployeeID(employeeJPA);
-		List<ApprovalFlowJPA> approvalFlowList = approvalFlowDAO.getEmployeeApprovalFlow(employeeJPAFromDB);
+		ExpenseHeaderJPA expenseHeaderJPA= expenseDAO.getExpense(expenseHeaderDTO);
+		EmployeeJPA employeeJPA= expenseHeaderJPA.getEmployeeJPA();
+		List<ApprovalFlowJPA> approvalFlowList = approvalFlowDAO.getEmployeeApprovalFlow(employeeJPA);
 		
 		ApprovalFlowJPA functionalApprovalFlow= getFunctionOrBranchApprovalFlow(approvalFlowList);// Check functional or branch approval flow
 		ApprovalFlowJPA financeApprovalFlow = getFinanceApprovalFlow(approvalFlowList);
 		
 		List<ApprovalFlowDTO> mergeApprovalFlow= new ArrayList<ApprovalFlowDTO>();
-		ApprovalFlowDTO functionalAppprovalFlowDTO= updateEmployeeDetailsInApprovalFlow(functionalApprovalFlow,employeeJPAFromDB);
-		ApprovalFlowDTO financeApprovalFlowDTO= updateEmployeeDetailsInApprovalFlow(financeApprovalFlow,employeeJPAFromDB);
+		ApprovalFlowDTO functionalAppprovalFlowDTO= updateEmployeeDetailsInApprovalFlow(functionalApprovalFlow,employeeJPA);
+		ApprovalFlowDTO financeApprovalFlowDTO= updateEmployeeDetailsInApprovalFlow(financeApprovalFlow,employeeJPA);
 		
 		mergeApprovalFlow.add(functionalAppprovalFlowDTO);
 		mergeApprovalFlow.add(financeApprovalFlowDTO);
