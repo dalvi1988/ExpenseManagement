@@ -438,7 +438,8 @@ public class ExpenseController {
 	
 	// View Approval Flow for Voucher
 	@RequestMapping(value = "/viewVoucherApprovalFlow", method={RequestMethod.POST,RequestMethod.GET})
-	public ModelAndView viewVoucherApprovalFlow(@RequestParam(value="employeeId",required=false) Long employeeId) {
+	public ModelAndView viewVoucherApprovalFlow(@RequestParam(value="employeeId",required=false) Long employeeId,
+			@RequestParam(value="expenseHeaderId",required=false) Long expenseHeaderId) {
 
 		ModelAndView model = new ModelAndView();
 		try{

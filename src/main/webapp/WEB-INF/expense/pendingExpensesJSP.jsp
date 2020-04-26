@@ -56,13 +56,14 @@
    });
    
    
-   function showApprovalFlow(val){
-	   $("#dialog-confirm").load("viewVoucherApprovalFlow?employeeId="+val);
+   function showApprovalFlow( data){
+	   alert(data);
+	   $("#dialog-confirm").load("viewVoucherApprovalFlow?employeeId="+data.employeeId+"&expenseHeaderId="+data.expenseHeaderId);
 	   
 	   $( "#dialog-confirm" ).dialog({
 		      resizable: false,
 		      height: 500,
-		      width: 1000,
+		      width: 1100,
 		      modal: true,
 		      buttons: {
 		        Cancel: function() {
@@ -76,7 +77,7 @@
 <body>
   	<div id="grid_filter" style="margin: auto;"></div>
   	
-  <div id="dialog-confirm" style="display: none" title="Approval Flow">
+  <div id="dialog-confirm"  style="display: none;" title="Approval Flow">
     
   </div>
 </body>
