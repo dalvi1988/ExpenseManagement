@@ -58,11 +58,11 @@
    
    function showApprovalFlow( employeeId, expenseHeaderId){
 	   $("#dialog-confirm").load("viewVoucherApprovalFlow?employeeId="+employeeId+"&expenseHeaderId="+expenseHeaderId);
-	   
+ 
 	   $( "#dialog-confirm" ).dialog({
 		      resizable: false,
 		      height: 500,
-		      width: 1100,
+		      width: 1000,
 		      modal: true,
 		      buttons: {
 		        Cancel: function() {
