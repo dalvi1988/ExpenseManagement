@@ -81,12 +81,6 @@ $(document).ready(function() {
 				    </jstl:when>    
 				    <jstl:otherwise>
 				        <span class="info-box-icon bg-gray"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
-
-				        <span class="info-box-icon bg-orange"><img src="icon/Male Boss.ico" alt="Smiley face" height="42" width="42"></span>
-				    </jstl:when>    
-				    <jstl:otherwise>
-				        <span class="info-box-icon bg-orange"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
->>>>>>> branch 'master' of https://github.com/dalvi1988/ExpenseManagement.git
 				    </jstl:otherwise>
 				</jstl:choose>
 	
@@ -181,10 +175,6 @@ $(document).ready(function() {
 				    </jstl:when>    
 				    <jstl:otherwise>
 				        <span class="info-box-icon bg-gray"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
-				    </jstl:when>    
-				    <jstl:otherwise>
-				        <span class="info-box-icon bg-orange"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
->>>>>>> branch 'master' of https://github.com/dalvi1988/ExpenseManagement.git
 				    </jstl:otherwise>
 				</jstl:choose>
 	
@@ -208,12 +198,6 @@ $(document).ready(function() {
 				    </jstl:when>    
 				    <jstl:otherwise>
 				        <span class="info-box-icon bg-gray"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
-
-				        <span class="info-box-icon bg-green"><img src="icon/Male Boss.ico" alt="Smiley face" height="42" width="42"></span>
-				    </jstl:when>    
-				    <jstl:otherwise>
-				        <span class="info-box-icon bg-green"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
->>>>>>> branch 'master' of https://github.com/dalvi1988/ExpenseManagement.git
 				    </jstl:otherwise>
 				</jstl:choose>
 				

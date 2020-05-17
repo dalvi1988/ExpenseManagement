@@ -249,15 +249,27 @@ public class ExpenseDAO implements IExpenseDAO{
 	}
 
 	@Override
-	public List<ExpenseHeaderJPA> getDraftExpenseList(ExpenseHeaderDTO expenseHeaderDTO) {
+	public List<ExpenseHeaderJPA> getDraftExpenseList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderList= session.createCriteria(ExpenseHeaderJPA.class)
-				.setFetchMode("advanceJPA",FetchMode.JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+				.createAlias("voucherStatusJPA","voucherStatusJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
 				.list();
 		return expsensHeaderList;
+	}
+	
+	@Override
+	public Long getDraftExpenseCount(EmployeeDTO employeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Long expsensHeaderCount= (Long) session.createCriteria(ExpenseHeaderJPA.class)
+				.setProjection(Projections.rowCount())
+				.createAlias("voucherStatusJPA","voucherStatusJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
+				.uniqueResult();
+		return expsensHeaderCount;
 	}
 	
 	@Override
@@ -271,21 +283,33 @@ public class ExpenseDAO implements IExpenseDAO{
 	}
 	
 	@Override
-	public List<ExpenseHeaderJPA> getPendingExpenseList(ExpenseHeaderDTO expenseHeaderDTO) {
+	public List<ExpenseHeaderJPA> getPendingExpenseList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
 		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
 				.list();
 		return expsensHeaderJPAList;
 	}
 	
 	@Override
+	public Long getPendingExpenseCount(EmployeeDTO employeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
+		Long pendingExpenseCount= (Long) session.createCriteria(ExpenseHeaderJPA.class)
+				.setProjection(Projections.rowCount())
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
+				.uniqueResult();
+		return pendingExpenseCount;
+	}
+	
+	@Override
 	public List<ExpenseHeaderJPA> getPendingExpensesAtPaymentDesk(ExpenseHeaderDTO expenseHeaderDTO) {
-		// TODO	Get voucher whose status is 4 of current company
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
@@ -364,16 +388,29 @@ public class ExpenseDAO implements IExpenseDAO{
 	
 
 	@Override
-	public List<ExpenseHeaderJPA> getRejectedExpenseList(ExpenseHeaderDTO expenseHeaderDTO) {
+	public List<ExpenseHeaderJPA> getRejectedExpenseList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
 		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
 				.list();
 		return expsensHeaderJPAList;
+	}
+	
+	@Override
+	public Long getRejectedExpenseCount(EmployeeDTO employeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
+		Long rejectedExpenseCount= (Long) session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.setProjection(Projections.rowCount())
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
+				.uniqueResult();
+		return rejectedExpenseCount;
 	}
 	
 	@Override
@@ -400,15 +437,28 @@ public class ExpenseDAO implements IExpenseDAO{
 	}
 	
 	@Override
-	public List<ExpenseHeaderJPA> getPaidExpenseList(ExpenseHeaderDTO expenseHeaderDTO) {
+	public List<ExpenseHeaderJPA> getPaidExpenseList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",expenseHeaderDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
 				.list();
 		return expsensHeaderJPAList;
+
+	}
+	
+	@Override
+	public Long getPaidExpenseCount(EmployeeDTO employeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Long paidExpenseCount= (Long) session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.setProjection(Projections.rowCount())
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
+				.uniqueResult();
+		return paidExpenseCount;
 	}
 
 	@Override

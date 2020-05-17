@@ -103,7 +103,7 @@ public class AdvanceController {
 			}
 		}
 		catch(Exception e){
-			logger.error("AdvanceController: addEvent",e);
+			logger.error("AdvanceController: saveAdvance",e);
 			toBeSentEventDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 		return toBeSentEventDTO;

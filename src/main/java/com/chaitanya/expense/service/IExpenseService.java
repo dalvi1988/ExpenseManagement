@@ -37,4 +37,12 @@ public interface IExpenseService {
 
 	List<ApprovalFlowDTO> viewVoucherApprovalFlow(BaseDTO baseDTO) throws ParseException;
 
+	Long getDraftExpenseCount(BaseDTO baseDTO) throws ParseException;
+
+	Long getPendingExpenseCount(BaseDTO baseDTO) throws ParseException;
+
+	Long getRejectedExpenseCount(BaseDTO baseDTO) throws ParseException;
+
+	Long getPaidExpenseCount(BaseDTO baseDTO) throws ParseException;
+
 }

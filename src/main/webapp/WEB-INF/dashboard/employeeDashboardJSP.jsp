@@ -20,6 +20,24 @@ canvas {
 
 </style>
 </head>
+<script type="text/javascript">
+$(".viewDraftExpenses").click(function() {
+	 $('.viewDraftExpense').click();
+});
+
+$(".paidExpenses").click(function() {
+	 $('.paidExpense').click();
+});
+
+$(".pendingExpenses").click(function() {
+	 $('.pendingExpense').click();
+});
+
+$(".rejectedExpenses").click(function() {
+	 $('.rejectedExpense').click();
+});
+
+</script>
 <body>
        <h2> Expense Voucher</h2>
        <div class="row">
@@ -29,12 +47,12 @@ canvas {
             <div class="inner">
               <h4>Draft Expense</h4>
 
-              <h1>150</h1>
+              <h1>${draftExpenseCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-android-drafts"></i>
             </div>
-            <a href="#" class="small-box-footer draftExpense">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="viewDraftExpenses small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -44,12 +62,12 @@ canvas {
             <div class="inner">
               <h4>Paid Expense</h4>
 
-              <h1>120</h1>
+              <h1>${paidExpenseCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-checkmark-round"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a  class="paidExpenses small-box-footer" href="#">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -59,12 +77,12 @@ canvas {
             <div class="inner">
               <h4>Pending Expense</h4>
 
-              <h1>120</h1>
+              <h1>${pendingExpenseCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-person"></i>
             </div>
-            <a href="#" class="small-box-footer pendingExpense">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="pendingExpenses small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -74,12 +92,12 @@ canvas {
             <div class="inner">
               <h4>Rejected Expense</h4>
 
-              <h1>120</h1>
+              <h1>${rejectedExpenseCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-android-cancel"></i>
             </div>
-            <a href="#" class="small-box-footer rejectedExpense">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="rejectedExpenses small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -98,7 +116,7 @@ canvas {
             <div class="icon">
               <i class="ion ion-android-drafts"></i>
             </div>
-            <a href="#" class="small-box-footer draftExpense">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -148,29 +166,7 @@ canvas {
         </div>
         <!-- ./col -->
       </div>
-      
-       <!-- /.col (LEFT) -->
-        <div class="col-md-6">
-          <!-- LINE CHART -->
-          <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">Line Chart</h3>
-
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body">
-              <div class="chart">
-                <canvas id="lineChart" style="height:250px"></canvas>
-              </div>
-            </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
-
+     
           <!-- BAR CHART -->
           <div class="box box-success">
             <div class="box-header with-border">

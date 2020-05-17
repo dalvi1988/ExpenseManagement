@@ -16,7 +16,7 @@ public interface IExpenseDAO {
 	
 	public ExpenseHeaderJPA persistExpense(ExpenseHeaderJPA expenseHeader) throws IOException;
 
-	public List<ExpenseHeaderJPA> getDraftExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
+	public List<ExpenseHeaderJPA> getDraftExpenseList(EmployeeDTO employeeDTO);
 
 	public ExpenseHeaderJPA getExpense(ExpenseHeaderDTO expenseHeaderDTO);
 
@@ -31,19 +31,28 @@ public interface IExpenseDAO {
 
 	public String generateVoucherNumber(ExpenseHeaderDTO expenseHeaderDTO);
 
-	public List<ExpenseHeaderJPA> getPendingExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
+	public List<ExpenseHeaderJPA> getPendingExpenseList(EmployeeDTO employeeDTO);
 
-	public List<ExpenseHeaderJPA> getRejectedExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
+	public List<ExpenseHeaderJPA> getRejectedExpenseList(EmployeeDTO employeeDTO);
 
 	public List<ExpenseHeaderJPA> getPendingExpensesAtPaymentDesk(ExpenseHeaderDTO expenseHeaderDTO);
 
-	public List<ExpenseHeaderJPA> getPaidExpenseList(ExpenseHeaderDTO expenseHeaderDTO);
+	public List<ExpenseHeaderJPA> getPaidExpenseList(EmployeeDTO employeeDTO);
 
 	public List<ExpenseHeaderJPA> getPaymentDeskExpense(ExpenseHeaderDTO expenseHeaderDTO);
 
 	public List<ProcessHistoryJPA> getProcessedByMeExpense(ExpenseHeaderDTO expenseHeaderDTO);
 
 	void deleteExpenseDetail(ExpenseDetailJPA expenseDetailJPA);
+
+	public Long getDraftExpenseCount(EmployeeDTO employeeDTO);
+
+	Long getPendingExpenseCount(EmployeeDTO employeeDTO);
+
+	public Long getRejectedExpenseCount(EmployeeDTO employeeDTO);
+
+	public Long getPaidExpenseCount(EmployeeDTO employeeDTO);
+
 
 
 }

@@ -76,4 +76,23 @@ function pqDatePicker(ui) {
     $this.filter(".pq-to").datepicker("option", "defaultDate", "Now");
 } 
 
+function activeInactiveMenu(obj) {
+    var activeTab = $(obj).attr("class");
+    if(typeof activeTab != "undefined" ){
+   	 $("ul.sidebar-menu li").removeClass("active"); //Remove any "active" class
+        $(obj).parent().addClass("active"); //Add "active" class to selected tab
+    	$('.overlay').show();
+    	loadPage(activeTab);
+    }
+      /* $(".tab_content").hide(); //Hide all tab content
+    var activeTab = $(this).find("a").attr("href"); //Find the rel attribute value to identify the active tab + content
+    $(activeTab).fadeIn();  //Fade in the active content
+    //return false;  */
+}; 
+
+function loadPage(pageName){
+	$('.content').load(pageName,function( response, status, xhr ) {
+    	$('.overlay').hide();
+	});
+}
 

@@ -171,7 +171,7 @@ public class ExpenseService implements IExpenseService{
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getDraftExpenseList(expenseHeaderDTO);
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getDraftExpenseList(expenseHeaderDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(expenseHeaderJPAList)){
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
@@ -194,6 +194,8 @@ public class ExpenseService implements IExpenseService{
 		return  expenseHeaderDTOList;
 	}
 	
+	
+	
 	@Override
 	public List<ExpenseHeaderDTO> getPendingExpenseList(BaseDTO baseDTO) throws ParseException {
 		logger.debug("ExpenseService: getPendingExpenseList-Start");
@@ -202,7 +204,7 @@ public class ExpenseService implements IExpenseService{
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPendingExpenseList(expenseHeaderDTO);
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPendingExpenseList(expenseHeaderDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(expenseHeaderJPAList)){
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
@@ -233,6 +235,26 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: getPendingExpenseList-End");
 		return  expenseHeaderDTOList;
 	}
+	
+
+	@Override
+	public Long getPendingExpenseCount(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: getPendingExpenseCount-Start");
+		validateExpenseDTO(baseDTO);
+		Long pendingExpenseCount= -1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			pendingExpenseCount =expenseDAO.getPendingExpenseCount(expenseHeaderDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: getPendingExpenseCount-End");
+		return  pendingExpenseCount;
+	}
+	
 	
 	@Override
 	public List<ExpenseHeaderDTO> getPendingExpensesAtPaymentDesk(BaseDTO baseDTO) throws ParseException {
@@ -307,7 +329,7 @@ public class ExpenseService implements IExpenseService{
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getRejectedExpenseList(expenseHeaderDTO);
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getRejectedExpenseList(expenseHeaderDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(expenseHeaderJPAList)){
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
@@ -337,6 +359,25 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: getRejectedExpenseList-End");
 		return  expenseHeaderDTOList;
 	}
+	
+	@Override
+	public Long getRejectedExpenseCount(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: getRejectedExpenseCount-Start");
+		validateExpenseDTO(baseDTO);
+		Long rejectedExpenseCount= -1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			rejectedExpenseCount =expenseDAO.getRejectedExpenseCount(expenseHeaderDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: getRejectedExpenseCount-End");
+		return  rejectedExpenseCount;
+	}
+	
 	@Override
 	public List<ExpenseHeaderDTO> getExpenseToBeApprove(BaseDTO baseDTO) throws ParseException {
 
@@ -630,7 +671,7 @@ public class ExpenseService implements IExpenseService{
 		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPaidExpenseList(expenseHeaderDTO);
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getPaidExpenseList(expenseHeaderDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(expenseHeaderJPAList)){
 				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
 				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
@@ -649,6 +690,25 @@ public class ExpenseService implements IExpenseService{
 		
 		logger.debug("ExpenseService: getPaidExpenseList-End");
 		return  expenseHeaderDTOList;
+	}
+
+	@Override
+	public Long getPaidExpenseCount(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: getPaidExpenseCount-Start");
+		validateExpenseDTO(baseDTO);
+		
+		Long paindExpenseCount= -1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			paindExpenseCount =expenseDAO.getPaidExpenseCount(expenseHeaderDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: getPaidExpenseCount-End");
+		return  paindExpenseCount;
 	}
 
 
@@ -717,6 +777,22 @@ public class ExpenseService implements IExpenseService{
 		}
 		return EmployeeConvertor.setEmployeeJPAToEmployeeDTO(approvalEmployeeJPA);
 	}
-	
+
+	@Override
+	public Long getDraftExpenseCount(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: getDraftExpenseCount-Start");
+		validateExpenseDTO(baseDTO);
+		Long expenseCount =-1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			expenseCount =expenseDAO.getDraftExpenseCount(expenseHeaderDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("ExpenseService: getDraftExpenseCount-End");
+		return  expenseCount;
+	}
 	
 }

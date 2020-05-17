@@ -15,6 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.chaitanya.dashboard.model.DashboardDTO;
 import com.chaitanya.dashboard.service.IDashboardService;
 import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.expense.model.ExpenseHeaderDTO;
+import com.chaitanya.expense.service.IExpenseService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -25,6 +27,9 @@ public class DashboardController {
 
 	@Autowired 
 	private IDashboardService dashboardService;
+	
+	@Autowired
+	private IExpenseService expenseService;
 	
 	private Logger logger= LoggerFactory.getLogger(DashboardController.class);
 	
@@ -38,7 +43,18 @@ public class DashboardController {
 			EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
 			dashboardDTO.setEmployeeDTO(employeeDTO);
 			List<DashboardDTO> dashboardDTOList = dashboardService.totalAmountGroupByMonth(dashboardDTO);
+			ExpenseHeaderDTO expenseHeaderDTO= new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(employeeDTO);
+			Long draftExpenseCount=  expenseService.getDraftExpenseCount(expenseHeaderDTO);
+			Long pendingExpenseCount=  expenseService.getPendingExpenseCount(expenseHeaderDTO);
+			Long rejectedExpenseCount=  expenseService.getRejectedExpenseCount(expenseHeaderDTO);
+			Long paidExpenseCount=  expenseService.getRejectedExpenseCount(expenseHeaderDTO);
+			
 			model.addObject("dashboardDTOList", mapper.writeValueAsString(dashboardDTOList));
+			model.addObject("draftExpenseCount", draftExpenseCount);
+			model.addObject("pendingExpenseCount", pendingExpenseCount);
+			model.addObject("rejectedExpenseCount", rejectedExpenseCount);
+			model.addObject("paidExpenseCount", paidExpenseCount);
 			model.setViewName("dashboard/employeeDashboardJSP");
 		}
 		catch(Exception e){

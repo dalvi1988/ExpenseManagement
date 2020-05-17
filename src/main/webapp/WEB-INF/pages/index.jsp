@@ -46,184 +46,20 @@
 	<script>
 	
 	$(document).ready(function(){
-		
 		$('a').click(function() {
 			//$('.overlay').show();
 			$(".alert").hide();
 		});
-		
-	    $('.branchMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("branch");
-	     });
 	    
-	    $('.employeeMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("employee");
-	     });
-	    
-	    $('.companyMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("company");
-	     });
-	    
-	    $('.departmentHeadMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("departmentHead");
-	     });
-	    
-	    $('.departmentMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("department");
-	     });
-	    
-	    $('.expenseCategoryMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("expenseCategory");
-	     });
-	    
-	    $('.approvalFlowMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("approvalFlow");
-	     });
-	    
-	    $('.expenseForApproval').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("toBeApproveExpense");
-	     });
-	    
-	    $('.advanceForApproval').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("toBeApproveAdvance");
-	     });
-	    
-	    $('.createExpense').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("expense");
-	     });
-	    
-	    $('.draftExpense').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("viewDraftExpense");
-	     });
-	    
-	    $('.pendingExpense').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("pendingExpense");
-	     });
-	    
-	    $('.rejectedExpense').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("rejectedExpense");
-	     });
-	    
-	    $('.paidExpenses').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("paidExpense");
-	     });
-	    
-	     $('.processedByMeExpense').click(function(){
-		    	$('.overlay').show();
-		    	$( this ).parent().addClass("active")
-		    	loadPage("processedByMeExpense");
-		     });
-	     
-	     $('.processedByMeAdvance').click(function(){
-		    	$('.overlay').show();
-		    	$( this ).parent().addClass("active")
-		    	loadPage("processedByMeAdvances");
-		     });
-	    $('.paidAdvances').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("paidAdvances");
-	     });
-	    
-	    $('.eventMaster').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("event");
-	     });
-	    
-	    $('.requestAdvance').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("advance");
-	     });
-	    
-	    $('.draftAdvance').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("viewDraftAdvance");
-	     });
-	    
-	    $('.pendingAdvance').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("pendingAdvance");
-	     });
-	    
-	    $('.rejectedAdvance').click(function(){
-	    	$('.overlay').show();
-	    	$( this ).parent().addClass("active")
-	    	loadPage("rejectedAdvance");
-	     });
-	    
-	     $('.pendingExpensesAtPaymentDesk').click(function(){
-	    	 $('.overlay').show();
-		    	$( this ).parent().addClass("active")
-		    	loadPage("pendingExpensesAtPaymentDesk");
-		 });
-	     
-	     $('.pendingAdvanceAtPaymentDesk').click(function(){
-	    	 $('.overlay').show();
-		    	$( this ).parent().addClass("active")
-		    	loadPage("pendingAdvanceAtPaymentDesk");
-		 });
-	    
-	     $('.paymentExpense').click(function(){
-	    	 $('.overlay').show();
-		    	$( this ).parent().addClass("active")
-		    	loadPage("paymentDeskExpenses");
-		 });
-	     
-	     $('.paymentAdvance').click(function(){
-	    	 $('.overlay').show();
-		    	$( this ).parent().addClass("active")
-		    	loadPage("paymentDeskAdvance");
-		 });
-	     
-	     $('.employeeDashboard').click(function(){
-	    	  $('.overlay').show();
-		      $( this ).parent().addClass("active")
-		      loadPage("employeeDashboard");
-		 });
-	     
-	    
-	    $('.pendingExpense').click();
+		$("ul.sidebar-menu li a").click(function() {
+			activeInactiveMenu(this);
+		});
+ 
+	    $('.employeeDashboard').click();
 	    
 	});
 	
-	function loadPage(pageName){
-		$('.content').load(pageName,function( response, status, xhr ) {
-        	$('.overlay').hide();
-		});
-	}
-	
+		
 	function logout(){
     	document.getElementById("logoutForm").submit();
     }
@@ -291,12 +127,12 @@
         </li>
         
         <li>
-          <a href="#" class="createExpense">
+          <a href="#" class="expense">
             <i class="fa fa-calendar"></i> <span>Create New Expense</span>
           </a>
         </li>
         <li>
-          <a href="#" class="draftExpense">
+          <a href="#" class="viewDraftExpense">
             <i class="fa fa-calendar"></i> <span>Draft Expenses</span>
           </a>
         </li>
@@ -312,7 +148,7 @@
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
             <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
-            <li><a href="#" class="paidExpenses"><i class="fa fa-circle-o"></i>Paid Expenses</a></li>
+            <li><a href="#" class="paidExpense"><i class="fa fa-circle-o"></i>Paid Expenses</a></li>
             <li><a href="#" class="processedByMeExpense"><i class="fa fa-circle-o"></i>Processed Expense By Me</a></li>
           </ul>
         </li>
@@ -325,13 +161,13 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="requestAdvance"><i class="fa fa-circle-o"></i>Request Advance</a></li>
-            <li><a href="#" class="draftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
+            <li><a href="#" class="advance"><i class="fa fa-circle-o"></i>Request Advance</a></li>
+            <li><a href="#" class="viewDraftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
             <li><a href="#" class="pendingAdvance"><i class="fa fa-circle-o"></i>Pending Advance</a></li>
             <li><a href="#" class="rejectedAdvance"><i class="fa fa-circle-o"></i>Rejected Advance</a></li>
             <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Advances at Payment Desk</a></li>
             <li><a href="#" class="paidAdvances"><i class="fa fa-circle-o"></i>Paid Advances</a></li>
-            <li><a href="#" class="processedByMeAdvance"><i class="fa fa-circle-o"></i>Processed Advances By Me</a></li>
+            <li><a href="#" class="processedByMeAdvances"><i class="fa fa-circle-o"></i>Processed Advances By Me</a></li>
           </ul>
         </li>
         
@@ -345,27 +181,27 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="employeeMaster"><i class="fa fa-circle-o"></i> Employee Master</a></li>
-            <li><a href="#" class="departmentHeadMaster"><i class="fa fa-circle-o"></i> Department Head Master</a></li>
-            <li><a href="#" class="branchMaster"><i class="fa fa-circle-o"></i> Branch Master</a></li>
-            <li><a href="#" class="eventMaster"><i class="fa fa-circle-o"></i> Event Master</a></li>
-            <li><a href="#" class="expenseCategoryMaster"><i class="fa fa-circle-o"></i> Expense Category Master</a></li>
+            <li><a href="#" class="employee"><i class="fa fa-circle-o"></i> Employee Master</a></li>
+            <li><a href="#" class="departmentHead"><i class="fa fa-circle-o"></i> Department Head Master</a></li>
+            <li><a href="#" class="branch"><i class="fa fa-circle-o"></i> Branch Master</a></li>
+            <li><a href="#" class="event"><i class="fa fa-circle-o"></i> Event Master</a></li>
+            <li><a href="#" class="expenseCategory"><i class="fa fa-circle-o"></i> Expense Category Master</a></li>
             
           </ul>
         </li>
         <li>
-          <a href="#" class="approvalFlowMaster">
+          <a href="#" class="approvalFlow">
             <i class="fa fa-calendar"></i> <span>Approval Flow Master</span>
           </a>
         </li>
         </sec:authorize>
          <li>
-          <a href="#" class="expenseForApproval">
+          <a href="#" class="toBeApproveExpense">
             <i class="fa fa-calendar"></i> <span>Expense For Approval</span>
           </a>
         </li>
         <li>
-          <a href="#" class="advanceForApproval">
+          <a href="#" class="toBeApproveAdvance">
             <i class="fa fa-calendar"></i> <span>Advance For Approval</span>
           </a>
         </li>
@@ -380,8 +216,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="paymentExpense"><i class="fa fa-circle-o"></i> Expense Voucher</a></li>
-            <li><a href="#" class="paymentAdvance"><i class="fa fa-circle-o"></i> Advance Voucher</a></li>
+            <li><a href="#" class="paymentDeskExpenses"><i class="fa fa-circle-o"></i> Expense Voucher</a></li>
+            <li><a href="#" class="paymentDeskAdvance"><i class="fa fa-circle-o"></i> Advance Voucher</a></li>
             
           </ul>
         </li>
@@ -398,8 +234,8 @@
 
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="companyMaster"><i class="fa fa-circle-o"></i> Company Master</a></li>
-            <li><a href="#" class="departmentMaster"><i class="fa fa-circle-o"></i> Department Master</a></li>
+            <li><a href="#" class="company"><i class="fa fa-circle-o"></i> Company Master</a></li>
+            <li><a href="#" class="department"><i class="fa fa-circle-o"></i> Department Master</a></li>
           </ul>
         </li>
         </sec:authorize>
