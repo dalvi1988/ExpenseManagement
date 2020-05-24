@@ -36,6 +36,18 @@ $(".pendingExpenses").click(function() {
 $(".rejectedExpenses").click(function() {
 	 $('.rejectedExpense').click();
 });
+$(".viewDraftAdvances").click(function() {
+	 $('.viewDraftAdvance').click();
+});
+$(".pendingAdvances").click(function() {
+	 $('.pendingAdvance').click();
+});
+$(".paidAdvance").click(function() {
+	 $('.paidAdvances').click();
+});
+$(".rejectedExpenses").click(function() {
+	 $('.rejectedExpense').click();
+});
 
 </script>
 <body>
@@ -111,12 +123,12 @@ $(".rejectedExpenses").click(function() {
             <div class="inner">
               <h4>Draft Advance</h4>
 
-              <h1>150</h1>
+              <h1>${draftAdvanceCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-android-drafts"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="viewDraftAdvances small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -126,12 +138,12 @@ $(".rejectedExpenses").click(function() {
             <div class="inner">
               <h4>Paid Advance</h4>
 
-              <h1>120</h1>
+              <h1>${paidAdvanceCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-checkmark-round"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="paidAdvance small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -141,12 +153,12 @@ $(".rejectedExpenses").click(function() {
             <div class="inner">
               <h4>Pending Advance</h4>
 
-              <h1>120</h1>
+              <h1>${pendingAdvanceCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-person"></i>
             </div>
-            <a href="#" class="small-box-footer pendingExpense">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="small-box-footer pendingAdvances">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -156,12 +168,12 @@ $(".rejectedExpenses").click(function() {
             <div class="inner">
               <h4>Rejected Advance</h4>
 
-              <h1>120</h1>
+              <h1>${rejectedAdvanceCount}</h1>
             </div>
             <div class="icon">
               <i class="ion ion-android-cancel"></i>
             </div>
-            <a href="#" class="small-box-footer rejectedExpense">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="small-box-footer rejectedExpenses">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -202,7 +214,7 @@ $(document).ready(function(){
 	var data = {
 			  labels: label,
 			  datasets: [{
-			    label: "Total expense Amount Per Month",
+			    label: "Total Approved Expense Amount(Monthly)",
 			    backgroundColor: "rgba(255,99,132,0.2)",
 			    borderColor: "rgba(255,99,132,1)",
 			    borderWidth: 2,

@@ -259,6 +259,7 @@ public class ExpenseController {
 			}
 		}
 		catch(Exception e){
+			toBeSendExpenseHeaderDTO = new ExpenseHeaderDTO();
 			toBeSendExpenseHeaderDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 		return toBeSendExpenseHeaderDTO;

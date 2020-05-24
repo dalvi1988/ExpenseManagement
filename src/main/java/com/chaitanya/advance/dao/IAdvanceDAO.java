@@ -15,19 +15,19 @@ public interface IAdvanceDAO {
 
 	String generateAdvanceNumber(AdvanceDTO advanceDTO);
 
-	List<AdvanceJPA> getDraftAdvanceList(AdvanceDTO advanceDTO);
+	List<AdvanceJPA> getDraftAdvanceList(EmployeeDTO employeeDTO);
 
 	AdvanceJPA getAdvance(AdvanceDTO advanceDTO);
 
-	List<AdvanceJPA> getPendingAdvanceList(AdvanceDTO advanceDTO);
+	List<AdvanceJPA> getPendingAdvanceList(EmployeeDTO employeeDTO);
 
 	List<AdvanceJPA> getAdvanceToBeApprove(AdvanceDTO advanceDTO);
 
 	AdvanceJPA getAdvanceById(AdvanceDTO advanceDTO);
 	
-	List<AdvanceJPA> getPendingAdvancesAtPaymentDesk(AdvanceDTO advanceDTO);
+	List<AdvanceJPA> getPendingAdvancesAtPaymentDesk(EmployeeDTO employeeDTO);
 
-	List<AdvanceJPA> getRejectedAdvanceList(AdvanceDTO advanceDTO);
+	List<AdvanceJPA> getRejectedAdvanceList(EmployeeDTO employeeDTO);
 
 	List<AdvanceJPA> getApprovedAdvanceByEmp(AdvanceDTO advanceDTO);
 
@@ -36,5 +36,13 @@ public interface IAdvanceDAO {
 	List<AdvanceJPA> getPaidAdvances(AdvanceDTO advanceDTO);
 
 	List<AdvanceProcessHistoryJPA> getProcessedByMeAdvances(AdvanceDTO advanceDTO);
+
+	Long getDraftAdvanceCount(EmployeeDTO employeeDTO);
+
+	Long getPendingAdvanceCount(EmployeeDTO employeeDTO);
+
+	Long getPaidAdvancesCount(EmployeeDTO employeeDTO);
+
+	Long getRejectedAdvanceCount(EmployeeDTO employeeDTO);
 
 }

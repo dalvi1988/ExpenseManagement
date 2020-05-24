@@ -52,11 +52,7 @@ public class AdvanceController {
 				advanceDTO.setAdvanceDetailId(advanceDetailId);
 				BaseDTO baseDTO= advanceService.getAdvance(advanceDTO);
 				
-				if(Validation.validateForSuccessStatus(baseDTO)){
-					advanceDTO = (AdvanceDTO) baseDTO;
-				}else{
-					throw new Exception("");
-				}
+				advanceDTO = (AdvanceDTO) baseDTO;
 			}
 			EventDTO eventDTO= new EventDTO();
 			eventDTO.setBranchDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO());

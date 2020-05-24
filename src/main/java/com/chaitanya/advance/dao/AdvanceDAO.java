@@ -251,15 +251,25 @@ public class AdvanceDAO implements IAdvanceDAO{
 	
 	
 	@Override
-	public List<AdvanceJPA> getDraftAdvanceList(AdvanceDTO advanceDTO) {
+	public List<AdvanceJPA> getDraftAdvanceList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
-		        .createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
 				.list();
 		return advanceJPAList;
+	}
+	
+	@Override
+	public Long getDraftAdvanceCount(EmployeeDTO employeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Long draftAdvanceCount = (Long)session.createCriteria(AdvanceJPA.class)
+				.setProjection(Projections.rowCount())
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.eq("voucherStatusJPA.voucherStatusId",new Integer(1)))
+				.uniqueResult();
+		return draftAdvanceCount;
 	}
 
 	@Override
@@ -272,17 +282,29 @@ public class AdvanceDAO implements IAdvanceDAO{
 	}
 
 	@Override
-	public List<AdvanceJPA> getPendingAdvanceList(AdvanceDTO advanceDTO) {
+	public List<AdvanceJPA> getPendingAdvanceList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
-				.createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
 				.list();
 		return advanceJPAList;
+	}
+	
+	@Override
+	public Long getPendingAdvanceCount(EmployeeDTO employeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
+		Long pendingAdvanceCount= (Long) session.createCriteria(AdvanceJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.setProjection(Projections.rowCount())
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
+				.uniqueResult();
+		return pendingAdvanceCount;
 	}
 
 	@Override
@@ -332,17 +354,29 @@ public class AdvanceDAO implements IAdvanceDAO{
 	}
 	
 	@Override
-	public List<AdvanceJPA> getRejectedAdvanceList(AdvanceDTO advanceDTO) {
+	public List<AdvanceJPA> getRejectedAdvanceList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
 		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
-				.createAlias("eventJPA", "eventJPA",JoinType.LEFT_OUTER_JOIN)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
 				.list();
 		return advanceJPAList;
+	}
+	
+	@Override
+	public Long getRejectedAdvanceCount(EmployeeDTO employeeDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		Object voucherId[]={13,23,33,43,53,63,73,83,93,103,113,123,133,143,153};
+		Long rejectedAdvanceCount= (Long) session.createCriteria(AdvanceJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.setProjection(Projections.rowCount())
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.in("processInstanceJPA.voucherStatusJPA.voucherStatusId", voucherId))
+				.uniqueResult();
+		return rejectedAdvanceCount;
 	}
 
 	@Override
@@ -361,11 +395,11 @@ public class AdvanceDAO implements IAdvanceDAO{
 	 * Fetch list of advances of login employee
 	 */
 	@Override
-	public List<AdvanceJPA> getPendingAdvancesAtPaymentDesk(AdvanceDTO advanceDTO) {Session session = sessionFactory.getCurrentSession();
+	public List<AdvanceJPA> getPendingAdvancesAtPaymentDesk(EmployeeDTO employeeDTO) {Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
-				.add(Restrictions.eq("employeeJPA.employeeId",advanceDTO.getEmployeeDTO().getEmployeeId()))
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
 				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(4)))
 				.list();
 		return advanceJPAList;
@@ -381,6 +415,18 @@ public class AdvanceDAO implements IAdvanceDAO{
 				.list();
 		return advanceJPAList;
 	}
+	
+	@Override
+	public Long getPaidAdvancesCount(EmployeeDTO employeeDTO) {Session session = sessionFactory.getCurrentSession();
+		Long paidAdvanceCount= (Long) session.createCriteria(AdvanceJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.setProjection(Projections.rowCount())
+				.add(Restrictions.eq("employeeJPA.employeeId",employeeDTO.getEmployeeId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", new Integer(5)))
+				.uniqueResult();
+		return paidAdvanceCount;
+	}
+	
 	
 	/**
 	 * Fetch List of advances pending for payment of all employee under company

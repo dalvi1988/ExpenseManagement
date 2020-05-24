@@ -97,7 +97,7 @@ public class AdvanceService implements IAdvanceService{
 		List<AdvanceDTO> advanceDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
-			List<AdvanceJPA> advanceJPAList =advanceDAO.getDraftAdvanceList(advanceDTO);
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getDraftAdvanceList(advanceDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(advanceJPAList)){
 				advanceDTOList= new ArrayList<AdvanceDTO>();
 				for(AdvanceJPA advanceJPA: advanceJPAList){
@@ -116,6 +116,26 @@ public class AdvanceService implements IAdvanceService{
 		logger.debug("AdvanceService: getDraftAdvanceList-End");
 		return  advanceDTOList;
 	}
+	
+	@Override
+	public Long getDraftAdvanceCount(BaseDTO baseDTO) throws ParseException {
+		logger.debug("AdvanceService: getDraftAdvanceCount-Start");
+		validateAdvanceDTO(baseDTO);
+
+		
+		Long draftAdvanceCount= -1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO= (AdvanceDTO) baseDTO;
+			draftAdvanceCount =advanceDAO.getDraftAdvanceCount(advanceDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("AdvanceService: getDraftAdvanceCount-End");
+		return  draftAdvanceCount;
+	}
+
 
 
 	@Override
@@ -147,7 +167,7 @@ public class AdvanceService implements IAdvanceService{
 		List<AdvanceDTO> advanceDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
-			List<AdvanceJPA> advanceJPAList =advanceDAO.getPendingAdvanceList(advanceDTO);
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getPendingAdvanceList(advanceDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(advanceJPAList)){
 				advanceDTOList= new ArrayList<AdvanceDTO>();
 				for(AdvanceJPA advanceJPA: advanceJPAList){
@@ -182,6 +202,23 @@ public class AdvanceService implements IAdvanceService{
 		
 		logger.debug("AdvanceService: getPendingAdvanceList-End");
 		return  advanceDTOList;
+	}
+
+	@Override
+	public Long getPendingAdvanceCount(BaseDTO baseDTO) throws ParseException {
+		logger.debug("AdvanceService: getPendingAdvanceCount-Start");
+		validateAdvanceDTO(baseDTO);
+		Long pendingAdvanceCount =-1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			pendingAdvanceCount =advanceDAO.getPendingAdvanceCount(advanceDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		return  pendingAdvanceCount;
 	}
 
 
@@ -349,7 +386,7 @@ public class AdvanceService implements IAdvanceService{
 		List<AdvanceDTO> advanceDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
-			List<AdvanceJPA> advanceJPAList =advanceDAO.getPendingAdvancesAtPaymentDesk(advanceDTO);
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getPendingAdvancesAtPaymentDesk(advanceDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(advanceJPAList)){
 				advanceDTOList= new ArrayList<AdvanceDTO>();
 				for(AdvanceJPA advanceJPA: advanceJPAList){
@@ -374,7 +411,7 @@ public class AdvanceService implements IAdvanceService{
 	@Override
 	public List<AdvanceDTO> getPaidAdvances(BaseDTO baseDTO) throws ParseException {
 
-		logger.debug("AdvanceService: getPendingAdvancesAtPaymentDesk-Start");
+		logger.debug("AdvanceService: getPaidAdvances-Start");
 		validateAdvanceDTO(baseDTO);
 		
 		List<AdvanceDTO> advanceDTOList= null;
@@ -398,9 +435,30 @@ public class AdvanceService implements IAdvanceService{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
 	
-		logger.debug("AdvanceService: getPendingAdvancesAtPaymentDesk-End");
+		logger.debug("AdvanceService: getPaidAdvances-End");
 		return  advanceDTOList;
 	}
+
+	@Override
+	public Long getPaidAdvancesCount(BaseDTO baseDTO) throws ParseException {
+
+		logger.debug("AdvanceService: getPaidAdvancesCount-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		Long paidAdvanceCount= -1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			paidAdvanceCount =advanceDAO.getPaidAdvancesCount(advanceDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+	
+		logger.debug("AdvanceService: getPaidAdvancesCount-End");
+		return  paidAdvanceCount;
+	}
+
 	
 	@Override
 	public List<AdvanceDTO> getPaymentDeskAdvances(BaseDTO baseDTO) throws ParseException {
@@ -443,7 +501,7 @@ public class AdvanceService implements IAdvanceService{
 		List<AdvanceDTO> advanceDTOList= null;
 		if (Validation.validateForNullObject(baseDTO)) {
 			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
-			List<AdvanceJPA> advanceJPAList =advanceDAO.getRejectedAdvanceList(advanceDTO);
+			List<AdvanceJPA> advanceJPAList =advanceDAO.getRejectedAdvanceList(advanceDTO.getEmployeeDTO());
 			if(Validation.validateForNullObject(advanceJPAList)){
 				advanceDTOList= new ArrayList<AdvanceDTO>();
 				for(AdvanceJPA advanceJPA: advanceJPAList){
@@ -476,6 +534,24 @@ public class AdvanceService implements IAdvanceService{
 		return  advanceDTOList;
 	}
 
+	@Override
+	public Long getRejectedAdvanceCount(BaseDTO baseDTO) throws ParseException {
+		logger.debug("AdvanceService: getPendingAdvanceList-Start");
+		validateAdvanceDTO(baseDTO);
+		
+		Long rejectedAdvanceCount =-1L;
+		if (Validation.validateForNullObject(baseDTO)) {
+			AdvanceDTO advanceDTO=(AdvanceDTO) baseDTO;;
+			rejectedAdvanceCount =advanceDAO.getRejectedAdvanceCount(advanceDTO.getEmployeeDTO());
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("AdvanceService: getPendingAdvanceList-End");
+		return  rejectedAdvanceCount;
+	}
 
 	@Override
 	public List<AdvanceDTO> getApprovedAdvanceByEmp(BaseDTO baseDTO) throws ParseException {

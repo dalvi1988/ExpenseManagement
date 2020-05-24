@@ -32,5 +32,13 @@ public interface IAdvanceService {
 
 	List<AdvanceDTO> getProcessedByMeAdvances(BaseDTO baseDTO) throws ParseException;
 
+	Long getDraftAdvanceCount(BaseDTO baseDTO) throws ParseException;
+
+	Long getPendingAdvanceCount(BaseDTO baseDTO) throws ParseException;
+
+	Long getPaidAdvancesCount(BaseDTO baseDTO) throws ParseException;
+
+	Long getRejectedAdvanceCount(BaseDTO baseDTO) throws ParseException;
+
 
 }

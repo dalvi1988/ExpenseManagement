@@ -1,17 +1,16 @@
 package com.chaitanya.dashboard.service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.base.BaseDTO;
-import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.dashboard.dao.IDashboardDAO;
 import com.chaitanya.dashboard.model.DashboardDTO;
 import com.chaitanya.utility.Validation;
@@ -25,28 +24,21 @@ public class DashboardService implements IDashboardService{
 	private Logger logger= LoggerFactory.getLogger(DashboardService.class);
 
 	@Override
-	public List<DashboardDTO> totalAmountGroupByMonth(BaseDTO baseDTO) throws ParseException {
+	public List<DashboardDTO> totalAmountGroupByMonth(BaseDTO baseDTO) throws ParseException, IOException {
 		logger.debug("DashboardService: totalAmountGroupByMonth-Start");
 		validateDashboardDTO(baseDTO);
 		List<DashboardDTO> list=null;
-		try{
-			DashboardDTO dashboardDTO=(DashboardDTO)baseDTO;
-			if (Validation.validateForNullObject(dashboardDTO)) {
-				list=dashboardDAO.totalAmountGroupByMonth(dashboardDTO);
-			}
-		}
-		catch(DataIntegrityViolationException e){
-			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("DashboardService: Exception",e);
+		DashboardDTO dashboardDTO=(DashboardDTO)baseDTO;
+		if (Validation.validateForNullObject(dashboardDTO)) {
+			list=dashboardDAO.totalAmountGroupByMonth(dashboardDTO);
 		}
 		logger.debug("DashboardService: totalAmountGroupByMonth-End");
 		return list;
 	}
 	
-	private void validateDashboardDTO(BaseDTO baseDTO) {
+	private void validateDashboardDTO(BaseDTO baseDTO) throws IOException{
 		if( baseDTO == null  || !(baseDTO instanceof DashboardDTO)){
-			throw new IllegalArgumentException("Object expected of DashboardDTO type.");
+			throw new IOException("Object expected of DashboardDTO type.");
 		}
 	}
 }

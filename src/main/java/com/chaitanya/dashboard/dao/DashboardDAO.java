@@ -39,8 +39,11 @@ public class DashboardDAO implements IDashboardDAO{
 	  	list = (List<DashboardDTO>) session.createCriteria(ExpenseDetailJPA.class)    
 						.setProjection(projection)
 						.createAlias("expenseHeaderJPA", "expenseHeaderJPA",JoinType.INNER_JOIN)
+						.createAlias("expenseHeaderJPA.processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+						.createAlias("processInstanceJPA.voucherStatusJPA", "voucherStatusJPA",JoinType.INNER_JOIN)
 						.createAlias("expenseHeaderJPA.employeeJPA", "employeeJPA",JoinType.INNER_JOIN)
 						.add(Restrictions.eq("employeeJPA.employeeId", dashboardDTO.getEmployeeDTO().getEmployeeId()))
+						.add(Restrictions.eq("voucherStatusJPA.voucherStatusId", 5))
 						 .setResultTransformer(new AliasToBeanResultTransformer(DashboardDTO.class))
 						.list();
 		return list;

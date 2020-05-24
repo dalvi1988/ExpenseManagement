@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 public class FTPUtility {
 	
 	static String ftpServerAddress = "localhost";
-    static String userName = "chaitanya";
-    static String password = "chaitanya";
+    static String userName = "anonymous";
+    static String password = null;
     static FTPClient ftpclient;
     private static Logger logger= LoggerFactory.getLogger(FTPUtility.class);
     
@@ -106,6 +106,6 @@ public class FTPUtility {
     }
     
     public static void main(String[] arg) throws SocketException, IOException{
-    	retriveFile("error.txt");
+    	connect();
     }
 }

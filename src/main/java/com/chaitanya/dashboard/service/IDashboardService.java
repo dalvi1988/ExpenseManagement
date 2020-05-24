@@ -1,5 +1,6 @@
 package com.chaitanya.dashboard.service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -8,5 +9,5 @@ import com.chaitanya.dashboard.model.DashboardDTO;
 
 public interface IDashboardService {
 
-	List<DashboardDTO> totalAmountGroupByMonth(BaseDTO baseDTO) throws ParseException;
+	List<DashboardDTO> totalAmountGroupByMonth(BaseDTO baseDTO) throws ParseException, IOException;
 }
