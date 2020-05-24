@@ -221,6 +221,21 @@
             
           </ul>
         </li>
+        
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i>
+            <span>Accounting Entry</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="fetchAccountingEntries"><i class="fa fa-circle-o"></i>Fetch Entries</a></li>
+            <li><a href="#" class="fetchedAccountingEntries"><i class="fa fa-circle-o"></i>Fetched Entries</a></li>
+            
+          </ul>
+        </li>
         </sec:authorize>
         
         <sec:authorize access="hasAnyRole('SUPER_ADMIN')" var="isAuthorizeAny">

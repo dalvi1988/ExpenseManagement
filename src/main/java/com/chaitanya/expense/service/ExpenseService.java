@@ -691,6 +691,38 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: getPaidExpenseList-End");
 		return  expenseHeaderDTOList;
 	}
+	
+	@Override
+	public List<ExpenseHeaderDTO> fetchAccountingEntries(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: fetchAccountingEntries-Start");
+		validateExpenseDTO(baseDTO);
+		
+		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.fetchAccountingEntries(expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO());
+			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+						expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+					}
+					expenseHeaderDTOList.add(expHeaderDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: fetchAccountingEntries-End");
+		return  expenseHeaderDTOList;
+	}
 
 	@Override
 	public Long getPaidExpenseCount(BaseDTO baseDTO) throws ParseException {
