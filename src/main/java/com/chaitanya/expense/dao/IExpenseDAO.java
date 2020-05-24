@@ -3,6 +3,7 @@ package com.chaitanya.expense.dao;
 import java.io.IOException;
 import java.util.List;
 
+import com.chaitanya.company.model.CompanyDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.ApprovalFlowJPA;
@@ -52,6 +53,8 @@ public interface IExpenseDAO {
 	public Long getRejectedExpenseCount(EmployeeDTO employeeDTO);
 
 	public Long getPaidExpenseCount(EmployeeDTO employeeDTO);
+
+	public List<ExpenseHeaderJPA> fetchAccountingEntries(CompanyDTO companyDTO);
 
 
 

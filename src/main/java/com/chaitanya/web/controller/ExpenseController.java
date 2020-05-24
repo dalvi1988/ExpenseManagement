@@ -466,6 +466,30 @@ public class ExpenseController {
 		}
 		
 		return model;
-
+	}
+	
+	@RequestMapping(value="/fetchAccountingEntries",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView fetchAccountingEntries() {
+		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 expenseHeaderDTOList = expenseService.fetchAccountingEntries(expenseHeaderDTO);
+			}
+			
+			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
+			model.setViewName("accounting/accountingEntryJSP");
+		}
+		catch(Exception e){
+			logger.error("ExpenseController: fetchAccountingEntries",e);
+			model.setViewName("others/505");
+		}
+		return model;
 	}
 }

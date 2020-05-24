@@ -45,4 +45,6 @@ public interface IExpenseService {
 
 	Long getPaidExpenseCount(BaseDTO baseDTO) throws ParseException;
 
+	List<ExpenseHeaderDTO> fetchAccountingEntries(BaseDTO baseDTO)	throws ParseException;
+
 }

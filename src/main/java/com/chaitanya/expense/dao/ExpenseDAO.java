@@ -19,6 +19,7 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.chaitanya.company.model.CompanyDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.ApprovalFlowJPA;
@@ -459,6 +460,22 @@ public class ExpenseDAO implements IExpenseDAO{
 				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
 				.uniqueResult();
 		return paidExpenseCount;
+	}
+	
+	@Override
+	public List<ExpenseHeaderJPA> fetchAccountingEntries(CompanyDTO companyDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA", "employeeJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA.branchJPA", "branchJPA",JoinType.INNER_JOIN)
+				.createAlias("branchJPA.companyJPA", "companyJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("companyJPA.companyId", companyDTO.getCompanyId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
+				.list();
+		return expsensHeaderJPAList;
+
 	}
 
 	@Override
