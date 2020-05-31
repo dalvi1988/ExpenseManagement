@@ -303,7 +303,11 @@
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
     </div>
+<<<<<<< Upstream, based on branch 'master' of https://github.com/dalvi1988/ExpenseManagement.git
     <strong>Copyright &copy; 2016-2018 <a href="http://expensewala.com">ExpenseWala.com</a>.</strong> All rights
+=======
+    <strong>Copyright &copy; 2020-2021 <a href="http://expensewala.com">ExpenseWala</a>.</strong> All rights
+>>>>>>> d0e10b1 Rename from finsoft to expensewala
     reserved.
   </footer>
   
