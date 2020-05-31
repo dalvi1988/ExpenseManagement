@@ -6,10 +6,13 @@ import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -30,7 +33,11 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @ComponentScan({ "com.chaitanya.*" })
 @Import({ SecurityConfig.class })
+@PropertySource("classpath:application.properties")
 public class AppConfig extends WebMvcConfigurerAdapter {
+	
+	@Autowired
+	private Environment env;
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -57,7 +64,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         Properties prop = new Properties();
         prop.put("hibernate.format_sql", "true");
         prop.put("hibernate.show_sql", "true");
-        prop.put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        prop.put("hibernate.dialect", env.getProperty("databaseDialect"));
         return prop;
     }
 	
@@ -67,10 +74,10 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		BasicDataSource ds = new BasicDataSource();
 	    ds.setDriverClassName("com.mysql.jdbc.Driver");
 	    
-	    
-		ds.setUrl("jdbc:mysql://localhost:3306/test");
-		ds.setUsername("root");
-		ds.setPassword("root");
+	    System.out.println(env.getProperty("databaseURL"));
+	    ds.setUrl(env.getProperty("databaseURL"));
+		ds.setUsername(env.getProperty("databaseUser"));
+		ds.setPassword(env.getProperty("databasePassword"));
 	    
 	/*	ds.setUrl("jdbc:mysql://node31131-env-8602550.cloud.cms500.com/test");
 		ds.setUsername("root");
