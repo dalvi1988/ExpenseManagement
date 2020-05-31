@@ -3,6 +3,7 @@ package com.chaitanya.web.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -389,7 +390,7 @@ public class ExpenseController {
 	}
 	
 	@RequestMapping(value="/paidExpense",method=RequestMethod.GET)
-	public @ResponseBody ModelAndView getPaidExpense() throws JsonGenerationException, JsonMappingException, IOException{
+	public @ResponseBody ModelAndView getPaidExpense() {
 		
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
@@ -491,5 +492,22 @@ public class ExpenseController {
 			model.setViewName("others/505");
 		}
 		return model;
+	}
+	
+	@RequestMapping(value="/exportAccountingEntry",method=RequestMethod.POST)
+	public @ResponseBody BaseDTO exportAccountingEntry(@RequestBody ArrayList<Long> expenseHeaderIds) {
+		
+		try{
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
+			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
+			
+	
+			
+		}
+		catch(Exception e){
+			logger.error("ExpenseController: exportAccountingEntry",e);
+		}
+		return new BaseDTO();
 	}
 }

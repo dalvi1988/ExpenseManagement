@@ -303,7 +303,7 @@
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
     </div>
-    <strong>Copyright &copy; 2016-2018 <a href="http://finsoftsolution.com">Finsoft Solution</a>.</strong> All rights
+    <strong>Copyright &copy; 2016-2018 <a href="http://expensewala.com">ExpenseWala.com</a>.</strong> All rights
     reserved.
   </footer>
   

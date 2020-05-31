@@ -16,7 +16,7 @@
        //define colModel
        var colM = [
 			{ title: "", dataIndx: "state", maxWidth: 30, minWidth: 30, align: "center",
-			    cb: { header: true, all: false },
+			    cb: { header: true, all: true },
 			    type: 'checkBoxSelection', cls: 'ui-state-default', resizable: false, sortable: false, editable: false
 			},
 			{ title: "expenseHeaderId", width: 100, dataType: "integer", hidden:true, dataIndx: "expenseHeaderId" },
@@ -68,8 +68,25 @@
 	
 	                               ids.push(rowData.expenseHeaderId);
 	                           }
-	                           alert(ids);
-                               $("#grid_export").pqGrid("exportCsv", { url: "/pro/demos/excel" });
+	                           $.ajax($.extend({}, ajaxObj, { 
+	                            	context: $grid,
+	                        	    url: "exportAccountingEntry", 
+	                        	    type: 'POST', 
+	                        	    data: JSON.stringify(ids),
+	                        	 
+	                        	    success: function(data) { 
+	                        	    	if(data.serviceStatus=="SUCCESS"){
+	                        	    		$(".alert").addClass("alert-success").text(data.message).show();
+	                        	    	}
+	                        	    	else{
+	                        	    		$(".alert").addClass("alert-danger").text(data.message).show();
+	                        	    	}
+	                        	    	
+	                        	    },
+	                        	    error:function(data) {
+	                        	    	$(".alert").addClass("alert-danger").text(data.message).show();
+	                        	    }
+	        	       		   }));
                            }
                        }]
                },
@@ -90,7 +107,7 @@
            hwrap: false,
            pageModel: { type: "local", rPP: 10 },
            editable: false,
-           selectionModel: {type: 'row', mode: 'single'},
+           selectionModel: {type: null},
            title: "Accounting Entries",
            resizable: true,
            numberCell: { show: false },
