@@ -473,9 +473,49 @@ public class ExpenseDAO implements IExpenseDAO{
 				.createAlias("branchJPA.companyJPA", "companyJPA",JoinType.INNER_JOIN)
 				.add(Restrictions.eq("companyJPA.companyId", companyDTO.getCompanyId()))
 				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
+				.add(Restrictions.isNull("accountingEntry"))
 				.list();
 		return expsensHeaderJPAList;
 
+	}
+	
+	@Override
+	public List<ExpenseHeaderJPA> fetchedAccountingEntries(CompanyDTO companyDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA", "employeeJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA.branchJPA", "branchJPA",JoinType.INNER_JOIN)
+				.createAlias("branchJPA.companyJPA", "companyJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("companyJPA.companyId", companyDTO.getCompanyId()))
+				.add(Restrictions.eq("processInstanceJPA.voucherStatusJPA.voucherStatusId", 5))
+				.add(Restrictions.eq("accountingEntry", 'Y'))
+				.list();
+		return expsensHeaderJPAList;
+
+	}
+	
+	@Override
+	public Integer updateAccountingEntriesByIds(List<Long> expenseHeaderIds) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		String hqlUpdate = "update ExpenseHeaderJPA expenseHeader set expenseHeader.accountingEntry='Y' where expenseHeader.expenseHeaderId in (:expenseHeaderIds)";
+		int updatedEntities = session.createQuery( hqlUpdate )
+		        .setParameterList( "expenseHeaderIds", expenseHeaderIds)
+		        .executeUpdate();
+		
+		return updatedEntities;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ExpenseHeaderJPA> getExpenseHeaderByIds(List<Long> expenseHeaderIds) {
+		Session session = sessionFactory.getCurrentSession();
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+				.add(Restrictions.in("expenseHeaderId", expenseHeaderIds))
+				.list();
+		return expsensHeaderJPAList;
 	}
 
 	@Override

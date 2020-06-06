@@ -47,4 +47,9 @@ public interface IExpenseService {
 
 	List<ExpenseHeaderDTO> fetchAccountingEntries(BaseDTO baseDTO)	throws ParseException;
 
+	byte[] exportAccountingEntries(BaseDTO baseDTO) throws ParseException,IOException;
+
+	List<ExpenseHeaderDTO> fetchedAccountingEntries(BaseDTO baseDTO) throws ParseException;
+
+
 }

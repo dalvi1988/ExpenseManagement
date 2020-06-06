@@ -220,7 +220,7 @@
   <div id="dialog-confirm" style="display: none" title="Rejection Comment">
     <fieldset>
       <label for="name">Please enter rejection comments:</label>
-      <input type="text" name="comment" id="comment" class="text ui-widget-content ui-corner-all">
+      <textarea name="comment" id="comment" class="text ui-widget-content ui-corner-all"></textarea>
     </fieldset>
   </div>
 </body>

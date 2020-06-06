@@ -56,6 +56,12 @@ public interface IExpenseDAO {
 
 	public List<ExpenseHeaderJPA> fetchAccountingEntries(CompanyDTO companyDTO);
 
+	public Integer updateAccountingEntriesByIds(List<Long> expenseHeaderIds);
+
+	public List<ExpenseHeaderJPA> fetchedAccountingEntries(CompanyDTO companyDTO);
+
+	public List<ExpenseHeaderJPA> getExpenseHeaderByIds(List<Long> expenseHeaderIds);
+
 
 
 }

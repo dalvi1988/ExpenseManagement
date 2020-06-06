@@ -218,6 +218,12 @@ $(function () {
 	}
 	
 	function validateComponent(){
+		if($grid.pqGrid( "option" , "dataModel.data" ).length == 0){
+			$("#dialog").text("Empty voucher not allowed.");
+			$("#dialog").dialog();
+			return false;
+		}
+		
 		if($("#startDate").val() ==""){
 			$("#dialog").text("Start Date can not be empty.");
 			$("#dialog").dialog();
@@ -299,11 +305,12 @@ $(function () {
           	 
           	    success: function(data) { 
           	    	if(data.serviceStatus=="SUCCESS"){
-          	    		$('.draftExpense').click();
+          	    		if(command== 2){
+          	    			$grid.pqGrid( "disable" );
+          	    		}
           	    		$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
           	    	else{
-          	    		$('.draftExpense').click();
           	    		$(".alert").addClass("alert-danger").text(data.message).show();
           	    		$grid.pqGrid("rollback");
           	    	}
@@ -574,7 +581,7 @@ $(function () {
             			 else{
             				 filename =ui.rowData.fileName;
             			 }
-            			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close'></button></div><input type='file' class='btn_file'/>";
+            			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
             		 }  
 	            }  
             },
@@ -631,6 +638,19 @@ $(function () {
 			 $grid.pqGrid("refresh"); 
 				 
 	   	});  
+	   	 
+	 	
+		   
+	   	 // Remove file hyperlink button click
+	   	$("#grid_editing").find(".fileName_btn").button().bind("click", function (evt){
+	   		 $(this).closest("div").hide();
+	   	}); 
+	   	
+	   $("#grid_editing").find(".fileName_btn").button().removeClass("ui-widget ui-state-default ui-corner-all ui-button-text-only");
+	   $("#grid_editing").find(".fileName_btn").button().hover(function () {
+		    $(this).removeClass("ui-button ui-state-hover");
+		 });	
+	   
        $("#grid_editing").find("button.delete_btn").button({ icons: { primary: 'ui-icon-scissors'} })
        .unbind("click")
        .bind("click", function (evt) {

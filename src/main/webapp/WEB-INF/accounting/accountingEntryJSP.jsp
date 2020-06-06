@@ -56,7 +56,7 @@
                cls: 'pq-toolbar-export',
                items: [{
                        type: 'button',
-                       label: "Export to CSV",
+                       label: "Export to XLSX",
                        icon: 'ui-icon-document',
                        listeners: [{
                            "click": function (evt) {
@@ -65,41 +65,40 @@
 	   							ids = [];
 	                           for (var i = 0, len = selarray.length; i < len; i++) {
 	                               var rowData = selarray[i].rowData;
-	
 	                               ids.push(rowData.expenseHeaderId);
+	                               $grid.pqGrid( "deleteRow",  { rowIndx: selarray[i].rowIndx });
 	                           }
-	                           $.ajax($.extend({}, ajaxObj, { 
+	                           /* $.ajax($.extend({}, ajaxObj, { 
 	                            	context: $grid,
 	                        	    url: "exportAccountingEntry", 
 	                        	    type: 'POST', 
 	                        	    data: JSON.stringify(ids),
-	                        	 
+	                        	    dataType: 'binary',
+	                                xhrFields: {
+	                                    'responseType': 'blob'
+	                                },
 	                        	    success: function(data) { 
-	                        	    	if(data.serviceStatus=="SUCCESS"){
-	                        	    		$(".alert").addClass("alert-success").text(data.message).show();
-	                        	    	}
-	                        	    	else{
-	                        	    		$(".alert").addClass("alert-danger").text(data.message).show();
-	                        	    	}
-	                        	    	
+	                        	    	var a = document.createElement('a');
+	                                    var url = window.URL.createObjectURL(data);
+	                                    a.href = url;
+	                                    a.download = 'myfile.pdf';
+	                                    document.body.append(a);
+	                                    a.click();
+	                                    a.remove();
+	                                    window.URL.revokeObjectURL(url); 
+	                                    alert("success"+data)
 	                        	    },
 	                        	    error:function(data) {
+	                        	    	 alert("fail")
 	                        	    	$(".alert").addClass("alert-danger").text(data.message).show();
 	                        	    }
-	        	       		   }));
+	        	       		   })); */
+	                           $("#expenseHeaderIds").val(ids);
+	        	       		   $( "#form" ).submit();
+	        	       		   
                            }
                        }]
-               },
-               {
-                   type: 'button',
-                   label: "Export to XLSX",
-                   icon: 'ui-icon-document',
-                   listeners: [{
-                       "click": function (evt) {
-                           $("#grid_filter").pqGrid("exportExcel", { url: "/pro/demos/excel" });
-                       }
-                   }]
-           		}
+               }
                ]
            },
            dataModel: dataModel,
@@ -121,5 +120,8 @@
 </head>
 <body>
   	<div id="grid_filter" style="margin: auto;"></div>
+  	<form id="form" action="exportAccountingEntry" method="POST" >
+ 		<input type="hidden" id="expenseHeaderIds" name="expenseHeaderIds"></input>
+ 	  </form>
 </body>
 </html>

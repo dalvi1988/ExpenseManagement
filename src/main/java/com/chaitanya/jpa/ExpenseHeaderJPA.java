@@ -71,6 +71,9 @@ public class ExpenseHeaderJPA {
 	
 	@Column(name="purpose")
 	private String purpose;
+	
+	@Column(name="accounting_entry")
+	private Character accountingEntry;
 
 	@Column(name="created_by")
 	private Long createdBy;
@@ -218,6 +221,14 @@ public class ExpenseHeaderJPA {
 
 	public void setEventJPA(EventJPA eventJPA) {
 		this.eventJPA = eventJPA;
+	}
+	
+	public Character getAccountingEntry() {
+		return accountingEntry;
+	}
+
+	public void setAccountingEntry(Character accountingEntry) {
+		this.accountingEntry = accountingEntry;
 	}
 
 }

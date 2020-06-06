@@ -50,14 +50,14 @@ public class DashboardController {
 			Long draftExpenseCount=  expenseService.getDraftExpenseCount(expenseHeaderDTO);
 			Long pendingExpenseCount=  expenseService.getPendingExpenseCount(expenseHeaderDTO);
 			Long rejectedExpenseCount=  expenseService.getRejectedExpenseCount(expenseHeaderDTO);
-			Long paidExpenseCount=  expenseService.getRejectedExpenseCount(expenseHeaderDTO);
+			Long paidExpenseCount=  expenseService.getPaidExpenseCount(expenseHeaderDTO);
 			
 			AdvanceDTO advanceDTO= new AdvanceDTO();
 			advanceDTO.setEmployeeDTO(employeeDTO);
 			Long draftAdvanceCount = advanceService.getDraftAdvanceCount(advanceDTO);
 			Long pendingAdvanceCount = advanceService.getPendingAdvanceCount(advanceDTO);
 			Long paidAdvanceCount = advanceService.getPaidAdvancesCount(advanceDTO);
-			Long rejectedAdvanceCount = advanceService.getPaidAdvancesCount(advanceDTO);
+			Long rejectedAdvanceCount = advanceService.getRejectedAdvanceCount(advanceDTO);
 			
 			
 			model.addObject("dashboardDTOList", mapper.writeValueAsString(dashboardDTOList));

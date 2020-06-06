@@ -1,18 +1,25 @@
 package com.chaitanya.expense.service;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chaitanya.accountingGenerator.AccountingFactory;
+import com.chaitanya.accountingGenerator.IAccountingGenerator;
 import com.chaitanya.advance.convertor.AdvanceConvertor;
 import com.chaitanya.approvalFlow.convertor.ApprovalFlowConvertor;
 import com.chaitanya.approvalFlow.dao.IApprovalFlowDAO;
@@ -38,7 +45,6 @@ import com.chaitanya.jpa.ProcessHistoryJPA;
 import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Convertor;
-import com.chaitanya.utility.FTPUtility;
 import com.chaitanya.utility.Validation;
 import com.chaitanya.utility.model.VoucherStatusDTO;
 
@@ -57,6 +63,12 @@ public class ExpenseService implements IExpenseService{
 	
 	@Autowired
 	private IDepartmentHeadDAO departmentHeadDAO;
+	
+	@Autowired
+	private AccountingFactory accountingFactory;
+	
+	@Autowired
+	private Environment environment;
 	
 	private Logger logger= LoggerFactory.getLogger(ExpenseService.class);
 	
@@ -144,24 +156,26 @@ public class ExpenseService implements IExpenseService{
 	}
 
 	private void addUpdateDeleteAttachment(ExpenseHeaderDTO expenseHeaderDTO,Long expenseHeaderId) throws Exception {
-		
+		String drive= environment.getProperty("fileDrive");
+		String filePath=drive+"\\"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"\\"+expenseHeaderId;
+		Files.createDirectories(Paths.get(filePath));
 		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
 			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
-				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
-				expenseDetailDTO.getReceipt().transferTo(convFile);
-				FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+//				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
+//				expenseDetailDTO.getReceipt().transferTo(convFile);
+				
+				Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"\\"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+				//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
 			}
 		}
 		
 		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
 			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
-				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
-				expenseDetailDTO.getReceipt().transferTo(convFile);
-				FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+				Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"\\"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+				//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
 			}
 		}
 	}
-
 
 	@Override
 	public List<ExpenseHeaderDTO> getDraftExpenseList(BaseDTO baseDTO) throws ParseException {
@@ -723,6 +737,38 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: fetchAccountingEntries-End");
 		return  expenseHeaderDTOList;
 	}
+	
+	@Override
+	public List<ExpenseHeaderDTO> fetchedAccountingEntries(BaseDTO baseDTO) throws ParseException {
+		logger.debug("ExpenseService: fetchedAccountingEntries-Start");
+		validateExpenseDTO(baseDTO);
+		
+		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.fetchedAccountingEntries(expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO());
+			if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
+				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+						expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+					}
+					expenseHeaderDTOList.add(expHeaderDTO);
+				}
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: fetchedAccountingEntries-End");
+		return  expenseHeaderDTOList;
+	}
 
 	@Override
 	public Long getPaidExpenseCount(BaseDTO baseDTO) throws ParseException {
@@ -826,5 +872,44 @@ public class ExpenseService implements IExpenseService{
 		logger.debug("ExpenseService: getDraftExpenseCount-End");
 		return  expenseCount;
 	}
+	
+	@Override
+	public byte[] exportAccountingEntries(BaseDTO baseDTO) throws ParseException, IOException {
+		logger.debug("ExpenseService: exportAccountingEntries-Start");
+		validateExpenseDTO(baseDTO);
+		byte[] generatedByteData = null;
+		if (Validation.validateForNullObject(baseDTO)) {
+			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+			List<Long> expenseHeaderIds=  Stream.of(expenseHeaderDTO.getMessage().toString().split(",")).map(Long::parseLong).collect(Collectors.toList());
+			Integer updatedEntries= expenseDAO.updateAccountingEntriesByIds(expenseHeaderIds);
+			logger.debug("ExpenseService: No of accounting file updated= "+updatedEntries);
+			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getExpenseHeaderByIds(expenseHeaderIds);
+		/*	if(Validation.validateForNullObject(expenseHeaderJPAList)){
+				ArrayList<ExpenseHeaderDTO> expenseHeaderDTOList = new ArrayList<ExpenseHeaderDTO>();
+				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
+					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
+						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
+						expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
+					}
+					expenseHeaderDTOList.add(expHeaderDTO);
+					
+				}
+			}*/
+			IAccountingGenerator accountingGenerator= accountingFactory.generateAccounting("EXCEL") ;
+			 generatedByteData= accountingGenerator.generate(expenseHeaderJPAList);
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else{
+			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		
+		logger.debug("ExpenseService: exportAccountingEntries-End");
+		return generatedByteData;
+	}
+
+
 	
 }

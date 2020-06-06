@@ -1,5 +1,7 @@
 package com.chaitanya.web.controller;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -14,6 +16,10 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,7 +50,7 @@ import com.chaitanya.expenseCategory.service.IExpenseCategoryService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
-import com.chaitanya.utility.FTPUtility;
+import com.chaitanya.utility.Utility;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -65,6 +71,9 @@ public class ExpenseController {
 	
 	@Autowired 
 	private IAdvanceService advanceService;
+	
+	@Autowired
+	Environment environment;
 	
 	private Logger logger= LoggerFactory.getLogger(ExpenseController.class);
 	
@@ -425,9 +434,12 @@ public class ExpenseController {
 	        String headerValue = String.format("attachment; filename=\"%s\"",
 	        		fileName);
 	        response.setHeader(headerKey, headerValue);
-	        
+	        LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	        String drive= environment.getProperty("fileDrive");
+			String filePath=drive+"\\"+user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"\\"+voucherId;
 	      // get your file as InputStream
-	      InputStream	inputStream =FTPUtility.retriveFile("Attachment/"+voucherId+"/"+fileName);
+	      //InputStream	inputStream =FTPUtility.retriveFile("Attachment/"+voucherId+"/"+fileName);
+	        InputStream inputStream = new FileInputStream(filePath+"\\"+fileName);
 	      // copy it to response's OutputStream
 	      IOUtils.copy(inputStream, response.getOutputStream());
 	      response.flushBuffer();
@@ -469,7 +481,7 @@ public class ExpenseController {
 		return model;
 	}
 	
-	@RequestMapping(value="/fetchAccountingEntries",method=RequestMethod.GET)
+	@RequestMapping(value="/accountingEntries",method=RequestMethod.GET)
 	public @ResponseBody ModelAndView fetchAccountingEntries() {
 		
 		ModelAndView model=new ModelAndView();
@@ -494,20 +506,51 @@ public class ExpenseController {
 		return model;
 	}
 	
-	@RequestMapping(value="/exportAccountingEntry",method=RequestMethod.POST)
-	public @ResponseBody BaseDTO exportAccountingEntry(@RequestBody ArrayList<Long> expenseHeaderIds) {
+	@RequestMapping(value="/fetchedAccountingEntries",method=RequestMethod.GET)
+	public @ResponseBody ModelAndView fetchedAccountingEntries() {
 		
+		ModelAndView model=new ModelAndView();
+		ObjectMapper mapper = new ObjectMapper();
 		try{
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			List<ExpenseHeaderDTO> expenseHeaderDTOList=null;
 			ExpenseHeaderDTO expenseHeaderDTO=new ExpenseHeaderDTO();
 			expenseHeaderDTO.setEmployeeDTO(user.getLoginDTO().getEmployeeDTO());
 			
-	
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				 expenseHeaderDTOList = expenseService.fetchedAccountingEntries(expenseHeaderDTO);
+			}
 			
+			model.addObject("expenseHeaderList",mapper.writeValueAsString(expenseHeaderDTOList));
+			model.setViewName("accounting/fetchedAccountingEntryJSP");
+		}
+		catch(Exception e){
+			logger.error("ExpenseController: fetchedAccountingEntries",e);
+			model.setViewName("others/505");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/exportAccountingEntry",method=RequestMethod.POST)
+	public HttpEntity<byte[]> exportAccountingEntries(@RequestParam ArrayList<Long> expenseHeaderIds) throws FileNotFoundException {
+		
+		try{
+			ExpenseHeaderDTO expenseHeaderDTO= new ExpenseHeaderDTO();
+			StringBuilder concanatedId= Utility.convertArrayListToCommaString(expenseHeaderIds);
+			expenseHeaderDTO.setMessage(concanatedId);//Used BaseDTO message variable instead of creating new
+			byte[] fileData= expenseService.exportAccountingEntries(expenseHeaderDTO);
+	
+			HttpHeaders header= new HttpHeaders();
+			header.setContentType(new MediaType("application","vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+			header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=AccountingEntry_"+Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime)+".xlsx");
+			header.set("Access-Control-Allow-Origin", "Content-Disposition");
+			
+			header.setContentLength(fileData.length);
+			return new HttpEntity<byte[]>(fileData,header);
 		}
 		catch(Exception e){
 			logger.error("ExpenseController: exportAccountingEntry",e);
 		}
-		return new BaseDTO();
+		return null;
 	}
 }

@@ -3,6 +3,7 @@ package com.chaitanya.utility;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.chaitanya.employee.model.EmployeeDTO;
 
@@ -34,6 +35,24 @@ public class Utility {
 		  public static String nextSessionId() {
 		     return new BigInteger(50, random).toString(32);
 		  }
+	}
+	
+	/** 
+	 * This method takes any wrapper class list and concatenate all element by (,)
+	 * @param list 
+	 * @return
+	 */
+	public static StringBuilder convertArrayListToCommaString(List<? extends Number > list) {
+		StringBuilder concatenateIds=new StringBuilder();
+		ListIterator<? extends Number> iterator= list.listIterator();
+		while(iterator.hasNext()) {
+			concatenateIds.append(iterator.next());
+			if(iterator.nextIndex()!= list.size()) {
+				concatenateIds.append(",");
+			}
+		}
+		return concatenateIds;
+		
 	}
 	
 	  
