@@ -68,7 +68,7 @@ public class ExpenseCategoryService implements IExpenseCategoryService{
 		validateExpenseCategoryDTO(baseDTO);
 		
 		List<ExpenseCategoryDTO> expenseCategoryDTOList = null;
-		List<ExpenseCategoryJPA> expenseCategoryJPAList = expenseCategoryDAO.findExpenseCategoryByCompany((ExpenseCategoryDTO) baseDTO);
+		List<ExpenseCategoryJPA> expenseCategoryJPAList = expenseCategoryDAO.getAllExpenseCategoryByCompany((ExpenseCategoryDTO) baseDTO);
 		
 		if (Validation.validateCollectionForNullSize(expenseCategoryJPAList)) {
 			expenseCategoryDTOList = new ArrayList<ExpenseCategoryDTO>();
@@ -78,6 +78,26 @@ public class ExpenseCategoryService implements IExpenseCategoryService{
 			}
 		}
 		logger.debug("ExpenseCategoryService: findExpenseCategoryByCompany-End");
+		return expenseCategoryDTOList;
+	}
+	
+	@Override
+	public List<ExpenseCategoryDTO> getAllActiveExpenseCategoryByCompany(BaseDTO baseDTO) {
+		logger.debug("ExpenseCategoryService: getAllActiveExpenseCategoryByCompany-Start");
+
+		validateExpenseCategoryDTO(baseDTO);
+		
+		List<ExpenseCategoryDTO> expenseCategoryDTOList = null;
+		List<ExpenseCategoryJPA> expenseCategoryJPAList = expenseCategoryDAO.getAllActiveExpenseCategoryByCompany((ExpenseCategoryDTO) baseDTO);
+		
+		if (Validation.validateCollectionForNullSize(expenseCategoryJPAList)) {
+			expenseCategoryDTOList = new ArrayList<ExpenseCategoryDTO>();
+			for (ExpenseCategoryJPA expenseCategoryJPA : expenseCategoryJPAList) {
+				ExpenseCategoryDTO expenseCategoryDTO = ExpenseCategoryConvertor.setExpenseCategoryJPAtoDTO(expenseCategoryJPA);
+				expenseCategoryDTOList.add(expenseCategoryDTO);
+			}
+		}
+		logger.debug("ExpenseCategoryService: getAllActiveExpenseCategoryByCompany-End");
 		return expenseCategoryDTOList;
 	}
 	

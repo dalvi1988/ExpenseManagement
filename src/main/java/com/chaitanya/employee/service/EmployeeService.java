@@ -124,6 +124,16 @@ public class EmployeeService implements IEmployeeService {
 					loginDAO.saveLoginDetail(loginJPA);
 					mailService.sendAutoGeneratePassword(employeeDTO,original);
 				}
+				else {
+					LoginJPA loginJPA= loginDAO.getLoginDetailByEmployeeId(employeeJPA);
+					if(!loginJPA.getUserName().equals(employeeJPA.getEmailId())){
+						String original= Utility.SessionIdentifierGenerator.nextSessionId();
+						loginJPA.setPassword(passwordEncoder.encode(original));
+						loginJPA.setUserName(employeeJPA.getEmailId());
+						loginDAO.saveLoginDetail(loginJPA);
+						mailService.sendAutoGeneratePassword(employeeDTO,original);
+					}
+				}
 				baseDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}

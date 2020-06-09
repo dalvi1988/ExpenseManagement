@@ -24,5 +24,7 @@ public class ApplicationConstant {
 	public static final String EXPENSE_TYPE_EMP = "EmployeeExpense";
 	
 	public static final String EXPENSE_TYPE_EVENT = "EventExpense";
+	
+	public static final String INVALID_EMAIL ="Email does not exists in system. Please contact system administrator.";
 
 }

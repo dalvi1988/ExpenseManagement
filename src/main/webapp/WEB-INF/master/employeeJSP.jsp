@@ -378,7 +378,7 @@
                  
                   { title: "", width: 0, dataIndx: "createdBy", hidden:true },
                   { title: "", width: 0, dataIndx: "createdDate", hidden:true },
-                  { title: "", editable: false, minWidth: 150, sortable: false, render: function (ui) {
+                  { title: "", editable: false, minWidth: 180, sortable: false, render: function (ui) {
                       return "<button type='button' class='edit_btn'>Edit</button>\
                           <button type='button' class='delete_btn'>Delete</button>";
                   }

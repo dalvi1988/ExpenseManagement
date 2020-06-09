@@ -36,6 +36,7 @@
    		   scrollModel: {
                   autoFit: true
            },
+           height: '75%',
            dataModel: dataModel,
            colModel: colM,
            hwrap: false,

@@ -38,6 +38,9 @@ public class LoginController {
 				loginDTO.setEmployeeDTO(employeeDTO);
 				BaseDTO baseDTO = loginService.forgotPassword(loginDTO);
 				if(Validation.validateForSystemFailureStatus(baseDTO)){
+					model.addObject("error", baseDTO.getMessage());
+				}
+				else if(Validation.validateForBusinessFailureStatus(baseDTO)) {
 					model.addObject("error", ApplicationConstant.SYSTEM_FAILURE);
 				}
 				else{

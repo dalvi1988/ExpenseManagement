@@ -59,6 +59,7 @@ public class ExpenseCategoryController {
 		}
 		return model;
 	}
+	
 	@RequestMapping(value="/addExpenseCategory", method=RequestMethod.POST)
 	public @ResponseBody ExpenseCategoryDTO addExpenseCategory(@RequestBody ExpenseCategoryDTO receivedCategoryDTO){
 		ExpenseCategoryDTO toBeSentCategoryDTO=null;

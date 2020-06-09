@@ -85,6 +85,7 @@
            scrollModel: {
                autoFit: true
            },
+           height: '70%',
            filterModel: {type: 'local', on: true, mode: "AND", header: true },
            numberCell: { show: false },
            title: "<b>Processed By Me Expense Voucher</b>",                        

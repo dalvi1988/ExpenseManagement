@@ -10,5 +10,8 @@ public interface IExpenseCategoryDAO {
 	public ExpenseCategoryJPA add(ExpenseCategoryJPA department);
 
 
-	public List<ExpenseCategoryJPA> findExpenseCategoryByCompany(ExpenseCategoryDTO expenseCategoryDTO);
+	public List<ExpenseCategoryJPA> getAllActiveExpenseCategoryByCompany(ExpenseCategoryDTO expenseCategoryDTO);
+
+
+	List<ExpenseCategoryJPA> getAllExpenseCategoryByCompany(ExpenseCategoryDTO expenseCategoryDTO);
 }

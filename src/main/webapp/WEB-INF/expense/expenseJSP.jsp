@@ -172,8 +172,6 @@ $(function () {
 	    	//resetDate();
 	    }
 	});
-	$( "#startDate" ).datepicker( "setDate", "Now" );
-	$( "#endDate" ).datepicker( "setDate", "Now" );
 	
 	var dateEditor = function (ui) {
 	    var $inp = ui.$cell.find("input"),
@@ -218,13 +216,13 @@ $(function () {
 	}
 	
 	function validateComponent(){
+		debugger;
 		if($grid.pqGrid( "option" , "dataModel.data" ).length == 0){
 			$("#dialog").text("Empty voucher not allowed.");
 			$("#dialog").dialog();
 			return false;
 		}
-		
-		if($("#startDate").val() ==""){
+		else if($("#startDate").val() ==""){
 			$("#dialog").text("Start Date can not be empty.");
 			$("#dialog").dialog();
 			return false;
@@ -237,6 +235,16 @@ $(function () {
 			$("#dialog").text("Purpose should be more than 4 character");
 			$("#dialog").dialog();
 			return false;
+		}
+		else if($("input[name='expenseType']:checked").val()=="EventExpense" && $('#eventId').val()==-1){
+   			$("#dialog").text("Please select event for which you filling expense.");
+			$("#dialog").dialog();
+	    	return false;
+	   	}
+		else if($("input[name='isAdvance']:checked").val()=="on" && $('#advanceSelect').val()== -1){
+ 			$("#dialog").text("Please select advance for which you settling expense.");
+ 			$("#dialog").dialog();
+	 		return false;
 		}
 		else{
 			return true;
@@ -293,7 +301,7 @@ $(function () {
             
             $("#data").val(JSON.stringify(changes));
             $("#voucherStatusId").val(command);
-            
+            $grid.pqGrid( "disable" );
             $.ajax( { 
               	//context: $grid,
           	    url: "saveExpense", 
@@ -307,6 +315,10 @@ $(function () {
           	    	if(data.serviceStatus=="SUCCESS"){
           	    		if(command== 2){
           	    			$grid.pqGrid( "disable" );
+          	    		}
+          	    		else{
+          	    			$(".viewDraftExpense").click();
+          	    			//$('#expenseHeaderId').val(data.expenseHeaderId) ;
           	    		}
           	    		$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
@@ -325,11 +337,12 @@ $(function () {
     var obj = {
         wrap: false,
         hwrap: false,
-       // resizable: true,
+        //resizable: true,
         rowBorders: true,
         numberCell: { show: false },
         track : true, //to turn on the track changes.
         trackModel: { on: true },
+        height: '85%',
         flexHeight: true,
         toolbar: {
             items: [
@@ -374,6 +387,7 @@ $(function () {
          scrollModel: {
             autoFit: true
         },
+        
         editModel: {
             saveKey: $.ui.keyCode.ENTER
         },
@@ -581,7 +595,11 @@ $(function () {
             			 else{
             				 filename =ui.rowData.fileName;
             			 }
-            			 return "<div><a href="+fullPath+">"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
+            			 if( $('#expenseHeaderId').val() =="")
+            			    return "<div><a>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
+            			 else
+               			    return "<div><a href='getFile?fileName="+filename+"&voucherId="+$('#expenseHeaderId').val()+"'>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
+               			   
             		 }  
 	            }  
             },
@@ -659,7 +677,7 @@ $(function () {
            var rowIndx = obj.rowIndx;
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
 
-           var ans = window.confirm("Are you sure to delete row No " + (rowIndx + 1) + "?");
+           var ans = window.confirm("Are you sure to delete selected item.");
 
            if (ans) {
                $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true, complete: function () {
@@ -725,7 +743,7 @@ $(function () {
 	   	 }
 	   	 else if($("input[name='expenseType']:checked").val()=="EventExpense"){
 	   		 if($('#eventId').val()==-1){
-	   			$("#dialog").text("Please first select event for which you filling expense.");
+	   			$("#dialog").text("Please select event for which you filling expense.");
 				$("#dialog").dialog();
 				$("input[name='isAdvance']:checkbox").prop('checked', false);
 		    	$(".advanceTab").hide();
@@ -781,6 +799,8 @@ $(function () {
 	    $grid = $("#grid_editing").pqGrid(obj);
     }
     else{
+    	$( "#startDate" ).datepicker( "setDate", "Now" );
+    	$( "#endDate" ).datepicker( "setDate", "Now" );
     	$grid = $("#grid_editing").pqGrid(obj);
     	addNewRow(); 
     }

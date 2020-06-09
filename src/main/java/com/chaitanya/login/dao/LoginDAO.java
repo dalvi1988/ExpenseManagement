@@ -6,12 +6,15 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.LoginJPA;
+import com.chaitanya.utility.Validation;
 
 @Repository
 @EnableTransactionManagement
@@ -51,6 +54,15 @@ public class LoginDAO implements ILoginDAO {
 	    int res = qry.executeUpdate();
 		return res;
 		
+	}
+	
+	@Override
+	public LoginJPA getLoginDetailByEmployeeId(EmployeeJPA employeeJPA) {
+		Session session=sessionFactory.getCurrentSession();
+		LoginJPA loginJPA= (LoginJPA) session.createCriteria(LoginJPA.class)
+										.add(Restrictions.eq("employeeJPA.employeeId", employeeJPA.getEmployeeId()))
+										.uniqueResult();
+		return loginJPA;
 	}
 
 }

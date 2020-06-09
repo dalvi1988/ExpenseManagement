@@ -12,4 +12,6 @@ public interface IExpenseCategoryService {
 
 	List<ExpenseCategoryDTO> findExpenseCategoryByCompany(BaseDTO baseDTO);
 
+	List<ExpenseCategoryDTO> getAllActiveExpenseCategoryByCompany(BaseDTO baseDTO);
+
 }

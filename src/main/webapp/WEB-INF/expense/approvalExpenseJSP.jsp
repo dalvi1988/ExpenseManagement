@@ -194,8 +194,8 @@
 		           { title: "Amount", align: "center", width: 85, dataIndx: "amount", dataType: "float"},
 		           { title: "Receipt", width: 200, dataIndx: "fileName", 
 		        	   render: function(ui){
-		        		   return "<a href='https://docs.google.com/viewer?embedded=true&url=getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
-		        		   //return "<a href='getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        		   //return "<a href='https://docs.google.com/viewer?embedded=true&url=getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        		   return "<a href='getFile?fileName="+ui.cellData+"&voucherId="+$('#expenseHeaderId').val()+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
 		        	   }
 		        	   
 		           }

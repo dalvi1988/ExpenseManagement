@@ -157,20 +157,22 @@ public class ExpenseService implements IExpenseService{
 
 	private void addUpdateDeleteAttachment(ExpenseHeaderDTO expenseHeaderDTO,Long expenseHeaderId) throws Exception {
 		String drive= environment.getProperty("fileDrive");
-		String filePath=drive+"\\"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"\\"+expenseHeaderId;
-		Files.createDirectories(Paths.get(filePath));
+		
 		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
 			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
 //				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
 //				expenseDetailDTO.getReceipt().transferTo(convFile);
-				
-				Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"\\"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+				String filePath=drive+"/"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+expenseHeaderId;
+				Files.createDirectories(Paths.get(filePath));		
+				Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"/"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
 				//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
 			}
 		}
 		
 		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
 			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
+				String filePath=drive+"/"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+expenseHeaderId;
+				Files.createDirectories(Paths.get(filePath));
 				Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"\\"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
 				//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
 			}

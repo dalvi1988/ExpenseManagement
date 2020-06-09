@@ -31,8 +31,10 @@ import com.chaitanya.login.convertor.LoginConvertor;
 import com.chaitanya.login.dao.ILoginDAO;
 import com.chaitanya.login.model.LoginDTO;
 import com.chaitanya.login.model.LoginUserDetails;
+import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.MailServiceImpl;
 import com.chaitanya.utility.Utility;
+import com.chaitanya.utility.Validation;
 
 @Service("loginDetailsService")
 public class LoginService implements UserDetailsService,ILoginService {
@@ -96,15 +98,21 @@ public class LoginService implements UserDetailsService,ILoginService {
 		
 		LoginDTO loginDTO=(LoginDTO) baseDTO;
 		EmployeeJPA employeeJPA = employeeDAO.findEmployeeByEmailId(loginDTO.getEmployeeDTO());
-		EmployeeDTO employeeDTO= EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
-		
-		String password= Utility.SessionIdentifierGenerator.nextSessionId();
-		int result = loginDAO.updatePassword(employeeDTO,passwordEncoder.encode(password));
-		if(result == 1){
-			mailService.sendAutoGeneratePassword(employeeDTO,password);
-			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);;
+		if(Validation.validateForNullObject(employeeJPA)) {
+			EmployeeDTO employeeDTO= EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
+			
+			String password= Utility.SessionIdentifierGenerator.nextSessionId();
+			int result = loginDAO.updatePassword(employeeDTO,passwordEncoder.encode(password));
+			if(result == 1){
+				mailService.sendAutoGeneratePassword(employeeDTO,password);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);;
+			}
+			else{
+				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			}
 		}
-		else{
+		else {
+			baseDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_EMAIL));
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 		}
 		

@@ -109,7 +109,7 @@ public class ExpenseController {
 		
 		ExpenseCategoryDTO expenseCategoryDTO=new ExpenseCategoryDTO();
 		expenseCategoryDTO.setCompanyDTO(user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO());
-		expenseCategoryDTOList = expenseCategoryService.findExpenseCategoryByCompany(expenseCategoryDTO);
+		expenseCategoryDTOList = expenseCategoryService.getAllActiveExpenseCategoryByCompany(expenseCategoryDTO);
 		
 		model.addObject("expenseDetailList", mapper.writeValueAsString(expenseHeaderDTO.getAddedExpenseDetailsDTOList()));
 		model.addObject("expenseCategoryList", mapper.writeValueAsString(expenseCategoryDTOList));
@@ -436,10 +436,10 @@ public class ExpenseController {
 	        response.setHeader(headerKey, headerValue);
 	        LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	        String drive= environment.getProperty("fileDrive");
-			String filePath=drive+"\\"+user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"\\"+voucherId;
+			String filePath=drive+"/"+user.getLoginDTO().getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+voucherId;
 	      // get your file as InputStream
 	      //InputStream	inputStream =FTPUtility.retriveFile("Attachment/"+voucherId+"/"+fileName);
-	        InputStream inputStream = new FileInputStream(filePath+"\\"+fileName);
+	        InputStream inputStream = new FileInputStream(filePath+"/"+fileName);
 	      // copy it to response's OutputStream
 	      IOUtils.copy(inputStream, response.getOutputStream());
 	      response.flushBuffer();
