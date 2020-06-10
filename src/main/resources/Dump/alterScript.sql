@@ -12,3 +12,8 @@ ADD CONSTRAINT `branch_id_dept`
   REFERENCES `branch_details` (`branch_id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+
+  
+  ALTER TABLE `test`.`department_details` 
+DROP INDEX `dept_code_UNIQUE` ,
+DROP INDEX `dept_name_UNIQUE` ;
