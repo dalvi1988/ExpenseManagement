@@ -2,7 +2,9 @@ package com.chaitanya.department.convertor;
 
 import java.text.ParseException;
 
+import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.department.model.DepartmentDTO;
+import com.chaitanya.jpa.BranchJPA;
 import com.chaitanya.jpa.DepartmentJPA;
 import com.chaitanya.utility.Convertor;
 import com.chaitanya.utility.Validation;
@@ -16,6 +18,12 @@ public class DepartmentConvertor {
 			departmentDTO.setDepartmentId(departmentJPA.getDepartmentId());
 			departmentDTO.setDepartmentName(departmentJPA.getDeptName());
 			departmentDTO.setDepartmentCode(departmentJPA.getDeptCode());
+			if(Validation.validateForNullObject(departmentJPA.getBranchJPA())){
+				BranchDTO branchDTO= new BranchDTO();
+				branchDTO.setBranchId(departmentJPA.getBranchJPA().getBranchId());
+				//branchDTO.setBranchName(employeeJPA.getBranchJPA().getBranchName());
+				departmentDTO.setBranchDTO(branchDTO);
+			}
 			
 			if(Validation.validateForNullObject(departmentJPA.getCreatedBy())){
 				departmentDTO.setCreatedBy(departmentJPA.getCreatedBy());
@@ -38,28 +46,35 @@ public class DepartmentConvertor {
 	
 	public static DepartmentJPA setDepartmentDTOToJPA(DepartmentDTO departmentDTO) throws ParseException
 	{
-		DepartmentJPA department=null;
+		DepartmentJPA departmentJPA=null;
 		if(Validation.validateForNullObject(departmentDTO)){
-			department=new DepartmentJPA();
+			departmentJPA=new DepartmentJPA();
 			if(Validation.validateForNullObject(departmentDTO.getDepartmentId())){
-				department.setDepartmentId(departmentDTO.getDepartmentId());
+				departmentJPA.setDepartmentId(departmentDTO.getDepartmentId());
+			}
+
+			departmentJPA.setDeptCode(departmentDTO.getDepartmentCode());
+			departmentJPA.setDeptName(departmentDTO.getDepartmentName());
+			departmentJPA.setStatus(Convertor.convertStatusToChar(departmentDTO.getStatus()));
+			
+			if(Validation.validateForNullObject(departmentDTO.getBranchDTO())){
+				BranchJPA branchDetails=new BranchJPA();
+				branchDetails.setBranchId(departmentDTO.getBranchDTO().getBranchId());
+				departmentJPA.setBranchJPA(branchDetails);
 			}
 			if(Validation.validateForZero(departmentDTO.getModifiedBy())){
-				department.setModifiedBy(departmentDTO.getModifiedBy());
+				departmentJPA.setModifiedBy(departmentDTO.getModifiedBy());
 			}
 			if(Validation.validateForZero(departmentDTO.getCreatedBy())){
-				department.setCreatedBy(departmentDTO.getCreatedBy());
+				departmentJPA.setCreatedBy(departmentDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(departmentDTO.getCreatedDate())){
-				department.setCreatedDate(Convertor.stringToCalendar(departmentDTO.getCreatedDate(),Convertor.dateFormatWithTime));
+				departmentJPA.setCreatedDate(Convertor.stringToCalendar(departmentDTO.getCreatedDate(),Convertor.dateFormatWithTime));
 			}
 			if(Validation.validateForNullObject(departmentDTO.getModifiedDate())){
-				department.setModifiedDate(Convertor.stringToCalendar(departmentDTO.getModifiedDate(),Convertor.dateFormatWithTime));
+				departmentJPA.setModifiedDate(Convertor.stringToCalendar(departmentDTO.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
-			department.setDeptCode(departmentDTO.getDepartmentCode());
-			department.setDeptName(departmentDTO.getDepartmentName());
-			department.setStatus(Convertor.convertStatusToChar(departmentDTO.getStatus()));
 		}
-		return department;
+		return departmentJPA;
 	}
 }

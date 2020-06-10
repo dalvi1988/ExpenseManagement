@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -21,6 +23,10 @@ public class DepartmentJPA {
 	
 	@Column(name="dept_code",unique=true,nullable=false)
 	private String deptCode;
+	
+	@OneToOne
+	@JoinColumn(name="branch_id")
+	private BranchJPA branchJPA;
 	
 	@Column(name="created_by")
 	private Long createdBy;
@@ -51,6 +57,12 @@ public class DepartmentJPA {
 		this.deptCode = departmentCode;
 	}
 
+	public BranchJPA getBranchJPA() {
+		return branchJPA;
+	}
+	public void setBranchJPA(BranchJPA branchJPA) {
+		this.branchJPA = branchJPA;
+	}
 	public Calendar getCreatedDate() {
 		return createdDate;
 	}

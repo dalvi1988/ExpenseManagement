@@ -56,7 +56,9 @@ public class DepartmentHeadController {
 			EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
 			if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
 				employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
-				departmentDTOList=departmentService.findAll();
+				DepartmentDTO departmentDTO= new DepartmentDTO();
+				departmentDTO.setBranchDTO(employeeDTO.getBranchDTO());
+				departmentDTOList=departmentService.findAllDepartmentUnderCompany(departmentDTO);
 			}
 			
 			model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));

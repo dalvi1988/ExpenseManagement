@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -39,6 +41,8 @@ public class EmployeeController {
 	@Autowired
 	IDepartmentService departmentService;
 	
+	private Logger logger= LoggerFactory.getLogger(EmployeeController.class);
+	
 	@RequestMapping(value="employee",method=RequestMethod.GET)
 	public ModelAndView getAllEmployee() throws JsonProcessingException{
 		ModelAndView model=new ModelAndView();
@@ -57,7 +61,9 @@ public class EmployeeController {
 				if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
 					employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
 					branchDTOList=branchService.findAllBranchUnderCompany(employeeDTO.getBranchDTO());
-					departmentDTOList=departmentService.findAll();
+					DepartmentDTO departmentDTO= new DepartmentDTO();
+					departmentDTO.setBranchDTO(employeeDTO.getBranchDTO());
+					departmentDTOList=departmentService.findAllDepartmentUnderCompany(departmentDTO);
 				}
 				
 				model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
@@ -67,6 +73,7 @@ public class EmployeeController {
 			model.setViewName("master/employeeJSP");
 		}
 		catch(Exception e){
+			logger.error("EmployeeController: getAllEmployee",e);
 			model.setViewName("others/505");
 		}
 		return model;

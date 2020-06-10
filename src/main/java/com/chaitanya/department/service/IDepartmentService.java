@@ -9,6 +9,6 @@ public interface IDepartmentService {
 
 	BaseDTO addDepartment(BaseDTO baseDTO);
 
-	List<DepartmentDTO> findAll();
+	List<DepartmentDTO> findAllDepartmentUnderCompany(BaseDTO baseDTO);
 
 }

@@ -2,9 +2,10 @@
 <html lang="en">
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <head>
 
-    <title>Department Master</title>
+    <title>Department/Cost Center/Project Master</title>
     
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
@@ -12,7 +13,9 @@
 
    <script type="text/javascript">
    //var data = [{ "departmentId": 1, "departmentCode": "Exxon Mobil", "departmentName": "339938.0" }];
+   var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;
    var data= ${departmentList};
+   var branchList= ${branchList};
    
    $(function () {
 
@@ -221,7 +224,7 @@
            validation: {
                icon: 'ui-icon-info'
            },
-           title: "<h1><b>Department Master</b></h1>",
+           title: "<h1><b>Department/Cost Center/Project Master</b></h1>",
 
            colModel: [
                   { title: "Department Id", dataType: "integer", dataIndx: "departmentId",hidden:true, editable: false, width: 80 },
@@ -238,6 +241,33 @@
                           { type: 'minLen', value: 1, msg: "Required" },
                           { type: 'maxLen', value: 40, msg: "length should be <= 40" }
                       ]
+                  },
+                  { title: "Branch", dataIndx: "branchId", width: 150,
+                	  filter: { type: "select",
+          		        condition: 'equal',
+          		        prepend: { '': '--All--' },
+          		        listeners: ['change'],
+          		        valueIndx: "branchId",
+          		        labelIndx: "branchName",
+          		        options: branchList,
+          		        
+          		      },
+          		      editor: {                    
+                          type: "select",
+                          valueIndx: "branchId",
+                          labelIndx: "branchName",
+                          options: branchList,
+                      } ,
+                       render: function (ui) {
+        			       var options = ui.column.editor.options,
+        			           cellData = ui.cellData;
+	       			       for (var i = 0; i < options.length; i++) {
+	       			           var option = options[i];
+	       			           if (option.branchId == ui.rowData.branchId) {
+	       			               return option.branchName;
+	       			           } 
+	       			       }
+        			   }   
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
@@ -319,6 +349,10 @@
                editRow(rowIndx, $grid);
            }
        }); 
+       $grid.pqGrid( "filter", {
+		    oper: 'add', 
+		    data: [{dataIndx: 'branchId', value:logerBranchId}] 
+		});
 		$("#grid_editing").pqGrid("refresh")
    });
 

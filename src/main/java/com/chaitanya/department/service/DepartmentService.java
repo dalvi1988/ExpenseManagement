@@ -15,6 +15,7 @@ import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.department.convertor.DepartmentConvertor;
 import com.chaitanya.department.dao.IDepartmentDAO;
 import com.chaitanya.department.model.DepartmentDTO;
+import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.DepartmentJPA;
 import com.chaitanya.utility.Validation;
 
@@ -26,12 +27,18 @@ public class DepartmentService implements IDepartmentService {
 	
 	private Logger logger= LoggerFactory.getLogger(DepartmentService.class);
 
+	private void validateDepartmentDTO(BaseDTO baseDTO) {
+		if( baseDTO == null  || !(baseDTO instanceof DepartmentDTO)){
+			throw new IllegalArgumentException("Object expected of DepartmentDTO type.");
+		}
+			
+	}
+	
 	@Override
 	public BaseDTO addDepartment(BaseDTO baseDTO) {
 		logger.debug("DepartmentService: addDepartment-Start");
-		if(validateDepartmentMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of DepartmentMasterDTO type.");
-		}
+		validateDepartmentDTO(baseDTO);
+		
 		try{
 			DepartmentJPA department=DepartmentConvertor.setDepartmentDTOToJPA((DepartmentDTO)baseDTO);
 			if (Validation.validateForNullObject(department)) {
@@ -59,24 +66,26 @@ public class DepartmentService implements IDepartmentService {
 	}
 
 	@Override
-	public List<DepartmentDTO> findAll() {
+	public List<DepartmentDTO> findAllDepartmentUnderCompany(BaseDTO baseDTO) {
+		logger.debug("DepartmentService: findAllDepartmentUnderCompany-Start");
+		validateDepartmentDTO(baseDTO);
+		DepartmentDTO departmentDTO= (DepartmentDTO)baseDTO;
 		List<DepartmentDTO> departmentDTOList = null;
-		List<DepartmentJPA> departmentList = departmentDAO.findAll();
+		
+		List<DepartmentJPA> departmentList = departmentDAO.findAllDepartmentUnderCompany(departmentDTO.getBranchDTO().getCompanyDTO());
 		if (Validation.validateCollectionForNullSize(departmentList)) {
 			departmentDTOList = new ArrayList<DepartmentDTO>();
 			for (Iterator<DepartmentJPA> iterator = departmentList.iterator(); iterator
 					.hasNext();) {
 				DepartmentJPA department = iterator.next();
-				DepartmentDTO departmentDTO = DepartmentConvertor
+				DepartmentDTO deptDTO = DepartmentConvertor
 						.setDepartmentJPAToDTO(department);
-				departmentDTOList.add(departmentDTO);
+				departmentDTOList.add(deptDTO);
 			}
 		}
+		logger.debug("DepartmentService: findAllDepartmentUnderCompany-End");
 		return departmentDTOList;
-	}
-	private boolean validateDepartmentMasterDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof DepartmentDTO);
-	}
+	}	
 	
 	
 }

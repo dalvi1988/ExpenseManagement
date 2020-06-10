@@ -16,8 +16,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.Command;
+import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.branch.service.IBranchService;
 import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.department.service.IDepartmentService;
+import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
@@ -33,14 +36,21 @@ public class DepartmentController {
 	@Qualifier("departmentService")
 	private IDepartmentService departmentService;
 	
+	@Autowired
+	IBranchService branchService;
 	
 	@RequestMapping(value="/department",method=RequestMethod.GET)
 	public ModelAndView getDepartment() throws JsonGenerationException, JsonMappingException, IOException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
-		List<DepartmentDTO> departmentDTOList=null;
-		departmentDTOList=departmentService.findAll();
+		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
+		DepartmentDTO departmentDTO= new DepartmentDTO();
+		departmentDTO.setBranchDTO(employeeDTO.getBranchDTO());
+		List<DepartmentDTO> departmentDTOList=departmentService.findAllDepartmentUnderCompany(departmentDTO);
+		List<BranchDTO> branchDTOList=branchService.findAllBranchUnderCompany(employeeDTO.getBranchDTO());
 		model.addObject("departmentList", mapper.writeValueAsString(departmentDTOList));
+		model.addObject("branchList", mapper.writeValueAsString(branchDTOList));
 		model.setViewName("master/departmentJSP");
 		return model;
 	}

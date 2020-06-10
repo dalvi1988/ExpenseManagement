@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.branch.model.BranchDTO;
 
 
 public class DepartmentDTO extends BaseDTO {
@@ -20,7 +21,10 @@ public class DepartmentDTO extends BaseDTO {
 	@Size(min=3,max=30,message="Department lenght should be between 3 to 30 character")
 	private String departmentCode;
 	
+	private BranchDTO branchDTO;
 
+	private Long branchId;
+	
 	public String getDepartmentName() {
 		return departmentName;
 	}
@@ -36,6 +40,24 @@ public class DepartmentDTO extends BaseDTO {
 	public void setDepartmentCode(String depatmentCode) {
 		this.departmentCode = depatmentCode;
 	}
+
+	public BranchDTO getBranchDTO() {
+		return branchDTO;
+	}
+
+	public void setBranchDTO(BranchDTO branchDTO) {
+		this.branchDTO = branchDTO;
+		this.branchId=branchDTO.getBranchId();
+	}
+	
+	public Long getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(Long branchId) {
+		this.branchId = branchId;
+	}
+
 
 	public Long getDepartmentId() {
 		return departmentId;

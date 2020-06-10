@@ -729,7 +729,8 @@ $(function () {
     	$('#advanceSelect').append($('<option>', {
     		    value: "-1",
     		    text: "--Select Advance--",
-    	}));
+    	}
+    	));
     	
 	   	 if($("input[name='expenseType']:checked").val()=="EmployeeExpense"){
 	   		for(var i=0;i<advanceList.length;i++){

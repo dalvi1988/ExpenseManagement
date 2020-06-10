@@ -65,7 +65,7 @@
             wrap: false,
             hwrap: false,            
             numberCell: { show: false },
-            title: "<b>Branch Department Head Master</b>",                        
+            title: "<b>Branch Department/Cost Center/Project Master Head Master</b>",                        
             resizable: true,
             freezeCols: 1,            
             selectionModel: { type: 'cell' },

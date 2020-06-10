@@ -182,6 +182,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="#" class="employee"><i class="fa fa-circle-o"></i> Employee Master</a></li>
+            <li><a href="#" class="department"><i class="fa fa-circle-o"></i> Department Master</a></li>
             <li><a href="#" class="departmentHead"><i class="fa fa-circle-o"></i> Department Head Master</a></li>
             <li><a href="#" class="branch"><i class="fa fa-circle-o"></i> Branch Master</a></li>
             <li><a href="#" class="event"><i class="fa fa-circle-o"></i> Event Master</a></li>
@@ -250,7 +251,6 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="#" class="company"><i class="fa fa-circle-o"></i> Company Master</a></li>
-            <li><a href="#" class="department"><i class="fa fa-circle-o"></i> Department Master</a></li>
           </ul>
         </li>
         </sec:authorize>

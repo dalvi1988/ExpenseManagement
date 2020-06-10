@@ -64,7 +64,9 @@ public class ApprovalFlowController {
 				if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
 					employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
 					Utility.addLevelsToEmployeeDTO(employeeDTOList);
-					departmentDTOList=departmentService.findAll();
+					DepartmentDTO departmentDTO= new DepartmentDTO();
+					departmentDTO.setBranchDTO(employeeDTO.getBranchDTO());
+					departmentDTOList=departmentService.findAllDepartmentUnderCompany(departmentDTO);
 				}
 				
 				model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
