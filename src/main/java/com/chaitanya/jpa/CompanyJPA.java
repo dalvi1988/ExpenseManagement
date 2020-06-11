@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -14,9 +15,9 @@ import javax.persistence.Table;
 @Table(name="company_details")
 public class CompanyJPA{
 	
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="company_id")
-	private Integer companyId;
+	private Long companyId;
 	
 	@Column(name="company_code",unique=true,nullable=false)
 	private String companyCode;
@@ -42,10 +43,10 @@ public class CompanyJPA{
 	@Column(name="status",nullable=false)
 	private Character status;
 	
-	public Integer getCompanyId() {
+	public Long getCompanyId() {
 		return companyId;
 	}
-	public void setCompanyId(Integer companyId) {
+	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
 	public String getCompanyCode() {

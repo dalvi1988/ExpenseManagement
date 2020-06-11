@@ -17,7 +17,7 @@ public class AdvanceDTO extends BaseDTO {
 	private String purpose;
 	private Double amount;
 	private Boolean isEvent;
-	private Integer eventId;
+	private Long eventId;
 	private String rejectionComment;
 	
 	@JsonProperty(access = Access.READ_ONLY)
@@ -80,11 +80,11 @@ public class AdvanceDTO extends BaseDTO {
 	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
-	public Integer getEventId() {
+	public Long getEventId() {
 		return eventId;
 	}
 
-	public void setEventId(Integer eventId) {
+	public void setEventId(Long eventId) {
 		this.eventId = eventId;
 		EventDTO eventDTO=new EventDTO();
 		eventDTO.setEventId(eventId);

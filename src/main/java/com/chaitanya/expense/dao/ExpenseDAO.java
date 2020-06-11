@@ -239,7 +239,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				query.registerParameter(
 			        "module", String.class, ParameterMode.IN).bindValue("EMPLOYEE_EXPENSE");
 				query.registerParameter(
-				        "companyId", Integer.class, ParameterMode.IN).bindValue(expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId());
+				        "companyId", Long.class, ParameterMode.IN).bindValue(expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId());
 				query.registerParameter(
 			        "voucherNumber", String.class, ParameterMode.OUT);
 

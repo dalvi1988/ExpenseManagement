@@ -47,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 		.csrf().disable()
 		.exceptionHandling().accessDeniedPage("/others/403");
+		
 	}
 	
 	@Bean
@@ -54,5 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder;
 	}
+
 	
 }

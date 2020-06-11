@@ -12,7 +12,6 @@
  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
  	
- 	
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
@@ -62,8 +61,10 @@
       </div>
         
        <div class="col-xs-4">
+       
          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
        </div>
+       
     </form>
 
     <a href="#" onclick="forgotPassword()">I forgot my password</a><br>
@@ -124,6 +125,7 @@
 	  $(".register-box-body").hide();
 	  
   }
+  
 </script>
 </body>
 </html>

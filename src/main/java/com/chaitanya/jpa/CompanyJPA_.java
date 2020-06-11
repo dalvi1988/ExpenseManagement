@@ -6,10 +6,10 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2017-06-30T11:40:52.938+0530")
+@Generated(value="Dali", date="2020-06-11T18:59:46.082+0530")
 @StaticMetamodel(CompanyJPA.class)
 public class CompanyJPA_ {
-	public static volatile SingularAttribute<CompanyJPA, Integer> companyId;
+	public static volatile SingularAttribute<CompanyJPA, Long> companyId;
 	public static volatile SingularAttribute<CompanyJPA, String> companyCode;
 	public static volatile SingularAttribute<CompanyJPA, String> companyName;
 	public static volatile SetAttribute<CompanyJPA, BranchJPA> branchJPA;

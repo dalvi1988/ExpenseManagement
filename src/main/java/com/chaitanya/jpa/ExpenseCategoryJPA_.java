@@ -5,7 +5,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2020-04-15T21:06:37.035+0530")
+@Generated(value="Dali", date="2020-06-11T18:04:14.825+0530")
 @StaticMetamodel(ExpenseCategoryJPA.class)
 public class ExpenseCategoryJPA_ {
 	public static volatile SingularAttribute<ExpenseCategoryJPA, Long> expCategoryId;

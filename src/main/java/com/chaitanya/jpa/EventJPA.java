@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,9 +16,9 @@ import javax.persistence.Table;
 @Table(name="event_details")
 public class EventJPA {
 	
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="event_id")
-	private Integer eventId;
+	private Long eventId;
 	
 	@Column(name="event_code",unique=true,nullable=false)
 	private String eventCode;
@@ -44,10 +45,10 @@ public class EventJPA {
 	@Column(name="status",nullable=false)
 	private Character status;
 	
-	public Integer getEventId() {
+	public Long getEventId() {
 		return eventId;
 	}
-	public void setEventId(Integer eventId) {
+	public void setEventId(Long eventId) {
 		this.eventId = eventId;
 	}
 	public String getEventCode() {

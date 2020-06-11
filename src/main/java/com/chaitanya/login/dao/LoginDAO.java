@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.LoginJPA;
-import com.chaitanya.utility.Validation;
 
 @Repository
 @EnableTransactionManagement

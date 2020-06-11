@@ -32,7 +32,7 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	@JsonIdentityReference(alwaysAsId=true)
 	private VoucherStatusDTO voucherStatusDTO;
 
-	private Integer eventId;
+	private Long eventId;
 	
 	@JsonProperty(access = Access.READ_ONLY)
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="eventName")
@@ -203,11 +203,11 @@ public class ExpenseHeaderDTO extends BaseDTO{
 		this.expenseType = expenseType;
 	}
 
-	public Integer getEventId() {
+	public Long getEventId() {
 		return eventId;
 	}
 
-	public void setEventId(Integer eventId) {
+	public void setEventId(Long eventId) {
 		this.eventId = eventId;
 		EventDTO eventDTO= new EventDTO();
 		eventDTO.setEventId(eventId);

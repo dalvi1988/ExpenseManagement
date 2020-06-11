@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -18,7 +19,7 @@ import javax.persistence.Table;
 @Table(name="login_details")
 public class LoginJPA {
 	
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="login_id")
 	private Long loginId;
 	
@@ -33,7 +34,7 @@ public class LoginJPA {
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "login_id", referencedColumnName = "login_id")
-	private Set<UserRoleJPA> userRole = new HashSet<UserRoleJPA>(0);
+	private Set<UserRoleJPA> userRole = new HashSet<UserRoleJPA>();
 	
 	public Long getLoginId() {
 		return loginId;

@@ -6,7 +6,7 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2017-06-19T10:53:59.412+0530")
+@Generated(value="Dali", date="2020-06-11T18:04:14.642+0530")
 @StaticMetamodel(AdvanceJPA.class)
 public class AdvanceJPA_ {
 	public static volatile SingularAttribute<AdvanceJPA, Long> advanceDetailId;

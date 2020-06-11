@@ -14,6 +14,7 @@
  	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+ 
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
@@ -171,7 +172,7 @@
           </ul>
         </li>
         
-        <sec:authorize access="hasAnyRole('ADMIN_ROLE','SUPER_ADMIN')" var="isAuthorizeAny">
+        <sec:authorize access="hasAnyAuthority('ADMIN_ROLE','SUPER_ADMIN')" var="isAuthorizeAny">
         <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i>
@@ -207,7 +208,7 @@
           </a>
         </li>
         
-        <sec:authorize access="hasAnyRole('ADMIN_ROLE')" var="isAuthorizeAny">
+        <sec:authorize access="hasAnyAuthority('ACCOUNTING_ROLE')" var="isAuthorizeAny">
         <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i>
@@ -239,7 +240,7 @@
         </li>
         </sec:authorize>
         
-        <sec:authorize access="hasAnyRole('SUPER_ADMIN')" var="isAuthorizeAny">
+        <sec:authorize access="hasAnyAuthority('SUPER_ADMIN')" var="isAuthorizeAny">
          <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i>

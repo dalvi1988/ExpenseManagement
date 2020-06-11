@@ -238,7 +238,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 				query.registerParameter(
 			        "module", String.class, ParameterMode.IN).bindValue("ADVANCE_EXPENSE");
 				query.registerParameter(
-				        "companyId", Integer.class, ParameterMode.IN).bindValue(advanceDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId());
+				        "companyId", Long.class, ParameterMode.IN).bindValue(advanceDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId());
 				query.registerParameter(
 			        "voucherNumber", String.class, ParameterMode.OUT);
 
