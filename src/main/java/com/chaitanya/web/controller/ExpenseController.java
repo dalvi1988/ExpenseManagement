@@ -553,4 +553,29 @@ public class ExpenseController {
 		}
 		return null;
 	}
+	
+	@RequestMapping(value="/downloadLog", method = RequestMethod.GET)
+	public void downloadLog(
+	    HttpServletResponse response) {
+	    try {
+	    	response.setContentType("text/plain");
+	    	// set headers for the response
+	        String headerKey = "Content-Disposition";
+	        String fileName="error.log";
+	        String headerValue = String.format("attachment; filename=\"%s\"",
+	        		fileName);
+	        response.setHeader(headerKey, headerValue);
+	        String drive= environment.getProperty("fileDrive");
+	      // get your file as InputStream
+	      //InputStream	inputStream =FTPUtility.retriveFile("Attachment/"+voucherId+"/"+fileName);
+	        InputStream inputStream = new FileInputStream(drive+"/error.log");
+	      // copy it to response's OutputStream
+	      IOUtils.copy(inputStream, response.getOutputStream());
+	      response.flushBuffer();
+	    } catch (Exception ex) {
+	      logger.error("Error writing file to output stream. Filename was '{}'", ex);
+	      throw new RuntimeException("IOError writing file to output stream");
+	    }
+
+	}
 }

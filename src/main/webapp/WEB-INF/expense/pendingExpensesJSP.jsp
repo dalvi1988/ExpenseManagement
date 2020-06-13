@@ -18,12 +18,12 @@
        var colM = [
 	       { title: "Purpose", width: 100, dataIndx: "purpose"},
 	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
-	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
-		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
-	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center", render: amountRenderer},
-	       { title: "Previously Approved By", minWidth: 120, dataIndx: "processedByEmployeeDTO" },
+	       { title: "Start date", minWidth: 70, dataIndx: "startDate", dataType:"String"},
+		   { title: "End Date", minWidth: 60, dataIndx: "endDate"},
+	       { title: "Total Amount", width: 60, dataIndx: "totalAmount", align: "center", render: amountRenderer},
+	       { title: "Previously Approved By", minWidth: 90, dataIndx: "processedByEmployeeDTO" },
 	       { title: "Currently Pending At", minWidth: 100, dataIndx: "pendingAtEmployeeDTO",render: voucherStatusRenderer },
-	       { title: "View Approval Flow", dataIndx: "employeeId", render: viewApprovalFlowRenderer},
+	       { title: "View Approval Flow", minWidth: 100, dataIndx: "employeeId", render: viewApprovalFlowRenderer},
 	       { title: "", dataIndx: "expenseHeaderId", hidden:true},
 		];
        //define dataModel

@@ -216,7 +216,6 @@ $(function () {
 	}
 	
 	function validateComponent(){
-		debugger;
 		if($grid.pqGrid( "option" , "dataModel.data" ).length == 0){
 			$("#dialog").text("Empty voucher not allowed.");
 			$("#dialog").dialog();

@@ -125,7 +125,7 @@ public class EmployeeService implements IEmployeeService {
 					mailService.sendAutoGeneratePassword(employeeDTO,original);
 				}
 				else {
-					LoginJPA loginJPA= loginDAO.getLoginDetailByEmployeeId(employeeJPA);
+					LoginJPA loginJPA= loginDAO.getLoginDetailByEmployeeId(employeeDTO);
 					if(!loginJPA.getUserName().equals(employeeJPA.getEmailId())){
 						String original= Utility.SessionIdentifierGenerator.nextSessionId();
 						loginJPA.setPassword(passwordEncoder.encode(original));

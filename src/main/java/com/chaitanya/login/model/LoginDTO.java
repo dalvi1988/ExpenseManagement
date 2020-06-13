@@ -7,7 +7,7 @@ public class LoginDTO extends BaseDTO{
 	
 	private static final long serialVersionUID = 1L;
 	
-	
+	private String password;
 	private EmployeeDTO employeeDTO;
 	
 	public EmployeeDTO getEmployeeDTO() {
@@ -15,5 +15,11 @@ public class LoginDTO extends BaseDTO{
 	}
 	public void setEmployeeDTO(EmployeeDTO employeeDTO) {
 		this.employeeDTO = employeeDTO;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

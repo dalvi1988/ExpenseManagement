@@ -6,4 +6,8 @@ import com.chaitanya.base.BaseDTO;
 
 public interface ILoginService {
 	BaseDTO forgotPassword(BaseDTO baseDTO) throws ParseException;
+
+	boolean validateOldPassword(BaseDTO baseDTO);
+
+	BaseDTO updatePassword(BaseDTO baseDTO);
 }
