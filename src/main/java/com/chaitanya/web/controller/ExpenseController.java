@@ -39,7 +39,10 @@ import com.chaitanya.advance.model.AdvanceDTO;
 import com.chaitanya.advance.service.IAdvanceService;
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.base.BaseDTO.ServiceStatus;
+import com.chaitanya.customException.ApprovalFlowException;
 import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.employee.service.IEmployeeService;
 import com.chaitanya.event.model.EventDTO;
 import com.chaitanya.event.service.IEventService;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
@@ -50,6 +53,7 @@ import com.chaitanya.expenseCategory.service.IExpenseCategoryService;
 import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Convertor;
+import com.chaitanya.utility.MailServiceImpl;
 import com.chaitanya.utility.Utility;
 import com.chaitanya.utility.Validation;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -73,7 +77,14 @@ public class ExpenseController {
 	private IAdvanceService advanceService;
 	
 	@Autowired
-	Environment environment;
+	private Environment environment;
+	
+	@Autowired
+	private MailServiceImpl mailService;
+	
+	@Autowired
+	private IEmployeeService employeeService;
+	
 	
 	private Logger logger= LoggerFactory.getLogger(ExpenseController.class);
 	
@@ -180,7 +191,7 @@ public class ExpenseController {
 	
 	@RequestMapping(value="/approveRejectExpense",method=RequestMethod.POST)
 	public @ResponseBody BaseDTO approveRejectExpenses(@RequestBody ExpenseHeaderDTO expenseHeaderDTO) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
-		BaseDTO baseDTO= null;
+		BaseDTO baseDTO= new BaseDTO();
 		
 		try{
 			 LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -191,21 +202,167 @@ public class ExpenseController {
 			 if(Validation.validateForSuccessStatus(baseDTO)){
 				 ExpenseHeaderDTO expHeaderDTO=(ExpenseHeaderDTO)baseDTO;
 				 if(expenseHeaderDTO.getVoucherStatusId() == 3){
+					    // For approval mail
+					 try {
+						final ExpenseHeaderDTO expenseHeaderDTOforMail = expHeaderDTO;
+						if(Validation.validateForNullObject(expHeaderDTO.getPendingAtEmployeeDTO())) {
+							EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(expHeaderDTO.getPendingAtEmployeeDTO());
+							expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+							new Thread(new Runnable() {
+								public void run() {
+	
+									try {
+										expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
+										List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
+										// Send mail to approval
+										
+										mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
+										} catch (Exception e) {
+											logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
+										}
+									}
+								}
+							).start();
+						}
+					 }
+					catch(Exception e) {
+						logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
+					}
 					 baseDTO.setMessage(new StringBuilder("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been approved\n."));
 				 }
 				 else if(expenseHeaderDTO.getVoucherStatusId() == 4){
 					 baseDTO.setMessage(new StringBuilder("Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been rejected\n."));
+						    // For Rejection mail
+						 try {
+							final ExpenseHeaderDTO expenseHeaderDTOforMail = expHeaderDTO;
+							EmployeeDTO processedByEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(expHeaderDTO.getProcessedByEmployeeDTO());
+							expenseHeaderDTOforMail.setProcessedByEmployeeDTO(processedByEmployeeDTO);
+							expenseHeaderDTOforMail.setRejectionComment(expenseHeaderDTO.getRejectionComment());
+							new Thread(new Runnable() {
+								public void run() {
+
+									try {
+										expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
+										// Send mail to approval
+										
+										mailService.sendRejectedMail(expenseHeaderDTOforMail);
+										} catch (Exception e) {
+											logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
+										}
+									}
+								}
+							).start();
+						 }
+						catch(Exception e) {
+							logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
+						}
 				 }
 			 }
 			 else{
 				 baseDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE) );
 			 }
 		}
+		catch(IllegalStateException e) {
+			baseDTO.setMessage(new StringBuilder(e.getMessage()));
+		}
+		catch(ApprovalFlowException e) {
+			baseDTO.setMessage(new StringBuilder(e.getMessage()));
+		}
 		catch(Exception e){
 			baseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
 
 		return baseDTO;
+	}
+	
+	@RequestMapping(value="/approveFromEmail",method=RequestMethod.POST, consumes = "application/x-www-form-urlencoded")
+	public @ResponseBody String approveRejectExpensesFromMail(ExpenseHeaderDTO expenseHeaderDTO) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
+		BaseDTO baseDTO= new BaseDTO();
+		
+		try{
+			 EmployeeDTO processedByEmployeeDTO= new EmployeeDTO();
+			 processedByEmployeeDTO.setEmployeeId(expenseHeaderDTO.getEmployeeId());
+				
+			 expenseHeaderDTO.setProcessedByEmployeeDTO(processedByEmployeeDTO);
+			 expenseHeaderDTO.setStatus(Boolean.TRUE);// This status to used in service to check token or sessionId for mail confirmation
+			 
+		     baseDTO=expenseService.approveRejectExpenses(expenseHeaderDTO);
+			 if(Validation.validateForSuccessStatus(baseDTO)){
+				 ExpenseHeaderDTO expHeaderDTO=(ExpenseHeaderDTO)baseDTO;
+				 if(expenseHeaderDTO.getVoucherStatusId() == 3){
+						// For approval mail
+					 try {
+						final ExpenseHeaderDTO expenseHeaderDTOforMail = expHeaderDTO;
+						if(Validation.validateForNullObject(expHeaderDTO.getPendingAtEmployeeDTO())) {
+							EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(expHeaderDTO.getPendingAtEmployeeDTO());
+							expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+							expenseHeaderDTOforMail.setRejectionComment(expenseHeaderDTO.getRejectionComment());
+							new Thread(new Runnable() {
+								public void run() {
+									try {
+										expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
+										List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
+									// Send mail to approval
+									
+										mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
+									}
+									catch(Exception e) {
+										logger.debug("ExpenseService: approveFromEmail-sendingmail: "+ e);
+									}
+					
+								}
+							}).start();
+						}
+					 }
+					 catch(Exception e) {
+						 logger.debug("ExpenseService: approveFromEmail-sendingmail: "+ e);
+					 }
+					 return "<h1>Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been approved.</h1>";
+					 
+				 }
+				 else if(expenseHeaderDTO.getVoucherStatusId() == 4){
+					   // For Rejection mail
+					 try {
+						final ExpenseHeaderDTO expenseHeaderDTOforMail = expHeaderDTO;
+						EmployeeDTO rejectedByEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(expHeaderDTO.getProcessedByEmployeeDTO());
+						expenseHeaderDTOforMail.setProcessedByEmployeeDTO(rejectedByEmployeeDTO);
+						new Thread(new Runnable() {
+							public void run() {
+
+								try {
+									expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
+									// Send mail to approval
+									
+									mailService.sendRejectedMail(expenseHeaderDTOforMail);
+									} catch (Exception e) {
+										logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
+									}
+								}
+							}
+							).start();
+						 }
+						catch(Exception e) {
+							logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
+						}
+
+					 return "<h1>Voucher Number "+ expHeaderDTO.getVoucherNumber()+" has been rejected.</h1>";
+				 }
+			 }
+			 else{
+				 return ApplicationConstant.BUSSINESS_FAILURE;
+			 }
+		}
+		catch(IllegalStateException e) {
+			return "<h1>"+e.getMessage()+"<h1>";
+		}
+		catch(ApprovalFlowException e) {
+			return "<h1>"+e.getMessage()+"<h1>";
+		}
+		catch(Exception e){
+			return "<h1>"+ApplicationConstant.SYSTEM_FAILURE+"<h1>";
+		}
+
+		return "<h1>"+ApplicationConstant.SYSTEM_FAILURE+"<h1>";
 	}
 	
 
@@ -258,7 +415,26 @@ public class ExpenseController {
 			if(Validation.validateForSuccessStatus(baseDTO)){
 				toBeSendExpenseHeaderDTO=(ExpenseHeaderDTO)baseDTO;
 				if(receivedExpenseHeaderDTO.getVoucherStatusId() == 2){
-					toBeSendExpenseHeaderDTO.setMessage(new StringBuilder("Your voucher number: "+toBeSendExpenseHeaderDTO.getVoucherNumber()+" has beed send for approval."));
+					toBeSendExpenseHeaderDTO.setMessage(new StringBuilder("Your voucher number: "+toBeSendExpenseHeaderDTO.getVoucherNumber()+" has been send for approval."));
+					
+					// For approval mail
+					final ExpenseHeaderDTO expenseHeaderDTOforMail = toBeSendExpenseHeaderDTO;
+					EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(toBeSendExpenseHeaderDTO.getPendingAtEmployeeDTO());
+					expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+					new Thread(new Runnable() {
+						public void run() {
+							expenseHeaderDTOforMail.setEmployeeDTO(receivedExpenseHeaderDTO.getEmployeeDTO());
+							List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
+							// Send mail to approval
+							try {
+								mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
+							}
+							catch(Exception e) {
+								logger.debug("ExpenseService: saveUpdateExpense-sendingmail: "+ e);
+							}
+			
+						}
+					}).start();
 				}
 				else{
 					toBeSendExpenseHeaderDTO.setMessage(new StringBuilder("Your voucher has been saved in draft."));
@@ -268,10 +444,17 @@ public class ExpenseController {
 				toBeSendExpenseHeaderDTO=receivedExpenseHeaderDTO;
 			}
 		}
+		catch(ApprovalFlowException e) {
+			toBeSendExpenseHeaderDTO = receivedExpenseHeaderDTO;
+			toBeSendExpenseHeaderDTO.setMessage(new StringBuilder(e.getMessage()));
+		}
 		catch(Exception e){
-			toBeSendExpenseHeaderDTO = new ExpenseHeaderDTO();
+			logger.error("ExpenseController: saveExpense",e);
+			toBeSendExpenseHeaderDTO = receivedExpenseHeaderDTO;
+			toBeSendExpenseHeaderDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			toBeSendExpenseHeaderDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}
+
 		return toBeSendExpenseHeaderDTO;
 	}
 	

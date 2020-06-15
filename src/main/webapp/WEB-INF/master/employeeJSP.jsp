@@ -182,15 +182,15 @@
           }
        }
        //define the grid.
-       var obj = {                        
+       var obj = {    
+   		   resizable: true,
+      	   scrollModel: {autoFit: true},
+           height: '75%',
            wrap: false,
-           hwrap: false,
-           resizable: true,
            columnBorders: false,
-           sortable: false,
+           sortable: true,
            numberCell: { show: false },
            track: true, //to turn on the track changes.
-           flexHeight: true,
            filterModel: { on: true, mode: "AND", header: true },
            toolbar: {
                items: [
@@ -239,7 +239,7 @@
                           { type: 'maxLen', value: 40, msg: "length should be <= 20" }
                       ]
                   },
-                  { title: "Gender", width: 50, dataIndx: "gender",
+                  { title: "Gender", minWidth: 55, dataIndx: "gender",
                 	  filter: { type: "select",
           		        condition: 'equal',
           		        prepend: { '': '--All--' },
@@ -388,6 +388,9 @@
                dataType: "JSON",
                location: "local",
                recIndx: "employeeId",
+               sorting: "local",
+               sortIndx: "firstName",
+               sortDir: "down",
                data: employeeList
            },
            pageModel: { type: "local" },

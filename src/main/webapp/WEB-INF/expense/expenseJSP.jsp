@@ -146,6 +146,7 @@ $(function () {
     }
 	
 	$( "#startDate" ).datepicker({
+		minDate: -60,
 	    maxDate: "Now",
 	    dateFormat: "dd-MM-yy",
 	    buttonImage: "/images/calendar.gif",
@@ -256,7 +257,7 @@ $(function () {
 		} 
     	 
         //attempt to save editing cell.
-        //debugger;
+        debugger;
         if (grid.saveEditCell() === false) {
             return false;
         }
@@ -553,7 +554,6 @@ $(function () {
                 ],
                 
                 editable: function(ui){
-                	debugger;
             		if(typeof ui.rowData != "undefined"  && ui.rowData != null && ui.rowData['unitRequired'] != null){
 						if(ui.rowData['unitRequired'] == true && (typeof ui.rowData['unit'] != "undefined" && ui.rowData['unit'] != null) ){ 
 							return true;
@@ -650,7 +650,12 @@ $(function () {
 	            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
 	            rowData.receipt=null;
 	   		 var clone = $(this).clone();
-	   	     rowData.receipt = clone.attr('name', 'addedFiles');
+	   		 if(rowData.expenseDetailId != null ){
+	   	     	rowData.receipt = clone.attr('name', 'updatedFiles');
+	   		 }
+	   		 else{
+	   			rowData.receipt = clone.attr('name', 'addedFiles');
+	   		 }
 	   		 $grid.pqGrid( "updateRow", {rowIndx: rowIndx, row: { 'modified':true},checkEditable:false} );
 			 $grid.pqGrid("refresh"); 
 				 
@@ -676,7 +681,7 @@ $(function () {
            var rowIndx = obj.rowIndx;
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
 
-           var ans = window.confirm("Are you sure to delete selected item.");
+           var ans = window.confirm("Are you sure to delete selected item?");
 
            if (ans) {
                $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true, complete: function () {

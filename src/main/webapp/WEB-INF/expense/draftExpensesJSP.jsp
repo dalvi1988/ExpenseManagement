@@ -48,7 +48,7 @@
            location: "local",
            sorting: "local",
            sortIndx: "expenseHeaderId",
-           sortDir: "up",
+           sortDir: "down",
            data: expenseHeaderList
        }
        var obj = {
@@ -63,7 +63,7 @@
            editable: false,
            selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},    
            filterModel: { on: true, mode: "AND", header: true },
-           title: "Saved Expense Vouchers",
+           title: "Draft Expense Voucher",
            resizable: true,
            numberCell: { show: false },
            columnBorders: true,           

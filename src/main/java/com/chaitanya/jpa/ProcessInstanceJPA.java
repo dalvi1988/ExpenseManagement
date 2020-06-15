@@ -35,6 +35,9 @@ public class ProcessInstanceJPA {
 	
 	@Column(name="comments")
 	private String comment;
+	
+	@Column(name="session_id")
+	private String sessionId;
 
 	public Long getProcessInstanceId() {
 		return processInstanceId;
@@ -82,6 +85,14 @@ public class ProcessInstanceJPA {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
 }

@@ -30,8 +30,8 @@
        var dataModel = {
            location: "local",
            sorting: "local",
-           sortIndx: "totalAmount",
-           sortDir: "up",
+           sortIndx: "expenseHeaderId",
+           sortDir: "down",
            data: expenseHeaderList
        }
        var obj = {
@@ -39,7 +39,7 @@
    		   scrollModel: {
                   autoFit: true
            },
-           height: '100%',
+           height: '78%',
            dataModel: dataModel,
            colModel: colM,
            hwrap: false,

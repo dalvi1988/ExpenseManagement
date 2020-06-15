@@ -3,6 +3,7 @@ package com.chaitanya.expense.dao;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.ParameterMode;
 
@@ -221,6 +222,8 @@ public class ExpenseDAO implements IExpenseDAO{
 				processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 				
 				processInstanceJPA.setComment("");
+				
+				processInstanceJPA.setSessionId(UUID.randomUUID().toString());
 				
 				expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
 			}

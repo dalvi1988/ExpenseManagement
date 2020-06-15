@@ -43,15 +43,15 @@ public class EmployeeService implements IEmployeeService {
 	
 	private Logger logger= LoggerFactory.getLogger(EmployeeService.class);
 	
-	private boolean validateEmployeeMasterDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof EmployeeDTO);
+	private void validateEmployeeMasterDTO(BaseDTO baseDTO) {
+		if(baseDTO == null  || !(baseDTO instanceof EmployeeDTO)) {
+			throw new IllegalArgumentException("Object expected of EmployeeDTO type.");
+		}
 	}
 	
 	public List<EmployeeDTO> findEmployeeOnCompany(BaseDTO baseDTO) throws ParseException {
 		logger.debug("EmployeeService: findEmployeeOnCompany-Start");
-		if(validateEmployeeMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of EmployeeMasterDTO type.");
-		}
+		validateEmployeeMasterDTO(baseDTO);
 		
 		List<EmployeeDTO> employeeDTOList = null;
 		EmployeeDTO employeeDTO=(EmployeeDTO)baseDTO;
@@ -78,10 +78,7 @@ public class EmployeeService implements IEmployeeService {
 	
 	public List<EmployeeDTO> findEmployeeOnUnderDeptBranch(BaseDTO baseDTO) throws ParseException {
 		logger.debug("EmployeeService: findEmployeeOnUnderDeptBranch-Start");
-		if(validateEmployeeMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of EmployeeMasterDTO type.");
-		}
-		
+		validateEmployeeMasterDTO(baseDTO);
 		List<EmployeeDTO> employeeDTOList = null;
 		EmployeeDTO employeeDTO=(EmployeeDTO)baseDTO;
 		if(Validation.validateForNullObject(employeeDTO)){
@@ -107,9 +104,7 @@ public class EmployeeService implements IEmployeeService {
 	@Override
 	public BaseDTO addEmployee(BaseDTO baseDTO) throws Exception {
 		logger.debug("EmployeeService: addEmployee-Start");
-		if(validateEmployeeMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of EmployeeMasterDTO type.");
-		}
+		validateEmployeeMasterDTO(baseDTO);
 		try{
 		    EmployeeDTO employeeDTO= (EmployeeDTO)baseDTO;
 			EmployeeJPA employeeJPA=EmployeeConvertor.setEmployeeDTOToEmployee(employeeDTO);
@@ -149,4 +144,21 @@ public class EmployeeService implements IEmployeeService {
 		logger.debug("EmployeeService: addEmployee-End");
 		return baseDTO;
 	}
+
+	@Override
+	public BaseDTO getEmployeeById(BaseDTO baseDTO) throws ParseException {
+		logger.debug("EmployeeService: getEmployeeById-Start");
+		validateEmployeeMasterDTO(baseDTO);
+		EmployeeDTO emplDTO=(EmployeeDTO) baseDTO;
+		EmployeeJPA emplJPA= new EmployeeJPA();
+		emplJPA.setEmployeeId(emplDTO.getEmployeeId());
+		
+		EmployeeJPA empJPA= employeeDAO.getEmployeeByEmployeeID(emplJPA);
+		EmployeeDTO employeeDTO= EmployeeConvertor.setEmployeeJPAToEmployeeDTO(empJPA);
+		
+		logger.debug("EmployeeService: getEmployeeById-End");
+		return employeeDTO;
+	}
+	
+	
 }

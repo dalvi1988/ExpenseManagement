@@ -1,0 +1,76 @@
+<style>
+::placeholder {
+  color: red;
+}
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+<body>
+<p>HI</p> 
+<p>Your have been received voucher ${expenseHeaderDTO.getVoucherNumber()} for approval from ${expenseHeaderDTO.getEmployeeDTO().getFirstName()} ${expenseHeaderDTO.getEmployeeDTO().getLastName()}.</p>
+<p>Voucher Detail as below:</p>
+<p>Start Date: ${expenseHeaderDTO.getStartDate()}</p>
+<p>End Date: ${expenseHeaderDTO.getEndDate()}</p>
+<p>Purpose: ${expenseHeaderDTO.getPurpose()}</p>
+<p>Total Amount: ${expenseHeaderDTO.getTotalAmount()}</p>
+<p>Itinerary Details:&nbsp;</p>
+<form action="http://localhost:8080/ExpenseManagement/approveFromEmail" method="POST">
+<table style="height: 42px; width: 613px;" border="1">
+<tbody>
+<tr>
+<td style="width: 112px;"><strong>&nbsp;Date</strong></td>
+<td style="width: 112px;"><strong>Expense Category</strong></td>
+<td style="width: 113px;"><strong>From Location</strong></td>
+<td style="width: 114px;"><strong>To Location</strong></td>
+<td style="width: 114px;"><strong>Description</strong></td>
+<td style="width: 128px;"><strong>Unit</strong></td>
+<td style="width: 128px;"><strong>Amount</strong></td>
+<td style="width: 128px;"><strong>Receipt</strong></td>
+</tr>
+#foreach( $expenseDetail in $expenseDetailList )
+    <tr>
+    	<td>$expenseDetail.getDate()</td>
+    	<td>$expenseDetail.getExpenseCategoryDTO().getExpenseName()</td>
+    	#if ($expenseDetail.getFromLocation())
+    		<td>$expenseDetail.getFromLocation()</td>
+    	#else
+		  <td></td>
+		#end
+		
+		#if ($expenseDetail.getToLocation())
+    		<td>$expenseDetail.getToLocation()</td>
+    	#else
+		  <td></td>
+		#end
+		#if ($expenseDetail.getDescription())
+    		<td>$expenseDetail.getDescription()</td>
+    	#else
+		  <td></td>
+		#end
+		
+		#if ($expenseDetail.getUnit())
+    		<td>$expenseDetail.getUnit()</td>
+    	#else
+		  <td></td>
+		#end
+    	<td>$expenseDetail.getAmount()</td>
+    	<td>File Preview coming soon</td>
+    </tr>
+#end
+</tbody>
+</table>
+<input type="hidden" name="employeeId" value=${expenseHeaderDTO.getPendingAtEmployeeDTO().getEmployeeId()}>
+<input type="hidden" name="expenseHeaderId" value=${expenseHeaderDTO.getExpenseHeaderId()}>
+<input type="hidden" name="processSessionId" value=${expenseHeaderDTO.getProcessSessionId()}>
+<p>Rejection Comments:<br/><textarea name="rejectionComment" rows="4" cols="50" placeholder="Note: Comment in above field will not capture in case of approval."></textarea></br>
+<br>Please enter comment for rejection of voucher.</p>
+
+<p><button type="submit" style="width: 150px;background-color:#4CAF50;border-radius: 10px;border: 4px double #cccccc;color: #eeeeee;text-align: center;" name="voucherStatusId" value="3">Approve</button> <button type="submit" style="width: 150px;background-color:red;border-radius: 10px;border: 4px double #cccccc;color: #eeeeee;text-align: center;" name="voucherStatusId" value="4">Reject</button></p>
+</form>
+<p>&nbsp;</p>
+<p>Thanks &amp; Regards</p>
+<p>ExpenseWala.com</p>
+</body>

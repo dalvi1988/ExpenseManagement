@@ -47,7 +47,7 @@
    		   scrollModel: {
                   autoFit: true
            },
-           height: '100%',
+           height: '78%',
            dataModel: dataModel,
            colModel: colM,
            hwrap: false,
@@ -55,7 +55,6 @@
            editable: false,
            selectionModel: {type: 'row', mode: 'single'},
            title: "Paid Expense Vouchers",
-           resizable: true,
            numberCell: { show: false },
            columnBorders: true,           
        };

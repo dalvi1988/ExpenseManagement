@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.departmentHead.model.DepartmentHeadDTO;
 import com.chaitanya.jpa.DepartmentHeadJPA;
 import com.chaitanya.jpa.EmployeeJPA;
 
@@ -43,6 +44,16 @@ public class DepartmentHeadDAO implements IDepartmentHeadDAO{
 		DepartmentHeadJPA departmentHeadJPA = (DepartmentHeadJPA) session.createCriteria(DepartmentHeadJPA.class)
 		.add(Restrictions.eq("departmentJPA.departmentId",employeeJPA.getDepartmentJPA().getDepartmentId()))
 		.add(Restrictions.eq("branchJPA.branchId",employeeJPA.getBranchJPA().getBranchId()))
+		.uniqueResult();
+		return departmentHeadJPA;
+	}
+
+	@Override
+	public DepartmentHeadJPA checkDepartmentHeadExist(DepartmentHeadDTO departmentHeadDTO) {
+		Session session=sessionFactory.getCurrentSession();
+		DepartmentHeadJPA departmentHeadJPA = (DepartmentHeadJPA) session.createCriteria(DepartmentHeadJPA.class)
+		.add(Restrictions.eq("departmentJPA.departmentId",departmentHeadDTO.getDepartmentId()))
+		.add(Restrictions.eq("branchJPA.branchId",departmentHeadDTO.getBranchDTO().getBranchId()))
 		.uniqueResult();
 		return departmentHeadJPA;
 	}

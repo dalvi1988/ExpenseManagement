@@ -14,4 +14,6 @@ public interface IEmployeeService {
 
 	BaseDTO addEmployee(BaseDTO baseDTO) throws ParseException, Exception;
 
+	BaseDTO getEmployeeById(BaseDTO baseDTO) throws ParseException;
+
 }

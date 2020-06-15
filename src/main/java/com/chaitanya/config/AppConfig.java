@@ -1,10 +1,13 @@
 package com.chaitanya.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.VelocityException;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +24,7 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.velocity.VelocityEngineFactory;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -131,8 +135,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         //Using gmail
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername("dalvi21288@gmail.com");
-        mailSender.setPassword("Chaitanya@21");
+        mailSender.setUsername("expensewala@gmail.com");
+        mailSender.setPassword("Temp*123456");
          
         Properties javaMailProperties = new Properties();
         javaMailProperties.put("mail.smtp.starttls.enable", "true");
@@ -148,5 +152,19 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	 public PasswordEncoder passwordEncoder() {
 	     return new BCryptPasswordEncoder();
 	 }
+	 
+	 /*
+     * Velocity configuration.
+     */
+    @Bean
+    public VelocityEngine getVelocityEngine() throws VelocityException, IOException {
+        VelocityEngineFactory factory = new VelocityEngineFactory();
+        Properties props = new Properties();
+        props.put("resource.loader", "class");
+        props.put("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+ 
+        factory.setVelocityProperties(props);
+        return factory.createVelocityEngine();
+    }
 
 }

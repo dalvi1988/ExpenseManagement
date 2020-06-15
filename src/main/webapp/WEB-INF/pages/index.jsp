@@ -89,7 +89,8 @@
          <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="theme/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+              
+              <img src="icon/Male Boss.ico" class="user-image" alt="User Image">
               <span class="hidden-xs"><sec:authentication property="principal.loginDTO.employeeDTO.fullName" /></span>
             </a>
          </li>
@@ -109,7 +110,7 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="theme/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+          <img src="icon/no_image.png" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <h4><sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.companyDTO.companyName" /></h4>
@@ -147,7 +148,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
-            <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
+            <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li>
             <li><a href="#" class="paidExpense"><i class="fa fa-circle-o"></i>Paid Expenses</a></li>
             <li><a href="#" class="processedByMeExpense"><i class="fa fa-circle-o"></i>Processed Expense By Me</a></li>
           </ul>
@@ -165,7 +166,7 @@
             <li><a href="#" class="viewDraftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
             <li><a href="#" class="pendingAdvance"><i class="fa fa-circle-o"></i>Pending Advance</a></li>
             <li><a href="#" class="rejectedAdvance"><i class="fa fa-circle-o"></i>Rejected Advance</a></li>
-            <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Advances at Payment Desk</a></li>
+            <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li>
             <li><a href="#" class="paidAdvances"><i class="fa fa-circle-o"></i>Paid Advances</a></li>
             <li><a href="#" class="processedByMeAdvances"><i class="fa fa-circle-o"></i>Processed Advances By Me</a></li>
           </ul>
@@ -273,7 +274,7 @@
     </div>
 
     <!-- Main content -->
-    <section class=" content">
+    <section class=" content" style="height:90%">
     
     </section>
      
@@ -281,9 +282,10 @@
         <i class="fa fa-refresh fa-spin"></i>
       </div>
     <!-- /.content -->
-    </div>
+   </div>
   <!-- /.content-wrapper -->
   
+  <div>
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
@@ -291,7 +293,7 @@
     <strong>Copyright &copy; 2016-2018 <a href="http://expensewala.com">ExpenseWala.com</a>.</strong> All rights
     reserved.
   </footer>
-  
+  </div>
   
 </div>
 <!-- ./wrapper -->

@@ -2,6 +2,7 @@
 <html lang="en">
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <head>
 
     <title>Department Head Master</title>
@@ -11,7 +12,7 @@
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
    <script type="text/javascript">
-   
+   var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;
    var departmentList=${departmentList};
    var employeeList=${employeeList};
    
@@ -21,13 +22,13 @@
             { title: "", minWidth: 27, width: 27, type: "detail", resizable: false, editable:false },
             { title: "Branch Code", width: 100, dataIndx: "branchCode" },
             { title: "Branch Name", width: 100, dataIndx: "branchName",
-            	filter: { type: "select",
+            	/* filter: { type: "select",
     		        condition: 'equal',
     		        prepend: { '': '--Select--' },
     		        valueIndx: "branchName",
     		        labelIndx: "branchName",
     		        listeners: ['change']
-    		    }
+    		    } */
             },
             { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                 editor: { type: "checkbox", style: "margin:3px 5px;" },
@@ -56,7 +57,7 @@
         }
 
         var $gridMain = $("div#grid_md").pqGrid({
-            width: '100%', height: '100%-5',
+            width: '100%', height: '58%',
             flexHeight: true,
             dataModel: dataModel,
             virtualX: true, virtualY: true,
@@ -65,7 +66,7 @@
             wrap: false,
             hwrap: false,            
             numberCell: { show: false },
-            title: "<b>Branch Department/Cost Center/Project Master Head Master</b>",                        
+            title: "<b>Department/Cost Center/Project Master Head Master</b>",                        
             resizable: true,
             freezeCols: 1,            
             selectionModel: { type: 'cell' },
@@ -124,7 +125,7 @@
                     location: "remote",
                     dataType: "json",
                     method: "POST",
-                    recIndx: "branchId",
+                    recIndx: "deptHeadId",
                     getUrl: function() {
                         return { url: "departmentHeadList", data: "{\"branchId\":"+rowData.branchId+"}" };
                     },
@@ -142,7 +143,6 @@
                 },
                 colModel: [
                     
-                    { title: "Department Head Id", dataType: "integer", dataIndx: "deptHeadId", hidden:true, width: 80 },
                     { title: "Department", dataIndx: "departmentId", width: 150,
                          editor: {                    
                             type: "select",
@@ -189,11 +189,10 @@
                          	
                         }
                     },
-                    { title: "", width: 100, dataIndx: "status", hidden:true },
+                    { title: "Department Head Id", dataType: "integer", dataIndx: "deptHeadId", hidden:true, width: 80 },
                     { title: "", width: 100, dataIndx: "createdBy", hidden:true },
                     { title: "", width: 100, dataIndx: "createdDate", hidden:true },
                     { title: "", editable: false, minWidth: 150, sortable: false, render: function (ui) {
-                    	debugger;
                         return "<button type='button' class='edit_btn'>Edit</button>\
                             <button type='button' class='delete_btn'>Delete</button>";
                     	}
@@ -231,10 +230,9 @@
                         return false;
                     }
                 },
-                refresh: function () {
-                    //debugger;
+                refreshRow: function( event, ui ) {
                     var $grid = $(this);
-
+          		   
                     //delete button
                     $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
                     .unbind("click")
@@ -250,6 +248,43 @@
                     $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
                     .unbind("click")
                     .bind("click", function (evt) {
+                        if (isEditing($grid)) {
+                            return false;
+                        }
+                        var $tr = $(this).closest("tr"),
+                            rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
+                        editRow(rowIndx, $grid);
+                        return false;
+                    });
+
+                    //rows which were in edit mode before refresh, put them in edit mode again.
+                    var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
+                    if (rows.length > 0) {
+                        var rowIndx = rows[0].rowIndx;
+                        editRow(rowIndx, $grid);
+                    }
+                },
+                refresh: function () {
+                    //debugger;
+                    var $grid = $(this);
+                    $(".customMessage").text("");
+                    //delete button
+                    $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
+                    .unbind("click")
+                    .bind("click", function (evt) {
+                    	$(".customMessage").text("");
+                        if (isEditing($grid)) {
+                            return false;
+                        }
+                        var $tr = $(this).closest("tr"),
+                            rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
+                        deleteRow(rowIndx, $grid);
+                    });
+                    //edit button
+                    $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+                    .unbind("click")
+                    .bind("click", function (evt) {
+                    	$(".customMessage").text("");
                         if (isEditing($grid)) {
                             return false;
                         }
@@ -282,7 +317,6 @@
         
       //called by add button in toolbar.
         function addRow($grid) {
-    	  debugger;
         	var branchId = $grid.data( 'branchId' );
      	   $(".customMessage").text("");
      	   
@@ -290,7 +324,7 @@
                 return false;
             }
             //append empty row in the first row.
-            var rowData = {branchId:branchId }; //empty row template
+            var rowData = {branchId:branchId, status:true }; //empty row template
             $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
             var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -341,7 +375,7 @@
 
         //called by update button.
         function update(rowIndx, $grid) {
-    	  
+        	$(".customMessage").text("");
            if ($grid.pqGrid("saveEditCell") == false) {
                return false;
            }
@@ -380,18 +414,21 @@
            	    url: url, 
            	    type: 'POST', 
            	    data: JSON.stringify(jsonToBeSend),
-           	    success: function(data) { 
+           	    success: function(data) {
+           	    	debugger;
            	    	if(data.serviceStatus=="SUCCESS"){
  	          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
  	                    if (rowData[recIndx] == null || rowData[recIndx] == "") {
- 	                       rowData.departmentHeadId= data.departmentHeadId;
+ 	                       rowData.deptHeadId= data.deptHeadId;
  	                    } 
- 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
- 	          	    	$grid.pqGrid("commit");
+ 	                   $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
+	          	    	$grid.pqGrid("commit");
            	    	}
            	    	else{
-           	    		
-           	    		$grid.pqGrid("rollback");
+           	    		$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+           	    		$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
+           	    		//$grid.pqGrid("rollback");
            	    	}
            	    	$(".customMessage").text(data.message);
            	    	
@@ -410,6 +447,8 @@
                $grid.pqGrid("refreshRow", { rowIndx: rowIndx });
            }
         } 
+        
+
     });
    
    
