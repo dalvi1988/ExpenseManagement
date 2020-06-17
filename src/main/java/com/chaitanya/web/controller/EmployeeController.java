@@ -101,35 +101,25 @@ public class EmployeeController {
 	public @ResponseBody EmployeeDTO addEmployee(@RequestBody EmployeeDTO receivedEmployeeDTO){
 		EmployeeDTO toBeSentEmployeeDTO=null;
 		try{
-			if(Validation.validateForNullObject(receivedEmployeeDTO)){
-				LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-				if(!Validation.validateForNullObject(receivedEmployeeDTO.getEmployeeId())){
-					receivedEmployeeDTO.setCommand(Command.ADD);
-					receivedEmployeeDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-					receivedEmployeeDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
-				}
-				else{
-					receivedEmployeeDTO.setCommand(Command.UPDATE);
-					receivedEmployeeDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-					receivedEmployeeDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
-				}
-				BaseDTO baseDTO=employeeService.addEmployee(receivedEmployeeDTO);
-				if(Validation.validateForSuccessStatus(baseDTO)){
-					toBeSentEmployeeDTO=(EmployeeDTO)baseDTO;
-					if(receivedEmployeeDTO.getCommand().equals(Command.ADD)){
-						toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
-					}
-					else
-						toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
-				}
-				else if(Validation.validateForBusinessFailureStatus(baseDTO)){
-					toBeSentEmployeeDTO=receivedEmployeeDTO;
-					toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
-				}
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if(!Validation.validateForNullObject(receivedEmployeeDTO.getEmployeeId())){
+				receivedEmployeeDTO.setCommand(Command.ADD);
+				receivedEmployeeDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedEmployeeDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
-				toBeSentEmployeeDTO=receivedEmployeeDTO;
-				toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+				receivedEmployeeDTO.setCommand(Command.UPDATE);
+				receivedEmployeeDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedEmployeeDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
+			}
+			BaseDTO baseDTO=employeeService.addEmployee(receivedEmployeeDTO);
+			if(Validation.validateForSuccessStatus(baseDTO)){
+				toBeSentEmployeeDTO=(EmployeeDTO)baseDTO;
+				if(receivedEmployeeDTO.getCommand().equals(Command.ADD)){
+					toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
+				}
+				else
+					toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
 			}
 		}
 		catch(Exception e){

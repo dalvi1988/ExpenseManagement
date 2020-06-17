@@ -44,18 +44,17 @@ $(document).ready(function() {
 	<div class="row" >
 	 	<div id="svgContainer"></div>
 	<jstl:set var="approvalFlow" value="${approvalFlowList[0]}"/>
-		<h1 style="position: absolute; top: 5px; left: 10px;" class="center">Functional Approval</h1>
-			 	
-		<jstl:if test="${not empty approvalFlow.level1}">
+		<h1 style="position: absolute; top: 5px; left: 10px;" class="center">Functional Approval</h1></br>
+s		<jstl:if test="${not empty approvalFlow.level1}">
 	        <div id="level1Fun" style="position: absolute; top: ${y}px; left: 10px;" class="fromContainer col-md-3 col-sm-6 col-xs-12">
 	        <div><i><span class="info-box-text">Functional 1<sup>st</sup> level approval</span></i></div>
 	          <div class="info-box">
 	          	<jstl:choose>
 				   <jstl:when test="${approvalFlow.level1EmployeeDTO.gender.toString()=='M'}">
-				        <span class="info-box-icon bg-green"><img src="icon/Male Boss.ico" alt="Smiley face" height="42" width="42"></span>
+				        <span class="info-box-icon bg-gray"><img src="icon/Male Boss.ico" alt="Smiley face" height="42" width="42"></span>
 				    </jstl:when>    
 				    <jstl:otherwise>
-				        <span class="info-box-icon bg-green"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
+				        <span class="info-box-icon bg-gray"><img src="icon/Female Boss.ico" alt="Smiley face" height="42" width="42"></span>
 				    </jstl:otherwise>
 				</jstl:choose>
 				

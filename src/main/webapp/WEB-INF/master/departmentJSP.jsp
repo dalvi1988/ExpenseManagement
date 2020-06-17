@@ -37,7 +37,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { departmentId:"", departmentCode: "", departmentName:"", status:""}; //empty row template
+           var rowData = { departmentId:"", departmentCode: "", departmentName:"", status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -134,6 +134,7 @@
 	
               jsonToBeSend["departmentName"] = rowData.departmentName;
               jsonToBeSend["departmentCode"] = rowData.departmentCode;
+              jsonToBeSend["branchId"]=rowData.branchId;
               jsonToBeSend["status"] = rowData.status;
               url = "addDepartment";
               
@@ -267,7 +268,10 @@
 	       			               return option.branchName;
 	       			           } 
 	       			       }
-        			   }   
+        			   },
+        			   validations: [
+                           { type: 'nonEmpty', msg: "Required" }
+                       ]
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },

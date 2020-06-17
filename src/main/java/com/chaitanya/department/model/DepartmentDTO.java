@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.utility.Validation;
 
 
 public class DepartmentDTO extends BaseDTO {
@@ -56,6 +57,11 @@ public class DepartmentDTO extends BaseDTO {
 
 	public void setBranchId(Long branchId) {
 		this.branchId = branchId;
+		if(Validation.validateForNullObject(branchId)) {
+			BranchDTO branchDTO= new BranchDTO();
+			branchDTO.setBranchId(branchId);
+			this.branchDTO=branchDTO;
+		}
 	}
 
 

@@ -193,8 +193,8 @@
         var bar = $(divS)
           .addClass(o.barClass)
           .css({
-            background: o.color,
-            width: o.size,
+        	  background: '#00c0ef',
+            width: '10px',
             position: 'absolute',
             top: 0,
             opacity: o.opacity,

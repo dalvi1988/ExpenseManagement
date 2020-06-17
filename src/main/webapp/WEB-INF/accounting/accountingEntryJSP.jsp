@@ -22,12 +22,12 @@
 			{ title: "expenseHeaderId", width: 100, dataType: "integer", hidden:true, dataIndx: "expenseHeaderId" },
 			{ title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
 	       { title: "Purpose", width: 100, dataIndx: "purpose"},
-	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
-	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
-		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
-	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center",render: amountRenderer
+	       { title: "Voucher Number", minWidth: 180, dataIndx: "voucherNumber"}, 
+	       { title: "Start date", minWidth: 80, dataIndx: "startDate", dataType:"String"},
+		   { title: "End Date", minWidth: 80, dataIndx: "endDate"},
+	       { title: "Total Amount", width: 70, dataIndx: "totalAmount", align: "center",render: amountRenderer
 		   },
-	       { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",
+	       { title: "Advance Amount", width: 70, align: "right", dataType: "float", dataIndx: "advanceAmount",
         	   render: function (ui) {                        
                    var cellData = ui.cellData;
                    if (cellData != null) {
@@ -52,6 +52,7 @@
    		   scrollModel: {
                   autoFit: true
            },
+           height:'90%',
            toolbar: {
                cls: 'pq-toolbar-export',
                items: [{
@@ -63,38 +64,17 @@
                         	   var $grid = $(this).closest('.pq-grid'),
                                selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
 	   							ids = [];
-	                           for (var i = 0, len = selarray.length; i < len; i++) {
-	                               var rowData = selarray[i].rowData;
-	                               ids.push(rowData.expenseHeaderId);
-	                               $grid.pqGrid( "deleteRow",  { rowIndx: selarray[i].rowIndx });
-	                           }
-	                           /* $.ajax($.extend({}, ajaxObj, { 
-	                            	context: $grid,
-	                        	    url: "exportAccountingEntry", 
-	                        	    type: 'POST', 
-	                        	    data: JSON.stringify(ids),
-	                        	    dataType: 'binary',
-	                                xhrFields: {
-	                                    'responseType': 'blob'
-	                                },
-	                        	    success: function(data) { 
-	                        	    	var a = document.createElement('a');
-	                                    var url = window.URL.createObjectURL(data);
-	                                    a.href = url;
-	                                    a.download = 'myfile.pdf';
-	                                    document.body.append(a);
-	                                    a.click();
-	                                    a.remove();
-	                                    window.URL.revokeObjectURL(url); 
-	                                    alert("success"+data)
-	                        	    },
-	                        	    error:function(data) {
-	                        	    	 alert("fail")
-	                        	    	$(".alert").addClass("alert-danger").text(data.message).show();
-	                        	    }
-	        	       		   })); */
-	                           $("#expenseHeaderIds").val(ids);
-	        	       		   $( "#form" ).submit();
+                        	   if(selarray.length> 1){
+		                           for (var i = 0, len = selarray.length; i < len; i++) {
+		                               var rowData = selarray[i].rowData;
+		                               ids.push(rowData.expenseHeaderId);
+		                               $grid.pqGrid( "deleteRow",  { rowIndx: selarray[i].rowIndx });
+		                           }
+		                           $("#expenseHeaderIds").val(ids);
+		        	       		   $( "#form" ).submit();
+                        	   }else{
+                        		   alert("Please select expenses to export for accounting entry.")
+                        	   }
 	        	       		   
                            }
                        }]
@@ -104,7 +84,7 @@
            dataModel: dataModel,
            colModel: colM,
            hwrap: false,
-           pageModel: { type: "local", rPP: 10 },
+           pageModel: { type: "local", rPP: 12 },
            editable: false,
            selectionModel: {type: null},
            title: "Accounting Entries",

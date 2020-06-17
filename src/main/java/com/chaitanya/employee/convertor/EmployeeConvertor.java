@@ -86,7 +86,7 @@ public class EmployeeConvertor {
 			employeeJPA.setEmailId(employeeDTO.getEmailId());
 			employeeJPA.setGender(employeeDTO.getGender());
 			
-			if(Validation.validateForNullObject(employeeDTO.getReportingMgrDTO())){
+			if(Validation.validateForNullObject(employeeDTO.getReportingMgrDTO()) && Validation.validateForNullObject(employeeDTO.getReportingMgrDTO().getEmployeeId())){
 				EmployeeJPA reportingMgr= new EmployeeJPA();
 				reportingMgr.setEmployeeId(employeeDTO.getReportingMgr());
 				employeeJPA.setReportingMgr(reportingMgr);
@@ -96,7 +96,7 @@ public class EmployeeConvertor {
 				branchDetails.setBranchId(employeeDTO.getBranchDTO().getBranchId());
 				employeeJPA.setBranchJPA(branchDetails);
 			}
-			if(Validation.validateForNullObject(employeeDTO.getDepartmentDTO())){
+			if(Validation.validateForNullObject(employeeDTO.getDepartmentDTO()) && Validation.validateForNullObject(employeeDTO.getDepartmentDTO().getDepartmentId())){
 				DepartmentJPA departmentJPA=new DepartmentJPA();
 				departmentJPA.setDepartmentId(employeeDTO.getDepartmentDTO().getDepartmentId());
 				employeeJPA.setDepartmentJPA(departmentJPA);

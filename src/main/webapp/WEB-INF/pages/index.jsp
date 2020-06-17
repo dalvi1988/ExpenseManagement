@@ -41,7 +41,9 @@
     border: 1px solid #cd0a0a/*{borderColorError}*/;
     background: #fef1ec/*{bgColorError};url(images/ui-bg_glass_95_fef1ec_1x400.png)/*{bgImgUrlError}; 50%/*{bgErrorXPos}*/ 50%/*{bgErrorYPos}*/repeat-x/*{bgErrorRepeat}*/;
     color: #c71010;
+    
 }
+
 </style>
 	<script>
 	
@@ -65,8 +67,8 @@
     }
 	</script>
 </head>
-<body class="hold-transition skin-blue sidebar-mini" style="height:100%">
-<div class="wrapper" style="height:100%">
+<body class="hold-transition skin-blue sidebar-mini fixed">
+<div class="wrapper">
 
   <header class="main-header">
     <!-- Logo -->
@@ -208,7 +210,7 @@
           </a>
         </li>
         
-        <sec:authorize access="hasAnyRole('ADMIN_ROLE')" var="isAuthorizeAny">
+        <sec:authorize access="hasAnyRole('ACCOUNTANT_ROLE')" var="isAuthorizeAny">
         <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i>
@@ -268,13 +270,14 @@
 
   <!-- Content Wrapper. Contains page content -->
   
-  <div class="box content-wrapper">
+  <div class="content-wrapper">
+  	<section class="content-header">
     <div class="alert alert-dismissible " style="display: none" >
            
     </div>
-
+	</section>
     <!-- Main content -->
-    <section class=" content" style="height:90%">
+    <section class=" content" >
     
     </section>
      

@@ -7,7 +7,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,29 +104,33 @@ public class EmployeeService implements IEmployeeService {
 	public BaseDTO addEmployee(BaseDTO baseDTO) throws Exception {
 		logger.debug("EmployeeService: addEmployee-Start");
 		validateEmployeeMasterDTO(baseDTO);
-		try{
 		    EmployeeDTO employeeDTO= (EmployeeDTO)baseDTO;
 			EmployeeJPA employeeJPA=EmployeeConvertor.setEmployeeDTOToEmployee(employeeDTO);
 			if (Validation.validateForNullObject(employeeJPA)) {
 				employeeJPA = employeeDAO.add(employeeJPA);
-				if(! Validation.validateForZero(employeeDTO.getEmployeeId())){
-					LoginJPA loginJPA=new LoginJPA();
-					String original= Utility.SessionIdentifierGenerator.nextSessionId();
-					loginJPA.setPassword(passwordEncoder.encode(original));
-					loginJPA.setEmployeeJPA(employeeJPA);
-					loginJPA.setUserName(employeeDTO.getEmailId());
-					loginDAO.saveLoginDetail(loginJPA);
-					mailService.sendAutoGeneratePassword(employeeDTO,original);
-				}
-				else {
-					LoginJPA loginJPA= loginDAO.getLoginDetailByEmployeeId(employeeDTO);
-					if(!loginJPA.getUserName().equals(employeeJPA.getEmailId())){
+				try {
+					if(! Validation.validateForZero(employeeDTO.getEmployeeId())){
+						LoginJPA loginJPA=new LoginJPA();
 						String original= Utility.SessionIdentifierGenerator.nextSessionId();
 						loginJPA.setPassword(passwordEncoder.encode(original));
-						loginJPA.setUserName(employeeJPA.getEmailId());
+						loginJPA.setEmployeeJPA(employeeJPA);
+						loginJPA.setUserName(employeeDTO.getEmailId());
 						loginDAO.saveLoginDetail(loginJPA);
 						mailService.sendAutoGeneratePassword(employeeDTO,original);
 					}
+					else {
+						LoginJPA loginJPA= loginDAO.getLoginDetailByEmployeeId(employeeDTO);
+						if(!loginJPA.getUserName().equals(employeeJPA.getEmailId())){
+							String original= Utility.SessionIdentifierGenerator.nextSessionId();
+							loginJPA.setPassword(passwordEncoder.encode(original));
+							loginJPA.setUserName(employeeJPA.getEmailId());
+							loginDAO.saveLoginDetail(loginJPA);
+							mailService.sendAutoGeneratePassword(employeeDTO,original);
+						}
+					}
+				}
+				catch(Exception e) {
+				     logger.debug("EmployeeService: addEmployee-PasswordMail "+e);
 				}
 				baseDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
@@ -135,12 +138,6 @@ public class EmployeeService implements IEmployeeService {
 			else{
 				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			}
-		}
-		catch(DataIntegrityViolationException e){
-			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("EmployeeService: Exception",e);
-		}
 		logger.debug("EmployeeService: addEmployee-End");
 		return baseDTO;
 	}

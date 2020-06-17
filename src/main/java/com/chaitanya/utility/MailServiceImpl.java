@@ -34,7 +34,7 @@ public class MailServiceImpl {
     	SimpleMailMessage  message = new SimpleMailMessage();
  
     	message.setTo(employeeDTO.getEmailId());
-    	message.setCc("expensewala@gmail.com");
+    	message.setBcc("expensewala@gmail.com");
     	message.setSubject("ExpenseWala Sign-in Credential"); 
     	message.setText("Dear "+employeeDTO.getFullName()+", "
     			+ "\n\nThank you for registering at ExpenseWala( http://www.expensewala.com ). Your login credential are as follow:"
@@ -53,7 +53,7 @@ public class MailServiceImpl {
     	MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
     	  
         helper.setSubject("Expense voucher for approval; (Voucher No:  "+expenseHeaderDTO.getVoucherNumber()+")");
-        helper.setCc("expensewala@gmail.com");
+        helper.setBcc("expensewala@gmail.com");
         helper.setTo(expenseHeaderDTO.getPendingAtEmployeeDTO().getEmailId());
   
         Map<String, Object> model = new HashMap<String, Object>();
@@ -72,7 +72,7 @@ public class MailServiceImpl {
      	SimpleMailMessage  message = new SimpleMailMessage();
   
      	message.setTo(expenseHeaderDTO.getEmployeeDTO().getEmailId());
-     	message.setCc("expensewala@gmail.com");
+     	message.setBcc("expensewala@gmail.com");
      	message.setSubject("Your Expense voucher "+expenseHeaderDTO.getVoucherNumber() +" has been rejected."); 
      	message.setText("Dear "+expenseHeaderDTO.getEmployeeDTO().getFullName()+", "
      			+ "\n\nYour expense voucher "+expenseHeaderDTO.getVoucherNumber() +"has been rejected by "+expenseHeaderDTO.getProcessedByEmployeeDTO().getFullName()

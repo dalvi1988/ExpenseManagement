@@ -35,7 +35,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:logerBranchId, status:true}; //empty row template
+           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:logerBranchId,departmentId:null, status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -70,8 +70,8 @@
                    },
                    error: function () {
                        //debugger;
-                       this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
-                       this.pqGrid("rollback");
+                       /* this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
+                       this.pqGrid("rollback"); */
                    }
                }));
            }
@@ -161,12 +161,16 @@
 	          	    	$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
           	    	else{
-          	    		$grid.pqGrid("rollback");
+          	    		//$grid.pqGrid("rollback");
+          	    		$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+           				$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
           	    		$(".alert").addClass("alert-danger").text(data.message).show();
           	    	}
           	    	
           	    },
           	    error:function(data) { 
+          	    	$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+                    $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
           	    	$(".alert").addClass("alert-danger").text(data.message).show();
           	    }
           	    
@@ -185,7 +189,7 @@
        var obj = {    
    		   resizable: true,
       	   scrollModel: {autoFit: true},
-           height: '75%',
+           height: '85%',
            wrap: false,
            columnBorders: false,
            sortable: true,
@@ -337,7 +341,10 @@
 	       			               return option.departmentName;
 	       			           } 
 	       			       }
-        			   }   
+        			   },
+        			   validations: [
+                           { type: 'nonEmpty', msg: "Required" }
+                       ]
                   },
                   { title: "Reporting Manager", dataIndx: "reportingMgr", minWidth: 150,
                 	  filter: { type: "select",
@@ -365,6 +372,9 @@
       		                }
       		            }
       		        },
+	      		      validations: [
+	                      { type: 'nonEmpty', msg: "Required" }
+	                  ]
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },

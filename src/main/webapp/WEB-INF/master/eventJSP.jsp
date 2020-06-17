@@ -28,7 +28,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { eventId:"", eventCode: "", eventName:"", status:""}; //empty row template
+           var rowData = { eventId:"", eventCode: "", eventName:"", status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -68,9 +68,8 @@
                       this.pqGrid("refreshDataAndView");
                    },
                    error: function () {
-                       //debugger;
-                       this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
-                       this.pqGrid("rollback");
+                	   $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+                       $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
                    }
                }));
            }
