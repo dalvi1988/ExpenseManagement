@@ -574,11 +574,12 @@ $(function () {
             { title: "Receipt/Document",editable:false, dataIndx: "receipt", minWidth: 200, sortable: false, 
 
             	  render:function (ui) {
+            		  debugger;
             		 if(ui.cellData == ""){
             			 return "";
             		 }
             		 else if(typeof ui.cellData == "undefined" && ui.rowData.fileName == null){
-            		   	return "<input type='file' class='btn_file'/>";
+            		   	return "<input type='file' class='btn_file' accept='image/*,application/pdf' />";
             		 }
             		 else{
             			 var filename;
@@ -595,7 +596,7 @@ $(function () {
             				 filename =ui.rowData.fileName;
             			 }
             			 if( $('#expenseHeaderId').val() =="")
-            			    return "<div><a>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
+            			    return "<div><a>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file' accept='image/*,application/pdf' />";
             			 else
                			    return "<div><a href='getFile?fileName="+filename+"&voucherId="+$('#expenseHeaderId').val()+"'>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
                			   
@@ -643,12 +644,21 @@ $(function () {
     };
     obj.refresh= function () {
 	   	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
+	   		 
+	   		
 	   		 debugger;
 	   		 var $tr = $(this).closest("tr");
 	            var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
 	            var rowIndx = obj.rowIndx;
 	            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
 	            rowData.receipt=null;
+	            const maxAllowedSize = 3 * 1024 * 1024;
+		        if (evt.target.files[0].size > maxAllowedSize) {
+		        	// Here you can ask your users to load correct file
+		         	alert("Uploaded file is too big!!! Max size 3MB. ")
+		         	$(this).val("");
+		        	return false;
+		        }
 	   		 var clone = $(this).clone();
 	   		 if(rowData.expenseDetailId != null ){
 	   	     	rowData.receipt = clone.attr('name', 'updatedFiles');

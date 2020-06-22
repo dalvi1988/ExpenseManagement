@@ -1,6 +1,10 @@
 package com.chaitanya.utility;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +13,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -28,6 +34,8 @@ public class MailServiceImpl {
     
     @Autowired
     VelocityEngine velocityEngine;
+    @Autowired
+    Environment environment;
  
     public void sendAutoGeneratePassword(EmployeeDTO employeeDTO, String password) {
  
@@ -47,14 +55,25 @@ public class MailServiceImpl {
         mailSender.send(message);
     }
  
-     public void sendApprovalMail(final ExpenseHeaderDTO expenseHeaderDTO,final List<ExpenseDetailDTO> expenseDetailDTOList) throws MessagingException {
+     public void sendApprovalMail(final ExpenseHeaderDTO expenseHeaderDTO,final List<ExpenseDetailDTO> expenseDetailDTOList) throws MessagingException, FileNotFoundException {
  
     	MimeMessage message =mailSender.createMimeMessage();
-    	MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+    	MimeMessageHelper helper = new MimeMessageHelper(message, true);
     	  
         helper.setSubject("Expense voucher for approval; (Voucher No:  "+expenseHeaderDTO.getVoucherNumber()+")");
         helper.setBcc("expensewala@gmail.com");
         helper.setTo(expenseHeaderDTO.getPendingAtEmployeeDTO().getEmailId());
+        Iterator<ExpenseDetailDTO> iterator= expenseDetailDTOList.iterator();
+        String drive= environment.getProperty("fileDrive");
+		String filePath=drive+"/"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+expenseHeaderDTO.getExpenseHeaderId();
+        while(iterator.hasNext()) {
+        	ExpenseDetailDTO expenseDetailDTO= iterator.next();
+        	String fileName=expenseDetailDTO.getFileName();
+        	if(Validation.validateForNullObject(fileName)) {
+        		FileSystemResource file = new FileSystemResource(filePath+"/"+fileName);
+        		helper.addAttachment(fileName, file);
+        	}
+        }
   
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("expenseHeaderDTO", expenseHeaderDTO);
@@ -62,7 +81,7 @@ public class MailServiceImpl {
         
         String text = geVelocityTemplateContent(model);//Use Velocity
         System.out.println("Template content : "+text);
-        message.setContent(text, "text/html");
+        helper.setText(text,true);
                 // use the true flag to indicate you need a multipart message
         mailSender.send(message);
     }

@@ -198,6 +198,19 @@
             <i class="fa fa-calendar"></i> <span>Approval Flow Master</span>
           </a>
         </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i>
+            <span>MIS</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="expenseMIS"><i class="fa fa-circle-o"></i> Expense MIS</a></li>
+            
+          </ul>
+        </li>
         </sec:authorize>
          <li>
           <a href="#" class="toBeApproveExpense">
@@ -270,7 +283,7 @@
 
   <!-- Content Wrapper. Contains page content -->
   
-  <div class="content-wrapper">
+  <div class="box content-wrapper">
   	<section class="content-header">
     <div class="alert alert-dismissible " style="display: none" >
            

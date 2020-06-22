@@ -17,7 +17,7 @@
 <p>Purpose: ${expenseHeaderDTO.getPurpose()}</p>
 <p>Total Amount: ${expenseHeaderDTO.getTotalAmount()}</p>
 <p>Itinerary Details:&nbsp;</p>
-<form action="http://localhost:8080/ExpenseManagement/approveFromEmail" method="POST">
+<form action="http://expensewala.com:8080/ExpenseManagement/approveFromEmail" method="POST">
 <table style="height: 42px; width: 613px;" border="1">
 <tbody>
 <tr>
@@ -57,7 +57,13 @@
 		  <td></td>
 		#end
     	<td>$expenseDetail.getAmount()</td>
-    	<td>File Preview coming soon</td>
+    	
+    	#if ($expenseDetail.getFileName())
+    		<td><a href=\"cid:expenseDetail.getExpenseDetailId()\">$expenseDetail.getFileName()</a> 
+    		    		<img src=\"cid:expenseDetail.getExpenseDetailId()\"/></td>
+    	#else
+		  <td></td>
+		#end
     </tr>
 #end
 </tbody>

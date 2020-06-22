@@ -1,5 +1,6 @@
 package com.chaitanya.web.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -79,6 +80,22 @@ public class EmployeeController {
 		return model;
 	}
 	
+	@RequestMapping(value="employeeList",method=RequestMethod.GET)
+	public @ResponseBody List<EmployeeDTO> getAllEmployeeList() throws JsonProcessingException, ParseException{
+			List<EmployeeDTO> employeeDTOList=null;
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				employeeDTOList=new ArrayList<EmployeeDTO>();
+			
+				EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
+				if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
+					employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
+				}
+			}
+		return employeeDTOList;
+	}
+	
 	@RequestMapping(value="/empUnderDeptBranchWithLevel",method=RequestMethod.POST)
 	public @ResponseBody String getDepartmentHead(@RequestBody EmployeeDTO receivedEmployeeDTO) throws JsonProcessingException{
 		ObjectMapper mapper=new ObjectMapper();
@@ -123,6 +140,7 @@ public class EmployeeController {
 			}
 		}
 		catch(Exception e){
+			logger.error("EmployeeController: addEmployee",e);
 			toBeSentEmployeeDTO=receivedEmployeeDTO;
 			toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}

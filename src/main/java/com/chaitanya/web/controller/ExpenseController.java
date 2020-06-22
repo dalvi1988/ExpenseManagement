@@ -208,14 +208,12 @@ public class ExpenseController {
 						if(Validation.validateForNullObject(expHeaderDTO.getPendingAtEmployeeDTO())) {
 							EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(expHeaderDTO.getPendingAtEmployeeDTO());
 							expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+							expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
+							List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
 							new Thread(new Runnable() {
 								public void run() {
-	
 									try {
-										expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
-										List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
 										// Send mail to approval
-										
 										mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
 										} catch (Exception e) {
 											logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
@@ -238,13 +236,11 @@ public class ExpenseController {
 							EmployeeDTO processedByEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(expHeaderDTO.getProcessedByEmployeeDTO());
 							expenseHeaderDTOforMail.setProcessedByEmployeeDTO(processedByEmployeeDTO);
 							expenseHeaderDTOforMail.setRejectionComment(expenseHeaderDTO.getRejectionComment());
+							expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
 							new Thread(new Runnable() {
 								public void run() {
-
 									try {
-										expenseHeaderDTOforMail.setEmployeeDTO((EmployeeDTO) employeeService.getEmployeeById(expenseHeaderDTOforMail.getEmployeeDTO()));
 										// Send mail to approval
-										
 										mailService.sendRejectedMail(expenseHeaderDTOforMail);
 										} catch (Exception e) {
 											logger.debug("ExpenseService: approveRejectExpense-SendingMail: "+ e);
@@ -419,22 +415,24 @@ public class ExpenseController {
 					
 					// For approval mail
 					final ExpenseHeaderDTO expenseHeaderDTOforMail = toBeSendExpenseHeaderDTO;
-					EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(toBeSendExpenseHeaderDTO.getPendingAtEmployeeDTO());
-					expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
-					new Thread(new Runnable() {
-						public void run() {
-							expenseHeaderDTOforMail.setEmployeeDTO(receivedExpenseHeaderDTO.getEmployeeDTO());
-							List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
-							// Send mail to approval
-							try {
-								mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
+					if(Validation.validateForNullObject(expenseHeaderDTOforMail.getPendingAtEmployeeDTO())) {
+						EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(toBeSendExpenseHeaderDTO.getPendingAtEmployeeDTO());
+						expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+						expenseHeaderDTOforMail.setEmployeeDTO(receivedExpenseHeaderDTO.getEmployeeDTO());
+						List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
+						new Thread(new Runnable() {
+							public void run() {
+								// Send mail to approval
+								try {
+									mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
+								}
+								catch(Exception e) {
+									logger.debug("ExpenseService: saveUpdateExpense-sendingmail: "+ e);
+								}
+				
 							}
-							catch(Exception e) {
-								logger.debug("ExpenseService: saveUpdateExpense-sendingmail: "+ e);
-							}
-			
-						}
-					}).start();
+						}).start();
+					}
 				}
 				else{
 					toBeSendExpenseHeaderDTO.setMessage(new StringBuilder("Your voucher has been saved in draft."));
