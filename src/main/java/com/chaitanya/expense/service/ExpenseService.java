@@ -945,36 +945,4 @@ public class ExpenseService implements IExpenseService{
 		return generatedByteData;
 	}
 
-	@Override
-	public List<ExpenseHeaderDTO> getAllExpensesByCompany(BaseDTO baseDTO) throws ParseException {
-		logger.debug("ExpenseService: getAllExpensesByCompany-Start");
-		validateExpenseDTO(baseDTO);
-		
-		List<ExpenseHeaderDTO> expenseHeaderDTOList= null;
-		if (Validation.validateForNullObject(baseDTO)) {
-			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
-			List<ExpenseHeaderJPA> expenseHeaderJPAList =expenseDAO.getAllExpensesByCompany(expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO());
-			if(Validation.validateForNullObject(expenseHeaderJPAList)){
-				expenseHeaderDTOList= new ArrayList<ExpenseHeaderDTO>();
-				for(ExpenseHeaderJPA expenseHeaderJPA: expenseHeaderJPAList){
-					ExpenseHeaderDTO expHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
-					if(Validation.validateForNullObject(expenseHeaderJPA.getAdvanceJPA())){
-						expHeaderDTO.setAdvanceDTO(AdvanceConvertor.setAdvanceJPAtoDTO(expenseHeaderJPA.getAdvanceJPA()));
-					}
-					if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())){
-						expHeaderDTO.setEmployeeDTO(EmployeeConvertor.setEmployeeJPAToEmployeeDTO(expenseHeaderJPA.getEmployeeJPA()));
-					}
-					expenseHeaderDTOList.add(expHeaderDTO);
-				}
-				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
-			}
-		}
-		else{
-			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-		}
-		
-		logger.debug("ExpenseService: getAllExpensesByCompany-End");
-		return  expenseHeaderDTOList;
-	}
-	
 }

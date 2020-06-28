@@ -712,7 +712,7 @@ public class ExpenseController {
 		return model;
 	}
 	
-	@RequestMapping(value="/exportAccountingEntry",method=RequestMethod.POST)
+	@RequestMapping(value="/exportAccountingEntry",method= {RequestMethod.POST,RequestMethod.GET})
 	public HttpEntity<byte[]> exportAccountingEntries(@RequestParam ArrayList<Long> expenseHeaderIds) throws FileNotFoundException {
 		
 		try{

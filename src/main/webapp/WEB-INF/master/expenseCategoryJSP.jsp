@@ -236,7 +236,7 @@
                       filter: { type: 'textbox',attr: 'placeholder="Search Expense Name"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
-                          { type: 'maxLen', value: 20, msg: "length should be <= 20" }
+                          { type: 'maxLen', value: 25, msg: "length should be <= 25" }
                       ]
                   },
                   { title: "GL Code", width: 165, dataType: "string", dataIndx: "glCode",

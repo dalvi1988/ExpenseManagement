@@ -18,6 +18,7 @@
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
  	
+ 	
  	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet">
  	<!-- <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet"> -->
   
@@ -285,7 +286,7 @@
   
   <div class="box content-wrapper">
   	<section class="content-header">
-    <div class="alert alert-dismissible " style="display: none" >
+    <div class="alert alert-dismissible " style="display: none;padding: 5px;" >
            
     </div>
 	</section>

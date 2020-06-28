@@ -68,6 +68,7 @@ public class EmployeeController {
 				}
 				
 				model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
+				model.addObject("reportingMgrList", mapper.writeValueAsString(employeeDTOList));
 				model.addObject("branchList", mapper.writeValueAsString(branchDTOList));
 				model.addObject("departmentList", mapper.writeValueAsString(departmentDTOList));
 			}
