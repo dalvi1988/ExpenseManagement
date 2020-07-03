@@ -32,7 +32,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { expenseCategoryId:"", status:true,unitRequired :false, amount:""}; //empty row template
+           var rowData = { expenseCategoryId:"", status:true,unitRequired :false, amount:0.0}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -109,7 +109,7 @@
        }
        //called by update button.
        function update(rowIndx, $grid) {
-   	  
+   	  	  debugger;
           if ($grid.pqGrid("saveEditCell") == false) {
               return false;
           }
@@ -236,7 +236,7 @@
                       filter: { type: 'textbox',attr: 'placeholder="Search Expense Name"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
-                          { type: 'maxLen', value: 20, msg: "length should be <= 20" }
+                          { type: 'maxLen', value: 25, msg: "length should be <= 25" }
                       ]
                   },
                   { title: "GL Code", width: 165, dataType: "string", dataIndx: "glCode",
@@ -274,31 +274,34 @@
                       validations: [
                           //{ type: 'gt', value: 0, msg: "should be > 0" },
                           { type: function(ui){
+                        	  debugger;
                         	  	if(ui.rowData['unitRequired'] == true){
                         	  		if(ui.value<=0 || ui.value== "NaN" ||ui.value ==""){
                         	  		    ui.msg= "should be > 0";
                         	  			return false;
                         	  		}
-                        	  	}
-                        	  	else{
+                        	  	}else{
                         	  		return true;
                         	  	}
+                        	  	
                           	 }
                           }
                       ],
 	               	  
                       render: function (ui) {
+                    	  debugger;
                     	  if(ui.rowData['unitRequired'] == true)  
 								return ""+parseFloat(ui.cellData).toFixed(2)+ " per Unit";
-							else 
-								return ""+parseFloat(ui.cellData).toFixed(2);
+							else{
+								if(typeof ui.cellData != "undefined" && ui.cellData != null)
+									return ""+parseFloat(ui.cellData).toFixed(2);
+							}
                       }
                   },
                   { title: "Amount Limit Increased?", width: 130, dataType: "bool", align: "center", dataIndx: "limitIncrease",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
                 	  editor: { type: "checkbox", style: "margin:3px 5px;"},
                 	  editable: function(ui){
-                		  debugger;
 							if(typeof ui.rowData!= "undefined" && ui.rowData['amount'] != null )  
 								return true;
 							else 

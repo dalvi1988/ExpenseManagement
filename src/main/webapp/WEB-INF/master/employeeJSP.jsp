@@ -35,7 +35,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:logerBranchId, status:true}; //empty row template
+           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:logerBranchId,departmentId:null, status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -70,8 +70,8 @@
                    },
                    error: function () {
                        //debugger;
-                       this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
-                       this.pqGrid("rollback");
+                       /* this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
+                       this.pqGrid("rollback"); */
                    }
                }));
            }
@@ -161,12 +161,16 @@
 	          	    	$(".alert").addClass("alert-success").text(data.message).show();
           	    	}
           	    	else{
-          	    		$grid.pqGrid("rollback");
+          	    		//$grid.pqGrid("rollback");
+          	    		$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+           				$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
           	    		$(".alert").addClass("alert-danger").text(data.message).show();
           	    	}
           	    	
           	    },
           	    error:function(data) { 
+          	    	$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+                    $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
           	    	$(".alert").addClass("alert-danger").text(data.message).show();
           	    }
           	    
@@ -182,15 +186,15 @@
           }
        }
        //define the grid.
-       var obj = {                        
+       var obj = {    
+   		   resizable: true,
+      	   scrollModel: {autoFit: true},
+           height: '85%',
            wrap: false,
-           hwrap: false,
-           resizable: true,
            columnBorders: false,
-           sortable: false,
+           sortable: true,
            numberCell: { show: false },
            track: true, //to turn on the track changes.
-           flexHeight: true,
            filterModel: { on: true, mode: "AND", header: true },
            toolbar: {
                items: [
@@ -239,7 +243,7 @@
                           { type: 'maxLen', value: 40, msg: "length should be <= 20" }
                       ]
                   },
-                  { title: "Gender", width: 50, dataIndx: "gender",
+                  { title: "Gender", minWidth: 55, dataIndx: "gender",
                 	  filter: { type: "select",
           		        condition: 'equal',
           		        prepend: { '': '--All--' },
@@ -337,7 +341,10 @@
 	       			               return option.departmentName;
 	       			           } 
 	       			       }
-        			   }   
+        			   },
+        			   validations: [
+                           { type: 'nonEmpty', msg: "Required" }
+                       ]
                   },
                   { title: "Reporting Manager", dataIndx: "reportingMgr", minWidth: 150,
                 	  filter: { type: "select",
@@ -365,6 +372,9 @@
       		                }
       		            }
       		        },
+	      		      validations: [
+	                      { type: 'nonEmpty', msg: "Required" }
+	                  ]
                   },
                   { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
@@ -388,6 +398,9 @@
                dataType: "JSON",
                location: "local",
                recIndx: "employeeId",
+               sorting: "local",
+               sortIndx: "firstName",
+               sortDir: "down",
                data: employeeList
            },
            pageModel: { type: "local" },

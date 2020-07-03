@@ -5,8 +5,8 @@
 <head>
 
  <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
- <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
- <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
+ <script type="text/javascript" src=<spring:url value="/gridNew/pqgrid.min.js"/> ></script>
+ <link rel="stylesheet" href=<spring:url value="/gridNew/pqgrid.min.css"/> />
 
 <style type="text/css">
 div.pq-grid tr td.disabled{    
@@ -146,6 +146,7 @@ $(function () {
     }
 	
 	$( "#startDate" ).datepicker({
+		minDate: -60,
 	    maxDate: "Now",
 	    dateFormat: "dd-MM-yy",
 	    buttonImage: "/images/calendar.gif",
@@ -216,7 +217,6 @@ $(function () {
 	}
 	
 	function validateComponent(){
-		debugger;
 		if($grid.pqGrid( "option" , "dataModel.data" ).length == 0){
 			$("#dialog").text("Empty voucher not allowed.");
 			$("#dialog").dialog();
@@ -257,7 +257,6 @@ $(function () {
 		} 
     	 
         //attempt to save editing cell.
-        //debugger;
         if (grid.saveEditCell() === false) {
             return false;
         }
@@ -342,7 +341,7 @@ $(function () {
         numberCell: { show: false },
         track : true, //to turn on the track changes.
         trackModel: { on: true },
-        height: '85%',
+        height: '95%',
         flexHeight: true,
         toolbar: {
             items: [
@@ -389,7 +388,10 @@ $(function () {
         },
         
         editModel: {
-            saveKey: $.ui.keyCode.ENTER
+        	clicksToEdit: 1, 
+        	 pressToEdit: true,
+            saveKey: $.ui.keyCode.ENTER,
+            
         },
         title: "<b>Expense Voucher</b>",
 
@@ -437,7 +439,7 @@ $(function () {
                             ui.msg = value + " not found in list";
                             return false;
                         } 
-                    }, icon: 'ui-icon-info'
+                    }, icon: 'ui-icon-info',
                     }
                 ],
                 render:function(ui){
@@ -523,38 +525,55 @@ $(function () {
             			return false;
             		}
                 },
+                validations:[
+                	{
+                		type: function (ui){
+                			debugger;
+                			if(ui.rowData['unitRequired']== true){
+                				if(typeof ui.value == "undefined"  || ui.value == null || ui.value=="" ){
+                					 ui.msg="Unit can not empty";
+                					return false;
+                				}
+                			}
+                		}
+                	}
+                ],
                 render: disableFieldRenderer
             },
-            { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",render:amountRenderer,
+            { title: "Amount", width: 140, dataType: "float", align: "right", dataIndx: "amount",
             	 validations: [
                       { type: function (ui) {
                           var value = ui.value;
-                          
-                          if(ui.rowData['limitIncrease'] == false){
-                        	 if(ui.rowData['unitRequired'] == true){
-                        		 var expectedAmmount= ui.rowData['amountPerUnit']*ui.rowData['unit'];
-                        		 if(value> expectedAmmount){
-                        			 ui.msg="Amount can not exceed "+expectedAmmount;
-                        			 return false;
-                        		 }
-
-                        	 }
-                        	 else{
-                        		 var expectedAmmount= ui.rowData['amountPerUnit'];
-                        		 if( ui.rowData['amountPerUnit'] != null){
+                          if(typeof value != "undefined"){
+	                          if(ui.rowData['limitIncrease'] == false){
+	                        	 if(ui.rowData['unitRequired'] == true){
+	                        		 var expectedAmmount= ui.rowData['amountPerUnit']*ui.rowData['unit'];
 	                        		 if(value> expectedAmmount){
 	                        			 ui.msg="Amount can not exceed "+expectedAmmount;
 	                        			 return false;
 	                        		 }
-                        		 }
-                        	 }
+	
+	                        	 }
+	                        	 else{
+	                        		 var expectedAmmount= ui.rowData['amountPerUnit'];
+	                        		 if( ui.rowData['amountPerUnit'] != null){
+		                        		 if(value> expectedAmmount){
+		                        			 ui.msg="Amount can not exceed "+expectedAmmount;
+		                        			 return false;
+		                        		 }
+	                        		 }
+	                        	 }
+	                          }
+                      		}
+                          else{
+                        	  ui.msg="Amount can not empty";
+                        	  return false;
                           }
                       }, icon: 'ui-icon-info'
                       }
                 ],
                 
                 editable: function(ui){
-                	debugger;
             		if(typeof ui.rowData != "undefined"  && ui.rowData != null && ui.rowData['unitRequired'] != null){
 						if(ui.rowData['unitRequired'] == true && (typeof ui.rowData['unit'] != "undefined" && ui.rowData['unit'] != null) ){ 
 							return true;
@@ -570,7 +589,7 @@ $(function () {
             			return true;
             		}
                 },
-                
+                render:amountRenderer
             },
             { title: "Receipt/Document",editable:false, dataIndx: "receipt", minWidth: 200, sortable: false, 
 
@@ -579,7 +598,7 @@ $(function () {
             			 return "";
             		 }
             		 else if(typeof ui.cellData == "undefined" && ui.rowData.fileName == null){
-            		   	return "<input type='file' class='btn_file'/>";
+            		   	return "<input type='file' class='btn_file' accept='image/*,application/pdf' />";
             		 }
             		 else{
             			 var filename;
@@ -596,7 +615,7 @@ $(function () {
             				 filename =ui.rowData.fileName;
             			 }
             			 if( $('#expenseHeaderId').val() =="")
-            			    return "<div><a>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
+            			    return "<div><a>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file' accept='image/*,application/pdf' />";
             			 else
                			    return "<div><a href='getFile?fileName="+filename+"&voucherId="+$('#expenseHeaderId').val()+"'>"+ filename+"</a><button type='button' style='display: inline;width:20px;height:20px' class='ui-icon ui-icon-circle-close fileName_btn'></button></div><input type='file' class='btn_file'/>";
                			   
@@ -616,12 +635,6 @@ $(function () {
             location: "local",
             recIndx: "expenseDetailId",
             data: expenseDetailList
-        },
-        //save the cell when cell loses focus.
-        quitEditMode: function (evt, ui) {                
-            if (evt.keyCode != $.ui.keyCode.ESCAPE) {
-                $grid.pqGrid("saveEditCell");
-            }
         },
         render : function (evt, ui) {
             $summary = $("<div class='pq-grid-summary'  ></div>")
@@ -644,14 +657,28 @@ $(function () {
     };
     obj.refresh= function () {
 	   	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
+	   		 
+	   		
 	   		 debugger;
 	   		 var $tr = $(this).closest("tr");
 	            var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
 	            var rowIndx = obj.rowIndx;
 	            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
 	            rowData.receipt=null;
+	            const maxAllowedSize = 3 * 1024 * 1024;
+		        if (evt.target.files[0].size > maxAllowedSize) {
+		        	// Here you can ask your users to load correct file
+		         	alert("Uploaded file is too big!!! Max size 3MB. ")
+		         	$(this).val("");
+		        	return false;
+		        }
 	   		 var clone = $(this).clone();
-	   	     rowData.receipt = clone.attr('name', 'addedFiles');
+	   		 if(rowData.expenseDetailId != null ){
+	   	     	rowData.receipt = clone.attr('name', 'updatedFiles');
+	   		 }
+	   		 else{
+	   			rowData.receipt = clone.attr('name', 'addedFiles');
+	   		 }
 	   		 $grid.pqGrid( "updateRow", {rowIndx: rowIndx, row: { 'modified':true},checkEditable:false} );
 			 $grid.pqGrid("refresh"); 
 				 
@@ -677,7 +704,7 @@ $(function () {
            var rowIndx = obj.rowIndx;
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
 
-           var ans = window.confirm("Are you sure to delete selected item.");
+           var ans = window.confirm("Are you sure to delete selected item?");
 
            if (ans) {
                $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true, complete: function () {
@@ -782,7 +809,6 @@ $(function () {
     
     
     var $grid;
-    
     if($('#expenseHeaderId').val() != "" && $('#expenseHeaderId').val() != null){
     		
     	$(".expenseType").change();
@@ -812,7 +838,8 @@ $(function () {
 });
 
 function changedAdvance(){
-	if($('#advanceSelect').val()!=-1 || $('#advanceSelect').val()!=null){
+	debugger;
+	if($('#advanceSelect').val()!=null && $('#advanceSelect').val()!=-1 ){
 		for(var i=0;i<advanceList.length;i++){
 			if( advanceList[i].advanceDetailId==$('#advanceSelect').val()){
 				 $('#advanceAmountSpan').text(advanceList[i].amount);
@@ -822,6 +849,9 @@ function changedAdvance(){
 				 break;
 			}
 		}
+		if(typeof grid != "undefined"){
+			grid.refresh(); 
+		 }
 	}
 	else{
 		 $('#advanceAmountSpan').text("");
@@ -829,8 +859,7 @@ function changedAdvance(){
 		 $('#advanceAmount').val("");
 		 
 	}
-	if(typeof grid != "undefined")
-		grid.refresh();
+	 
 }
 
 </script>

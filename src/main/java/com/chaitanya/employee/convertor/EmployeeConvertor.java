@@ -3,6 +3,7 @@ package com.chaitanya.employee.convertor;
 import java.text.ParseException;
 
 import com.chaitanya.branch.model.BranchDTO;
+import com.chaitanya.company.model.CompanyDTO;
 import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.BranchJPA;
@@ -37,7 +38,11 @@ public class EmployeeConvertor {
 			if(Validation.validateForNullObject(employeeJPA.getBranchJPA())){
 				BranchDTO branchDTO= new BranchDTO();
 				branchDTO.setBranchId(employeeJPA.getBranchJPA().getBranchId());
-				//branchDTO.setBranchName(employeeJPA.getBranchJPA().getBranchName());
+				if(Validation.validateForNullObject(employeeJPA.getBranchJPA().getCompanyJPA())){
+					CompanyDTO companyDTO= new CompanyDTO();
+					companyDTO.setCompanyId(employeeJPA.getBranchJPA().getCompanyJPA().getCompanyId());
+					branchDTO.setCompanyDTO(companyDTO);
+				}
 				employeeDTO.setBranchDTO(branchDTO);
 			}
 			
@@ -86,7 +91,7 @@ public class EmployeeConvertor {
 			employeeJPA.setEmailId(employeeDTO.getEmailId());
 			employeeJPA.setGender(employeeDTO.getGender());
 			
-			if(Validation.validateForNullObject(employeeDTO.getReportingMgrDTO())){
+			if(Validation.validateForNullObject(employeeDTO.getReportingMgrDTO()) && Validation.validateForNullObject(employeeDTO.getReportingMgrDTO().getEmployeeId())){
 				EmployeeJPA reportingMgr= new EmployeeJPA();
 				reportingMgr.setEmployeeId(employeeDTO.getReportingMgr());
 				employeeJPA.setReportingMgr(reportingMgr);
@@ -96,7 +101,7 @@ public class EmployeeConvertor {
 				branchDetails.setBranchId(employeeDTO.getBranchDTO().getBranchId());
 				employeeJPA.setBranchJPA(branchDetails);
 			}
-			if(Validation.validateForNullObject(employeeDTO.getDepartmentDTO())){
+			if(Validation.validateForNullObject(employeeDTO.getDepartmentDTO()) && Validation.validateForNullObject(employeeDTO.getDepartmentDTO().getDepartmentId())){
 				DepartmentJPA departmentJPA=new DepartmentJPA();
 				departmentJPA.setDepartmentId(employeeDTO.getDepartmentDTO().getDepartmentId());
 				employeeJPA.setDepartmentJPA(departmentJPA);

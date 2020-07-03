@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.Command;
+import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.department.model.DepartmentDTO;
 import com.chaitanya.department.service.IDepartmentService;
 import com.chaitanya.departmentHead.model.DepartmentHeadDTO;
@@ -45,7 +47,7 @@ public class DepartmentHeadController {
 	IEmployeeService employeeService;
 	
 	@RequestMapping(value="/departmentHead",method=RequestMethod.GET)
-	public ModelAndView getDepartmentHeadJSP() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
+	public ModelAndView getDepartmentHeadPage() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 		ModelAndView model=new ModelAndView();
 		ObjectMapper mapper = new ObjectMapper();
 		List<EmployeeDTO> employeeDTOList=null;
@@ -83,9 +85,9 @@ public class DepartmentHeadController {
 	}
 	
 	@RequestMapping(value="/addDepartmentHead", method=RequestMethod.POST)
-	public @ResponseBody DepartmentHeadDTO addDepartmentHead(@RequestBody DepartmentHeadDTO receivedDepartmentHeadDTO){
-		DepartmentHeadDTO toBeSentBranchDTO=null;
-		if(Validation.validateForNullObject(receivedDepartmentHeadDTO)){
+	public @ResponseBody BaseDTO addDepartmentHead(@RequestBody DepartmentHeadDTO receivedDepartmentHeadDTO){
+		BaseDTO toBeSentBranchDTO=null;
+		try {
 			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if(!Validation.validateForNullObject(receivedDepartmentHeadDTO.getDeptHeadId())){
 				receivedDepartmentHeadDTO.setCommand(Command.ADD);
@@ -106,18 +108,16 @@ public class DepartmentHeadController {
 				else
 					toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
 			}
-			else if(Validation.validateForSystemFailureStatus(baseDTO)){
-				toBeSentBranchDTO=receivedDepartmentHeadDTO;
-				toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
-			}
-			else if(Validation.validateForBusinessFailureStatus(baseDTO)){
-				toBeSentBranchDTO=receivedDepartmentHeadDTO;
-				toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
-			}
 		}
-		else{
+		catch(DataIntegrityViolationException e) {
+			toBeSentBranchDTO=receivedDepartmentHeadDTO;
+			toBeSentBranchDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+			toBeSentBranchDTO.setMessage(new StringBuilder(e.getMessage()));
+		}
+		catch(Exception e){
 			toBeSentBranchDTO=receivedDepartmentHeadDTO;
 			toBeSentBranchDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+			toBeSentBranchDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 		}
 		
 		return toBeSentBranchDTO;

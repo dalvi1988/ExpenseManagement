@@ -19,6 +19,7 @@
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
  	
+ 	
  	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet">
  	<!-- <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet"> -->
   
@@ -42,7 +43,9 @@
     border: 1px solid #cd0a0a/*{borderColorError}*/;
     background: #fef1ec/*{bgColorError};url(images/ui-bg_glass_95_fef1ec_1x400.png)/*{bgImgUrlError}; 50%/*{bgErrorXPos}*/ 50%/*{bgErrorYPos}*/repeat-x/*{bgErrorRepeat}*/;
     color: #c71010;
+    
 }
+
 </style>
 	<script>
 	
@@ -66,8 +69,8 @@
     }
 	</script>
 </head>
-<body class="hold-transition skin-blue sidebar-mini" style="height:100%">
-<div class="wrapper" style="height:100%">
+<body class="hold-transition skin-blue sidebar-mini fixed">
+<div class="wrapper">
 
   <header class="main-header">
     <!-- Logo -->
@@ -75,7 +78,7 @@
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>EMS</b></span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Expense</b>Management</span>
+      <span class="logo-lg"><b>Expense</b><i>Wala</i></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -90,7 +93,8 @@
          <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="theme/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+              
+              <img src="icon/Male Boss.ico" class="user-image" alt="User Image">
               <span class="hidden-xs"><sec:authentication property="principal.loginDTO.employeeDTO.fullName" /></span>
             </a>
          </li>
@@ -110,7 +114,7 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="theme/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+          <img src="icon/no_image.png" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <h4><sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.companyDTO.companyName" /></h4>
@@ -148,7 +152,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
-            <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Expenses at Payment Desk</a></li>
+            <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li>
             <li><a href="#" class="paidExpense"><i class="fa fa-circle-o"></i>Paid Expenses</a></li>
             <li><a href="#" class="processedByMeExpense"><i class="fa fa-circle-o"></i>Processed Expense By Me</a></li>
           </ul>
@@ -166,7 +170,7 @@
             <li><a href="#" class="viewDraftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
             <li><a href="#" class="pendingAdvance"><i class="fa fa-circle-o"></i>Pending Advance</a></li>
             <li><a href="#" class="rejectedAdvance"><i class="fa fa-circle-o"></i>Rejected Advance</a></li>
-            <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Advances at Payment Desk</a></li>
+            <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li>
             <li><a href="#" class="paidAdvances"><i class="fa fa-circle-o"></i>Paid Advances</a></li>
             <li><a href="#" class="processedByMeAdvances"><i class="fa fa-circle-o"></i>Processed Advances By Me</a></li>
           </ul>
@@ -195,6 +199,19 @@
           <a href="#" class="approvalFlow">
             <i class="fa fa-calendar"></i> <span>Approval Flow Master</span>
           </a>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i>
+            <span>MIS</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="expenseMIS"><i class="fa fa-circle-o"></i> Expense MIS</a></li>
+            
+          </ul>
         </li>
         </sec:authorize>
          <li>
@@ -255,6 +272,11 @@
           </ul>
         </li>
         </sec:authorize>
+        <li>
+          <a href="#" class="resetPasswordPage">
+            <i class="fa fa-calendar"></i> <span>Reset Password</span>
+          </a>
+        </li>
         
       </ul>
     </section>
@@ -264,12 +286,13 @@
   <!-- Content Wrapper. Contains page content -->
   
   <div class="box content-wrapper">
-    <div class="alert alert-dismissible " style="display: none" >
+  	<section class="content-header">
+    <div class="alert alert-dismissible " style="display: none;padding: 5px;" >
            
     </div>
-
+	</section>
     <!-- Main content -->
-    <section class=" content">
+    <section class=" content" >
     
     </section>
      
@@ -277,9 +300,10 @@
         <i class="fa fa-refresh fa-spin"></i>
       </div>
     <!-- /.content -->
-    </div>
+   </div>
   <!-- /.content-wrapper -->
   
+  <div>
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
@@ -287,7 +311,7 @@
     <strong>Copyright &copy; 2016-2018 <a href="http://expensewala.com">ExpenseWala.com</a>.</strong> All rights
     reserved.
   </footer>
-  
+  </div>
   
 </div>
 <!-- ./wrapper -->

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.chaitanya.employee.model.EmployeeDTO;
-import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.LoginJPA;
 
 @Repository
@@ -56,12 +55,13 @@ public class LoginDAO implements ILoginDAO {
 	}
 	
 	@Override
-	public LoginJPA getLoginDetailByEmployeeId(EmployeeJPA employeeJPA) {
+	public LoginJPA getLoginDetailByEmployeeId(EmployeeDTO employeeDTO) {
 		Session session=sessionFactory.getCurrentSession();
 		LoginJPA loginJPA= (LoginJPA) session.createCriteria(LoginJPA.class)
-										.add(Restrictions.eq("employeeJPA.employeeId", employeeJPA.getEmployeeId()))
+										.add(Restrictions.eq("employeeJPA.employeeId", employeeDTO.getEmployeeId()))
 										.uniqueResult();
 		return loginJPA;
 	}
+
 
 }

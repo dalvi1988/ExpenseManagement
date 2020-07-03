@@ -57,7 +57,7 @@
 	
 	<!-- Send logs to both console and file audit -->
 	<logger level="debug"
-		additivity="false">
+		additivity="true">
 		<appender-ref ref="FILE-AUDIT" />
 	</logger>
 

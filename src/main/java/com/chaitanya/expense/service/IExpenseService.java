@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.base.BaseDTO;
+import com.chaitanya.customException.ApprovalFlowException;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
 
@@ -21,7 +22,7 @@ public interface IExpenseService {
 
 	List<ExpenseDetailDTO> getExpenseDetailsByHeaderId(BaseDTO baseDTO);
 
-	BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException, ParseException;
+	BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException, ParseException, ApprovalFlowException;
 
 	List<ExpenseHeaderDTO> getPendingExpenseList(BaseDTO baseDTO) throws ParseException;
 
@@ -50,6 +51,5 @@ public interface IExpenseService {
 	byte[] exportAccountingEntries(BaseDTO baseDTO) throws ParseException,IOException;
 
 	List<ExpenseHeaderDTO> fetchedAccountingEntries(BaseDTO baseDTO) throws ParseException;
-
 
 }

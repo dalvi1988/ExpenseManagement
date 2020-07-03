@@ -82,6 +82,8 @@ public class ExpenseHeaderDTO extends BaseDTO{
 	private Double advanceAmount;
 	
 	private String processedDate;
+	
+	private String processSessionId;
 
 	public Long getExpenseHeaderId() {
 		return expenseHeaderId;
@@ -290,6 +292,14 @@ public class ExpenseHeaderDTO extends BaseDTO{
 
 	public void setProcessInstanceId(Long processInstanceId) {
 		this.processInstanceId = processInstanceId;
+	}
+
+	public String getProcessSessionId() {
+		return processSessionId;
+	}
+
+	public void setProcessSessionId(String processSessionId) {
+		this.processSessionId = processSessionId;
 	}
 
 }

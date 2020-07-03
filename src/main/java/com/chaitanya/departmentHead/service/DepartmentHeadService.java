@@ -1,5 +1,6 @@
 package com.chaitanya.departmentHead.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,17 +27,18 @@ public class DepartmentHeadService implements IDepartmentHeadService {
 	
 	private Logger logger= LoggerFactory.getLogger(DepartmentHeadService.class);
 
-	private boolean validateDepartmentHeadMasterDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof DepartmentHeadDTO);
+	private void validateDepartmentHeadMasterDTO(BaseDTO baseDTO) {
+		if(baseDTO == null  || !(baseDTO instanceof DepartmentHeadDTO))
+		{
+			throw new IllegalArgumentException("Object expected of DepartmentHeadDTO type.");
+		}
 	}
 	
 	@Override
 	@Transactional(readOnly=true)
 	public List<DepartmentHeadDTO> findDepartmentHeadUnderBranch(BaseDTO baseDTO) {
 		logger.debug("DepartmentHeadService: findDepartmentHeadUnderBranch-Start");
-		if(validateDepartmentHeadMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of DepartmentHeadDTO type.");
-		}
+		validateDepartmentHeadMasterDTO(baseDTO);
 		List<DepartmentHeadDTO> departmentHeadDTOList= null;
 		try{
 			if (Validation.validateForNullObject(baseDTO)) {
@@ -64,32 +66,29 @@ public class DepartmentHeadService implements IDepartmentHeadService {
 	}
 
 	@Override
-	public BaseDTO addDepartmentHead(BaseDTO baseDTO) {
+	public BaseDTO addDepartmentHead(BaseDTO baseDTO) throws ParseException {
 		logger.debug("DepartmentHeadService: addDepartmentHead-Start");
-		if(validateDepartmentHeadMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of DepartmentHeadDTO type.");
-		}
-		try{
-			DepartmentHeadJPA departmentHeadJPA=DepartmentHeadConvertor.setDepartmentHeadDTOToJPA((DepartmentHeadDTO)baseDTO);
-			if (Validation.validateForNullObject(departmentHeadJPA)) {
-				departmentHeadJPA=departmentHeadDAO.add(departmentHeadJPA);
-				if(Validation.validateForNullObject(departmentHeadJPA)){
-					baseDTO=DepartmentHeadConvertor.setDepartmentHeadJPAToDTO(departmentHeadJPA);
-					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		validateDepartmentHeadMasterDTO(baseDTO);
+		DepartmentHeadDTO departmentHeadDTO=(DepartmentHeadDTO) baseDTO;
+		DepartmentHeadJPA isDepartmentHeadExists= departmentHeadDAO.checkDepartmentHeadExist(departmentHeadDTO);
+		if(Validation.validateForNullObject(isDepartmentHeadExists)) {
+			if(!departmentHeadDTO.getDeptHeadId().equals(isDepartmentHeadExists.getDeptHeadId())) {
+				if(departmentHeadDTO.getDepartmentDTO().getDepartmentId().equals(isDepartmentHeadExists.getDepartmentJPA().getDepartmentId())){
+					baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+					throw new DataIntegrityViolationException("Deparment Head already exists for selected department.");
 				}
 			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		if (Validation.validateForNullObject(departmentHeadDTO)) {
+			DepartmentHeadJPA departmentHeadJPA=DepartmentHeadConvertor.setDepartmentHeadDTOToJPA((DepartmentHeadDTO)baseDTO);
+			departmentHeadJPA=departmentHeadDAO.add(departmentHeadJPA);
+			if(Validation.validateForNullObject(departmentHeadJPA)){
+				baseDTO=DepartmentHeadConvertor.setDepartmentHeadJPAToDTO(departmentHeadJPA);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
 		}
-		catch(DataIntegrityViolationException e){
+		else{
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("DepartmentHeadService: Exception",e);
-		}
-		catch(Exception e){
-			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
-			logger.error("DepartmentHeadService: Exception",e);
 		}
 		logger.debug("DepartmentHeadService: addDepartmentHead-End");
 		return baseDTO;

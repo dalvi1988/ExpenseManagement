@@ -3,6 +3,7 @@ package com.chaitanya.expense.dao;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.ParameterMode;
 
@@ -16,6 +17,8 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.procedure.ProcedureCall;
 import org.hibernate.procedure.ProcedureOutputs;
 import org.hibernate.sql.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +38,8 @@ import com.chaitanya.utility.VoucherStatusEnum;
 
 @Repository
 public class ExpenseDAO implements IExpenseDAO{
+	
+	private Logger logger= LoggerFactory.getLogger(ExpenseDAO.class);
 
 	@Autowired
 	SessionFactory sessionFactory;
@@ -156,9 +161,13 @@ public class ExpenseDAO implements IExpenseDAO{
 			pendingAt.setEmployeeId(expenseHeaderJPA.getEmployeeJPA().getEmployeeId());*/
 			processInstanceJPA.setPendingAt(null);
 			
-			EmployeeJPA approveBy = new EmployeeJPA();
-			approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
-			processInstanceJPA.setProcessedBy(approveBy);
+			if(Validation.validateForNullObject(approvalEmployeeDTO) && Validation.validateForNullObject(approvalEmployeeDTO.getEmployeeId())){
+				EmployeeJPA approveBy = new EmployeeJPA();
+				approveBy.setEmployeeId(approvalEmployeeDTO.getEmployeeId());
+				processInstanceJPA.setProcessedBy(approveBy);
+			}else {
+				processInstanceJPA.setProcessedBy(null);
+			}
 		
 			
 			VoucherStatusJPA voucherStatusJPA = new VoucherStatusJPA();
@@ -190,7 +199,7 @@ public class ExpenseDAO implements IExpenseDAO{
 				approvalId=level;
 			}
 		
-			if(employeeJPA.getEmployeeId()== approvalId){
+			if(employeeJPA.getEmployeeId().equals(approvalId)){
 				ProcessHistoryJPA processHistoryJPA = new ProcessHistoryJPA();
 				processHistoryJPA.setComment("Skipping "+levelInfo+" because voucher creator and approval are same");
 				processHistoryJPA.setExpenseHeaderJPA(expenseHeaderJPA);
@@ -222,10 +231,13 @@ public class ExpenseDAO implements IExpenseDAO{
 				
 				processInstanceJPA.setComment("");
 				
+				processInstanceJPA.setSessionId(UUID.randomUUID().toString());
+				
 				expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
 			}
 		}
 		else if(currentVoucerStatus != 131){
+			logger.debug(levelInfo +" not available.");
 			System.out.println(levelInfo +" not available.");
 			updateProcessInstanceByApprovalFlow(nextStatusId,expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow,approvalEmployeeDTO);
 		}
@@ -522,5 +534,20 @@ public class ExpenseDAO implements IExpenseDAO{
 	public void deleteExpenseDetail(ExpenseDetailJPA expenseDetailJPA) {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(expenseDetailJPA);
+	}
+	
+	@Override
+	public List<ExpenseHeaderJPA> getAllExpensesByCompany(CompanyDTO companyDTO) {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
+				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA", "employeeJPA",JoinType.INNER_JOIN)
+				.createAlias("employeeJPA.branchJPA", "branchJPA",JoinType.INNER_JOIN)
+				.createAlias("branchJPA.companyJPA", "companyJPA",JoinType.INNER_JOIN)
+				.add(Restrictions.eq("companyJPA.companyId",companyDTO.getCompanyId()))
+				.list();
+		return expsensHeaderJPAList;
+
 	}
 }

@@ -15,11 +15,12 @@
    $(function () {
        //define colModel
        var colM = [
+    	   { title: "Employee Name", width: 120, dataIndx: "employeeDTO" },
 	       { title: "Purpose", width: 100, dataIndx: "purpose"},
-	       { title: "Voucher Number", width: 120, dataIndx: "voucherNumber"}, 
-	       { title: "Start date", minWidth: 130, dataIndx: "startDate", dataType:"String"},
-		   { title: "End Date", minWidth: 130, dataIndx: "endDate"},
-	       { title: "Total Amount", width: 100, dataIndx: "totalAmount", align: "center",render: amountRenderer
+	       { title: "Voucher Number", minWidth: 200, dataIndx: "voucherNumber"}, 
+	       { title: "Start date", minWidth: 80, dataIndx: "startDate", dataType:"String"},
+		   { title: "End Date", minWidth: 80, dataIndx: "endDate"},
+	       { title: "Total Amount", width: 70, dataIndx: "totalAmount", align: "center",render: amountRenderer
 		   },
 	       { title: "Advance Amount", width: 85, align: "right", dataType: "float", dataIndx: "advanceAmount",
         	   render: function (ui) {                        
@@ -47,6 +48,7 @@
    		   scrollModel: {
                   autoFit: true
            },
+           height:'90%',
            dataModel: dataModel,
            colModel: colM,
            hwrap: false,

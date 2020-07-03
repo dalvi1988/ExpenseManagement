@@ -1,5 +1,6 @@
 package com.chaitanya.web.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -67,6 +68,7 @@ public class EmployeeController {
 				}
 				
 				model.addObject("employeeList", mapper.writeValueAsString(employeeDTOList));
+				model.addObject("reportingMgrList", mapper.writeValueAsString(employeeDTOList));
 				model.addObject("branchList", mapper.writeValueAsString(branchDTOList));
 				model.addObject("departmentList", mapper.writeValueAsString(departmentDTOList));
 			}
@@ -77,6 +79,22 @@ public class EmployeeController {
 			model.setViewName("others/505");
 		}
 		return model;
+	}
+	
+	@RequestMapping(value="employeeList",method=RequestMethod.GET)
+	public @ResponseBody List<EmployeeDTO> getAllEmployeeList() throws JsonProcessingException, ParseException{
+			List<EmployeeDTO> employeeDTOList=null;
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			
+			if(Validation.validateForNullObject(user.getLoginDTO().getEmployeeDTO())){
+				employeeDTOList=new ArrayList<EmployeeDTO>();
+			
+				EmployeeDTO employeeDTO=user.getLoginDTO().getEmployeeDTO();
+				if(Validation.validateForNullObject(employeeDTO.getBranchDTO().getCompanyDTO())){
+					employeeDTOList=employeeService.findEmployeeOnCompany(employeeDTO);
+				}
+			}
+		return employeeDTOList;
 	}
 	
 	@RequestMapping(value="/empUnderDeptBranchWithLevel",method=RequestMethod.POST)
@@ -101,38 +119,29 @@ public class EmployeeController {
 	public @ResponseBody EmployeeDTO addEmployee(@RequestBody EmployeeDTO receivedEmployeeDTO){
 		EmployeeDTO toBeSentEmployeeDTO=null;
 		try{
-			if(Validation.validateForNullObject(receivedEmployeeDTO)){
-				LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-				if(!Validation.validateForNullObject(receivedEmployeeDTO.getEmployeeId())){
-					receivedEmployeeDTO.setCommand(Command.ADD);
-					receivedEmployeeDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-					receivedEmployeeDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
-				}
-				else{
-					receivedEmployeeDTO.setCommand(Command.UPDATE);
-					receivedEmployeeDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
-					receivedEmployeeDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
-				}
-				BaseDTO baseDTO=employeeService.addEmployee(receivedEmployeeDTO);
-				if(Validation.validateForSuccessStatus(baseDTO)){
-					toBeSentEmployeeDTO=(EmployeeDTO)baseDTO;
-					if(receivedEmployeeDTO.getCommand().equals(Command.ADD)){
-						toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
-					}
-					else
-						toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
-				}
-				else if(Validation.validateForBusinessFailureStatus(baseDTO)){
-					toBeSentEmployeeDTO=receivedEmployeeDTO;
-					toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.BUSSINESS_FAILURE));
-				}
+			LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if(!Validation.validateForNullObject(receivedEmployeeDTO.getEmployeeId())){
+				receivedEmployeeDTO.setCommand(Command.ADD);
+				receivedEmployeeDTO.setCreatedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedEmployeeDTO.setCreatedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
 			}
 			else{
-				toBeSentEmployeeDTO=receivedEmployeeDTO;
-				toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+				receivedEmployeeDTO.setCommand(Command.UPDATE);
+				receivedEmployeeDTO.setModifiedBy(user.getLoginDTO().getEmployeeDTO().getEmployeeId());
+				receivedEmployeeDTO.setModifiedDate(Convertor.calendartoString(Calendar.getInstance(),Convertor.dateFormatWithTime));
+			}
+			BaseDTO baseDTO=employeeService.addEmployee(receivedEmployeeDTO);
+			if(Validation.validateForSuccessStatus(baseDTO)){
+				toBeSentEmployeeDTO=(EmployeeDTO)baseDTO;
+				if(receivedEmployeeDTO.getCommand().equals(Command.ADD)){
+					toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SAVE_RECORD));
+				}
+				else
+					toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.UPDATE_RECORD));
 			}
 		}
 		catch(Exception e){
+			logger.error("EmployeeController: addEmployee",e);
 			toBeSentEmployeeDTO=receivedEmployeeDTO;
 			toBeSentEmployeeDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
 		}

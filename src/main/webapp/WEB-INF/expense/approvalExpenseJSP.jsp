@@ -195,7 +195,8 @@
 		           { title: "Receipt", width: 200, dataIndx: "fileName", 
 		        	   render: function(ui){
 		        		   //return "<a href='https://docs.google.com/viewer?embedded=true&url=getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
-		        		   return "<a href='getFile?fileName="+ui.cellData+"&voucherId="+$('#expenseHeaderId').val()+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        		   if(ui.cellData != null)
+		        		   		return "<a href='getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
 		        	   }
 		        	   
 		           }

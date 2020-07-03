@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +27,7 @@ import com.chaitanya.approvalFlow.dao.IApprovalFlowDAO;
 import com.chaitanya.approvalFlow.model.ApprovalFlowDTO;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
+import com.chaitanya.customException.ApprovalFlowException;
 import com.chaitanya.departmentHead.dao.IDepartmentHeadDAO;
 import com.chaitanya.employee.convertor.EmployeeConvertor;
 import com.chaitanya.employee.dao.IEmployeeDAO;
@@ -135,17 +137,34 @@ public class ExpenseService implements IExpenseService{
 				ApprovalFlowJPA functionalApprovalFlow= getFunctionOrBranchApprovalFlow(approvalFlowList);// Check functional or branch approval flow
 				ApprovalFlowJPA financeApprovalFlow = getFinanceApprovalFlow(approvalFlowList);
 				if(!Validation.validateForNullObject(functionalApprovalFlow) || !Validation.validateForNullObject(financeApprovalFlow)){
-					System.out.println("No Approval Flow");// Handle Exception
+					throw new ApprovalFlowException();
 				}
 				else {
 					expenseDAO.updateProcessInstanceByApprovalFlow(expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId(),expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow,expenseHeaderDTO.getProcessedByEmployeeDTO());
 					//expenseDAO.updateProcessInstance(expenseHeaderJPA,expenseHeaderJPA.getVoucherStatusJPA().getVoucherStatusId(),null);
 				}
+				
 			}
 			
 			//Add, Update,delete attachment
 			addUpdateDeleteAttachment(expenseHeaderDTO,expenseHeaderJPA.getExpenseHeaderId());
-			baseDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+			ExpenseHeaderDTO toBeSendExopenseHeaderDTO;
+			toBeSendExopenseHeaderDTO= ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+			//Below information for Email
+			if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA())) {
+				EmployeeDTO pendingAtEmployeeDTO= new EmployeeDTO();
+				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt())) {
+					pendingAtEmployeeDTO.setEmployeeId(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt().getEmployeeId());
+					toBeSendExopenseHeaderDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+				}
+				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())) {
+					EmployeeDTO processedByEmployeeDTO= new EmployeeDTO();
+					processedByEmployeeDTO.setEmployeeId(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy().getEmployeeId());
+					toBeSendExopenseHeaderDTO.setProcessedByEmployeeDTO(processedByEmployeeDTO);
+				}
+				toBeSendExopenseHeaderDTO.setProcessSessionId(expenseHeaderJPA.getProcessInstanceJPA().getSessionId());
+			}
+			baseDTO= toBeSendExopenseHeaderDTO;
 			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 		}
 		else{
@@ -560,15 +579,19 @@ public class ExpenseService implements IExpenseService{
 	}
 	
 	@Override
-	public BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException, ParseException {
+	public BaseDTO approveRejectExpenses(BaseDTO baseDTO) throws IOException, ParseException, ApprovalFlowException {
 		logger.debug("ExpenseService: approveRejectExpenses-Start");
 		validateExpenseDTO(baseDTO);
 		
-		if (Validation.validateForNullObject(baseDTO)) {
-			ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
+		ExpenseHeaderDTO expenseHeaderDTO=(ExpenseHeaderDTO) baseDTO;;
 			ExpenseHeaderJPA expenseHeaderJPA =expenseDAO.getExpenseHeaderById(expenseHeaderDTO);
 			Integer statusID= expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId();
 			
+			if(expenseHeaderDTO.getStatus()==Boolean.TRUE) {//This flag set true in email approval.
+				if(!expenseHeaderDTO.getProcessSessionId().equals(expenseHeaderJPA.getProcessInstanceJPA().getSessionId())) {
+					throw new IllegalStateException("Email link expired.");
+				}
+			}
 			VoucherStatusJPA voucherStatusJPA= new VoucherStatusJPA();
 			
 			if(Validation.validateForNullObject(expenseHeaderJPA)){
@@ -577,7 +600,7 @@ public class ExpenseService implements IExpenseService{
 					ApprovalFlowJPA functionalApprovalFlow= getFunctionOrBranchApprovalFlow(approvalFlowList);// Check functional or branch approval flow
 					ApprovalFlowJPA financeApprovalFlow = getFinanceApprovalFlow(approvalFlowList);
 					if(!Validation.validateForNullObject(functionalApprovalFlow) || !Validation.validateForNullObject(financeApprovalFlow)){
-						System.out.println("No Approval Flow");// Handle Exception
+						throw new ApprovalFlowException();
 					}
 					else {
 						// update Voucher Status in ExpenseHEader
@@ -586,7 +609,6 @@ public class ExpenseService implements IExpenseService{
 						//expenseDAO.updateProcessInstance(expenseHeaderJPA,expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId(),expenseHeaderDTO.getProcessedByEmployeeDTO());
 						expenseDAO.updateProcessInstanceByApprovalFlow(expenseHeaderJPA.getProcessInstanceJPA().getVoucherStatusJPA().getVoucherStatusId(),expenseHeaderJPA,functionalApprovalFlow,financeApprovalFlow,expenseHeaderDTO.getProcessedByEmployeeDTO());
 					}
-					
 				}
 				else if(expenseHeaderDTO.getVoucherStatusId() == 4){//Rejected
 					voucherStatusJPA.setVoucherStatusId(3);
@@ -611,6 +633,7 @@ public class ExpenseService implements IExpenseService{
 					
 					processInstanceJPA.setComment(expenseHeaderDTO.getRejectionComment());
 					
+					processInstanceJPA.setSessionId(UUID.randomUUID().toString());
 					processInstanceJPA.setExpenseHeaderJPA(expenseHeaderJPA);
 					expenseHeaderJPA.setProcessInstanceJPA(processInstanceJPA);
 				}
@@ -634,14 +657,24 @@ public class ExpenseService implements IExpenseService{
 				
 				expenseHeaderJPA.setProcessHistoryJPA(processHistoryJPAList);
 				
-				
-				baseDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+				expenseHeaderDTO=ExpenseConvertor.setExpenseHeaderJPAtoDTO(expenseHeaderJPA);
+				//Below information for Email
+				if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA())) {
+					EmployeeDTO pendingAtEmployeeDTO= new EmployeeDTO();
+					if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt())) {
+						pendingAtEmployeeDTO.setEmployeeId(expenseHeaderJPA.getProcessInstanceJPA().getPendingAt().getEmployeeId());
+						expenseHeaderDTO.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+					}
+					if(Validation.validateForNullObject(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy())) {
+						EmployeeDTO processedByEmployeeDTO= new EmployeeDTO();
+						processedByEmployeeDTO.setEmployeeId(expenseHeaderJPA.getProcessInstanceJPA().getProcessedBy().getEmployeeId());
+						expenseHeaderDTO.setProcessedByEmployeeDTO(processedByEmployeeDTO);
+					}
+					expenseHeaderDTO.setProcessSessionId(expenseHeaderJPA.getProcessInstanceJPA().getSessionId());
+				}
+				baseDTO=expenseHeaderDTO;
 				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 			}
-		}
-		else{
-			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-		}
 		logger.debug("ExpenseService: approveRejectExpenses-End");
 		return  baseDTO;
 	}
@@ -912,6 +945,4 @@ public class ExpenseService implements IExpenseService{
 		return generatedByteData;
 	}
 
-
-	
 }

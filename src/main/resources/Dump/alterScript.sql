@@ -14,6 +14,9 @@ ADD CONSTRAINT `branch_id_dept`
   ON UPDATE NO ACTION;
 
   
-  ALTER TABLE `test`.`department_details` 
+  ALTER TABLE `department_details` 
 DROP INDEX `dept_code_UNIQUE` ,
 DROP INDEX `dept_name_UNIQUE` ;
+
+ALTER TABLE `process_instance` 
+ADD COLUMN `session_id` VARCHAR(45) NULL AFTER `comments`;

@@ -53,6 +53,9 @@ public class ExpenseConvertor {
 			if(Validation.validateForNullObject(expenseHeaderJPA.getModifiedDate())){
 				expenseHeaderDTO.setModifiedDate(Convertor.calendartoString(expenseHeaderJPA.getModifiedDate(),Convertor.dateFormatWithTime));
 			}
+			if(Validation.validateForNullObject(expenseHeaderJPA.getEmployeeJPA())) {
+				expenseHeaderDTO.setEmployeeId(expenseHeaderJPA.getEmployeeJPA().getEmployeeId());
+			}
 		}
 		return expenseHeaderDTO;
 	}

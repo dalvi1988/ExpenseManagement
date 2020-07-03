@@ -53,8 +53,10 @@ public class LoginService implements UserDetailsService,ILoginService {
 	
 	private Logger logger= LoggerFactory.getLogger(LoginService.class);
 	
-	private boolean validateLoginMasterDTO(BaseDTO baseDTO) {
-		return baseDTO == null  || !(baseDTO instanceof LoginDTO);
+	private void validateLoginDTO(BaseDTO baseDTO) {
+		if(baseDTO == null  || !(baseDTO instanceof LoginDTO)) {
+			throw new IllegalArgumentException("Object expected of LoginDTO type.");
+		}
 	}
 
 	@Transactional(readOnly=true)
@@ -92,9 +94,7 @@ public class LoginService implements UserDetailsService,ILoginService {
 	@Override
 	public BaseDTO forgotPassword(BaseDTO baseDTO) throws ParseException {
 		logger.debug("LoginService: forgotPassword-Start");
-		if(validateLoginMasterDTO(baseDTO)){
-			throw new IllegalArgumentException("Object expected of LoginDTO type.");
-		}
+		validateLoginDTO(baseDTO);
 		
 		LoginDTO loginDTO=(LoginDTO) baseDTO;
 		EmployeeJPA employeeJPA = employeeDAO.findEmployeeByEmailId(loginDTO.getEmployeeDTO());
@@ -117,6 +117,33 @@ public class LoginService implements UserDetailsService,ILoginService {
 		}
 		
 		logger.debug("LoginService: forgotPassword-End");
+		return baseDTO;
+	}
+
+	@Override
+	public boolean validateOldPassword(BaseDTO baseDTO) {
+		validateLoginDTO(baseDTO);
+		LoginDTO loginDTO= (LoginDTO) baseDTO;
+		
+		LoginJPA loginJPA = loginDAO.getLoginDetailByEmployeeId(loginDTO.getEmployeeDTO());
+		
+		boolean isOldPasswordMatch= passwordEncoder.matches(loginDTO.getPassword(),loginJPA.getPassword());
+		
+		return isOldPasswordMatch;
+	}
+
+	@Override
+	public BaseDTO updatePassword(BaseDTO baseDTO) {
+		validateLoginDTO(baseDTO);
+		LoginDTO loginDTO= (LoginDTO) baseDTO;
+		
+		int updatedCount = loginDAO.updatePassword(loginDTO.getEmployeeDTO(),passwordEncoder.encode(loginDTO.getPassword()));
+		if(updatedCount == 1) {
+			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		}
+		else {
+			baseDTO.setServiceStatus(ServiceStatus.FAILURE);
+		}
 		return baseDTO;
 	}
 	

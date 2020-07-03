@@ -6,15 +6,18 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.login.model.LoginDTO;
+import com.chaitanya.login.model.LoginUserDetails;
 import com.chaitanya.login.service.ILoginService;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Validation;
@@ -58,12 +61,42 @@ public class LoginController {
 		return model;
 	}
 	
-	@RequestMapping(value = "/login/resetPassword", method = RequestMethod.POST)
-	public String resetPassoword(@RequestParam(value = "oldPassword", required = true) String oldPassword,@RequestParam(value = "newPassword", required = true) String newPassword,
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+	public @ResponseBody BaseDTO resetPassoword(@RequestParam(value = "oldPassword", required = true) String oldPassword,@RequestParam(value = "newPassword", required = true) String newPassword,
 			@RequestParam(value = "confirmPassword", required = true) String confirmPassword) {
-
 		
-		return "";
+		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		LoginDTO loginDTO= user.getLoginDTO();
+		loginDTO.setPassword(oldPassword);
+		boolean isOldPassMatch= loginService.validateOldPassword(loginDTO);
+		BaseDTO toBeSentBaseDTO =new BaseDTO();
+		if(isOldPassMatch== true) {
+			
+			if(newPassword.equals(confirmPassword)) {
+				if(newPassword.matches("(?=.*?\\d)(?=.*?[a-zA-Z])(?=.*?[^\\w]).{6,}")) {
+					loginDTO.setPassword(newPassword);
+					toBeSentBaseDTO= loginService.updatePassword(loginDTO);
+					if(Validation.validateForSuccessStatus(toBeSentBaseDTO))
+						toBeSentBaseDTO.setMessage(new StringBuilder("Password reset successfully."));
+					else
+						toBeSentBaseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
+				}
+				else
+					toBeSentBaseDTO.setMessage(new StringBuilder("Password must contain at least one letter, at least one number, and be longer than six charaters."));
+			}
+			else
+				toBeSentBaseDTO.setMessage(new StringBuilder("New password and confirm password is not matching."));
+		}
+		else {
+			toBeSentBaseDTO.setMessage(new StringBuilder("Old password is not valid."));
+		}
+		
+		return toBeSentBaseDTO;
+	}
+	
+	@RequestMapping(value = "/resetPasswordPage", method = RequestMethod.GET)
+	public String resetPassowordPage() {
+		return "pages/resetPassword";
 	}
 
 	

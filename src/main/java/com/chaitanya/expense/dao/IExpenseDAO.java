@@ -62,6 +62,8 @@ public interface IExpenseDAO {
 
 	public List<ExpenseHeaderJPA> getExpenseHeaderByIds(List<Long> expenseHeaderIds);
 
+	public List<ExpenseHeaderJPA> getAllExpensesByCompany(CompanyDTO companyDTO);
+
 
 
 }
