@@ -9,7 +9,7 @@
     <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
     <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
-    
+
    <script type="text/javascript">
    var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;
    var employeeList= ${employeeList};
@@ -29,7 +29,6 @@
        }
        //called by add button in toolbar.
        function addRow($grid) {
-    	   $(".alert").hide();
     	   
            if (isEditing($grid)) {
                return false;
@@ -46,8 +45,6 @@
        }
        //called by delete button.
        function deleteRow(rowIndx, $grid) {
-    	   $(".alert").hide();
-    	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
            var ans = window.confirm("Are you sure to delete row No " + (rowIndx + 1) + "?");
@@ -81,8 +78,6 @@
        }
        //called by edit button.
        function editRow(rowIndx, $grid) {
-    	   $(".alert").hide();
-    	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
            $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
 
@@ -158,20 +153,20 @@
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
 	          	    	$grid.pqGrid("commit");
-	          	    	$(".alert").addClass("alert-success").text(data.message).show();
+	          	    	$(".alert").addClass("alert-success").text(data.message).show().delay(4000).fadeOut();;
           	    	}
           	    	else{
           	    		//$grid.pqGrid("rollback");
           	    		$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
            				$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
-          	    		$(".alert").addClass("alert-danger").text(data.message).show();
+          	    		$(".alert").addClass("alert-danger").text(data.message).show().delay(4000).fadeOut();
           	    	}
           	    	
           	    },
           	    error:function(data) { 
           	    	$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
                     $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
-          	    	$(".alert").addClass("alert-danger").text(data.message).show();
+          	    	$(".alert").addClass("alert-danger").text(data.message).show().delay(4000).fadeOut();
           	    }
           	    
           	}));
@@ -469,7 +464,6 @@
 		});
 	   $grid.pqGrid("refresh")
    });
-
 
 </script>
 </head>

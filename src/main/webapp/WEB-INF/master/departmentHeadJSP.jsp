@@ -115,9 +115,6 @@
                             }
                             }
                         ]
-                        },
-                        {
-                            type: '</br><span style="color:red;font-weight:bold;font-size:20px" class="customMessage"></span>'
                         }
                     ]
                 },
@@ -267,12 +264,10 @@
                 refresh: function () {
                     //debugger;
                     var $grid = $(this);
-                    $(".customMessage").text("");
                     //delete button
                     $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
                     .unbind("click")
                     .bind("click", function (evt) {
-                    	$(".customMessage").text("");
                         if (isEditing($grid)) {
                             return false;
                         }
@@ -284,7 +279,6 @@
                     $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
                     .unbind("click")
                     .bind("click", function (evt) {
-                    	$(".customMessage").text("");
                         if (isEditing($grid)) {
                             return false;
                         }
@@ -318,7 +312,6 @@
       //called by add button in toolbar.
         function addRow($grid) {
         	var branchId = $grid.data( 'branchId' );
-     	   $(".customMessage").text("");
      	   
             if (isEditing($grid)) {
                 return false;
@@ -347,7 +340,6 @@
       
         //called by edit button.
         function editRow(rowIndx, $grid) {
-     	   $(".customMessage").text("");
      	   
             $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
             $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
@@ -375,7 +367,6 @@
 
         //called by update button.
         function update(rowIndx, $grid) {
-        	$(".customMessage").text("");
            if ($grid.pqGrid("saveEditCell") == false) {
                return false;
            }
@@ -424,17 +415,20 @@
  	                   $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
 	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
 	          	    	$grid.pqGrid("commit");
+	          	    	$(".alert").addClass("alert-success").text(data.message).show().delay(4000).fadeOut();;
            	    	}
            	    	else{
            	    		$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
            	    		$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
            	    		//$grid.pqGrid("rollback");
+           	    		$(".alert").addClass("alert-danger").text(data.message).show().delay(4000).fadeOut();
            	    	}
-           	    	$(".customMessage").text(data.message);
            	    	
            	    },
            	    error:function(data) { 
-           	    	$(".customMessage").text(data.message);
+           	    	$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+                    $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
+          	    	$(".alert").addClass("alert-danger").text(data.message).show().delay(4000).fadeOut();
            	    }
            	    
            	}));

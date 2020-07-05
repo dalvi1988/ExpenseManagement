@@ -31,7 +31,6 @@
        }
        //called by add button in toolbar.
        function addRow($grid) {
-    	   $(".customMessage").text("");
     	   
            if (isEditing($grid)) {
                return false;
@@ -48,7 +47,6 @@
        }
        //called by delete button.
        function deleteRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
@@ -89,7 +87,6 @@
        }
        //called by edit button.
        function editRow(rowIndx, $grid) {
-    	   $(".customMessage").text("");
     	   
            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
            $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
@@ -159,17 +156,19 @@
 	                       rowData.departmentId= data.departmentId;
 	                    } 
 	          	    	$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+	          	    	$grid.pqGrid("refreshRow", { rowIndx: rowIndx });
 	          	    	$grid.pqGrid("commit");
+	          	    	$(".alert").addClass("alert-success").text(data.message).show().delay(4000).fadeOut();;
           	    	}
           	    	else{
-          	    		
-          	    		$grid.pqGrid("rollback");
+          	    		$grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
+           				$grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
+          	    		$(".alert").addClass("alert-danger").text(data.message).show().delay(4000).fadeOut();
           	    	}
-          	    	$(".customMessage").text(data.message);
           	    	
           	    },
           	    error:function(data) { 
-          	    	$(".customMessage").text(data.message);
+          	    	$(".alert").addClass("alert-danger").text(data.message).show().delay(4000).fadeOut();
           	    }
           	    
           	}));
@@ -203,9 +202,6 @@
                        }
                        }
                    ]
-                   },
-                   {
-                       type: '</br><span style="color:red;font-weight:bold;font-size:20px" class="customMessage"></span>'
                    }
                ]
            },
