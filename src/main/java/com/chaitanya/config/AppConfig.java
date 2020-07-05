@@ -52,6 +52,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/icon/**").addResourceLocations("classpath:/icon/");
 		registry.addResourceHandler("/drawline/**").addResourceLocations("classpath:/drawline/");
 		registry.addResourceHandler("/gridNew/**").addResourceLocations("classpath:/gridNew/");
+		registry.addResourceHandler("/companyLogo/**").addResourceLocations("classpath:/companyLogo/");
 	}
 	
 	

@@ -77,7 +77,7 @@
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>EMS</b></span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Expense</b><i>Wala</i></span>
+      <span class="logo-lg"><b>Paax</b><i>Tech</i></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -113,7 +113,7 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="icon/no_image.png" class="img-circle" alt="User Image">
+          <img src="companyLogo/<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.companyDTO.companyId" />.png" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <h4><sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.companyDTO.companyName" /></h4>
@@ -307,7 +307,7 @@
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
     </div>
-    <strong>Copyright &copy; 2016-2018 <a href="http://expensewala.com">ExpenseWala.com</a>.</strong> All rights
+    <strong>Copyright &copy; 2020-2021 <a href="http://paax.tech.com">paax.tech</a>.</strong> All rights
     reserved.
   </footer>
   </div>
