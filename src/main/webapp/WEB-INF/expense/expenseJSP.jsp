@@ -7,7 +7,8 @@
  <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
  <script type="text/javascript" src=<spring:url value="/gridNew/pqgrid.min.js"/> ></script>
  <link rel="stylesheet" href=<spring:url value="/gridNew/pqgrid.min.css"/> />
-
+<link rel="Stylesheet" href=<spring:url value="/gridNew/select/pqselect.min.css"/> >
+<script type="text/javascript" src=<spring:url value="/grid/select/pqselect.min.js"/> ></script>
 <style type="text/css">
 div.pq-grid tr td.disabled{    
     text-shadow: 0 1px 0 #fff;
@@ -44,9 +45,9 @@ $(function () {
 			        	revenueTotal += parseFloat(row["amount"]);
 			    }
 		    }
-		    totalData = { description: "<b>Total Amount</b>",  amount: revenueTotal ,receipt:"", delButton:"", pq_rowcls: 'green' };
+		    totalData = { description: "<b>Total Amount</b>",  amount: revenueTotal , expenseToolTip:"",receipt:"", delButton:"", pq_rowcls: 'green' };
 		    if($("input[name='isAdvance']:checked").val() == "on"){
-			    settlementData = { description: "<b>Pending Settment Amount</b>",  amount: revenueTotal-advanceAmount,receipt:"", delButton:"", pq_rowcls: 'green' };
+			    settlementData = { description: "<b>Pending Settment Amount</b>",  amount: revenueTotal-advanceAmount, receipt:"",expenseToolTip:"", delButton:"", pq_rowcls: 'green' };
 		    	
 		    }
 
@@ -89,61 +90,6 @@ $(function () {
 	    }
 	    return rows;
 	}
-	
-	var autoCompleteEditor = function (ui) {
-        var $inp = ui.$cell.find("input"),
-        asignCategoryDetails = function (that,data) {
-        	var rowData = $grid.pqGrid("getRowData", { rowIndx: ui.rowIndx });
-            rowData.locationRequired = data.row.locationRequired;
-            if(data.row.locationRequired == false){
-            	rowData.fromLocation="";
-            	rowData.toLocation="";
-            	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'fromLocation', cls: 'disabled'} );
-            	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'toLocation', cls: 'disabled'} );
-            }
-            else{
-            	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'fromLocation', cls: 'disabled'} );
-            	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'toLocation', cls: 'disabled'} );
-            }
-            rowData.unitRequired = data.row.unitRequired;
-            rowData.limitIncrease = data.row.limitIncrease;
-            if(data.row.unitRequired == false){
-            	rowData.unit="";
-            	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
-            }
-            else{
-            	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
-            }
-            //$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'amount', cls: 'disabled'} );
-            rowData.amountPerUnit= data.row.amount; 
-            
-            rowData.expenseCategoryId =data.value;
-           // $grid.pqGrid("refresh");
-        };
-        //initialize the editor
-        $inp.autocomplete({
-            source: function(request, response) {
-                var rows = jsonParseForAutoComplete(expenseCategoryList,"expenseName","expenseCategoryId");
-                return response(rows);
-            },
-            selectItem: { on: true }, //custom option
-            highlightText: { on: true }, //custom option
-            minLength: 0,
-            select: function(event, ui) {
-				event.preventDefault();
-				$(this).val(ui.item.label);
-				
-				asignCategoryDetails(this,ui.item);
-			},
-            focus: function(event,ui){
-            	event.preventDefault();
-				$(this).val(ui.item.label);
-            }
-        }).focus(function () {
-            //open the autocomplete upon focus                
-            $(this).autocomplete("search", "");
-        });
-    }
 	
 	$( "#startDate" ).datepicker({
 		minDate: -60,
@@ -422,11 +368,71 @@ $(function () {
 		    }, 
 		    { title: "Expense Category Id", width: 140, dataType: "string", align: "right", dataIndx: "expenseCategoryId",hidden:true},
 		    { title: "Expense Category", dataIndx: "expenseCategoryName", width: 200,
-                editor: {
-                    type: "textbox",
-                    init: autoCompleteEditor
-                    //type: function (ui) { return dropdowneditor(this, ui); }
-                },
+		    	editor: {
+		            type: 'select',
+		            init: function (ui) {
+		                ui.$cell.find("select").pqSelect()
+		                .change(function () {
+		                	debugger;
+		                	var val = $(this).val();
+		                        	
+                        	var rowData = $grid.pqGrid("getRowData", { rowIndx: ui.rowIndx });
+                        	rowData.unit="";
+                        	rowData.amount=0.0;
+		                    rowData.locationRequired = ui.Data.locationRequired;
+		                    if(ui.Data.locationRequired == false){
+		                    	rowData.fromLocation="";
+		                    	rowData.toLocation="";
+		                    	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'fromLocation', cls: 'disabled'} );
+		                    	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'toLocation', cls: 'disabled'} );
+		                    }
+		                    else{
+		                    	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'fromLocation', cls: 'disabled'} );
+		                    	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'toLocation', cls: 'disabled'} );
+		                    }
+		                    rowData.unitRequired = ui.Data.unitRequired;
+		                    rowData.limitIncrease = ui.Data.limitIncrease;
+		                    if(ui.Data.unitRequired == false){
+		                    	rowData.unit="";
+		                    	$grid.pqGrid( "addClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
+		                    }
+		                    else{
+		                    	$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'unit', cls: 'disabled'} );
+		                    }
+		                    //$grid.pqGrid( "removeClass", {rowIndx: ui.rowIndx, dataIndx: 'amount', cls: 'disabled'} );
+		                    rowData.amountPerUnit= ui.Data.amount; 
+		                	$grid.pqGrid( "refresh");
+			            });
+		            },
+		            prepend: { '': '' },
+		            valueIndx: "expenseCategoryId",
+		            labelIndx: "expenseName",		            		            
+                    mapIndices: {"expenseName": "expenseCategoryName", "expenseCategoryId": "expenseCategoryId"},
+		            options: expenseCategoryList
+		        },
+		        render:function(ui){
+                	for (var i = 0; i < expenseCategoryList.length; i++) {
+             	        if(expenseCategoryList[i].expenseCategoryId == ui.rowData.expenseCategoryId){
+                        	ui.rowData.expenseCategoryName=expenseCategoryList[i].expenseName;
+                        	if(expenseCategoryList[i].locationRequired == true){
+                        		ui.rowData.locationRequired=true;
+                        	}
+                        	else{
+                        		ui.rowData.locationRequired=false;
+                        	}
+                        	
+                        	if(expenseCategoryList[i].unitRequired== true){
+                        		ui.rowData.unitRequired=true;
+                        	}
+                        	else{
+                        		ui.rowData.unitRequired=false;
+                        	}
+                        	ui.rowData.amountPerUnit= expenseCategoryList[i].amount;
+                        	ui.rowData.limitIncrease=expenseCategoryList[i].limitIncrease;
+                         	return ""+expenseCategoryList[i].expenseName;
+                        }
+             	    }
+            	},
                 validations: [
                     { type: 'minLen', value: 1, msg: "Required" },
                     { type: function (ui) {
@@ -442,29 +448,33 @@ $(function () {
                     }, icon: 'ui-icon-info',
                     }
                 ],
-                render:function(ui){
-                	for (var i = 0; i < expenseCategoryList.length; i++) {
-             	        if(expenseCategoryList[i].expenseCategoryId == ui.rowData.expenseCategoryId){
-                        	ui.rowData.expenseCategoryName=expenseCategoryList[i].expenseName;
-                        	if(expenseCategoryList[i].locationRequired == true){
-                        		ui.rowData.locationRequired=true;
-                        	}
-                        	else{
-                        		ui.rowData.locationRequired=false;
-                        	}
-                        	
-                        	if(expenseCategoryList[i].unitRequired== true){
-                        		ui.rowData.unitRequired=true;
-                        		ui.rowData.amountPerUnit= expenseCategoryList[i].amount;
-                        	}
-                        	else{
-                        		ui.rowData.unitRequired=false;
-                        	}
-                         	return ""+expenseCategoryList[i].expenseName;
-                        }
-             	    }
+            },
+            { title: "", minWidth:25, maxWidth: 25, width:25, editable:false,  align: "left", dataIndx: "expenseToolTip",
+            	
+                render: function (ui){
+                	var locationRequired="";
+                	if(ui.rowData['locationRequired'] == true)
+                		locationRequired="Yes";
+                	else
+                		locationRequired="No";	
+                	
+                	var amountLimit="";
+                	if(ui.rowData['unitRequired'] == true)
+                		amountLimit=ui.rowData['amountPerUnit']+" per unit";
+                	else
+                		amountLimit= ui.rowData['amountPerUnit'];	
+                	
+                	var overLimit="";
+                	if(ui.rowData['limitIncrease'] == true){
+                		overLimit="Yes";
+                	}
+                	else{
+                		overLimit="No";
+                	}
+                	var expenseInfo="Expense Name: "+ui.rowData.expenseCategoryName+"<br>Location Required: "+locationRequired+"<br>Amount Limit: "+amountLimit+"<br>OverLimit Allowed: "+overLimit;
+                	if(typeof ui.rowData != "undefined" && ui.rowData != null && ui.rowData['expenseCategoryId'] != null && ui.rowData['expenseCategoryId'] != "")
+                		return "<button type='button' title='"+expenseInfo+"' class='fa fa-fw fa-info-circle'></button>";
                 }
-                
             },
             { title: "Location From", width: 140, dataType: "string", align: "left", dataIndx: "fromLocation",
             	editable: function(ui){
@@ -528,7 +538,6 @@ $(function () {
                 validations:[
                 	{
                 		type: function (ui){
-                			debugger;
                 			if(ui.rowData['unitRequired']== true){
                 				if(typeof ui.value == "undefined"  || ui.value == null || ui.value=="" ){
                 					 ui.msg="Unit can not empty";
@@ -544,7 +553,7 @@ $(function () {
             	 validations: [
                       { type: function (ui) {
                           var value = ui.value;
-                          if(typeof value != "undefined"){
+                          if(typeof value != "undefined" && value != 0){
 	                          if(ui.rowData['limitIncrease'] == false){
 	                        	 if(ui.rowData['unitRequired'] == true){
 	                        		 var expectedAmmount= ui.rowData['amountPerUnit']*ui.rowData['unit'];
@@ -642,7 +651,7 @@ $(function () {
             calculateSummary();
         },
         cellSave : function (evt, ui) {
-        	if(ui.dataIndx == "amount" || ui.dataIndx == "unit"){
+        	if(ui.dataIndx == "amount" || ui.dataIndx == "unit" ||ui.dataIndx =="expenseCategoryName"){
 	            calculateSummary();
 	            obj.refresh.call(this);
         	}
@@ -659,7 +668,6 @@ $(function () {
 	   	 $("#grid_editing").find("input.btn_file").button().bind("change", function (evt){
 	   		 
 	   		
-	   		 debugger;
 	   		 var $tr = $(this).closest("tr");
 	            var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
 	            var rowIndx = obj.rowIndx;
@@ -838,7 +846,6 @@ $(function () {
 });
 
 function changedAdvance(){
-	debugger;
 	if($('#advanceSelect').val()!=null && $('#advanceSelect').val()!=-1 ){
 		for(var i=0;i<advanceList.length;i++){
 			if( advanceList[i].advanceDetailId==$('#advanceSelect').val()){

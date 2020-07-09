@@ -296,7 +296,7 @@
 							}
                       }
                   },
-                  { title: "Amount Limit Increased?", width: 130, dataType: "bool", align: "center", dataIndx: "limitIncrease",
+                  { title: "Overlimit Allowed?", width: 130, dataType: "bool", align: "center", dataIndx: "limitIncrease",
                 	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
                 	  editor: { type: "checkbox", style: "margin:3px 5px;"},
                 	  editable: function(ui){

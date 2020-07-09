@@ -85,8 +85,12 @@
 	                }
 	            }
       		},
-	       { title: "Start date", minWidth: 80, dataIndx: "startDate", dataType:"String"},
-		   { title: "End Date", minWidth: 80, dataIndx: "endDate"},
+	       { title: "Start date", minWidth: 80, dataIndx: "startDate", dataType:"String",
+	    	   filter: { type: 'textbox', condition: "gte", init: pqDatePicker, listeners: ['change'] }
+      		},
+		   { title: "End Date", minWidth: 80, dataIndx: "endDate",
+			   filter: { type: 'textbox', condition: "lte", init: pqDatePicker, listeners: ['change'] }
+      		},
 	       { title: "Total Amount", minWidth: 80, dataIndx: "totalAmount", dataType: "float", align: "center",render:amountRenderer,
                summary:{ 
                    type: ["sum","sum","sum"], 

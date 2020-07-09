@@ -66,7 +66,7 @@
             wrap: false,
             hwrap: false,            
             numberCell: { show: false },
-            title: "<b>Department/Cost Center/Project Master Head Master</b>",                        
+            title: "<b>(Department/Cost Center/Project Master) Head Master</b>",                        
             resizable: true,
             freezeCols: 1,            
             selectionModel: { type: 'cell' },
@@ -190,22 +190,12 @@
                     { title: "", width: 100, dataIndx: "createdBy", hidden:true },
                     { title: "", width: 100, dataIndx: "createdDate", hidden:true },
                     { title: "", editable: false, minWidth: 150, sortable: false, render: function (ui) {
-                        return "<button type='button' class='edit_btn'>Edit</button>\
-                            <button type='button' class='delete_btn'>Delete</button>";
+                        return "<button type='button' class='edit_btn'></button>\
+                            <button type='button' class='delete_btn'></button>";
                     	}
                     }
 
 		        ],
-                /*editable: true, 
-                groupModel: {
-                    dataIndx: ["branchId"],
-                    dir: ["up"],
-                    title: ["{0} - {1} product(s)"],
-                    icon: [["ui-icon-triangle-1-se", "ui-icon-triangle-1-e"]]
-                },       */
-                scrollModel: {
-                    autoFit: true
-                },
                 selectionModel: {
                     //type: 'cell'
                     type: 'none'

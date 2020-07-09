@@ -208,6 +208,7 @@
            scrollModel: {
                autoFit: true
            },
+           height:'98%',
            selectionModel: {
                //type: 'cell'
                type: 'none'
@@ -225,7 +226,7 @@
 
            colModel: [
                   { title: "Department Id", dataType: "integer", dataIndx: "departmentId",hidden:true, editable: false, width: 80 },
-                  { title: "Department Code", width: 140, dataType: "string", align: "right", dataIndx: "departmentCode",
+                  { title: "Department Code", width: 140, dataType: "string", dataIndx: "departmentCode",
                 	  filter: { type: 'textbox',attr: 'placeholder="Search Department Code"', condition: 'contain', listeners: ['keyup'] },                      
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required." },
@@ -281,8 +282,8 @@
                   { title: "", width: 100, dataIndx: "createdBy", hidden:true },
                   { title: "", width: 100, dataIndx: "createdDate", hidden:true },
                   { title: "", editable: false, minWidth: 165, sortable: false, render: function (ui) {
-                      return "<button type='button' class='edit_btn'>Edit</button>\
-                          <button type='button' class='delete_btn'>Delete</button>";
+                      return "<button type='button' class='edit_btn'></button>\
+                          <button type='button' class='delete_btn'></button>";
                   }
                   }
           ],
@@ -292,7 +293,7 @@
                recIndx: "departmentId",
                data: data
            },
-           pageModel: { type: "local" },
+           pageModel: { type: "local",rPP: 15 },
            cellBeforeSave: function (evt, ui) {
                var $grid = $(this);
                var isValid = $grid.pqGrid("isValid", ui);

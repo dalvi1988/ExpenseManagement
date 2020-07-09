@@ -49,10 +49,7 @@
        }
        var obj = {
    		   resizable: true,
-   		   scrollModel: {
-                  autoFit: true
-           },
-           height:'90%',
+           height:'98%',
            toolbar: {
                cls: 'pq-toolbar-export',
                items: [{
@@ -64,7 +61,7 @@
                         	   var $grid = $(this).closest('.pq-grid'),
                                selarray = $grid.pqGrid('selection', { type: 'row', method: 'getSelection' }),
 	   							ids = [];
-                        	   if(selarray.length> 1){
+                        	   if(selarray.length> 0){
 		                           for (var i = 0, len = selarray.length; i < len; i++) {
 		                               var rowData = selarray[i].rowData;
 		                               ids.push(rowData.expenseHeaderId);
@@ -84,7 +81,7 @@
            dataModel: dataModel,
            colModel: colM,
            hwrap: false,
-           pageModel: { type: "local", rPP: 12 },
+           pageModel: { type: "local", rPP: 15 },
            editable: false,
            selectionModel: {type: null},
            title: "Accounting Entries",

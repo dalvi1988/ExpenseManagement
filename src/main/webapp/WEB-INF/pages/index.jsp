@@ -303,13 +303,6 @@
   <!-- /.content-wrapper -->
   
   <div>
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Version</b> 1.0.0
-    </div>
-    <strong>Copyright &copy; 2020-2021 <a href="http://paax.tech.com">paax.tech</a>.</strong> All rights
-    reserved.
-  </footer>
   </div>
   
 </div>

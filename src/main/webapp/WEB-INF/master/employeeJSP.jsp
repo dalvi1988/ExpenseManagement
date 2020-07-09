@@ -184,7 +184,7 @@
        var obj = {    
    		   resizable: true,
       	   scrollModel: {autoFit: true},
-           height: '85%',
+           height: '98%',
            wrap: false,
            columnBorders: false,
            sortable: true,
@@ -384,8 +384,8 @@
                   { title: "", width: 0, dataIndx: "createdBy", hidden:true },
                   { title: "", width: 0, dataIndx: "createdDate", hidden:true },
                   { title: "", editable: false, minWidth: 180, sortable: false, render: function (ui) {
-                      return "<button type='button' class='edit_btn'>Edit</button>\
-                          <button type='button' class='delete_btn'>Delete</button>";
+                      return "<button type='button' class='edit_btn'></button>\
+                          <button type='button' class='delete_btn'></button>";
                   }
                   }
           ],
@@ -395,10 +395,10 @@
                recIndx: "employeeId",
                sorting: "local",
                sortIndx: "firstName",
-               sortDir: "down",
+               sortDir: "up",
                data: employeeList
            },
-           pageModel: { type: "local" },
+           pageModel: { type: "local" ,rPP: 15},
            cellBeforeSave: function (evt, ui) {
                var $grid = $(this);
                var isValid = $grid.pqGrid("isValid", ui);
