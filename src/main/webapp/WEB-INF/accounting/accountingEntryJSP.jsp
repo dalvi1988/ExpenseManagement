@@ -49,6 +49,9 @@
        }
        var obj = {
    		   resizable: true,
+   		   scrollModel: {
+                  autoFit: true
+           },
            height:'98%',
            toolbar: {
                cls: 'pq-toolbar-export',

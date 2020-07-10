@@ -151,7 +151,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="pendingExpense"><i class="fa fa-circle-o"></i>Pending Expenses</a></li>
             <li><a href="#" class="rejectedExpense"><i class="fa fa-circle-o"></i>Rejected Expenses</a></li>
-            <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li>
+            <!-- <li><a href="#" class="pendingExpensesAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li> -->
             <li><a href="#" class="paidExpense"><i class="fa fa-circle-o"></i>Paid Expenses</a></li>
             <li><a href="#" class="processedByMeExpense"><i class="fa fa-circle-o"></i>Processed Expense By Me</a></li>
           </ul>
@@ -169,7 +169,7 @@
             <li><a href="#" class="viewDraftAdvance"><i class="fa fa-circle-o"></i>Draft Advance</a></li>
             <li><a href="#" class="pendingAdvance"><i class="fa fa-circle-o"></i>Pending Advance</a></li>
             <li><a href="#" class="rejectedAdvance"><i class="fa fa-circle-o"></i>Rejected Advance</a></li>
-            <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li>
+            <!-- <li><a href="#" class="pendingAdvanceAtPaymentDesk"><i class="fa fa-circle-o"></i>Pending at Payment Desk</a></li> -->
             <li><a href="#" class="paidAdvances"><i class="fa fa-circle-o"></i>Paid Advances</a></li>
             <li><a href="#" class="processedByMeAdvances"><i class="fa fa-circle-o"></i>Processed Advances By Me</a></li>
           </ul>

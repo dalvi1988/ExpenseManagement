@@ -284,7 +284,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 	@Override
 	public List<AdvanceJPA> getPendingAdvanceList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
+		Object voucherId[]={4,11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
 		@SuppressWarnings("unchecked")
 		List<AdvanceJPA> advanceJPAList= session.createCriteria(AdvanceJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
@@ -297,7 +297,7 @@ public class AdvanceDAO implements IAdvanceDAO{
 	@Override
 	public Long getPendingAdvanceCount(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
+		Object voucherId[]={4,11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
 		Long pendingAdvanceCount= (Long) session.createCriteria(AdvanceJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
 				.setProjection(Projections.rowCount())

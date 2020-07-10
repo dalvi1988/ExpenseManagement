@@ -298,7 +298,7 @@ public class ExpenseDAO implements IExpenseDAO{
 	@Override
 	public List<ExpenseHeaderJPA> getPendingExpenseList(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
+		Object voucherId[]={4,11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};//Pending at payment desk also included
 		@SuppressWarnings("unchecked")
 		List<ExpenseHeaderJPA> expsensHeaderJPAList= session.createCriteria(ExpenseHeaderJPA.class)
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)
@@ -311,7 +311,7 @@ public class ExpenseDAO implements IExpenseDAO{
 	@Override
 	public Long getPendingExpenseCount(EmployeeDTO employeeDTO) {
 		Session session = sessionFactory.getCurrentSession();
-		Object voucherId[]={11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};
+		Object voucherId[]={4,11,21,31,41,51,61,71,81,91,101,111,121,131,141,151};////Pending at payment desk also included
 		Long pendingExpenseCount= (Long) session.createCriteria(ExpenseHeaderJPA.class)
 				.setProjection(Projections.rowCount())
 				.createAlias("processInstanceJPA", "processInstanceJPA",JoinType.INNER_JOIN)

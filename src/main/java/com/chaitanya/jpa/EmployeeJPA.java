@@ -25,6 +25,9 @@ public class EmployeeJPA {
 	@Column(name="first_name",nullable=false)
 	private String firstName;
 	
+	@Column(name="employee_code",nullable=false)
+	private String employeeCode;
+	
 	@Column(name="middle_name",nullable=true)
 	private String middleName;
 	
@@ -189,5 +192,14 @@ public class EmployeeJPA {
 	public void setDepartmentJPA(DepartmentJPA departmentJPA) {
 		this.departmentJPA = departmentJPA;
 	}
+	
+	public String getEmployeeCode() {
+		return employeeCode;
+	}
+
+	public void setEmployeeCode(String employeeCode) {
+		this.employeeCode = employeeCode;
+	}
+
 
 }

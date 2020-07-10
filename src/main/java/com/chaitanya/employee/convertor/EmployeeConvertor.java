@@ -27,6 +27,9 @@ public class EmployeeConvertor {
 			if(Validation.validateForEmptyString(employeeJPA.getMiddleName())){
 				employeeDTO.setMiddleName(employeeJPA.getMiddleName());			
 			}
+			if(Validation.validateForEmptyString(employeeJPA.getEmployeeCode())){
+				employeeDTO.setEmployeeCode(employeeJPA.getEmployeeCode());			
+			}
 			if(Validation.validateForEmptyString(employeeJPA.getLastName())){
 				employeeDTO.setLastName(employeeJPA.getLastName());
 			}
@@ -88,6 +91,7 @@ public class EmployeeConvertor {
 			employeeJPA.setFirstName(employeeDTO.getFirstName());
 			employeeJPA.setMiddleName(employeeDTO.getMiddleName());
 			employeeJPA.setLastName(employeeDTO.getLastName());
+			employeeJPA.setEmployeeCode(employeeDTO.getEmployeeCode());
 			employeeJPA.setEmailId(employeeDTO.getEmailId());
 			employeeJPA.setGender(employeeDTO.getGender());
 			
@@ -111,7 +115,7 @@ public class EmployeeConvertor {
 				employeeJPA.setModifiedBy(employeeDTO.getModifiedBy());
 			}
 			if(Validation.validateForZero(employeeDTO.getCreatedBy())){
-				employeeJPA.setModifiedBy(employeeDTO.getCreatedBy());
+				employeeJPA.setCreatedBy(employeeDTO.getCreatedBy());
 			}
 			if(Validation.validateForNullObject(employeeDTO.getCreatedDate())){
 				employeeJPA.setCreatedDate(Convertor.stringToCalendar(employeeDTO.getCreatedDate(),Convertor.dateFormatWithTime));

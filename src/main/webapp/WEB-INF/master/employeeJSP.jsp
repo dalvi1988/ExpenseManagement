@@ -34,7 +34,7 @@
                return false;
            }
            //append empty row in the first row.                            
-           var rowData = { employeeId:"", firstName: "", lastName:"",gender:"M",branchId:logerBranchId,departmentId:null, status:true}; //empty row template
+           var rowData = { employeeId:"", firstName: "", lastName:"",employeeCode:"", gender:"M",branchId:logerBranchId,departmentId:null, status:true}; //empty row template
            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
 
            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
@@ -125,6 +125,7 @@
               jsonToBeSend["departmentId"] = rowData.departmentId;
               jsonToBeSend["status"] = rowData.status;
               jsonToBeSend["reportingMgr"] = rowData.reportingMgr;
+              jsonToBeSend["employeeCode"] = rowData.employeeCode;
               jsonToBeSend["gender"] = rowData.gender;
               jsonToBeSend["emailId"] = rowData.emailId;
              
@@ -224,6 +225,13 @@
 
            colModel: [
                   { title: "Id", dataType: "integer", dataIndx: "employeeId", editable: false, hidden: true},
+                  { title: "Employee Code", width: 130, dataType: "string", dataIndx: "employeeCode",
+                	  filter: { type: 'textbox',attr: 'placeholder="Search Code"', condition: 'contain', listeners: ['keyup'] },
+                      validations: [
+                          { type: 'minLen', value: 1, msg: "Required" },
+                          { type: 'maxLen', value: 20, msg: "length should be <= 20" }
+                      ]
+                  },
                   { title: "First Name", width: 130, dataType: "string", dataIndx: "firstName",
          	  			filter: { type: 'textbox',attr: 'placeholder="Search First Name"', condition: 'contain', listeners: ['keyup'] },
                 	    validations: [
@@ -235,10 +243,11 @@
                 	  filter: { type: 'textbox',attr: 'placeholder="Search Last Name"', condition: 'contain', listeners: ['keyup'] },
                       validations: [
                           { type: 'minLen', value: 1, msg: "Required" },
-                          { type: 'maxLen', value: 40, msg: "length should be <= 20" }
+                          { type: 'maxLen', value: 20, msg: "length should be <= 20" }
                       ]
                   },
-                  { title: "Gender", minWidth: 55, dataIndx: "gender",
+                  
+                  /* { title: "Gender", minWidth: 55, dataIndx: "gender",
                 	  filter: { type: "select",
           		        condition: 'equal',
           		        prepend: { '': '--All--' },
@@ -265,7 +274,7 @@
                           }
                     	  
                       }
-                  },
+                  }, */
                  
                   { title: "Email ID", width: 200, dataType: "string", dataIndx: "emailId",
                 	  filter: { type: 'textbox',attr: 'placeholder="Search Email ID"', condition: 'contain', listeners: ['keyup'] },

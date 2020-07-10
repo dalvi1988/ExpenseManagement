@@ -50,6 +50,12 @@ function voucherStatusRenderer(ui) {
     if (cellData != null) {
         return ui.cellData +"</br>"+ rowData.voucherStatusDTO;
     }
+    else if(rowData.voucherStatusDTO != null){
+    	if(rowData.voucherStatusDTO =="Completely Approved"){
+    		return rowData.voucherStatusDTO +"</br>"+ "Pending At Payment Desk";
+    	}
+    	return rowData.voucherStatusDTO;
+    }
     else {
         return "";
     }

@@ -37,14 +37,15 @@
                //create new detail place holder
                $detail = $("<div></div>");
 
-
-           for (var key in rowData) {
-               var cellData = (rowData[key] == null) ? "" : rowData[key];
-               html = html.replace("<#=" + key + "#>", cellData);
-           }
-           $detail.html(html);
-
-           $detail.find(".pq-tabs").tabs().on("tabsactivate", onTabsActive);
+		   if(typeof rowData["employeeId"] != "undefined"){
+	           for (var key in rowData) {
+	               var cellData = (rowData[key] == null) ? "" : rowData[key];
+	               html = html.replace("<#=" + key + "#>", cellData);
+	           }
+	           $detail.html(html);
+	
+	           $detail.find(".pq-tabs").tabs().on("tabsactivate", onTabsActive);
+       		}
 
            /* //append pqGrid in the 2nd tab.                
            $("<div></div>").appendTo($("#tabs-2", $detail)).pqGrid( detailobj ); */
@@ -511,10 +512,22 @@
        <script type="text/pq-template" id="tmpl">
     <div class="pq-tabs" style="width:700px;">
         <ul>
-            <li><a href="#tabs-1">Address</a></li>
-            <li><a href="#tabs-3">Dates</a></li>
+            <li><a href="#tabs-1">Additional Details</a></li>
+			<li><a href="#tabs-2">Address</a></li>
+            <li><a href="#tabs-3">Bank Details</a></li>
         </ul>
         <div id="tabs-1">
+            <p><b>Employee Id:</b> <#=employeeId#></p>
+            <p><b>Designation:</b> <select name="Designation" id="designation">
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="mercedes">Mercedes</option>
+  <option value="audi">Audi</option>
+</select></p>
+            <p><b>Employee Code:</b> <input type="text" id="employeeCode" name="employeeCode"></p>
+            <p><b>Shipping Postal Code:</b> <#=ShipPostalCode#></p>
+        </div>
+		<div id="tabs-2">
             <p><b>Shipping Address:</b> <#=ShipAddress#></p>
             <p><b>Shipping City:</b> <#=ShipCity#></p>
             <p><b>Shipping Region:</b> <#=ShipRegion#></p>

@@ -64,15 +64,16 @@ public class ExcelAccountingGenerator implements IAccountingGenerator {
 		headerMap =new LinkedHashMap<>();
 		headerMap.put(0, "Expense Type");
 		headerMap.put(1, "Voucher Number");
-		headerMap.put(2, "Employee Name");
-		headerMap.put(3, "Branch Name");
-		headerMap.put(4, "Department Name");
-		headerMap.put(5, "Purpose");
-		headerMap.put(6, "Expense Category");
-		headerMap.put(7, "GL Code");
-		headerMap.put(8, "Date");
-		headerMap.put(9, "Amount");
-		headerMap.put(10, "Credit/Debit");
+		headerMap.put(2, "Employee Code");
+		headerMap.put(3, "Employee Name");
+		headerMap.put(4, "Branch Name");
+		headerMap.put(5, "Department Name");
+		headerMap.put(6, "Purpose");
+		headerMap.put(7, "Expense Category");
+		headerMap.put(8, "GL Code");
+		headerMap.put(9, "Date");
+		headerMap.put(10, "Amount");
+		headerMap.put(11, "Credit/Debit");
 		
 		Row headerRow = sheet.createRow(0);
 
@@ -96,22 +97,27 @@ public class ExcelAccountingGenerator implements IAccountingGenerator {
 			//Voucher Number
 			Cell voucherNumberCell= expenseHeaderRow.createCell(1);
 			voucherNumberCell.setCellValue(expenseHeaderJPA.getVoucherNumber());
-			
-			//Voucher Number
+
+			//EmployeeCode
 			EmployeeJPA employeeJPA= expenseHeaderJPA.getEmployeeJPA();
-			Cell employeeNameCell= expenseHeaderRow.createCell(2);
+			Cell employeeCodeCell= expenseHeaderRow.createCell(2);
+			employeeCodeCell.setCellValue(employeeJPA.getEmployeeCode());
+			
+			
+			//EMployee Name
+			Cell employeeNameCell= expenseHeaderRow.createCell(3);
 			employeeNameCell.setCellValue(employeeJPA.getFirstName()+" "+employeeJPA.getLastName());
 			
 			//Branch Name
-			Cell branchCell= expenseHeaderRow.createCell(3);
+			Cell branchCell= expenseHeaderRow.createCell(4);
 			branchCell.setCellValue(employeeJPA.getBranchJPA().getBranchName());
 			
 			//Department Name
-			Cell departmentCell= expenseHeaderRow.createCell(4);
+			Cell departmentCell= expenseHeaderRow.createCell(5);
 			departmentCell.setCellValue(employeeJPA.getDepartmentJPA().getDeptName());
 			
 			//Voucher Number
-			Cell purposeCell= expenseHeaderRow.createCell(5);
+			Cell purposeCell= expenseHeaderRow.createCell(6);
 			purposeCell.setCellValue(expenseHeaderJPA.getPurpose());
 			
 			Double sumAmount=0.0;
@@ -121,34 +127,34 @@ public class ExcelAccountingGenerator implements IAccountingGenerator {
 				Row expenseDetailRow = sheet.createRow(headerIndex+detailIndex);
 				
 				// Expense Category Name
-				Cell expenseCategoryCell= expenseDetailRow.createCell(6);
+				Cell expenseCategoryCell= expenseDetailRow.createCell(7);
 				expenseCategoryCell.setCellValue(expenseDetailJPA.getExpenseCategoryJPA().getExpenseName());
 				
 				// Expense Category GL COde
-				Cell expenseCategoryGLCodeCell= expenseDetailRow.createCell(7);
+				Cell expenseCategoryGLCodeCell= expenseDetailRow.createCell(8);
 				expenseCategoryGLCodeCell.setCellValue(expenseDetailJPA.getExpenseCategoryJPA().getGlCode());
 				
-				// Expense date COde
-				Cell dateCell= expenseDetailRow.createCell(8);
+				// Expense date 
+				Cell dateCell= expenseDetailRow.createCell(9);
 				dateCell.setCellValue(Convertor.calendartoString(expenseDetailJPA.getDate(),Convertor.dateFormat));
 				
 				// Expense detail amount
-				Cell amountCell= expenseDetailRow.createCell(9);
+				Cell amountCell= expenseDetailRow.createCell(10);
 				amountCell.setCellValue(expenseDetailJPA.getAmount());
 				
 				//Debit cell
-				Cell debitCell= expenseDetailRow.createCell(10);
+				Cell debitCell= expenseDetailRow.createCell(11);
 				debitCell.setCellValue("Dr");
 				
 				sumAmount+=expenseDetailJPA.getAmount();
 				detailIndex++;
 			}
 			//Expense Header amount
-			Cell expenseHeadeAmountCell= expenseHeaderRow.createCell(9);
+			Cell expenseHeadeAmountCell= expenseHeaderRow.createCell(10);
 			expenseHeadeAmountCell.setCellValue(sumAmount);
 			
 			//Credit Cell
-			Cell creditCell= expenseHeaderRow.createCell(10);
+			Cell creditCell= expenseHeaderRow.createCell(11);
 			creditCell.setCellValue("Cr");
 			
 			headerIndex+=(detailIndex+1);

@@ -24,6 +24,9 @@ public class LoginConvertor {
 				if(Validation.validateForEmptyString(login.getEmployeeJPA().getLastName()))
 					employeeDTO.setLastName(login.getEmployeeJPA().getLastName());
 				
+				if(Validation.validateForEmptyString(login.getEmployeeJPA().getEmployeeCode()))
+					employeeDTO.setEmployeeCode(login.getEmployeeJPA().getEmployeeCode());
+				
 				if(Validation.validateForNullObject(login.getEmployeeJPA().getBranchJPA())){
 					BranchDTO branchDTO=new BranchDTO();
 					branchDTO.setBranchId(login.getEmployeeJPA().getBranchJPA().getBranchId());

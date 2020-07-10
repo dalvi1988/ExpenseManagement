@@ -88,7 +88,7 @@
            scrollModel: {
                autoFit: true
            },
-          
+           height: '98%',
            numberCell: { show: false },
            title: "<b>Vouchers For Approval</b>",                        
            resizable: true,

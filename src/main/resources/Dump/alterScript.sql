@@ -20,3 +20,7 @@ DROP INDEX `dept_name_UNIQUE` ;
 
 ALTER TABLE `process_instance` 
 ADD COLUMN `session_id` VARCHAR(45) NULL AFTER `comments`;
+
+
+ALTER TABLE `expensewala`.`employee_details` 
+ADD COLUMN `employee_code` VARCHAR(45) NULL AFTER `last_name`;
