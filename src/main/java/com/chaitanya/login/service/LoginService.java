@@ -37,6 +37,7 @@ import com.chaitanya.utility.Utility;
 import com.chaitanya.utility.Validation;
 
 @Service("loginDetailsService")
+@Transactional(rollbackFor=Exception.class)
 public class LoginService implements UserDetailsService,ILoginService {
 
 	@Autowired
@@ -89,6 +90,31 @@ public class LoginService implements UserDetailsService,ILoginService {
 		List<GrantedAuthority> Result = new ArrayList<GrantedAuthority>(setAuths);
 		logger.debug("LoginService: forgotPassword-End");
 		return Result;
+	}
+	
+	@Override
+	public LoginDTO authenticateUserForAPI(BaseDTO baseDTO) throws UsernameNotFoundException {
+		logger.debug("LoginService: authenticateUserForAPI-Start");
+		validateLoginDTO(baseDTO);
+		LoginDTO loginDTO = (LoginDTO) baseDTO;
+		LoginJPA loginJPA = loginDAO.findByUserName(loginDTO);
+		if(Validation.validateForNullObject(loginJPA)) {
+			boolean isOldPasswordMatch= passwordEncoder.matches(loginDTO.getPassword(),loginJPA.getPassword());
+			if(isOldPasswordMatch) {
+				loginDTO=LoginConvertor.setLoginJPAToDTO(loginJPA);
+				loginDTO.setServiceStatus(ServiceStatus.SUCCESS);
+			}
+			else {
+				loginDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				loginDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_CREDENTIAL));
+			}
+		}
+		else {
+			loginDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_EMAIL));
+			loginDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+		}
+		logger.debug("LoginService: authenticateUserForAPI-End");
+		return loginDTO;
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import com.chaitanya.departmentHead.dao.IDepartmentHeadDAO;
 import com.chaitanya.employee.convertor.EmployeeConvertor;
 import com.chaitanya.employee.dao.IEmployeeDAO;
 import com.chaitanya.employee.model.EmployeeDTO;
+import com.chaitanya.employee.service.IEmployeeService;
 import com.chaitanya.event.convertor.EventConvertor;
 import com.chaitanya.expense.convertor.ExpenseConvertor;
 import com.chaitanya.expense.dao.IExpenseDAO;
@@ -47,6 +48,7 @@ import com.chaitanya.jpa.ProcessHistoryJPA;
 import com.chaitanya.jpa.ProcessInstanceJPA;
 import com.chaitanya.jpa.VoucherStatusJPA;
 import com.chaitanya.utility.Convertor;
+import com.chaitanya.utility.MailServiceImpl;
 import com.chaitanya.utility.Validation;
 import com.chaitanya.utility.model.VoucherStatusDTO;
 
@@ -71,6 +73,14 @@ public class ExpenseService implements IExpenseService{
 	
 	@Autowired
 	private Environment environment;
+	
+
+	@Autowired
+	private MailServiceImpl mailService;
+	
+	@Autowired
+	private IEmployeeService employeeService;
+	
 	
 	private Logger logger= LoggerFactory.getLogger(ExpenseService.class);
 	
@@ -99,10 +109,12 @@ public class ExpenseService implements IExpenseService{
 			expenseDetailJPAList.add(expenseDetailJPA);
 		}
 		
-		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
-			ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
-			expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
-			expenseDetailJPAList.add(expenseDetailJPA);
+		if(Validation.validateForNullObject(expenseHeaderDTO.getUpdatedExpenseDetailsDTOList())) {
+			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
+				ExpenseDetailJPA expenseDetailJPA = ExpenseConvertor.setExpenseDetailDTOToJPA(expenseDetailDTO);
+				expenseDetailJPA.setExpenseHeaderJPA(expenseHeaderJPA);
+				expenseDetailJPAList.add(expenseDetailJPA);
+			}
 		}
 		
 		expenseHeaderJPA.setExpenseDetailJPA(expenseDetailJPAList);
@@ -116,10 +128,12 @@ public class ExpenseService implements IExpenseService{
 		if (Validation.validateForNullObject(expenseHeaderJPA)) {
 			expenseDAO.saveUpdateExpense(expenseHeaderJPA);
 			
-			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getDeletedExpenseDetailsDTOList()){
-				ExpenseDetailJPA expenseDetailJPA= new ExpenseDetailJPA();
-				expenseDetailJPA.setExpenseDetailId(expenseDetailDTO.getExpenseDetailId());
-				expenseDAO.deleteExpenseDetail(expenseDetailJPA);
+			if(Validation.validateForNullObject( expenseHeaderDTO.getDeletedExpenseDetailsDTOList())) {
+				for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getDeletedExpenseDetailsDTOList()){
+					ExpenseDetailJPA expenseDetailJPA= new ExpenseDetailJPA();
+					expenseDetailJPA.setExpenseDetailId(expenseDetailDTO.getExpenseDetailId());
+					expenseDAO.deleteExpenseDetail(expenseDetailJPA);
+				}
 			}
 
 			//Create process instance if voucher not saved as draft.
@@ -164,7 +178,34 @@ public class ExpenseService implements IExpenseService{
 				}
 				toBeSendExopenseHeaderDTO.setProcessSessionId(expenseHeaderJPA.getProcessInstanceJPA().getSessionId());
 			}
-			baseDTO= toBeSendExopenseHeaderDTO;
+			if(expenseHeaderDTO.getVoucherStatusId() == 2){
+				toBeSendExopenseHeaderDTO.setMessage(new StringBuilder("Your voucher number: "+toBeSendExopenseHeaderDTO.getVoucherNumber()+" has been send for approval."));
+				
+				// For approval mail
+				final ExpenseHeaderDTO expenseHeaderDTOforMail = expenseHeaderDTO;
+				if(Validation.validateForNullObject(expenseHeaderDTOforMail.getPendingAtEmployeeDTO())) {
+					EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(toBeSendExopenseHeaderDTO.getPendingAtEmployeeDTO());
+					expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
+					expenseHeaderDTOforMail.setEmployeeDTO(toBeSendExopenseHeaderDTO.getEmployeeDTO());
+					List<ExpenseDetailDTO> expenseDetailDTOList= getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
+					new Thread(new Runnable() {
+						public void run() {
+							// Send mail to approval
+							try {
+								mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
+							}
+							catch(Exception e) {
+								logger.debug("ExpenseService: saveUpdateExpense-sendingmail: "+ e);
+							}
+			
+						}
+					}).start();
+				}
+			}
+			else{
+				toBeSendExopenseHeaderDTO.setMessage(new StringBuilder("Your voucher has been saved in draft."));
+			}
+			baseDTO=toBeSendExopenseHeaderDTO;
 			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 		}
 		else{
@@ -176,24 +217,26 @@ public class ExpenseService implements IExpenseService{
 
 	private void addUpdateDeleteAttachment(ExpenseHeaderDTO expenseHeaderDTO,Long expenseHeaderId) throws Exception {
 		String drive= environment.getProperty("fileDrive");
-		
-		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
-			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
-//				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
-//				expenseDetailDTO.getReceipt().transferTo(convFile);
-				String filePath=drive+"/"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+expenseHeaderId;
-				Files.createDirectories(Paths.get(filePath));		
-				Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"/"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-				//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+		if(Validation.validateForNullObject(expenseHeaderDTO.getAddedExpenseDetailsDTOList())) {
+			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getAddedExpenseDetailsDTOList()){
+				if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
+	//				File convFile = new File( expenseDetailDTO.getReceipt().getOriginalFilename());
+	//				expenseDetailDTO.getReceipt().transferTo(convFile);
+					String filePath=drive+"/"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+expenseHeaderId;
+					Files.createDirectories(Paths.get(filePath));		
+					Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"/"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+					//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+				}
 			}
 		}
-		
-		for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
-			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
-				String filePath=drive+"/"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+expenseHeaderId;
-				Files.createDirectories(Paths.get(filePath));
-				Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"\\"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-				//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+		if(Validation.validateForNullObject(expenseHeaderDTO.getUpdatedExpenseDetailsDTOList())) {
+			for(ExpenseDetailDTO expenseDetailDTO: expenseHeaderDTO.getUpdatedExpenseDetailsDTOList()){
+				if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && ! expenseDetailDTO.getReceipt().isEmpty()){
+					String filePath=drive+"/"+expenseHeaderDTO.getEmployeeDTO().getBranchDTO().getCompanyDTO().getCompanyId()+"/"+expenseHeaderId;
+					Files.createDirectories(Paths.get(filePath));
+					Files.copy(expenseDetailDTO.getReceipt().getInputStream(), Paths.get(filePath+"\\"+expenseDetailDTO.getReceipt().getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+					//FTPUtility.uploadFile(convFile,""+expenseHeaderId);
+				}
 			}
 		}
 	}

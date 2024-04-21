@@ -12,14 +12,10 @@ import static org.hibernate.cfg.AvailableSettings.SHOW_SQL;
 import static org.hibernate.cfg.AvailableSettings.URL;
 import static org.hibernate.cfg.AvailableSettings.USER;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.VelocityException;
-import org.hibernate.SessionFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,11 +31,12 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.velocity.VelocityEngineFactory;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -49,11 +46,15 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan({ "com.chaitanya.*" })
 @Import({ SecurityConfig.class })
 @PropertySource("classpath:application.properties")
-public class AppConfig extends WebMvcConfigurerAdapter{
+public class AppConfig implements WebMvcConfigurer{
 	
 	@Autowired
 	private Environment env;
 	
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
+	}
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -144,13 +145,16 @@ public class AppConfig extends WebMvcConfigurerAdapter{
          
         //Using gmail
         mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+        mailSender.setPort(465);
         mailSender.setUsername("expensewala@gmail.com");
-        mailSender.setPassword("Temp*123456");
+        mailSender.setPassword("spvhtnnxvgahbyfw");
          
         Properties javaMailProperties = new Properties();
-        javaMailProperties.put("mail.smtp.starttls.enable", "true");
+        //javaMailProperties.put("mail.smtp.starttls.enable", "true");
+        javaMailProperties.put("mail.smtp.ssl.enable", "true");
         javaMailProperties.put("mail.smtp.auth", "true");
+        javaMailProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        javaMailProperties.put("mail.smtp.auth", true);
         javaMailProperties.put("mail.transport.protocol", "smtp");
         javaMailProperties.put("mail.debug", "true");//Prints out everything on screen
          
@@ -164,17 +168,13 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 	 }
 	 
 	 /*
-     * Velocity configuration.
+     * FreeMarker configuration.
      */
-    @Bean
-    public VelocityEngine getVelocityEngine() throws VelocityException, IOException {
-        VelocityEngineFactory factory = new VelocityEngineFactory();
-        Properties props = new Properties();
-        props.put("resource.loader", "class");
-        props.put("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
- 
-        factory.setVelocityProperties(props);
-        return factory.createVelocityEngine();
-    }
+	 @Bean
+	    public FreeMarkerConfigurationFactoryBean getFreeMarkerConfiguration() {
+	        FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
+	        bean.setTemplateLoaderPath("classpath:/emailTemplate/");
+	        return bean;
+	    }
 
 }

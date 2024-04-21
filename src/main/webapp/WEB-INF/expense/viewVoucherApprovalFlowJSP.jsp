@@ -45,7 +45,7 @@ $(document).ready(function() {
 	 	<div id="svgContainer"></div>
 	<jstl:set var="approvalFlow" value="${approvalFlowList[0]}"/>
 		<h1 style="position: absolute; top: 5px; left: 10px;" class="center">Functional Approval</h1></br>
-s		<jstl:if test="${not empty approvalFlow.level1}">
+		<jstl:if test="${not empty approvalFlow.level1}">
 	        <div id="level1Fun" style="position: absolute; top: ${y}px; left: 10px;" class="fromContainer col-md-3 col-sm-6 col-xs-12">
 	        <div><i><span class="info-box-text">Functional 1<sup>st</sup> level approval</span></i></div>
 	          <div class="info-box">
@@ -90,7 +90,22 @@ s		<jstl:if test="${not empty approvalFlow.level1}">
 		          </div>
 	        <!-- /.col -->
 	      	</div>
-		</jstl:if>	      	
+		</jstl:if>
+		<jstl:if test="${empty approvalFlow.level2}">
+		    	
+	        <div id="level2Fun" style="position: absolute; top: ${y}px; left: 330px;" class="fromContainer col-md-3 col-sm-6 col-xs-12">
+	        	<div><i><span class="info-box-text">Functional 2<sup>nd</sup> level approval</span></i></div>
+	          <div class="info-box">
+				<span class="info-box-icon glyphicon glyphicon-ban-circle"></span>
+	            <div class="info-box-content">
+	              <span class="info-box-text">Not Applicable</span>
+	              <span class="info-box-text-wrap">This level will be skip...</span>
+	            </div>
+	            <!-- /.info-box-content -->
+	          </div>
+	          <!-- /.info-box -->
+	        </div>
+		</jstl:if>		  	      	
 		
 		<!-- Level 3 -->
 		<jstl:if test="${not empty approvalFlow.level3}">
@@ -160,7 +175,21 @@ s		<jstl:if test="${not empty approvalFlow.level1}">
 	          <!-- /.info-box -->
 	        </div>
 		</jstl:if>
-		
+		<jstl:if test="${empty financeFlow.level3}">
+		    	
+	        <div id="level3Fin" style="position: absolute; top: ${y}px; left: 10px;" class="fromContainer col-md-3 col-sm-6 col-xs-12">
+	        	<div><i><span class="info-box-text">Finance 3<sup>rd</sup> level approval</span></i></div>
+	          <div class="info-box">
+				<span class="info-box-icon glyphicon glyphicon-ban-circle"></span>
+	            <div class="info-box-content">
+	              <span class="info-box-text">Not Applicable</span>
+	              <span class="info-box-text-wrap">This level will be skip...</span>
+	            </div>
+	            <!-- /.info-box-content -->
+	          </div>
+	          <!-- /.info-box -->
+	        </div>
+		</jstl:if>	 
 		<!-- Level 2 -->
 		<jstl:if test="${not empty financeFlow.level2}">
 		    	
@@ -184,6 +213,21 @@ s		<jstl:if test="${not empty approvalFlow.level1}">
 		          </div>
 	        <!-- /.col -->
 	      	</div>
+		</jstl:if>	
+		<jstl:if test="${empty financeFlow.level2}">
+		    	
+	        <div id="level2Fin" style="position: absolute; top: ${y}px; left: 330px;" class="fromContainer col-md-3 col-sm-6 col-xs-12">
+	        	<div><i><span class="info-box-text">Finance 2<sup>nd</sup> level approval</span></i></div>
+	          <div class="info-box">
+				<span class="info-box-icon glyphicon glyphicon-ban-circle"></span>
+	            <div class="info-box-content">
+	              <span class="info-box-text">Not Applicable</span>
+	              <span class="info-box-text-wrap">This level will be skip...</span>
+	            </div>
+	            <!-- /.info-box-content -->
+	          </div>
+	          <!-- /.info-box -->
+	        </div>
 		</jstl:if>	      	
 		
 		<jstl:if test="${not empty financeFlow.level1}">
@@ -201,14 +245,28 @@ s		<jstl:if test="${not empty approvalFlow.level1}">
 				</jstl:choose>
 				
 	            <div class="info-box-content">
-	              <span class="info-box-text">${financeFlow.level1EmployeeDTO.fullName}</span>
+	              <span class="info-box-text-wrap">${financeFlow.level1EmployeeDTO.fullName}</span>
 	            </div>
 	            <!-- /.info-box-content -->
 	          </div>
 	        <!-- /.col -->
 	      	</div>
 		</jstl:if>
-		
+		<jstl:if test="${empty financeFlow.level1}">
+		    	
+	        <div id="level1Fin" style="position: absolute; top: ${y}px; left: 630px;" class="fromContainer col-md-3 col-sm-6 col-xs-12">
+	        	<div><i><span class="info-box-text">Finance 1<sup>st</sup> level approval</span></i></div>
+	          <div class="info-box">
+				<span class="info-box-icon glyphicon glyphicon-ban-circle"></span>
+	            <div class="info-box-content">
+	              <span class="info-box-text">Not Applicable</span>
+	              <span class="info-box-text-wrap">This level will be skip...</span>
+	            </div>
+	            <!-- /.info-box-content -->
+	          </div>
+	          <!-- /.info-box -->
+	        </div>
+		</jstl:if>	
 			
     </div><!-- End Row Div -->
     

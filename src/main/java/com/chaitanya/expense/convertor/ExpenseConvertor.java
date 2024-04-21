@@ -86,7 +86,7 @@ public class ExpenseConvertor {
 			employeeJPA.setEmployeeId(expenseHeaderDTO.getEmployeeDTO().getEmployeeId());
 			expenseHeaderJPA.setEmployeeJPA(employeeJPA);
 			
-			if(Validation.validateForNullObject(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId())){
+			if(Validation.validateForNullObject(expenseHeaderDTO.getAdvanceDTO()) && Validation.validateForNullObject(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId())){
 				if(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId() != -1){
 					AdvanceJPA advanceJPA=new AdvanceJPA();
 					advanceJPA.setAdvanceDetailId(expenseHeaderDTO.getAdvanceDTO().getAdvanceDetailId());
@@ -155,7 +155,7 @@ public class ExpenseConvertor {
 				expenseDetailJPA.setUnit(expenseDetailDTO.getUnit());
 			}
 			expenseDetailJPA.setAmount(expenseDetailDTO.getAmount());
-			if(!expenseDetailDTO.getReceipt().isEmpty()){
+			if(Validation.validateForNullObject(expenseDetailDTO.getReceipt()) && !expenseDetailDTO.getReceipt().isEmpty()){
 				MultipartFile receipt= expenseDetailDTO.getReceipt();
 				expenseDetailJPA.setFileName(receipt.getOriginalFilename());
 			}

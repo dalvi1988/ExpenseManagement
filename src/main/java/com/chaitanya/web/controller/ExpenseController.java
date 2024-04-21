@@ -408,39 +408,7 @@ public class ExpenseController {
 			receivedExpenseHeaderDTO.setDeletedExpenseDetailsDTOList(deletedExpenseDetailDTOList);
 			
 			BaseDTO baseDTO= expenseService.saveUpdateExpense(receivedExpenseHeaderDTO);
-			if(Validation.validateForSuccessStatus(baseDTO)){
-				toBeSendExpenseHeaderDTO=(ExpenseHeaderDTO)baseDTO;
-				if(receivedExpenseHeaderDTO.getVoucherStatusId() == 2){
-					toBeSendExpenseHeaderDTO.setMessage(new StringBuilder("Your voucher number: "+toBeSendExpenseHeaderDTO.getVoucherNumber()+" has been send for approval."));
-					
-					// For approval mail
-					final ExpenseHeaderDTO expenseHeaderDTOforMail = toBeSendExpenseHeaderDTO;
-					if(Validation.validateForNullObject(expenseHeaderDTOforMail.getPendingAtEmployeeDTO())) {
-						EmployeeDTO pendingAtEmployeeDTO=(EmployeeDTO) employeeService.getEmployeeById(toBeSendExpenseHeaderDTO.getPendingAtEmployeeDTO());
-						expenseHeaderDTOforMail.setPendingAtEmployeeDTO(pendingAtEmployeeDTO);
-						expenseHeaderDTOforMail.setEmployeeDTO(receivedExpenseHeaderDTO.getEmployeeDTO());
-						List<ExpenseDetailDTO> expenseDetailDTOList= expenseService.getExpenseDetailsByHeaderId(expenseHeaderDTOforMail);
-						new Thread(new Runnable() {
-							public void run() {
-								// Send mail to approval
-								try {
-									mailService.sendApprovalMail(expenseHeaderDTOforMail,expenseDetailDTOList);
-								}
-								catch(Exception e) {
-									logger.debug("ExpenseService: saveUpdateExpense-sendingmail: "+ e);
-								}
-				
-							}
-						}).start();
-					}
-				}
-				else{
-					toBeSendExpenseHeaderDTO.setMessage(new StringBuilder("Your voucher has been saved in draft."));
-				}
-			}
-			else{
-				toBeSendExpenseHeaderDTO=receivedExpenseHeaderDTO;
-			}
+			toBeSendExpenseHeaderDTO=(ExpenseHeaderDTO)baseDTO;				
 		}
 		catch(ApprovalFlowException e) {
 			toBeSendExpenseHeaderDTO = receivedExpenseHeaderDTO;

@@ -6,7 +6,7 @@ import com.chaitanya.employee.model.EmployeeDTO;
 public class LoginDTO extends BaseDTO{
 	
 	private static final long serialVersionUID = 1L;
-	
+	private String username;
 	private String password;
 	private EmployeeDTO employeeDTO;
 	
@@ -21,5 +21,11 @@ public class LoginDTO extends BaseDTO{
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

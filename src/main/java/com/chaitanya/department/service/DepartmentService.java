@@ -15,7 +15,6 @@ import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.department.convertor.DepartmentConvertor;
 import com.chaitanya.department.dao.IDepartmentDAO;
 import com.chaitanya.department.model.DepartmentDTO;
-import com.chaitanya.expense.model.ExpenseHeaderDTO;
 import com.chaitanya.jpa.DepartmentJPA;
 import com.chaitanya.utility.Validation;
 

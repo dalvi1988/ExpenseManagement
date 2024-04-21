@@ -31,8 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.authorizeRequests()
-			.antMatchers("/login/**","/theme/**").permitAll()
+		http.cors().and()
+		.authorizeRequests()
+			.antMatchers("/login/**","/theme/**","/api/**").permitAll()
 			.antMatchers("/approveFromEmail/**").permitAll()
 			.antMatchers("/master/**").access("hasRole('ADMIN_ROLE')")
 			.antMatchers("/mis/**").access("hasRole('ADMIN_ROLE')")
@@ -49,6 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 		.csrf().disable()
 		.exceptionHandling().accessDeniedPage("/others/403");
+		
+		http.headers().httpStrictTransportSecurity()
+        .maxAgeInSeconds(0)
+        .includeSubDomains(true);
 		
 	}
 	

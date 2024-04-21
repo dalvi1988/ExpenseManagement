@@ -225,7 +225,7 @@
           </a>
         </li>
         
-        <sec:authorize access="hasAnyAuthority('ACCOUNTING_ROLE')" var="isAuthorizeAny">
+        <sec:authorize access="hasAnyAuthority('ACCOUNTANT_ROLE')" var="isAuthorizeAny">
         <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i>

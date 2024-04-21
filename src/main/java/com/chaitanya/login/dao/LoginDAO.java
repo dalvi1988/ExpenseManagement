@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.LoginJPA;
+import com.chaitanya.login.model.LoginDTO;
 
 @Repository
 @EnableTransactionManagement
@@ -33,8 +34,20 @@ public class LoginDAO implements ILoginDAO {
 		} else {
 			return null;
 		}
-		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public LoginJPA findByUserName(LoginDTO loginDTO) {
 
+		Session session=sessionFactory.getCurrentSession();
+		List<LoginJPA> loginDetails = new ArrayList<LoginJPA>();
+		loginDetails = session.createQuery("from LoginJPA where userName=?").setParameter(0, loginDTO.getUsername())
+				.list();
+		if (loginDetails.size() > 0) {
+			return loginDetails.get(0);
+		} else {
+			return null;
+		}
 	}
 	
 	public LoginJPA saveLoginDetail(LoginJPA loginJPA){

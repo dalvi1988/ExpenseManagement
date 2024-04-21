@@ -30,42 +30,42 @@
 <td style="width: 128px;"><strong>Amount</strong></td>
 <td style="width: 128px;"><strong>Receipt</strong></td>
 </tr>
-#foreach( $expenseDetail in $expenseDetailList )
+<#list  expenseDetailList as expenseDetail>
     <tr>
-    	<td>$expenseDetail.getDate()</td>
-    	<td>$expenseDetail.getExpenseCategoryDTO().getExpenseName()</td>
-    	#if ($expenseDetail.getFromLocation())
-    		<td>$expenseDetail.getFromLocation()</td>
-    	#else
+    	<td>${expenseDetail.getDate()}</td>
+    	<td>${expenseDetail.getExpenseCategoryDTO().getExpenseName()}</td>
+    	<#if expenseDetail.getFromLocation() ??>
+    		<td>${expenseDetail.getFromLocation()}</td>
+    	<#else>
 		  <td></td>
-		#end
+		</#if>
 		
-		#if ($expenseDetail.getToLocation())
-    		<td>$expenseDetail.getToLocation()</td>
-    	#else
+		<#if expenseDetail.getToLocation() ??>
+    		<td>${expenseDetail.getToLocation()}</td>
+    	<#else>
 		  <td></td>
-		#end
-		#if ($expenseDetail.getDescription())
-    		<td>$expenseDetail.getDescription()</td>
-    	#else
+		</#if>
+		<#if expenseDetail.getDescription() ??>
+    		<td>${expenseDetail.getDescription()}</td>
+    	<#else>
 		  <td></td>
-		#end
+		</#if>
 		
-		#if ($expenseDetail.getUnit())
-    		<td>$expenseDetail.getUnit()</td>
-    	#else
+		<#if expenseDetail.getUnit() ??>
+    		<td>${expenseDetail.getUnit()}</td>
+    	<#else>
 		  <td></td>
-		#end
-    	<td>$expenseDetail.getAmount()</td>
+		</#if>
+    	<td>${expenseDetail.getAmount()}</td>
     	
-    	#if ($expenseDetail.getFileName())
-    		<td><a href=\"cid:expenseDetail.getExpenseDetailId()\">$expenseDetail.getFileName()</a> 
-    		    		<img src=\"cid:expenseDetail.getExpenseDetailId()\"/></td>
-    	#else
+    	<#if expenseDetail.getFileName() ??>
+    		<td><a href=\"cid:${expenseDetail.getExpenseDetailId()}\">${expenseDetail.getFileName()}</a> 
+    		    		<img src=\"cid:${expenseDetail.getExpenseDetailId()}\"/></td>
+    	<#else>
 		  <td></td>
-		#end
+		</#if>
     </tr>
-#end
+</#list>
 </tbody>
 </table>
 <input type="hidden" name="employeeId" value=${expenseHeaderDTO.getPendingAtEmployeeDTO().getEmployeeId()}>
