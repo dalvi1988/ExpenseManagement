@@ -7,8 +7,6 @@
     <title>Expense Management System</title>
 
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
    <script type="text/javascript">
    var advanceList= ${advanceList};
@@ -37,32 +35,35 @@
            sortDir: "up",
            data: advanceList
        }
+     //define the grid.
        var obj = {
-    		   resizable: true,
-    		   scrollModel: {
-                   autoFit: true
-               },
-           dataModel: dataModel,
-           colModel: colM,
-           hwrap: false,
-           pageModel: { type: "local", rPP: 10 },
-           editable: false,
-           selectionModel: {type: 'row', mode: 'single'},
-           filterModel: { on: true, mode: "AND", header: true },
-           title: "Pending Advance Vouchers",
+           wrap: false,
+           hwrap: true,
            resizable: true,
+           columnBorders: true,
            numberCell: { show: false },
-           columnBorders: true
+           filterModel: { on: true, mode: "AND", header: true, type:"local" },
+           trackModel: { on: true }, //to turn on the track changes.,
+           collapsible:{ on : false,toggle: false },
+           scrollModel: { autoFit: true },
+           editor: { type: 'textbox', select: true, style: 'outline:none;' },
+           rowBorders: true,
+           selectionModel: {type: 'row', mode: 'single'},
+           validation: { icon: 'ui-icon-info' },
+           title: "Pending Advance Vouchers",
+           colModel:colM,
+           postRenderInterval: -1, //synchronous post rendering.
+           dataModel: dataModel,
+           editable:false
        };
-
-       var $grid = $("#grid_filter").pqGrid(obj);
+       var grid = pq.grid("#grid_editing", obj);
 
    });
 </script>
 </head>
 <body>
   <form id="form" action="expense" method="post">
-  	<div id="grid_filter" style="margin: auto;"></div>
+  	<div id="grid_editing" style="margin: auto;"></div>
   </form>
        
 </body>

@@ -49,7 +49,39 @@
            { title: "", dataIndx: "advanceDetailId",hidden:true},
            { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
                return "<button type='button' class='pay_btn' style='background:red; color: white'>Pay "+ui.rowData.amount+"</button>";
-               }
+               },
+               postRender: function (ui) {
+                   var rowIndx = ui.rowIndx,
+                       grid = this,
+                       $cell = grid.getCell(ui);
+                   $cell.find(".pay_btn").button({ icons: { primary: 'ui-icon-circle-check'} })
+                   .bind("click", function (evt) {
+        	             var rowData = grid.getRowData({ rowIndx: rowIndx });
+    	        	     rowData.moduleName="Advance";
+    	                 rowData.voucherId=rowData.advanceDetailId;
+    	                 $.ajax($.extend({}, ajaxObj, { 
+    	                  	context: grid,
+    	              	    url: "makePayment", 
+    	              	    type: 'POST', 
+    	              	    data: JSON.stringify(rowData),
+    	              	 
+    	              	    success: function(data) { 
+    	              	    	if(data.serviceStatus=="SUCCESS"){
+    	              	    		$(".alert").addClass("alert-success").text(data.message).show();
+    	              	    		 grid.deleteRow({ rowIndx: rowIndx, effect: true });
+    	              	    	}
+    	              	    	else{
+    	              	    		$(".alert").addClass("alert-danger").text(data.message).show();
+    	              	    		$grid.pqGrid("rollback");
+    	              	    	}
+    	              	    	
+    	              	    },
+    	              	    error:function(data) {
+    	              	    	$(".alert").addClass("alert-danger").text(data.message).show();
+    	              	    }
+    	     		   }));
+                   });
+               	}
            }
        ];
 
@@ -61,66 +93,28 @@
                data: advanceList
        }
 
+     //define the grid.
        var obj = {
-   		   resizable: true,
-   		   scrollModel: {autoFit: true},
-           dataModel: dataModel,
-           colModel: colM,
-           hwrap: false,
-           pageModel: { type: "local", rPP: 10 },
-           editable: false,
+           wrap: false,
+           hwrap: true,
+           resizable: true,
+           columnBorders: false,
+           numberCell: { show: false },
+           filterModel: { on: true, mode: "AND", header: true, type:"local" },
+           trackModel: { on: true }, //to turn on the track changes.,
+           collapsible:{ on : false,toggle: false },
+           scrollModel: { autoFit: true },
+           editor: { type: 'textbox', select: true, style: 'outline:none;' },
+           rowBorders: true,
            selectionModel: {type: 'row', mode: 'single'},
-           filterModel: { on: true, mode: "AND", header: true },
-           resizable: true,
-           numberCell: { show: false },
-           columnBorders: true,
-           numberCell: { show: false },
-           title: "<b>Advances For Payment</b>",                        
-           resizable: true,
-           selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},
-           
-           refresh: function() {
-        	 //debugger;
-               var $grid = $(this);
-               //edit button
-               $grid.find("button.pay_btn").button({ icons: { primary: 'ui-icon-check'} })
-               .unbind("click")
-               .bind("click", function (evt) {
-            	   var $tr = $(this).closest("tr");
-	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
-	                 var rowIndx = obj.rowIndx;
-	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
-	        	     rowData.moduleName="Advance";
-	                 rowData.voucherId=rowData.advanceDetailId;
-	                 $.ajax($.extend({}, ajaxObj, { 
-	                  	context: $grid,
-	              	    url: "makePayment", 
-	              	    type: 'POST', 
-	              	    data: JSON.stringify(rowData),
-	              	 
-	              	    success: function(data) { 
-	              	    	if(data.serviceStatus=="SUCCESS"){
-	              	    		$(".alert").addClass("alert-success").text(data.message).show();
-	              	    		 $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
-	              	    	}
-	              	    	else{
-	              	    		$(".alert").addClass("alert-danger").text(data.message).show();
-	              	    		$grid.pqGrid("rollback");
-	              	    	}
-	              	    	
-	              	    },
-	              	    error:function(data) {
-	              	    	$(".alert").addClass("alert-danger").text(data.message).show();
-	              	    }
-	     		   }));
-                 
-               });
-
-           }
-           
+           validation: { icon: 'ui-icon-info' },
+           title: "<b>Advances For Payment</b>", 
+           colModel:colM,
+           postRenderInterval: -1, //synchronous post rendering.
+           dataModel: dataModel
        };
+       var grid = pq.grid("#grid_editing", obj);
 
-       var $grid = $("#grid_filter").pqGrid(obj);
    });
    
    
@@ -128,6 +122,6 @@
 </script>
 </head>
 <body>
-  <div id="grid_filter" style="margin:5px auto;"></div>
+  <div id="grid_editing" style="margin:5px auto;"></div>
 </body>
 </html>

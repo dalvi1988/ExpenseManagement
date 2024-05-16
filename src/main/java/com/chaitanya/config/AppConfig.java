@@ -65,6 +65,7 @@ public class AppConfig implements WebMvcConfigurer{
 		registry.addResourceHandler("/icon/**").addResourceLocations("classpath:/icon/");
 		registry.addResourceHandler("/drawline/**").addResourceLocations("classpath:/drawline/");
 		registry.addResourceHandler("/gridNew/**").addResourceLocations("classpath:/gridNew/");
+		registry.addResourceHandler("/grid-3.5.1/**").addResourceLocations("classpath:/grid-3.5.1/");
 	}
 	
 	

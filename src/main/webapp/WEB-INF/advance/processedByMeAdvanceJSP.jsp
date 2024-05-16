@@ -13,29 +13,7 @@
    var advanceList= ${advanceList};
    $(function () {
 	   
-	   function submitDetails(rowData,rowIndx){
-		   $.ajax($.extend({}, ajaxObj, { 
-             	context: $grid,
-         	    url: "approveRejectAdvance", 
-         	    type: 'POST', 
-         	    data: JSON.stringify(rowData),
-         	 
-         	    success: function(data) { 
-         	    	if(data.serviceStatus=="SUCCESS"){
-         	    		$(".alert").addClass("alert-success").text(data.message).show();
-         	    		$grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
-         	    	}
-         	    	else{
-         	    		$(".alert").addClass("alert-danger").text(data.message).show();
-         	    		$grid.pqGrid("rollback");
-         	    	}
-         	    	
-         	    },
-         	    error:function(data) {
-         	    	$(".alert").addClass("alert-danger").text(data).show();
-         	    }
-		   }));
-	   }
+	  
 	   
        var colM = [
 			{ title: "Employee Name", minWidth: 130, dataIndx: "employeeDTO", dataType:"String",
@@ -65,27 +43,28 @@
                data: advanceList
        }
 
+       //define the grid.
        var obj = {
-    		   resizable: true,
-    		   scrollModel: {
-                   autoFit: true
-               },
+           wrap: false,
+           hwrap: true,
+           resizable: true,
+           columnBorders: true,
+           numberCell: { show: false },
+           filterModel: { on: true, mode: "AND", header: true, type:"local" },
+           trackModel: { on: true }, //to turn on the track changes.,
+           collapsible:{ on : false,toggle: false },
+           scrollModel: { autoFit: true },
+           editor: { type: 'textbox', select: true, style: 'outline:none;' },
+           rowBorders: true,
+           selectionModel: {type: 'row', mode: 'single'},
+           validation: { icon: 'ui-icon-info' },
+          title: "<b>Processed By Me Advances</b>",   
+           colModel:colM,
+           postRenderInterval: -1, //synchronous post rendering.
            dataModel: dataModel,
-           colModel: colM,
-           hwrap: false,
-           pageModel: { type: "local", rPP: 10 },
-           editable: false,
-           filterModel: { on: true, mode: "AND", header: true },
-           resizable: true,
-           numberCell: { show: false },
-           columnBorders: true, 
-           numberCell: { show: false },
-           title: "<b>Processed By Me Advances</b>",                        
-           resizable: true,
-           
+           editable:false
        };
-
-       var $grid = $("#grid_filter").pqGrid(obj);
+       var grid = pq.grid("#grid_filter", obj);
    });
    
   
@@ -95,12 +74,6 @@
 <body>
   <div id="grid_filter" style="margin:5px auto;"></div>
   
-  <div id="dialog-confirm" style="display: none" title="Rejection Comment">
-    <fieldset>
-      <label for="name">Please enter rejection comments:</label>
-      <input type="text" name="comment" id="comment" class="text ui-widget-content ui-corner-all">
-    </fieldset>
-  </div>
 	
 </body>
 </html>

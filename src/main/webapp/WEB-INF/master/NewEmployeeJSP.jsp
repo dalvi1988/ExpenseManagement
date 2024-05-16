@@ -7,10 +7,42 @@
 
     <title>Employee Master</title>
     <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
+    <script type="text/javascript" src=<spring:url value="/grid-3.5.1/pqgrid.min.js"/> ></script>
+    <link rel="stylesheet" href=<spring:url value="/grid-3.5.1/pqgrid.min.css"/> />
     
     <!--script tag used to define detail template-->
+    <style type="text/css"> 
+	
+div.pq-grid *
+{
+    font-size:12px;    
+}
+button.delete_btn
+{
+    margin:-2px 0px;
+}
+button.edit_btn
+{
+    margin:-3px 0px;
+}
+tr.pq-grid-row td
+{
+    color:#888;
+}
+tr.pq-row-edit > td
+{
+    color:#000;
+}
+tr.pq-row-delete
+{
+    text-decoration:line-through;         
+}
+tr.pq-row-delete td
+{
+    background-color:pink;   
+}
+	 
+</style> 
 
    <script type="text/javascript">
    var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;

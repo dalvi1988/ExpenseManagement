@@ -6,8 +6,6 @@
 
     <title>Expense Management System</title>
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
    <script type="text/javascript">
    var advanceList= ${advanceList};
@@ -15,7 +13,7 @@
 	   
 	   function submitDetails(rowData,rowIndx){
 		   $.ajax($.extend({}, ajaxObj, { 
-             	context: $grid,
+             	context: grid,
          	    url: "approveRejectAdvance", 
          	    type: 'POST', 
          	    data: JSON.stringify(rowData),
@@ -23,11 +21,11 @@
          	    success: function(data) { 
          	    	if(data.serviceStatus=="SUCCESS"){
          	    		$(".alert").addClass("alert-success").text(data.message).show();
-         	    		$grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
+         	    		grid.deleteRow({ rowIndx: rowIndx, effect: true });
          	    	}
          	    	else{
          	    		$(".alert").addClass("alert-danger").text(data.message).show();
-         	    		$grid.pqGrid("rollback");
+         	    		grid.rollback();
          	    	}
          	    	
          	    },
@@ -52,7 +50,47 @@
            { title: "", editable: false, width: 165, sortable: false, render: function (ui) {
                return "<button type='button' class='approve_btn'>Approve</button>\
                    <button type='button' class='reject_btn'>Reject</button>";
-               }
+               },
+               postRender: function (ui) {
+                   var rowIndx = ui.rowIndx,
+                       grid = this,
+                       $cell = grid.getCell(ui);
+                 //reject button
+                   $cell.find("button.reject_btn").button({ icons: { primary: 'ui-icon-closethick'} })
+                   .unbind("click")
+                   .bind("click", function (evt) {
+                       
+                	   var rowData = grid.getRowData({ rowIndx: rowIndx });
+                       rowData.voucherStatusId = 4;
+                       $( "#dialog-confirm" ).dialog({
+                 	      resizable: false,
+                 	      height: "auto",
+                 	      width: 400,
+                 	      modal: true,
+                 	      buttons: {
+                 	        "Continue": function() {
+                 	        	rowData.rejectionComment=$("#comment").val();
+                 	        	submitDetails(rowData,rowIndx);
+                 	          $( this ).dialog( "close" );
+                 	        },
+                 	        Cancel: function() {
+                 	          $( this ).dialog( "close" );
+                 	        }
+                 	      }
+                 	 });
+                       
+                   });
+                   //approver button
+                   $cell.find("button.approve_btn").button({ icons: { primary: 'ui-icon-check'} })
+                   .unbind("click")
+                   .bind("click", function (evt) {
+                       
+                	   var rowData = grid.getRowData({ rowIndx: rowIndx });
+                       rowData.voucherStatusId = 3;
+                       submitDetails(rowData,rowIndx);
+                   });
+                   
+               	}
            }
        ];
 
@@ -64,72 +102,27 @@
                data: advanceList
        }
 
+       //define the grid.
        var obj = {
-    		   resizable: true,
-    		   scrollModel: {
-                   autoFit: true
-               },
-           dataModel: dataModel,
-           colModel: colM,
-           hwrap: false,
-           pageModel: { type: "local", rPP: 10 },
-           editable: false,
-           selectionModel: { type: 'cell' },
-           filterModel: { on: true, mode: "AND", header: true },
+           wrap: false,
+           hwrap: true,
            resizable: true,
+           columnBorders: false,
            numberCell: { show: false },
-           columnBorders: true, 
-           numberCell: { show: false },
-           title: "<b>Advance For Approval</b>",                        
-           resizable: true,
-           selectionModel: { type: 'none', subtype:'incr', cbHeader:true, cbAll:true},
-           refresh: function() {
-        	 //debugger;
-               var $grid = $(this);
-
-               //delete button
-               $grid.find("button.reject_btn").button({ icons: { primary: 'ui-icon-closethick'} })
-               .unbind("click")
-               .bind("click", function (evt) {
-                   
-                   var $tr = $(this).closest("tr"),
-                       rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
-                   rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
-                   rowData.voucherStatusId = 4;
-                   $( "#dialog-confirm" ).dialog({
-             	      resizable: false,
-             	      height: "auto",
-             	      width: 400,
-             	      modal: true,
-             	      buttons: {
-             	        "Continue": function() {
-             	        	rowData.rejectionComment=$("#comment").val();
-             	        	submitDetails(rowData,rowIndx);
-             	          $( this ).dialog( "close" );
-             	        },
-             	        Cancel: function() {
-             	          $( this ).dialog( "close" );
-             	        }
-             	      }
-             	 });
-                   
-               });
-               //edit button
-               $grid.find("button.approve_btn").button({ icons: { primary: 'ui-icon-check'} })
-               .unbind("click")
-               .bind("click", function (evt) {
-                   
-                   var $tr = $(this).closest("tr"),
-                       rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx,
-                       rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
-                   rowData.voucherStatusId = 3;
-                   submitDetails(rowData,rowIndx);
-               });
-           }
-           
+           filterModel: { on: true, mode: "AND", header: true, type:"local" },
+           trackModel: { on: true }, //to turn on the track changes.,
+           collapsible:{ on : false,toggle: false },
+           scrollModel: { autoFit: true },
+           editor: { type: 'textbox', select: true, style: 'outline:none;' },
+           rowBorders: true,
+           selectionModel: {type: 'row', mode: 'single'},
+           validation: { icon: 'ui-icon-info' },
+          title: "<b>Advance For Approval</b>", 
+           colModel:colM,
+           postRenderInterval: -1, //synchronous post rendering.
+           dataModel: dataModel
        };
-
-       var $grid = $("#grid_filter").pqGrid(obj);
+       var grid = pq.grid("#grid_filter", obj);
    });
    
   

@@ -7,8 +7,6 @@
     <title>Expense Management System</title>
 
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
 
    <script type="text/javascript">
    var advanceList= ${advanceList};
@@ -27,7 +25,20 @@
        { title: "", dataIndx: "advanceDetailId",hidden:true},
        { title: "", editable: false, minWidth: 70, sortable: false, render: function (ui) {
         	return "<button type='button' class='edit_btn' >Edit</button>";
-      }},
+       },
+       postRender: function (ui) {
+           var rowIndx = ui.rowIndx,
+               grid = this,
+               $cell = grid.getCell(ui);
+           $cell.find(".edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+           .bind("click", function (evt) {
+	             var rowData = grid.getRowData({ rowIndx: rowIndx });
+	  	         $("#advanceDetailId").val(rowData.advanceDetailId);
+	 	    	 $( this ).parent().addClass("active")
+		         $('.content').load('advance?advanceDetailId='+rowData.advanceDetailId);
+           });
+       	}
+       },
 		];
        //define dataModel
        var dataModel = {
@@ -37,46 +48,34 @@
            sortDir: "up",
            data: advanceList
        }
+       //define the grid.
        var obj = {
-    		   resizable: true,
-    		   scrollModel: {
-                   autoFit: true
-               },
-           dataModel: dataModel,
-           colModel: colM,
-           hwrap: false,
-           pageModel: { type: "local", rPP: 10 },
-           editable: false,
-           selectionModel: {type: 'row', mode: 'single'},
-           filterModel: { on: true, mode: "AND", header: true },
-           title: "Saved Advance Vouchers",
+           wrap: false,
+           hwrap: true,
            resizable: true,
+           columnBorders: false,
            numberCell: { show: false },
-           columnBorders: true,           
-	       refresh: function(){
-	    	    $("#grid_filter").find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
-	           .unbind("click")
-	           .bind("click", function (evt) {
-	        	     var $tr = $(this).closest("tr");
-	                 var obj = $grid.pqGrid("getRowIndx", { $tr: $tr });
-	                 var rowIndx = obj.rowIndx;
-	                 var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx })
-	        	     $("#advanceDetailId").val(rowData.advanceDetailId);
-           	    	 $( this ).parent().addClass("active")
-         	         $('.content').load('advance?advanceDetailId='+rowData.advanceDetailId);
-	                 //$("#form").submit();
-	           }); 
-	       }
+           filterModel: { on: true, mode: "AND", header: true, type:"local" },
+           trackModel: { on: true }, //to turn on the track changes.,
+           collapsible:{ on : false,toggle: false },
+           scrollModel: { autoFit: true },
+           editor: { type: 'textbox', select: true, style: 'outline:none;' },
+           rowBorders: true,
+           selectionModel: {type: 'row', mode: 'single'},
+           validation: { icon: 'ui-icon-info' },
+           title: "Saved Advance Vouchers",
+           colModel:colM,
+           postRenderInterval: -1, //synchronous post rendering.
+           dataModel: dataModel
        };
-
-       var $grid = $("#grid_filter").pqGrid(obj);
+       var grid = pq.grid("#grid_editing", obj);
 
    });
 </script>
 </head>
 <body>
   <form id="form" action="expense" method="post">
-  	<div id="grid_filter" style="margin: auto;"></div>
+  	<div id="grid_editing" style="margin: auto;"></div>
   	<input name="advanceDetailId" id="advanceDetailId" type="text" hidden/>
   </form>
        

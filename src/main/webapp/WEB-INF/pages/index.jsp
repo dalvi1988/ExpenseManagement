@@ -15,8 +15,8 @@
  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
  
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
+    <script type="text/javascript" src=<spring:url value="/grid-3.5.1/pqgrid.min.js"/> ></script>
+    <link rel="stylesheet" href=<spring:url value="/grid-3.5.1/pqgrid.min.css"/> />
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
  	
  	

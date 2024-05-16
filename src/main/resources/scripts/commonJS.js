@@ -4,23 +4,18 @@ var ajaxObj = {
     beforeSend: function (xhr, setting) {
  	   xhr.setRequestHeader("Accept", "application/json");
        xhr.setRequestHeader("Content-Type", "application/json");
-       this.pqGrid("showLoading");
+       this.showLoading();
     },
     complete: function () {
-        this.pqGrid("hideLoading");
+    	this.hideLoading();
     },
     error: function () {
-        this.pqGrid("rollback");
-        this.pqGrid("hideLoading");
+        this.rollback();
+        this.hideLoading();
     }
 };
 
 function amountRenderer(ui) {
-    var grid = $(this).pqGrid('getInstance').grid,
-        rowData = ui.rowData,
-        rowIndx = ui.rowIndx,
-        dataIndx = ui.dataIndx;
-
     var cellData = ui.cellData;
     if (cellData != null) {
         return "&#8377;" + parseFloat(ui.cellData).toFixed(2);
@@ -32,8 +27,7 @@ function amountRenderer(ui) {
 
 
 function viewApprovalFlowRenderer(ui) {
-    var grid = $(this).pqGrid('getInstance').grid,
-        rowData = ui.rowData,
+    var rowData = ui.rowData,
         rowIndx = ui.rowIndx,
         dataIndx = ui.dataIndx;
 
@@ -41,8 +35,7 @@ function viewApprovalFlowRenderer(ui) {
 };
 
 function voucherStatusRenderer(ui) {
-    var grid = $(this).pqGrid('getInstance').grid,
-        rowData = ui.rowData,
+    var rowData = ui.rowData,
         rowIndx = ui.rowIndx,
         dataIndx = ui.dataIndx;
 

@@ -68,7 +68,7 @@
            getData: function (dataJSON) {
                var data = dataJSON.data;
                if(data == ""){
-            	   $gridMain.pqGrid("hideLoading");
+            	   gridMain.hideLoading();
                }
                //expand the first row.
                data[0]['pq_detail'] = { 'show': false };
@@ -76,85 +76,90 @@
            }
        }
 
-       var $gridMain = $("div#grid_md").pqGrid({ 
-           dataModel: dataModel,
+       var gridMain = pq.grid("#grid_md",{
+       	dataModel: dataModel,
            virtualX: true, virtualY: true,
+           height: '95%',
            editable: false,
+           collapsible:{ on : false,toggle: false },
            colModel: colM, 
            rowBorders: true,
+           selectionModel: {type: 'row', mode: 'single'},
            scrollModel: {
                autoFit: true
            },
-           height: '78%',
            filterModel: {type: 'local', on: true, mode: "AND", header: true },
            numberCell: { show: false },
-           title: "<b>Processed By Me Expense Voucher</b>",                        
            resizable: true,
            freezeCols: 1, 
-           selectionModel: {type: 'row', mode: 'single'},
+          title: "<b>Processed By Me Expense Voucher</b>",   
+           postRenderInterval: -1,
            detailModel: {
-               cache: true,
+                cache: true,
                collapseIcon: "ui-icon-plus",
                expandIcon: "ui-icon-minus",
-               init: function (ui) {
-                   
-                   var rowData = ui.rowData,                        
-                       detailobj = gridDetailModel( $(this), rowData ), //get a copy of gridDetailModel                        
+               init: function (ui) {                    
+                    var rowData = ui.rowData,                        
+                       detailobj = gridDetailModel(  rowData ), //get a copy of gridDetailModel                        
                        $grid = $("<div></div>").pqGrid( detailobj ); //init the detail grid.
-
+                       $grid.data( 'expenseHeaderId' , rowData.expenseHeaderId);
                    return $grid;
                }
            }
        });
-
-       /* 
-       * another grid in detail view.
-       * returns a new copy of detailModel every time the function is called.
-       * @param $gridMain {jQuery object}: reference to parent grid
-       * @param rowData {Plain Object}: row data of parent grid
-       */
-       var gridDetailModel = function( $gridMain, rowData ){
-           return {
-               height: 130,
-               pageModel: { type: "local", rPP: 5, strRpp: "" },
-               dataModel: {
-                   location: "remote",
-                   sorting: "local",
-                   dataType: "json",
-                   method: "POST",
-                   sortIndx: "expenseDetailId",
-                   getUrl: function() {
-                       return { url: "expenseDetail", data: "{\"expenseHeaderId\":"+rowData.expenseHeaderId+"}" };
-                   },
-                  
-                   mimeType : 'application/json',
-                   async: true,
-              	   beforeSend: function(xhr) {   
-                          xhr.setRequestHeader("Accept", "application/json; charset=UTF-8");
-                          xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-                   },
-                   error: function (data) {
-                       $gridMain.pqGrid( 'rowInvalidate', { rowData: rowData });
-                   }
-               },
-               colModel: [
-                   { title: "Expense Detail Id", width: 80, dataIndx: "expenseDetailId", hidden:true},
-                   { title: "Expense Name", width: 200, dataIndx: "expenseCategoryDTO" },
-                   { title: "To Location", width: 200, dataIndx: "toLocation" },
-                   { title: "From Location", width: 200, dataIndx: "fromLocation" },
+    
+    /* 
+     * another grid in detail view.
+     * returns a new copy of detailModel every time the function is called.
+     * @param $gridMain {jQuery object}: reference to parent grid
+     * @param rowData {Plain Object}: row data of parent grid
+     */
+     var gridDetailModel = function( rowData ){
+         return {
+              dataModel: {
+                 location: "remote",
+                 sorting: "local",
+                 dataType: "json",
+                 method: "POST",
+                 sortIndx: "expenseDetailId",
+                 getUrl: function() {
+                     return { url: "expenseDetail", data: "{\"expenseHeaderId\":"+rowData.expenseHeaderId+"}" };
+                 },
+                
+                 mimeType : 'application/json',
+                 async: true,
+            	   beforeSend: function(xhr) {   
+                        xhr.setRequestHeader("Accept", "application/json; charset=UTF-8");
+                        xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+                 },
+                 error: function (data) {
+                     gridMain.pqGrid( 'rowInvalidate', { rowData: rowData });
+                 }
+             },
+             colModel: [
+                 { title: "Expense Detail Id", width: 80, dataIndx: "expenseDetailId", hidden:true},
+                 { title: "Expense Name", width: 200, dataIndx: "expenseCategoryDTO" },
+                 { title: "To Location", width: 200, dataIndx: "toLocation" },
+                 { title: "From Location", width: 200, dataIndx: "fromLocation" },
 		           { title: "Unit Price", width: "80", align: "center", dataIndx: "unit", dataType: "float"},
 		           { title: "Amount", align: "center", width: 85, dataIndx: "amount", dataType: "float"},
-		           { title: "Receipt", width: 200, dataIndx: "receipt" }
+		           { title: "Receipt", width: 200, dataIndx: "fileName", 
+		        	   render: function(ui){
+		        		   //return "<a href='https://docs.google.com/viewer?embedded=true&url=getFile?fileName="+ui.cellData+"&voucherId="+$(this).data('expenseHeaderId')+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        		   if(ui.cellData != null)
+		        		   		return "<a href='getFile?fileName="+ui.cellData+"&voucherId="+rowData.expenseHeaderId+"' target='_blank' class='embed'>"+ui.cellData+"</a>";
+		        	   }
+		        	   
+		           }
 		        ],
-               editable: false,              
-               flexHeight: true,
-               flexWidth: true,
-               numberCell: { show: false },
-               title: "Expense Details",
-               showTop: true,
-               showBottom: false
-           };
-       };
+		        editable: false, 
+             height: 'flex',                
+             numberCell: { show: false },
+             scrollModel: {autoFit: true},
+             showTop: false
+
+         };
+     };
    });
    
    

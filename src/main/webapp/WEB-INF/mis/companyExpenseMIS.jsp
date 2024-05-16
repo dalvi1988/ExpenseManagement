@@ -7,9 +7,9 @@
 <title>Expense Management System</title>
 
 <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
-<script type="text/javascript" src=<spring:url value="/gridNew/pqgrid.min.js"/> ></script>
-<link rel="stylesheet" href=<spring:url value="/gridNew/pqgrid.min.css"/> />
-<link rel="Stylesheet" href=<spring:url value="/gridNew/select/pqselect.min.css"/> >
+<script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
+<link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
+<link rel="Stylesheet" href=<spring:url value="/grid/select/pqselect.min.css"/> >
 <script type="text/javascript" src=<spring:url value="/grid/select/pqselect.min.js"/> ></script>
 
 <script type="text/javascript">
