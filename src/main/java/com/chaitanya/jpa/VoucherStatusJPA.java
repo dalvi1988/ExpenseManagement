@@ -1,22 +1,22 @@
 package com.chaitanya.jpa;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name="voucher_status")
+@Table(name = "voucher_status")
 public class VoucherStatusJPA {
-	
+
 	@Id
-	@Column(name="voucher_status_id")
+	@Column(name = "voucher_status_id")
 	private Integer voucherStatusId;
-	
-	@Column(name="voucher_status",unique=true,nullable=false)
+
+	@Column(name = "voucher_status", unique = true, nullable = false)
 	private String voucherStatus;
-	
-	@Column(name="text_to_display",nullable=false)
+
+	@Column(name = "text_to_display", nullable = false)
 	private String textToDisplay;
 
 	public Integer getVoucherStatusId() {
@@ -42,5 +42,5 @@ public class VoucherStatusJPA {
 	public void setTextToDisplay(String textToDisplay) {
 		this.textToDisplay = textToDisplay;
 	}
-	
+
 }

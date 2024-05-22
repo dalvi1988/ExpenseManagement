@@ -2,58 +2,59 @@ package com.chaitanya.jpa;
 
 import java.util.Calendar;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name="functional_flow")
+@Table(name = "functional_flow")
 public class ApprovalFlowJPA {
-	
-	@Id @GeneratedValue
-	@Column(name="flow_id")
+
+	@Id
+	@GeneratedValue
+	@Column(name = "flow_id")
 	private Long flowId;
-	
+
 	@OneToOne
-	@JoinColumn(name="branch_id", nullable=false)
+	@JoinColumn(name = "branch_id", nullable = false)
 	private BranchJPA branchJPA;
-	
+
 	@OneToOne
-	@JoinColumn(name="department_id")
+	@JoinColumn(name = "department_id")
 	private DepartmentJPA departmentJPA;
-	
-	@Column(name="is_branch_flow",nullable=false)
+
+	@Column(name = "is_branch_flow", nullable = false)
 	private Character isBranchFlow;
-	
-	@Column(name="no_of_level", nullable=false)
+
+	@Column(name = "no_of_level", nullable = false)
 	private Integer noOfLevel;
-	
-	@Column(name="level1", nullable=false)
+
+	@Column(name = "level1", nullable = false)
 	private Long level1;
-	
-	@Column(name="level2", nullable=true)
+
+	@Column(name = "level2", nullable = true)
 	private Long level2;
-	
-	@Column(name="level3", nullable=true)
+
+	@Column(name = "level3", nullable = true)
 	private Long level3;
-	
-	@Column(name="created_by")
+
+	@Column(name = "created_by")
 	private Long createdBy;
-	
-	@Column(name="modified_by")
-    private Long modifiedBy;
-	
-	@Column(name="created_date")
+
+	@Column(name = "modified_by")
+	private Long modifiedBy;
+
+	@Column(name = "created_date")
 	private Calendar createdDate;
-		
-	@Column(name="modified_date")
+
+	@Column(name = "modified_date")
 	private Calendar modifiedDate;
-	
-	@Column(name="status",nullable=false)
+
+	@Column(name = "status", nullable = false)
 	private Character status;
 
 	public Long getFlowId() {
@@ -159,5 +160,5 @@ public class ApprovalFlowJPA {
 	public void setStatus(Character status) {
 		this.status = status;
 	}
-	
+
 }

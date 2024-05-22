@@ -2,37 +2,38 @@ package com.chaitanya.jpa;
 
 import java.util.Calendar;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name="payment_details")
+@Table(name = "payment_details")
 public class PaymentJPA {
-	
-	@Id @GeneratedValue
-	@Column(name="payment_detail_id")
+
+	@Id
+	@GeneratedValue
+	@Column(name = "payment_detail_id")
 	private Long paymentDetailId;
-	
-	@Column(name="module_name")
+
+	@Column(name = "module_name")
 	private String moduleName;
-	
-	@Column(name="voucher_id")
+
+	@Column(name = "voucher_id")
 	private Long voucherId;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "paid_by")
 	private EmployeeJPA paidByEmployeeJPA;
-	
-	@Column(name="date")
+
+	@Column(name = "date")
 	private Calendar date;
-	
-	@Column(name="amount")
+
+	@Column(name = "amount")
 	private Double amount;
 
 	public Long getPaymentDetailId() {
@@ -50,6 +51,7 @@ public class PaymentJPA {
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
+
 	public EmployeeJPA getPaidByEmployeeJPA() {
 		return paidByEmployeeJPA;
 	}
@@ -81,5 +83,5 @@ public class PaymentJPA {
 	public void setVoucherId(Long voucherId) {
 		this.voucherId = voucherId;
 	}
-		
+
 }

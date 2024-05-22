@@ -8,15 +8,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 @ComponentScan({ "com.chaitanya.*" })
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
 	@Autowired
 	@Qualifier("loginDetailsService")
@@ -27,34 +27,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(loginDetailsService).passwordEncoder(passwordEncoder());
 	}
 
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http.authorizeRequests()
-			.antMatchers("/login/**","/theme/**").permitAll()
-			.antMatchers("/approveFromEmail/**").permitAll()
-			.antMatchers("/master/**").access("hasRole('ADMIN_ROLE')")
-			.antMatchers("/mis/**").access("hasRole('ADMIN_ROLE')")
-			//.antMatchers("/approvalflow/**").access("hasRole('SUPER_ADMIN')")
-			.anyRequest().authenticated()
-		.and()
-			.formLogin()
-			.loginPage("/login").failureUrl("/login?error")
-			.usernameParameter("username")
-			.passwordParameter("password")
-			.permitAll()
-		.and()
-			.logout().logoutSuccessUrl("/login?logout")
-		.and()
-		.csrf().disable()
-		.exceptionHandling().accessDeniedPage("/others/403");
+		http.authorizeHttpRequests(auth -> auth.requestMatchers("/login/**", "/theme/**").permitAll()
+				.requestMatchers("/approveFromEmail/**").permitAll().requestMatchers("/master/**")
+				.hasAuthority("hasRole('ADMIN_ROLE')").requestMatchers("/mis/**").hasAuthority("hasRole('ADMIN_ROLE')")
+				// .antMatchers("/approvalflow/**").access("hasRole('SUPER_ADMIN')")
+				.anyRequest().authenticated())
+				.formLogin(form -> form.loginPage("/login").failureUrl("/login?error").usernameParameter("username")
+						.passwordParameter("password").permitAll())
+				.logout(logout -> logout.logoutSuccessUrl("/login?logout")).csrf(csrf -> csrf.disable())
+				.exceptionHandling(exception -> exception.accessDeniedPage("/others/403"));
+		return http.build();
 	}
-	
+
 	@Bean
-	public PasswordEncoder passwordEncoder(){
+	public PasswordEncoder passwordEncoder() {
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder;
 	}
-	
+
 }

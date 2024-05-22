@@ -1,42 +1,35 @@
 package com.chaitanya.jpa;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_roles")
-public class UserRoleJPA{
+public class UserRoleJPA {
 
 	@Id
-	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "user_role_id", unique = true, nullable = false)
 	private Long userRoleId;
-	
+
 	@Column(name = "role", nullable = false)
 	private String role;
-	
-	@Column(name="login_id")
+
+	@Column(name = "login_id")
 	private Long loginId;
-	
+
 	public Long getLoginId() {
 		return loginId;
 	}
-
 
 	public void setLoginId(Long loginId) {
 		this.loginId = loginId;
 	}
 
-
 	public UserRoleJPA() {
 	}
 
-	
 	public Long getUserRoleId() {
 		return this.userRoleId;
 	}
@@ -45,7 +38,6 @@ public class UserRoleJPA{
 		this.userRoleId = userRoleId;
 	}
 
-	
 	public String getRole() {
 		return this.role;
 	}

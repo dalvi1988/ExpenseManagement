@@ -1,8 +1,5 @@
 package com.chaitanya.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -22,85 +19,84 @@ import com.chaitanya.login.service.ILoginService;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.Validation;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
+
 @Controller
 @Transactional
 public class LoginController {
-		
+
 	@Autowired
 	ILoginService loginService;
-	
+
 	@RequestMapping(value = "/login/forgotPassword", method = RequestMethod.POST)
 	public ModelAndView forgotPassoword(@RequestParam(value = "emailId", required = true) String emailId) {
-		ModelAndView model= new ModelAndView();
-		LoginDTO loginDTO= new LoginDTO();
-		try{
-			if(emailId.matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")){
+		ModelAndView model = new ModelAndView();
+		LoginDTO loginDTO = new LoginDTO();
+		try {
+			if (emailId.matches(
+					"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")) {
 				EmployeeDTO employeeDTO = new EmployeeDTO();
 				employeeDTO.setEmailId(emailId);
 				loginDTO.setEmployeeDTO(employeeDTO);
 				BaseDTO baseDTO = loginService.forgotPassword(loginDTO);
-				if(Validation.validateForSystemFailureStatus(baseDTO)){
+				if (Validation.validateForSystemFailureStatus(baseDTO)) {
 					model.addObject("error", baseDTO.getMessage());
-				}
-				else if(Validation.validateForBusinessFailureStatus(baseDTO)) {
+				} else if (Validation.validateForBusinessFailureStatus(baseDTO)) {
 					model.addObject("error", ApplicationConstant.SYSTEM_FAILURE);
-				}
-				else{
+				} else {
 					model.addObject("message", ApplicationConstant.PASSWORD_SENT);
 				}
-			}
-			else{
-				model.addObject("error", "Invalid email id: " +emailId);
+			} else {
+				model.addObject("error", "Invalid email id: " + emailId);
 			}
 			model.setViewName("pages/login");
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			model.setViewName("others/505");
 		}
 		return model;
 	}
-	
+
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-	public @ResponseBody BaseDTO resetPassoword(@RequestParam(value = "oldPassword", required = true) String oldPassword,@RequestParam(value = "newPassword", required = true) String newPassword,
+	public @ResponseBody BaseDTO resetPassoword(
+			@RequestParam(value = "oldPassword", required = true) String oldPassword,
+			@RequestParam(value = "newPassword", required = true) String newPassword,
 			@RequestParam(value = "confirmPassword", required = true) String confirmPassword) {
-		
-		LoginUserDetails user = (LoginUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		LoginDTO loginDTO= user.getLoginDTO();
+
+		LoginUserDetails user = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		LoginDTO loginDTO = user.getLoginDTO();
 		loginDTO.setPassword(oldPassword);
-		boolean isOldPassMatch= loginService.validateOldPassword(loginDTO);
-		BaseDTO toBeSentBaseDTO =new BaseDTO();
-		if(isOldPassMatch== true) {
-			
-			if(newPassword.equals(confirmPassword)) {
-				if(newPassword.matches("(?=.*?\\d)(?=.*?[a-zA-Z])(?=.*?[^\\w]).{6,}")) {
+		boolean isOldPassMatch = loginService.validateOldPassword(loginDTO);
+		BaseDTO toBeSentBaseDTO = new BaseDTO();
+		if (isOldPassMatch == true) {
+
+			if (newPassword.equals(confirmPassword)) {
+				if (newPassword.matches("(?=.*?\\d)(?=.*?[a-zA-Z])(?=.*?[^\\w]).{6,}")) {
 					loginDTO.setPassword(newPassword);
-					toBeSentBaseDTO= loginService.updatePassword(loginDTO);
-					if(Validation.validateForSuccessStatus(toBeSentBaseDTO))
+					toBeSentBaseDTO = loginService.updatePassword(loginDTO);
+					if (Validation.validateForSuccessStatus(toBeSentBaseDTO))
 						toBeSentBaseDTO.setMessage(new StringBuilder("Password reset successfully."));
 					else
 						toBeSentBaseDTO.setMessage(new StringBuilder(ApplicationConstant.SYSTEM_FAILURE));
-				}
-				else
-					toBeSentBaseDTO.setMessage(new StringBuilder("Password must contain at least one letter, at least one number, and be longer than six charaters."));
-			}
-			else
+				} else
+					toBeSentBaseDTO.setMessage(new StringBuilder(
+							"Password must contain at least one letter, at least one number, and be longer than six charaters."));
+			} else
 				toBeSentBaseDTO.setMessage(new StringBuilder("New password and confirm password is not matching."));
-		}
-		else {
+		} else {
 			toBeSentBaseDTO.setMessage(new StringBuilder("Old password is not valid."));
 		}
-		
+
 		return toBeSentBaseDTO;
 	}
-	
+
 	@RequestMapping(value = "/resetPasswordPage", method = RequestMethod.GET)
 	public String resetPassowordPage() {
 		return "pages/resetPassword";
 	}
 
-	
-	@RequestMapping(value ={"/login"}, method = RequestMethod.GET)
+	@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
 	public ModelAndView login(@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout, HttpServletRequest request) {
 
@@ -112,7 +108,7 @@ public class LoginController {
 		if (logout != null) {
 			model.addObject("message", "You've been logged out successfully.");
 		}
-		
+
 		model.setViewName("pages/login");
 
 		return model;

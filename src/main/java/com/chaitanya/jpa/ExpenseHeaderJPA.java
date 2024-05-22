@@ -3,88 +3,89 @@ package com.chaitanya.jpa;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
 @Entity
-@Table(name="expense_header")
+@Table(name = "expense_header")
 public class ExpenseHeaderJPA {
-	
-	@Id @GeneratedValue
-	@Column(name="expense_header_id")
+
+	@Id
+	@GeneratedValue
+	@Column(name = "expense_header_id")
 	private Long expenseHeaderId;
-	
-	@Column(name="expense_type")
+
+	@Column(name = "expense_type")
 	private String expenseType;
-	
-	@Column(name="voucher_number")
+
+	@Column(name = "voucher_number")
 	private String voucherNumber;
-	
-	@OneToMany(mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
-	@Cascade({CascadeType.ALL})
-	@Fetch (FetchMode.SELECT)
-	private List<ExpenseDetailJPA> expenseDetailJPA; 
-	
-	@OneToMany(mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
-	@Cascade({CascadeType.ALL})
-	@Fetch (FetchMode.SELECT)
+
+	@OneToMany(mappedBy = "expenseHeaderJPA", fetch = FetchType.EAGER)
+	@Cascade({ CascadeType.ALL })
+	@Fetch(FetchMode.SELECT)
+	private List<ExpenseDetailJPA> expenseDetailJPA;
+
+	@OneToMany(mappedBy = "expenseHeaderJPA", fetch = FetchType.EAGER)
+	@Cascade({ CascadeType.ALL })
+	@Fetch(FetchMode.SELECT)
 	private List<ProcessHistoryJPA> processHistoryJPA;
-	
-	@OneToOne(mappedBy="expenseHeaderJPA",fetch=FetchType.EAGER) 
-	@Cascade({CascadeType.ALL})
+
+	@OneToOne(mappedBy = "expenseHeaderJPA", fetch = FetchType.EAGER)
+	@Cascade({ CascadeType.ALL })
 	private ProcessInstanceJPA processInstanceJPA;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "employee_id")
 	private EmployeeJPA employeeJPA;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "advance_id")
 	private AdvanceJPA advanceJPA;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_id")
 	private EventJPA eventJPA;
-	
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "voucher_status")
 	private VoucherStatusJPA voucherStatusJPA;
-	
-	@Column(name="start_date")
+
+	@Column(name = "start_date")
 	private Calendar startDate;
-		
-	@Column(name="end_date")
+
+	@Column(name = "end_date")
 	private Calendar endDate;
-	
-	@Column(name="purpose")
+
+	@Column(name = "purpose")
 	private String purpose;
-	
-	@Column(name="accounting_entry")
+
+	@Column(name = "accounting_entry")
 	private Character accountingEntry;
 
-	@Column(name="created_by")
+	@Column(name = "created_by")
 	private Long createdBy;
-	
-	@Column(name="modified_by")
-    private Long modifiedBy;
-	
-	@Column(name="created_date")
+
+	@Column(name = "modified_by")
+	private Long modifiedBy;
+
+	@Column(name = "created_date")
 	private Calendar createdDate;
-		
-	@Column(name="modified_date")
+
+	@Column(name = "modified_date")
 	private Calendar modifiedDate;
 
 	public Long getExpenseHeaderId() {
@@ -222,7 +223,7 @@ public class ExpenseHeaderJPA {
 	public void setEventJPA(EventJPA eventJPA) {
 		this.eventJPA = eventJPA;
 	}
-	
+
 	public Character getAccountingEntry() {
 		return accountingEntry;
 	}

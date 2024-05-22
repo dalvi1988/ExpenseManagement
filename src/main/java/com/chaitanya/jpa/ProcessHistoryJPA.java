@@ -2,40 +2,41 @@ package com.chaitanya.jpa;
 
 import java.util.Calendar;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name="process_history")
+@Table(name = "process_history")
 public class ProcessHistoryJPA {
 
-	@Id @GeneratedValue
-	@Column(name="process_history_id")
+	@Id
+	@GeneratedValue
+	@Column(name = "process_history_id")
 	private Long processHistoryId;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="expense_header_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "expense_header_id")
 	private ExpenseHeaderJPA expenseHeaderJPA;
-	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="voucher_status_id")
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "voucher_status_id")
 	private VoucherStatusJPA voucherStatusJPA;
-	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="processed_by")
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "processed_by")
 	private EmployeeJPA processedBy;
-	
-	@Column(name="processed_date")
+
+	@Column(name = "processed_date")
 	private Calendar processDate;
-	
-	@Column(name="comments")
+
+	@Column(name = "comments")
 	private String comment;
 
 	public Long getProcessHistoryId() {
@@ -85,5 +86,5 @@ public class ProcessHistoryJPA {
 	public void setProcessDate(Calendar processDate) {
 		this.processDate = processDate;
 	}
-	
+
 }

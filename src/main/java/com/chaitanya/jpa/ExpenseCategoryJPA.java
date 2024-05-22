@@ -2,58 +2,59 @@ package com.chaitanya.jpa;
 
 import java.util.Calendar;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name="expense_category")
+@Table(name = "expense_category")
 public class ExpenseCategoryJPA {
-	
-	@Id @GeneratedValue
-	@Column(name="expense_category_id")
+
+	@Id
+	@GeneratedValue
+	@Column(name = "expense_category_id")
 	private Long expCategoryId;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "company_id")
 	private CompanyJPA companyJPA;
 
-	@Column(name="expense_name",unique=true,nullable=false)
+	@Column(name = "expense_name", unique = true, nullable = false)
 	private String expenseName;
-		
-	@Column(name="gl_code")
+
+	@Column(name = "gl_code")
 	private String glCode;
-	
-	@Column(name="location_required",nullable=false)
+
+	@Column(name = "location_required", nullable = false)
 	private Character locationRequired;
-	
-	@Column(name="unit_required",nullable=false)
-    private Character unitRequired;
-	
-	@Column(name="amount")
+
+	@Column(name = "unit_required", nullable = false)
+	private Character unitRequired;
+
+	@Column(name = "amount")
 	private Double amount;
-	
-	@Column(name="limit_increase",nullable=false)
-    private Character limitIncrease;
-	
-	@Column(name="created_by")
+
+	@Column(name = "limit_increase", nullable = false)
+	private Character limitIncrease;
+
+	@Column(name = "created_by")
 	private Long createdBy;
-	
-	@Column(name="modified_by")
-    private Long modifiedBy;
-	
-	@Column(name="created_date")
+
+	@Column(name = "modified_by")
+	private Long modifiedBy;
+
+	@Column(name = "created_date")
 	private Calendar createdDate;
-		
-	@Column(name="modified_date")
+
+	@Column(name = "modified_date")
 	private Calendar modifiedDate;
-	
-	@Column(name="status")
+
+	@Column(name = "status")
 	private Character status;
 
 	public Long getExpCategoryId() {

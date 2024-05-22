@@ -1,17 +1,11 @@
 package com.chaitanya.utility;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
@@ -19,11 +13,15 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.velocity.VelocityEngineUtils;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.expense.model.ExpenseDetailDTO;
 import com.chaitanya.expense.model.ExpenseHeaderDTO;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
  
  
 @Service("mailService")
@@ -33,9 +31,10 @@ public class MailServiceImpl {
     JavaMailSender mailSender;
     
     @Autowired
-    VelocityEngine velocityEngine;
-    @Autowired
     Environment environment;
+    
+    @Autowired
+    private SpringTemplateEngine thymeleafTemplateEngine;
  
     public void sendAutoGeneratePassword(EmployeeDTO employeeDTO, String password) {
  
@@ -79,7 +78,7 @@ public class MailServiceImpl {
         model.put("expenseHeaderDTO", expenseHeaderDTO);
         model.put("expenseDetailList", expenseDetailDTOList);
         
-        String text = geVelocityTemplateContent(model);//Use Velocity
+        String text = geThymeleafTemplateContent(model);//Use Velocity
         System.out.println("Template content : "+text);
         helper.setText(text,true);
                 // use the true flag to indicate you need a multipart message
@@ -103,11 +102,15 @@ public class MailServiceImpl {
          mailSender.send(message);
      }
  
-     public String geVelocityTemplateContent(Map<String, Object> model){
-         StringBuffer content = new StringBuffer();
+     public String geThymeleafTemplateContent(Map<String, Object> model){
          try{
-             content.append(VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "/emailTemplate/approvalMailTemplate.vm","UTF-8", model));
-             return content.toString();
+//             content.append(VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "/emailTemplate/approvalMailTemplate.vm","UTF-8", model));
+//             return content.toString();
+             
+             Context thymeleafContext = new Context();
+             thymeleafContext.setVariables(model);
+             return  thymeleafTemplateEngine.process("approvalMailTemplate.html", thymeleafContext);
+             
          }catch(Exception e){
              System.out.println("Exception occured while processing velocity template:"+e.getMessage());
          }

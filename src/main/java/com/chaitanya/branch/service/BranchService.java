@@ -14,68 +14,65 @@ import org.springframework.transaction.annotation.Transactional;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.branch.convertor.BranchConvertor;
-import com.chaitanya.branch.dao.IBranchDAO;
 import com.chaitanya.branch.model.BranchDTO;
 import com.chaitanya.jpa.BranchJPA;
+import com.chaitanya.repositories.BranchRepository;
 import com.chaitanya.utility.Validation;
 
 @Service("branchService")
-@Transactional(rollbackFor=Exception.class)
-public class BranchService implements IBranchService{
+@Transactional(rollbackFor = Exception.class)
+public class BranchService implements IBranchService {
 	@Autowired
-	private IBranchDAO branchDAO;
-	
-	private Logger logger= LoggerFactory.getLogger(BranchService.class);
-	
+	private BranchRepository branchRepository;
+
+	private Logger logger = LoggerFactory.getLogger(BranchService.class);
+
 	@Override
 	public List<BranchDTO> findAllBranchUnderCompany(BaseDTO baseDTO) {
 		logger.debug("BranchService: findAllBranchUnderCompany-Start");
 		validateBranchDTO(baseDTO);
-		
-		BranchDTO branchDTO=(BranchDTO)baseDTO;
-		List<BranchJPA> branchList=branchDAO.findAllBranchUnderCompany(branchDTO.getCompanyDTO());
-		List<BranchDTO> branchDTOList=null;
-		if(Validation.validateCollectionForNullSize(branchList)){
-			branchDTOList=new ArrayList<BranchDTO>();
-			for(BranchJPA branchJPA:branchList){
-				BranchDTO brcDTO=BranchConvertor.setBranchJPAtoDTO(branchJPA);
+
+		BranchDTO branchDTO = (BranchDTO) baseDTO;
+		List<BranchJPA> branchList = branchRepository
+				.findAllBranchByCompanyId(branchDTO.getCompanyDTO().getCompanyId());
+		List<BranchDTO> branchDTOList = null;
+		if (Validation.validateCollectionForNullSize(branchList)) {
+			branchDTOList = new ArrayList<BranchDTO>();
+			for (BranchJPA branchJPA : branchList) {
+				BranchDTO brcDTO = BranchConvertor.setBranchJPAtoDTO(branchJPA);
 				branchDTOList.add(brcDTO);
 			}
 		}
 		logger.debug("BranchService: findAllBranchUnderCompany-End");
 		return branchDTOList;
 	}
-	
-	
 
 	@Override
 	public BaseDTO addBranch(BaseDTO baseDTO) throws ParseException {
 		logger.debug("BranchService: addBranch-Start");
 		validateBranchDTO(baseDTO);
-		try{
-			BranchJPA branchJPA=BranchConvertor.setBranchDTOToJPA((BranchDTO)baseDTO);
+		try {
+			BranchJPA branchJPA = BranchConvertor.setBranchDTOToJPA((BranchDTO) baseDTO);
 			if (Validation.validateForNullObject(branchJPA)) {
-				branchJPA=branchDAO.add(branchJPA);
-				if(Validation.validateForNullObject(branchJPA)){
-					baseDTO=BranchConvertor.setBranchJPAtoDTO(branchJPA);
+				branchJPA = branchRepository.save(branchJPA);
+				if (Validation.validateForNullObject(branchJPA)) {
+					baseDTO = BranchConvertor.setBranchJPAtoDTO(branchJPA);
 					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
 				}
-			}
-			else{
+			} else {
 				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			}
-		}
-		catch(DataIntegrityViolationException e){
+		} catch (DataIntegrityViolationException e) {
 			baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			baseDTO.setMessage(new StringBuilder(e.getMessage()));
-			logger.error("BranchService: Exception",e);
+			logger.error("BranchService: Exception", e);
 		}
 		logger.debug("BranchService: addBranch-End");
 		return baseDTO;
 	}
-	
+
 	private void validateBranchDTO(BaseDTO baseDTO) {
-		if( baseDTO == null  || !(baseDTO instanceof BranchDTO)){
+		if (baseDTO == null || !(baseDTO instanceof BranchDTO)) {
 			throw new IllegalArgumentException("Object expected of BranchDTO type.");
 		}
 	}

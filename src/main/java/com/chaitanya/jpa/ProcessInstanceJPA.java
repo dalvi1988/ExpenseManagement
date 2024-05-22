@@ -1,42 +1,43 @@
 package com.chaitanya.jpa;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name="process_instance")
+@Table(name = "process_instance")
 public class ProcessInstanceJPA {
 
-	@Id @GeneratedValue
-	@Column(name="process_instance_id")
+	@Id
+	@GeneratedValue
+	@Column(name = "process_instance_id")
 	private Long processInstanceId;
 
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="expense_header_id")
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "expense_header_id")
 	private ExpenseHeaderJPA expenseHeaderJPA;
-	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="voucher_status_id")
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "voucher_status_id")
 	private VoucherStatusJPA voucherStatusJPA;
-	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="pending_at")
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pending_at")
 	private EmployeeJPA pendingAt;
-	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="processed_by")
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "processed_by")
 	private EmployeeJPA processedBy;
-	
-	@Column(name="comments")
+
+	@Column(name = "comments")
 	private String comment;
-	
-	@Column(name="session_id")
+
+	@Column(name = "session_id")
 	private String sessionId;
 
 	public Long getProcessInstanceId() {

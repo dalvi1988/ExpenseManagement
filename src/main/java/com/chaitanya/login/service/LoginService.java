@@ -22,59 +22,62 @@ import org.springframework.transaction.annotation.Transactional;
 import com.chaitanya.base.BaseDTO;
 import com.chaitanya.base.BaseDTO.ServiceStatus;
 import com.chaitanya.employee.convertor.EmployeeConvertor;
-import com.chaitanya.employee.dao.IEmployeeDAO;
 import com.chaitanya.employee.model.EmployeeDTO;
 import com.chaitanya.jpa.EmployeeJPA;
 import com.chaitanya.jpa.LoginJPA;
 import com.chaitanya.jpa.UserRoleJPA;
 import com.chaitanya.login.convertor.LoginConvertor;
-import com.chaitanya.login.dao.ILoginDAO;
 import com.chaitanya.login.model.LoginDTO;
 import com.chaitanya.login.model.LoginUserDetails;
+import com.chaitanya.repositories.EmployeeRepository;
+import com.chaitanya.repositories.LoginRepository;
 import com.chaitanya.utility.ApplicationConstant;
 import com.chaitanya.utility.MailServiceImpl;
 import com.chaitanya.utility.Utility;
 import com.chaitanya.utility.Validation;
 
 @Service("loginDetailsService")
-public class LoginService implements UserDetailsService,ILoginService {
+public class LoginService implements UserDetailsService, ILoginService {
 
 	@Autowired
-	private ILoginDAO loginDAO;
-	
+	private LoginRepository loginRepository;
+
 	@Autowired
-	private IEmployeeDAO employeeDAO;
-	
+	private EmployeeRepository employeeRepository;
+
 	@Autowired
 	private MailServiceImpl mailService;
-	
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-	
-	private Logger logger= LoggerFactory.getLogger(LoginService.class);
-	
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	private Logger logger = LoggerFactory.getLogger(LoginService.class);
+
 	private void validateLoginDTO(BaseDTO baseDTO) {
-		if(baseDTO == null  || !(baseDTO instanceof LoginDTO)) {
+		if (baseDTO == null || !(baseDTO instanceof LoginDTO)) {
 			throw new IllegalArgumentException("Object expected of LoginDTO type.");
 		}
 	}
 
-	@Transactional(readOnly=true)
+	@Override
+	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 		logger.debug("LoginService: loadUserByUsername-Start");
-		LoginJPA loginDetails = loginDAO.findByUserName(username);
-		List<GrantedAuthority> authorities=null;
-		
+		LoginJPA loginDetails = loginRepository.findByUserName(username);
+		List<GrantedAuthority> authorities = null;
+
 		authorities = buildUserAuthority(loginDetails.getUserRole());
-		LoginDTO loginDTO=LoginConvertor.setLoginJPAToDTO(loginDetails);
+		LoginDTO loginDTO = LoginConvertor.setLoginJPAToDTO(loginDetails);
 		logger.debug("LoginService: loadUserByUsername-End");
-		return buildUserForAuthentication(loginDetails, authorities,loginDTO);
+		return buildUserForAuthentication(loginDetails, authorities, loginDTO);
 	}
 
 	// Converts com.mkyong.users.model.User user to
 	// org.springframework.security.core.userdetails.User
-	private User buildUserForAuthentication(LoginJPA loginDetails, List<GrantedAuthority> authorities,LoginDTO loginDTO) {
-		return new LoginUserDetails(loginDetails.getUserName(), loginDetails.getPassword(), true, true, true, true, authorities,loginDTO);
+	private User buildUserForAuthentication(LoginJPA loginDetails, List<GrantedAuthority> authorities,
+			LoginDTO loginDTO) {
+		return new LoginUserDetails(loginDetails.getUserName(), loginDetails.getPassword(), true, true, true, true,
+				authorities, loginDTO);
 	}
 
 	private List<GrantedAuthority> buildUserAuthority(Set<UserRoleJPA> userRoles) {
@@ -95,27 +98,26 @@ public class LoginService implements UserDetailsService,ILoginService {
 	public BaseDTO forgotPassword(BaseDTO baseDTO) throws ParseException {
 		logger.debug("LoginService: forgotPassword-Start");
 		validateLoginDTO(baseDTO);
-		
-		LoginDTO loginDTO=(LoginDTO) baseDTO;
-		EmployeeJPA employeeJPA = employeeDAO.findEmployeeByEmailId(loginDTO.getEmployeeDTO());
-		if(Validation.validateForNullObject(employeeJPA)) {
-			EmployeeDTO employeeDTO= EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
-			
-			String password= Utility.SessionIdentifierGenerator.nextSessionId();
-			int result = loginDAO.updatePassword(employeeDTO,passwordEncoder.encode(password));
-			if(result == 1){
-				mailService.sendAutoGeneratePassword(employeeDTO,password);
-				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);;
-			}
-			else{
+
+		LoginDTO loginDTO = (LoginDTO) baseDTO;
+		EmployeeJPA employeeJPA = employeeRepository.findByEmail(loginDTO.getEmployeeDTO().getEmailId());
+		if (Validation.validateForNullObject(employeeJPA)) {
+			EmployeeDTO employeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
+
+			String password = Utility.SessionIdentifierGenerator.nextSessionId();
+			int result = loginRepository.updatePassword(employeeDTO.getEmployeeId(), passwordEncoder.encode(password));
+			if (result == 1) {
+				mailService.sendAutoGeneratePassword(employeeDTO, password);
+				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				;
+			} else {
 				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 			}
-		}
-		else {
+		} else {
 			baseDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_EMAIL));
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 		}
-		
+
 		logger.debug("LoginService: forgotPassword-End");
 		return baseDTO;
 	}
@@ -123,28 +125,28 @@ public class LoginService implements UserDetailsService,ILoginService {
 	@Override
 	public boolean validateOldPassword(BaseDTO baseDTO) {
 		validateLoginDTO(baseDTO);
-		LoginDTO loginDTO= (LoginDTO) baseDTO;
-		
-		LoginJPA loginJPA = loginDAO.getLoginDetailByEmployeeId(loginDTO.getEmployeeDTO());
-		
-		boolean isOldPasswordMatch= passwordEncoder.matches(loginDTO.getPassword(),loginJPA.getPassword());
-		
+		LoginDTO loginDTO = (LoginDTO) baseDTO;
+
+		LoginJPA loginJPA = loginRepository.findByEmployeeId(loginDTO.getEmployeeDTO().getEmployeeId());
+
+		boolean isOldPasswordMatch = passwordEncoder.matches(loginDTO.getPassword(), loginJPA.getPassword());
+
 		return isOldPasswordMatch;
 	}
 
 	@Override
 	public BaseDTO updatePassword(BaseDTO baseDTO) {
 		validateLoginDTO(baseDTO);
-		LoginDTO loginDTO= (LoginDTO) baseDTO;
-		
-		int updatedCount = loginDAO.updatePassword(loginDTO.getEmployeeDTO(),passwordEncoder.encode(loginDTO.getPassword()));
-		if(updatedCount == 1) {
+		LoginDTO loginDTO = (LoginDTO) baseDTO;
+
+		int updatedCount = loginRepository.updatePassword(loginDTO.getEmployeeDTO().getEmployeeId(),
+				passwordEncoder.encode(loginDTO.getPassword()));
+		if (updatedCount == 1) {
 			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
-		}
-		else {
+		} else {
 			baseDTO.setServiceStatus(ServiceStatus.FAILURE);
 		}
 		return baseDTO;
 	}
-	
+
 }
