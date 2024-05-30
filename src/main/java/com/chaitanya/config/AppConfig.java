@@ -46,16 +46,16 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan({ "com.chaitanya.*" })
 @Import({ SecurityConfig.class })
 @PropertySource("classpath:application.properties")
-public class AppConfig implements WebMvcConfigurer{
-	
+public class AppConfig implements WebMvcConfigurer {
+
 	@Autowired
 	private Environment env;
-	
+
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
 	}
-	
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/jquery/**").addResourceLocations("classpath:/jquery/");
@@ -67,44 +67,43 @@ public class AppConfig implements WebMvcConfigurer{
 		registry.addResourceHandler("/gridNew/**").addResourceLocations("classpath:/gridNew/");
 		registry.addResourceHandler("/grid-3.5.1/**").addResourceLocations("classpath:/grid-3.5.1/");
 	}
-	
-	
-	@Bean
-    public LocalSessionFactoryBean getSessionFactory() {
-		LocalSessionFactoryBean  builder = new LocalSessionFactoryBean ();
-
-        Properties props = new Properties();
-        
-     // Setting JDBC properties
-        props.put(DRIVER, env.getProperty("mysql.driver"));
-        props.put(URL, env.getProperty("mysql.jdbcUrl"));
-        props.put(USER, env.getProperty("mysql.username"));
-        props.put(PASS, env.getProperty("mysql.password"));
-
-        // Setting Hibernate properties
-        props.put(SHOW_SQL, env.getProperty("hibernate.show_sql"));
-        props.put(HBM2DDL_AUTO, env.getProperty("hibernate.hbm2ddl.auto"));
-
-        // Setting C3P0 properties
-        props.put(C3P0_MIN_SIZE, env.getProperty("hibernate.c3p0.min_size"));
-        props.put(C3P0_MAX_SIZE, env.getProperty("hibernate.c3p0.max_size"));
-        props.put(C3P0_ACQUIRE_INCREMENT, env.getProperty("hibernate.c3p0.acquire_increment"));
-        props.put(C3P0_TIMEOUT, env.getProperty("hibernate.c3p0.timeout"));
-        props.put(C3P0_MAX_STATEMENTS, env.getProperty("hibernate.c3p0.max_statements"));
-
-        builder.setPackagesToScan("com.chaitanya.jpa");
-        builder.setHibernateProperties(props);
-
-        return builder;
-    }
 
 	@Bean
-	  public HibernateTransactionManager getTransactionManager() {
-	    HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-	    transactionManager.setSessionFactory(getSessionFactory().getObject());
-	    return transactionManager;
-	  }
-	
+	public LocalSessionFactoryBean getSessionFactory() {
+		LocalSessionFactoryBean builder = new LocalSessionFactoryBean();
+
+		Properties props = new Properties();
+
+		// Setting JDBC properties
+		props.put(DRIVER, env.getProperty("mysql.driver"));
+		props.put(URL, env.getProperty("mysql.jdbcUrl"));
+		props.put(USER, env.getProperty("mysql.username"));
+		props.put(PASS, env.getProperty("mysql.password"));
+
+		// Setting Hibernate properties
+		props.put(SHOW_SQL, env.getProperty("hibernate.show_sql"));
+		props.put(HBM2DDL_AUTO, env.getProperty("hibernate.hbm2ddl.auto"));
+
+		// Setting C3P0 properties
+		props.put(C3P0_MIN_SIZE, env.getProperty("hibernate.c3p0.min_size"));
+		props.put(C3P0_MAX_SIZE, env.getProperty("hibernate.c3p0.max_size"));
+		props.put(C3P0_ACQUIRE_INCREMENT, env.getProperty("hibernate.c3p0.acquire_increment"));
+		props.put(C3P0_TIMEOUT, env.getProperty("hibernate.c3p0.timeout"));
+		props.put(C3P0_MAX_STATEMENTS, env.getProperty("hibernate.c3p0.max_statements"));
+
+		builder.setPackagesToScan("com.chaitanya.jpa");
+		builder.setHibernateProperties(props);
+
+		return builder;
+	}
+
+	@Bean
+	public HibernateTransactionManager getTransactionManager() {
+		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+		transactionManager.setSessionFactory(getSessionFactory().getObject());
+		return transactionManager;
+	}
+
 	@Bean
 	public InternalResourceViewResolver viewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -113,69 +112,68 @@ public class AppConfig implements WebMvcConfigurer{
 		viewResolver.setSuffix(".jsp");
 		return viewResolver;
 	}
-	
+
 	@Bean
-    public RequestMappingHandlerAdapter  annotationMethodHandlerAdapter()
-    {
-        final RequestMappingHandlerAdapter annotationMethodHandlerAdapter = new RequestMappingHandlerAdapter();
-        final MappingJackson2HttpMessageConverter mappingJacksonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
+	public RequestMappingHandlerAdapter annotationMethodHandlerAdapter() {
+		final RequestMappingHandlerAdapter annotationMethodHandlerAdapter = new RequestMappingHandlerAdapter();
+		final MappingJackson2HttpMessageConverter mappingJacksonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
 
-        List<HttpMessageConverter<?>> httpMessageConverter = new ArrayList<HttpMessageConverter<?>>();
-        httpMessageConverter.add(mappingJacksonHttpMessageConverter);
+		List<HttpMessageConverter<?>> httpMessageConverter = new ArrayList<HttpMessageConverter<?>>();
+		httpMessageConverter.add(mappingJacksonHttpMessageConverter);
 
-        String[] supportedHttpMethods = { "POST", "GET", "HEAD" };
+		String[] supportedHttpMethods = { "POST", "GET", "HEAD" };
 
-        annotationMethodHandlerAdapter.setMessageConverters(httpMessageConverter);
-        annotationMethodHandlerAdapter.setSupportedMethods(supportedHttpMethods);
+		annotationMethodHandlerAdapter.setMessageConverters(httpMessageConverter);
+		annotationMethodHandlerAdapter.setSupportedMethods(supportedHttpMethods);
 
-        return annotationMethodHandlerAdapter;
-    }
-
+		return annotationMethodHandlerAdapter;
+	}
 
 	@Bean
 	public CommonsMultipartResolver multipartResolver() {
-	    CommonsMultipartResolver resolver=new CommonsMultipartResolver();
-	    resolver.setDefaultEncoding("utf-8");
-	    resolver.setMaxUploadSize(3145728);//5MB
-	    return resolver;
+		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+		resolver.setDefaultEncoding("utf-8");
+		resolver.setMaxUploadSize(3145728);// 5MB
+		return resolver;
 	}
-	
-	 @Bean
-    public JavaMailSender getMailSender(){
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-         
-        //Using gmail
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(465);
-        mailSender.setUsername("expensewala@gmail.com");
-        mailSender.setPassword("spvhtnnxvgahbyfw");
-         
-        Properties javaMailProperties = new Properties();
-        //javaMailProperties.put("mail.smtp.starttls.enable", "true");
-        javaMailProperties.put("mail.smtp.ssl.enable", "true");
-        javaMailProperties.put("mail.smtp.auth", "true");
-        javaMailProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-        javaMailProperties.put("mail.smtp.auth", true);
-        javaMailProperties.put("mail.transport.protocol", "smtp");
-        javaMailProperties.put("mail.debug", "true");//Prints out everything on screen
-         
-        mailSender.setJavaMailProperties(javaMailProperties);
-        return mailSender;
-    }
-	 
-	 @Bean
-	 public PasswordEncoder passwordEncoder() {
-	     return new BCryptPasswordEncoder();
-	 }
-	 
-	 /*
-     * FreeMarker configuration.
-     */
-	 @Bean
-	    public FreeMarkerConfigurationFactoryBean getFreeMarkerConfiguration() {
-	        FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
-	        bean.setTemplateLoaderPath("classpath:/emailTemplate/");
-	        return bean;
-	    }
+
+	@Bean
+	public JavaMailSender getMailSender() {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+		// Using gmail
+		mailSender.setHost("smtp.gmail.com");
+		mailSender.setPort(465);
+		mailSender.setUsername("expensewala@gmail.com");
+		mailSender.setPassword("hpqbphflthwulvds");
+
+		Properties javaMailProperties = new Properties();
+		// javaMailProperties.put("mail.smtp.starttls.enable", "true");
+		javaMailProperties.put("mail.smtp.ssl.enable", "true");
+		javaMailProperties.put("mail.smtp.auth", "true");
+		javaMailProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+		javaMailProperties.put("mail.transport.protocol", "smtp");
+		javaMailProperties.put("mail.smtp.ssl.protocols", "TLSv1.2");
+		javaMailProperties.put("mail.debug", "true");// Prints out everything on screen
+
+		mailSender.setJavaMailProperties(javaMailProperties);
+		return mailSender;
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+
+		return new BCryptPasswordEncoder();
+	}
+
+	/*
+	 * FreeMarker configuration.
+	 */
+	@Bean
+	public FreeMarkerConfigurationFactoryBean getFreeMarkerConfiguration() {
+		FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
+		bean.setTemplateLoaderPath("classpath:/emailTemplate/");
+		return bean;
+	}
 
 }

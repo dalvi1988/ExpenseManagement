@@ -37,45 +37,48 @@ import com.chaitanya.utility.Utility;
 import com.chaitanya.utility.Validation;
 
 @Service("loginDetailsService")
-@Transactional(rollbackFor=Exception.class)
-public class LoginService implements UserDetailsService,ILoginService {
+@Transactional(rollbackFor = Exception.class)
+public class LoginService implements UserDetailsService, ILoginService {
 
 	@Autowired
 	private ILoginDAO loginDAO;
-	
+
 	@Autowired
 	private IEmployeeDAO employeeDAO;
-	
+
 	@Autowired
 	private MailServiceImpl mailService;
-	
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-	
-	private Logger logger= LoggerFactory.getLogger(LoginService.class);
-	
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	private Logger logger = LoggerFactory.getLogger(LoginService.class);
+
 	private void validateLoginDTO(BaseDTO baseDTO) {
-		if(baseDTO == null  || !(baseDTO instanceof LoginDTO)) {
+		if (baseDTO == null || !(baseDTO instanceof LoginDTO)) {
 			throw new IllegalArgumentException("Object expected of LoginDTO type.");
 		}
 	}
 
-	@Transactional(readOnly=true)
+	@Override
+	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 		logger.debug("LoginService: loadUserByUsername-Start");
 		LoginJPA loginDetails = loginDAO.findByUserName(username);
-		List<GrantedAuthority> authorities=null;
-		
+		List<GrantedAuthority> authorities = null;
+
 		authorities = buildUserAuthority(loginDetails.getUserRole());
-		LoginDTO loginDTO=LoginConvertor.setLoginJPAToDTO(loginDetails);
+		LoginDTO loginDTO = LoginConvertor.setLoginJPAToDTO(loginDetails);
 		logger.debug("LoginService: loadUserByUsername-End");
-		return buildUserForAuthentication(loginDetails, authorities,loginDTO);
+		return buildUserForAuthentication(loginDetails, authorities, loginDTO);
 	}
 
 	// Converts com.mkyong.users.model.User user to
 	// org.springframework.security.core.userdetails.User
-	private User buildUserForAuthentication(LoginJPA loginDetails, List<GrantedAuthority> authorities,LoginDTO loginDTO) {
-		return new LoginUserDetails(loginDetails.getUserName(), loginDetails.getPassword(), true, true, true, true, authorities,loginDTO);
+	private User buildUserForAuthentication(LoginJPA loginDetails, List<GrantedAuthority> authorities,
+			LoginDTO loginDTO) {
+		return new LoginUserDetails(loginDetails.getUserName(), loginDetails.getPassword(), true, true, true, true,
+				authorities, loginDTO);
 	}
 
 	private List<GrantedAuthority> buildUserAuthority(Set<UserRoleJPA> userRoles) {
@@ -91,25 +94,28 @@ public class LoginService implements UserDetailsService,ILoginService {
 		logger.debug("LoginService: forgotPassword-End");
 		return Result;
 	}
-	
+
 	@Override
 	public LoginDTO authenticateUserForAPI(BaseDTO baseDTO) throws UsernameNotFoundException {
 		logger.debug("LoginService: authenticateUserForAPI-Start");
 		validateLoginDTO(baseDTO);
 		LoginDTO loginDTO = (LoginDTO) baseDTO;
 		LoginJPA loginJPA = loginDAO.findByUserName(loginDTO);
-		if(Validation.validateForNullObject(loginJPA)) {
-			boolean isOldPasswordMatch= passwordEncoder.matches(loginDTO.getPassword(),loginJPA.getPassword());
-			if(isOldPasswordMatch) {
-				loginDTO=LoginConvertor.setLoginJPAToDTO(loginJPA);
-				loginDTO.setServiceStatus(ServiceStatus.SUCCESS);
+		if (Validation.validateForNullObject(loginJPA)) {
+			try {
+				boolean isOldPasswordMatch = passwordEncoder.matches(loginDTO.getPassword(), loginJPA.getPassword());
+				if (isOldPasswordMatch) {
+					loginDTO = LoginConvertor.setLoginJPAToDTO(loginJPA);
+					loginDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				} else {
+					loginDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+					loginDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_CREDENTIAL));
+				}
+			} catch (Exception e) {
+				loginDTO.setMessage(new StringBuilder(e.getMessage()));
+				loginDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			}
-			else {
-				loginDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-				loginDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_CREDENTIAL));
-			}
-		}
-		else {
+		} else {
 			loginDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_EMAIL));
 			loginDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
 		}
@@ -121,27 +127,29 @@ public class LoginService implements UserDetailsService,ILoginService {
 	public BaseDTO forgotPassword(BaseDTO baseDTO) throws ParseException {
 		logger.debug("LoginService: forgotPassword-Start");
 		validateLoginDTO(baseDTO);
-		
-		LoginDTO loginDTO=(LoginDTO) baseDTO;
+
+		LoginDTO loginDTO = (LoginDTO) baseDTO;
 		EmployeeJPA employeeJPA = employeeDAO.findEmployeeByEmailId(loginDTO.getEmployeeDTO());
-		if(Validation.validateForNullObject(employeeJPA)) {
-			EmployeeDTO employeeDTO= EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
-			
-			String password= Utility.SessionIdentifierGenerator.nextSessionId();
-			int result = loginDAO.updatePassword(employeeDTO,passwordEncoder.encode(password));
-			if(result == 1){
-				mailService.sendAutoGeneratePassword(employeeDTO,password);
-				baseDTO.setServiceStatus(ServiceStatus.SUCCESS);;
+		if (Validation.validateForNullObject(employeeJPA)) {
+			EmployeeDTO employeeDTO = EmployeeConvertor.setEmployeeJPAToEmployeeDTO(employeeJPA);
+			try {
+				String password = Utility.SessionIdentifierGenerator.nextSessionId();
+				int result = loginDAO.updatePassword(employeeDTO, passwordEncoder.encode(password));
+				if (result == 1) {
+					mailService.sendAutoGeneratePassword(employeeDTO, password);
+					baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
+				} else {
+					baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
+				}
+			} catch (Exception e) {
+				baseDTO.setMessage(new StringBuilder(e.getMessage()));
+				baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 			}
-			else{
-				baseDTO.setServiceStatus(ServiceStatus.BUSINESS_VALIDATION_FAILURE);
-			}
-		}
-		else {
+		} else {
 			baseDTO.setMessage(new StringBuilder(ApplicationConstant.INVALID_EMAIL));
 			baseDTO.setServiceStatus(ServiceStatus.SYSTEM_FAILURE);
 		}
-		
+
 		logger.debug("LoginService: forgotPassword-End");
 		return baseDTO;
 	}
@@ -149,28 +157,28 @@ public class LoginService implements UserDetailsService,ILoginService {
 	@Override
 	public boolean validateOldPassword(BaseDTO baseDTO) {
 		validateLoginDTO(baseDTO);
-		LoginDTO loginDTO= (LoginDTO) baseDTO;
-		
+		LoginDTO loginDTO = (LoginDTO) baseDTO;
+
 		LoginJPA loginJPA = loginDAO.getLoginDetailByEmployeeId(loginDTO.getEmployeeDTO());
-		
-		boolean isOldPasswordMatch= passwordEncoder.matches(loginDTO.getPassword(),loginJPA.getPassword());
-		
+
+		boolean isOldPasswordMatch = passwordEncoder.matches(loginDTO.getPassword(), loginJPA.getPassword());
+
 		return isOldPasswordMatch;
 	}
 
 	@Override
 	public BaseDTO updatePassword(BaseDTO baseDTO) {
 		validateLoginDTO(baseDTO);
-		LoginDTO loginDTO= (LoginDTO) baseDTO;
-		
-		int updatedCount = loginDAO.updatePassword(loginDTO.getEmployeeDTO(),passwordEncoder.encode(loginDTO.getPassword()));
-		if(updatedCount == 1) {
+		LoginDTO loginDTO = (LoginDTO) baseDTO;
+
+		int updatedCount = loginDAO.updatePassword(loginDTO.getEmployeeDTO(),
+				passwordEncoder.encode(loginDTO.getPassword()));
+		if (updatedCount == 1) {
 			baseDTO.setServiceStatus(ServiceStatus.SUCCESS);
-		}
-		else {
+		} else {
 			baseDTO.setServiceStatus(ServiceStatus.FAILURE);
 		}
 		return baseDTO;
 	}
-	
+
 }

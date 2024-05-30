@@ -5,7 +5,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2020-06-11T19:15:12.776+0530")
+@Generated(value="Dali", date="2024-05-22T20:40:40.914+0100")
 @StaticMetamodel(ApprovalFlowJPA.class)
 public class ApprovalFlowJPA_ {
 	public static volatile SingularAttribute<ApprovalFlowJPA, Long> flowId;

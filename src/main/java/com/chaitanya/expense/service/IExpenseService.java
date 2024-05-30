@@ -28,7 +28,7 @@ public interface IExpenseService {
 
 	List<ExpenseHeaderDTO> getRejectedExpenseList(BaseDTO baseDTO) throws ParseException;
 
-	List<ExpenseHeaderDTO> getPendingExpensesAtPaymentDesk(BaseDTO baseDTO)throws ParseException;
+	List<ExpenseHeaderDTO> getPendingExpensesAtPaymentDesk(BaseDTO baseDTO) throws ParseException;
 
 	List<ExpenseHeaderDTO> getPaidExpenseList(BaseDTO baseDTO) throws ParseException;
 
@@ -46,10 +46,12 @@ public interface IExpenseService {
 
 	Long getPaidExpenseCount(BaseDTO baseDTO) throws ParseException;
 
-	List<ExpenseHeaderDTO> fetchAccountingEntries(BaseDTO baseDTO)	throws ParseException;
+	List<ExpenseHeaderDTO> fetchAccountingEntries(BaseDTO baseDTO) throws ParseException;
 
-	byte[] exportAccountingEntries(BaseDTO baseDTO) throws ParseException,IOException;
+	byte[] exportAccountingEntries(BaseDTO baseDTO) throws ParseException, IOException;
 
 	List<ExpenseHeaderDTO> fetchedAccountingEntries(BaseDTO baseDTO) throws ParseException;
+
+	public void sendMailToApproval(BaseDTO baseDTO) throws ParseException;
 
 }

@@ -6,7 +6,7 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2020-06-11T18:04:14.840+0530")
+@Generated(value="Dali", date="2024-05-22T20:40:41.582+0100")
 @StaticMetamodel(ExpenseHeaderJPA.class)
 public class ExpenseHeaderJPA_ {
 	public static volatile SingularAttribute<ExpenseHeaderJPA, Long> expenseHeaderId;

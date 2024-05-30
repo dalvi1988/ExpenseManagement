@@ -13,46 +13,46 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="expense_details")
+@Table(name = "expense_details")
 public class ExpenseDetailJPA {
-	
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="expense_detail_id")
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "expense_detail_id")
 	private Long expenseDetailId;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="expense_header_id")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "expense_header_id")
 	private ExpenseHeaderJPA expenseHeaderJPA;
-		
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="expense_category_id")
+
+	@ManyToOne
+	@JoinColumn(name = "expense_category_id")
 	private ExpenseCategoryJPA expenseCategoryJPA;
-	
-	@Column(name="date",nullable=false)
+
+	@Column(name = "date", nullable = false)
 	private Calendar date;
-	
-	@Column(name="from_location")
+
+	@Column(name = "from_location")
 	private String fromLocation;
-	
-	@Column(name="to_location")
+
+	@Column(name = "to_location")
 	private String toLocation;
-	
-	@Column(name="description",nullable=false)
+
+	@Column(name = "description", nullable = false)
 	private String description;
 
-	@Column(name="unit")
+	@Column(name = "unit")
 	private Integer unit;
 
-	
-	@Column(name="amount")
+	@Column(name = "amount")
 	private Double amount;
-	
-	@Column(name="file_name")
+
+	@Column(name = "file_name")
 	private String fileName;
-	
-	/*@Transient
-	private File receipt;
-*/
+
+	/*
+	 * @Transient private File receipt;
+	 */
 	public Long getExpenseDetailId() {
 		return expenseDetailId;
 	}
@@ -109,13 +109,11 @@ public class ExpenseDetailJPA {
 		this.expenseHeaderJPA = expenseHeaderJPA;
 	}
 
-	/*public File getReceipt() {
-		return receipt;
-	}
-
-	public void setReceipt(File receipt) {
-		this.receipt = receipt;
-	}*/
+	/*
+	 * public File getReceipt() { return receipt; }
+	 * 
+	 * public void setReceipt(File receipt) { this.receipt = receipt; }
+	 */
 
 	public ExpenseCategoryJPA getExpenseCategoryJPA() {
 		return expenseCategoryJPA;

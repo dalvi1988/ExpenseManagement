@@ -1,5 +1,5 @@
  /* another grid in detail view.
-       * returns a new copy of detailModel every time the function is called.*/
+       * returns a new copy of detailModel every time the function is called.*/this
 var getFunctionalGrid = function( rowData ){
        return {
        	   wrap: false,
@@ -15,9 +15,8 @@ var getFunctionalGrid = function( rowData ){
            toolbar: {
                items: [
                    { type: 'button', icon: 'ui-icon-plus', label: 'Add Functional', listeners: [
-                       { "click": function (evt, ui) {
-                           var $grid = $(this).closest('.pq-grid');
-                           addRow($grid,"FunctionalFlow");
+                       { "click": function () {
+                           addRow(this, rowData, "FunctionalFlow");
                        }
                        }
                    ]
@@ -41,7 +40,7 @@ var getFunctionalGrid = function( rowData ){
                    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
                },
                error: function (data) {
-                   $gridMain.pqGrid( 'rowInvalidate', { rowData: rowData });
+                   gridMain.rowInvalidate({ rowData: rowData });
                }
            },
            colModel: [
@@ -216,10 +215,40 @@ var getFunctionalGrid = function( rowData ){
                            			<button type='button' class='delete_btn'>Delete</button>";
             		    }
             		    else{
-            		    	if(ui.cellData == true) return "<button type='button' class='edit_btn'>Deactivate</button>";
+            		    	if(ui.cellData == true) return "<button type='button' class='delete_btn'>Deactivate</button>";
                             else return "<button type='button' class='delete_btn' disabled>Deactivated</button>";
             		    }
-               	   }
+               	   },
+               	   postRender: function (ui) {
+                        var rowIndx = ui.rowIndx,
+                            grid = this,
+                            $cell = grid.getCell(ui);
+
+			               //delete button
+			               $cell.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
+			               .unbind("click")
+			               .bind("click", function () {
+							   if (isEditing(grid)) {
+			                       return false;
+			                   }
+			                   deleteRow(rowIndx, grid);
+			               });
+			               
+			               //edit button
+			               $cell.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+			               .unbind("click")
+			               .bind("click", function () {
+			                   if (isEditing(grid)) {
+			                       return false;
+			                   }
+			                   editRow(rowIndx, grid,"FunctionalFlow", true);
+			               });
+			
+			               //if it has edit class, then edit the row.
+                            if (grid.hasClass({ rowData: ui.rowData, cls: 'pq-row-edit' })) {
+                                editRow(rowIndx, grid,"FunctionalFlow");
+                            }
+                   }
                }
 
 	        ],
@@ -246,61 +275,11 @@ var getFunctionalGrid = function( rowData ){
            validation: {
                icon: 'ui-icon-info'
            },
-           pageModel: { type: "local" },
-           cellBeforeSave: function (evt, ui) {
-               var $grid = $(this);
-               var isValid = $grid.pqGrid("isValid", ui);
-               if (!isValid.valid) {
-                   return false;
-               }
-           },
-           refresh: function () {
-               //debugger;
-               var $grid = $(this);
-
-               //delete button
-               $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
-               .unbind("click")
-               .bind("click", function (evt) {
-                   if (isEditing($grid)) {
-                       return false;
-                   }
-                   var $tr = $(this).closest("tr"),
-                       rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                   deleteRow(rowIndx, $grid);
-               });
-               
-               //edit button
-               $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
-               .unbind("click")
-               .bind("click", function (evt) {
-                   if (isEditing($grid)) {
-                       return false;
-                   }
-                   var $tr = $(this).closest("tr"),
-                       rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                   editRow(rowIndx, $grid, "FunctionalFlow");
-                   return false;
-               });
-
-               //rows which were in edit mode before refresh, put them in edit mode again.
-               var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
-               if (rows.length > 0) {
-                   var rowIndx = rows[0].rowIndx;
-                   editRow(rowIndx, $grid, "FunctionalFlow");
-               }
-           },
            //make rows editable selectively.
            editable: function (ui) {
-               var $grid = $(this);
-               var rowIndx = ui.rowIndx;
-               if ($grid.pqGrid("hasClass", { rowIndx: rowIndx, cls: 'pq-row-edit' }) == true) {
-                   return true;
-               }
-               else {
-                   return false;
-               }
-           }
+                return this.hasClass({ rowIndx: ui.rowIndx, cls: 'pq-row-edit' });
+            },
+            postRenderInterval: -1,
        };
 };
 
@@ -323,9 +302,8 @@ var getFinanceGrid = function( rowData ){
         toolbar: {
             items: [
                 { type: 'button', icon: 'ui-icon-plus', label: 'Add Finance Flow', listeners: [
-                    { "click": function (evt, ui) {
-                        var $grid = $(this).closest('.pq-grid');
-                        addRow($grid,"FinanceFlow");
+                    { "click": function () {
+                        addRow(this,rowData, "FinanceFlow");
                     }
                     }
                 ]
@@ -454,20 +432,44 @@ var getFinanceGrid = function( rowData ){
                     			<button type='button' class='fin_delete_btn'>Delete</button>";
          		    }
          		    else{
-         		    	if(ui.cellData == true) return "<button type='button' class='fin_edit_btn'>Deactivate</button>";
+         		    	if(ui.cellData == true) return "<button type='button' class='fin_delete_btn'>Deactivate</button>";
                          else return "<button type='button' class='fin_delete_btn' disabled>Deactivated</button>";
          		    }
-            	 }
+            	 },
+               	   postRender: function (ui) {
+                        var rowIndx = ui.rowIndx,
+                            grid = this,
+                            $cell = grid.getCell(ui);
+
+			               //delete button
+		               $cell.find("button.fin_delete_btn").button({ icons: { primary: 'ui-icon-close'} })
+		               .unbind("click")
+		               .bind("click", function () {
+						   if (isEditing(grid)) {
+		                       return false;
+		                   }
+		                   deleteRow(rowIndx, grid);
+		               });
+		               
+		               //edit button
+		               $cell.find("button.fin_edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+		               .unbind("click")
+		               .bind("click", function () {
+		                   if (isEditing(grid)) {
+		                       return false;
+		                   }
+		                   editRow(rowIndx, grid,"FinanceFlow", true);
+		               });
+		
+		               //if it has edit class, then edit the row.
+                        if (grid.hasClass({ rowData: ui.rowData, cls: 'pq-row-edit' })) {
+                            editRow(rowIndx, grid,"FinanceFlow");
+                        }
+                   }
             }
 
 	        ],
-        editable: true, 
-       /* groupModel: {
-            dataIndx: ["branchId"],
-            dir: ["up"],
-            title: ["{0} - {1} product(s)"],
-            icon: [["ui-icon-triangle-1-se", "ui-icon-triangle-1-e"]]
-        },       */
+
         scrollModel: {
             autoFit: true
         },
@@ -484,61 +486,11 @@ var getFinanceGrid = function( rowData ){
         validation: {
             icon: 'ui-icon-info'
         },
-        pageModel: { type: "local" },
-        cellBeforeSave: function (evt, ui) {
-            var $grid = $(this);
-            var isValid = $grid.pqGrid("isValid", ui);
-            if (!isValid.valid) {
-                return false;
-            }
-        },
-        refresh: function () {
-            //debugger;
-            var $grid = $(this);
-
-            //delete button
-            $grid.find("button.fin_delete_btn").button({ icons: { primary: 'ui-icon-close'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                deleteRow(rowIndx, $grid);
-            });
-            
-            //edit button
-            $grid.find("button.fin_edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                editRow(rowIndx, $grid,"FinanceFlow");
-                return false;
-            });
-
-            //rows which were in edit mode before refresh, put them in edit mode again.
-            var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
-            if (rows.length > 0) {
-                var rowIndx = rows[0].rowIndx;
-                editRow(rowIndx, $grid,"FinanceFlow");
-            }
-        },
         //make rows editable selectively.
         editable: function (ui) {
-            var $grid = $(this);
-            var rowIndx = ui.rowIndx;
-            if ($grid.pqGrid("hasClass", { rowIndx: rowIndx, cls: 'pq-row-edit' }) == true) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+            return this.hasClass({ rowIndx: ui.rowIndx, cls: 'pq-row-edit' });
+        },
+        postRenderInterval: -1,
     };
 };
 
@@ -559,9 +511,8 @@ var getBranchGrid = function( rowData ){
         toolbar: {
             items: [
                 { type: 'button', icon: 'ui-icon-plus', label: 'Add Branch Flow', listeners: [
-                    { "click": function (evt, ui) {
-                        var $grid = $(this).closest('.pq-grid');
-                        addRow($grid,"BranchFlow");
+                    { "click": function () {
+                        addRow(this,rowData, "BranchFlow");
                     }
                     }
                 ]
@@ -689,20 +640,43 @@ var getBranchGrid = function( rowData ){
                     			<button type='button' class='branch_delete_btn'>Delete</button>";
          		    }
          		    else{
-         		    	if(ui.cellData == true) return "<button type='button' class='branch_edit_btn'>Deactivate</button>";
+         		    	if(ui.cellData == true) return "<button type='button' class='branch_delete_btn'>Deactivate</button>";
                          else return "<button type='button' class='branch_delete_btn' disabled>Deactivated</button>";
          		    }
-            	 }
+            	 },
+               	   postRender: function (ui) {
+                        var rowIndx = ui.rowIndx,
+                            grid = this,
+                            $cell = grid.getCell(ui);
+
+			               //delete button
+		               $cell.find("button.branch_delete_btn").button({ icons: { primary: 'ui-icon-close'} })
+		               .unbind("click")
+		               .bind("click", function () {
+						   if (isEditing(grid)) {
+		                       return false;
+		                   }
+		                   deleteRow(rowIndx, grid);
+		               });
+		               
+		               //edit button
+		               $cell.find("button.branch_edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
+		               .unbind("click")
+		               .bind("click", function () {
+		                   if (isEditing(grid)) {
+		                       return false;
+		                   }
+		                   editRow(rowIndx, grid,"BranchFlow", true);
+		               });
+		
+		               //if it has edit class, then edit the row.
+                        if (grid.hasClass({ rowData: ui.rowData, cls: 'pq-row-edit' })) {
+                            editRow(rowIndx, grid,"BranchFlow");
+                        }
+                   }
             }
 
 	        ],
-        /*editable: true, 
-        groupModel: {
-            dataIndx: ["branchId"],
-            dir: ["up"],
-            title: ["{0} - {1} product(s)"],
-            icon: [["ui-icon-triangle-1-se", "ui-icon-triangle-1-e"]]
-        },       */
         scrollModel: {
             autoFit: true
         },
@@ -719,61 +693,11 @@ var getBranchGrid = function( rowData ){
         validation: {
             icon: 'ui-icon-info'
         },
-        pageModel: { type: "local" },
-        cellBeforeSave: function (evt, ui) {
-            var $grid = $(this);
-            var isValid = $grid.pqGrid("isValid", ui);
-            if (!isValid.valid) {
-                return false;
-            }
-        },
-        refresh: function () {
-            //debugger;
-            var $grid = $(this);
-
-            //delete button
-            $grid.find("button.branch_delete_btn").button({ icons: { primary: 'ui-icon-close'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                deleteRow(rowIndx, $grid);
-            });
-            
-            //edit button
-            $grid.find("button.branch_edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                editRow(rowIndx, $grid,"BranchFlow");
-                return false;
-            });
-
-            //rows which were in edit mode before refresh, put them in edit mode again.
-            var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
-            if (rows.length > 0) {
-                var rowIndx = rows[0].rowIndx;
-                editRow(rowIndx, $grid,"BranchFlow");
-            }
-        },
         //make rows editable selectively.
         editable: function (ui) {
-            var $grid = $(this);
-            var rowIndx = ui.rowIndx;
-            if ($grid.pqGrid("hasClass", { rowIndx: rowIndx, cls: 'pq-row-edit' }) == true) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+            return this.hasClass({ rowIndx: ui.rowIndx, cls: 'pq-row-edit' });
+        },
+        postRenderInterval: -1
     };
 };
 
@@ -782,149 +706,132 @@ var getBranchGrid = function( rowData ){
 
 
 //called by add button in toolbar.
-function addRow($grid, gridName) {
-
-    var branchId = $grid.data( 'branchId' );
+function addRow(grid,data, gridName) {
+	debugger;
+    var branchId = data.branchId;
     $(".customMessage").text("");
 	   
-    if (isEditing($grid)) {
-        return false;
-    }
-    //append empty row in the first row.
-    var rowData = {branchId:branchId,flowId:"",status:true }; //empty row template
-    $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
+    var rows = grid.getRowsByClass({ cls: 'pq-row-edit' });
+    
+    if (rows.length > 0) {//already a row currently being edited.
+        var rowIndx = rows[0].rowIndx;
 
-    var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
-    if ($tr) {
-    	
-    	if(gridName == "FinanceFlow"){
-    		//simulate click on edit button.
-            $tr.find("button.fin_edit_btn").click();
-        }
-        else if(gridName == "FunctionalFlow"){
-        	//simulate click on edit button.
-            $tr.find("button.edit_btn").click();
-        }
-        else if(gridName == "BranchFlow"){
-        	//simulate click on edit button.
-            $tr.find("button.branch_edit_btn").click();
-       }
-    	
+        //focus on editor if any 
+        grid.editFirstCellInRow({ rowIndx: rowIndx });
     }
+    else {
+        //append empty row in the first row.
+    	var rowData = {branchId:branchId,flowId:"",status:true };//empty row template
+        var rowIndx = grid.addRow({ rowIndxPage: 0, rowData: rowData, checkEditable: false });
+
+        //start editing the new row.
+        editRow(rowIndx, grid, gridName, true);
+    }
+   
 }
 
 
 //to check whether any row is currently being edited.
-function isEditing($grid) {
-    var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
+function isEditing(grid) {
+    var rows = grid.getRowsByClass({ cls: 'pq-row-edit' });
     if (rows.length > 0) {
+        var rowIndx = rows[0].rowIndx;
+        grid.goToPage({ rowIndx: rowIndx });
         //focus on editor if any 
-        $grid.find(".pq-editor-focus").focus();
+        grid.editFirstCellInRow({ rowIndx: rowIndx });
         return true;
     }
     return false;
 }
 
-//called by edit button.
-function editRow(rowIndx, $grid, gridName) {
-	   $(".customMessage").text("");
-	   
-	   var rowData= $grid.pqGrid( "getRowData",{ rowIndx: rowIndx } );
 
-	   if(rowData.flowId == "" || rowData.flowId == null){
-		   
-        $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-        $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
+//called by edit button.
+function editRow(rowIndx, grid, gridName, edit) {
+	debugger;
+	    $(".customMessage").text("");
+	   
+	    grid.addClass({ rowIndx: rowIndx, cls: 'pq-row-edit' });
+
+        if (edit) grid.editFirstCellInRow({ rowIndx: rowIndx });
+
+        //change edit button to update button and delete to cancel.
+        var $tr = grid.getRow({ rowIndx: rowIndx });
 
         if(gridName == "FinanceFlow"){
 	        //change edit button to update button and delete to cancel.
-	        var $tr = $grid.pqGrid("getRow", { rowIndx: rowIndx }),
-	            $btn = $tr.find("button.fin_edit_btn");
+            var $btn = $tr.find("button.fin_edit_btn");
+            $btn.button("option", { label: "Update", "icons": { primary: "ui-icon-check"} })
+            .unbind("click")
+            .click(function (evt) {
+                //evt.preventDefault();
+                return update(rowIndx, grid, gridName);
+            });
+             $btn.next().button("option", { label: "Cancel", "icons": { primary: "ui-icon-cancel"} })
+            .unbind("click")
+            .click(function (evt) {
+                grid.quitEditMode();
+                grid.removeClass({ rowIndx: rowIndx, cls: 'pq-row-edit' })
+                grid.rollback();
+            });
+           
         }
         else if(gridName == "FunctionalFlow"){
         	 //change edit button to update button and delete to cancel.
-	        var $tr = $grid.pqGrid("getRow", { rowIndx: rowIndx }),
-	            $btn = $tr.find("button.edit_btn");
+            var $btn = $tr.find("button.edit_btn");
+            $btn.button("option", { label: "Update", "icons": { primary: "ui-icon-check"} })
+            .unbind("click")
+            .click(function (evt) {
+                //evt.preventDefault();
+                return update(rowIndx, grid, gridName);
+            });
+             $btn.next().button("option", { label: "Cancel", "icons": { primary: "ui-icon-cancel"} })
+            .unbind("click")
+            .click(function (evt) {
+                grid.quitEditMode();
+                grid.removeClass({ rowIndx: rowIndx, cls: 'pq-row-edit' })
+                grid.rollback();
+            });
         }
         else if(gridName == "BranchFlow"){
         	 //change edit button to update button and delete to cancel.
-	        var $tr = $grid.pqGrid("getRow", { rowIndx: rowIndx }),
-	            $btn = $tr.find("button.branch_edit_btn");
+	        var $btn = $tr.find("button.branch_edit_btn");
+            $btn.button("option", { label: "Update", "icons": { primary: "ui-icon-check"} })
+            .unbind("click")
+            .click(function (evt) {
+                //evt.preventDefault();
+                return update(rowIndx, grid, gridName);
+            });
+             $btn.next().button("option", { label: "Cancel", "icons": { primary: "ui-icon-cancel"} })
+            .unbind("click")
+            .click(function (evt) {
+                grid.quitEditMode();
+                grid.removeClass({ rowIndx: rowIndx, cls: 'pq-row-edit' })
+                grid.rollback();
+            });
         }
-        $btn.button("option", { label: "Update", "icons": { primary: "ui-icon-check"} })
-            .unbind("click")
-            .click(function (evt) {
-                evt.preventDefault();
-                return update(rowIndx, $grid,gridName);
-            });
-        $btn.next().button("option", { label: "Cancel", "icons": { primary: "ui-icon-cancel"} })
-            .unbind("click")
-            .click(function (evt) {
-                //$grid.pqGrid("quitEditMode");
-                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-                $grid.pqGrid("refreshRow", { rowIndx: rowIndx });
-                $grid.pqGrid("rollback");
-            });
-	   }
-	   else{
-		   $( "#dialog-confirm" ).dialog({
-			      resizable: false,
-			      height: "auto",
-			      width: 400,
-			      modal: true,
-			      text: "Are you sure to deactivate workflow?",
-			      buttons: {
-			        "Deactivate": function() {
-			          $( this ).dialog( "close" );
-			          
-			          $.ajax($.extend({}, ajaxObj, { 
-			            	context: $gridMain,
-			          	    url: "deactivateFlow", 
-			          	    type: 'POST', 
-			          	    data: "{\"flowId\":"+rowData.flowId+"}",
-			          	    success: function(response) {
-			          	    	var data=response.data;
-			          	    	if(data.serviceStatus=="SUCCESS"){
-				          	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
-				                    rowData.status= data.status;
-				          	    	$grid.pqGrid("commit");
-			          	    	}
-			          	    	else{
-			          	    		$grid.pqGrid("rollback");
-			          	    	}
-			          	    	$(".customMessage").text(data.message);
-			          	    	
-			          	    },
-			          	    error:function(data) { 
-			          	    	$(".customMessage").text(data.message);
-			          	    }
-			          }));
-			        },
-			        Cancel: function() {
-			          $( this ).dialog( "close" );
-			        }
-			      }
-			});
-	   }
+	   
 }
 
 
 
 
 //called by update button.
-function update(rowIndx, $grid, gridName) {
+function update(rowIndx, grid, gridName) {
   
-   if ($grid.pqGrid("saveEditCell") == false) {
-       return false;
-   }
-   var isValid = $grid.pqGrid("isValid", { rowIndx: rowIndx }).valid;
-   
-   if (!isValid) {
-       return false;
-   }
-   var isDirty = $grid.pqGrid("isDirty");
-   //var isDirty = true;
-   if (isDirty) {
+    if (grid.saveEditCell() == false) {
+        return false;
+    }
+
+    if (!grid.isValid({ rowIndx: rowIndx, focusInvalid: true }).valid) {
+        return false;
+    }
+
+    if (grid.isDirty()) {
+        var url,
+            rowData = grid.getRowData({ rowIndx: rowIndx }),
+            recIndx = grid.option("dataModel.recIndx"),
+            type;
+
 	   
 	   var jsonToBeSend=new Object();
 	   if(gridName == "FinanceFlow"){
@@ -938,11 +845,6 @@ function update(rowIndx, $grid, gridName) {
     	   jsonToBeSend["isBranchFlow"]=true;
        }
 	   
-       var url,
-           rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx }),
-           recIndx = $grid.pqGrid("option", "dataModel.recIndx");
-       $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-
        jsonToBeSend["branchId"] = rowData.branchId;
        jsonToBeSend["flowType"]=gridName;
        jsonToBeSend["departmentId"] = rowData.departmentId;
@@ -955,33 +857,38 @@ function update(rowIndx, $grid, gridName) {
        
        if (rowData[recIndx] == null || rowData[recIndx] == "") {
      	  //For new record
+     	  type = 'add';
        }
        else {
      	  // For update
+     	   type = 'update';
      	  jsonToBeSend["createdBy"] = rowData.createdBy;
        	  jsonToBeSend["createdDate"] = rowData.createdDate;
      	  jsonToBeSend["deptHeadId"] = rowData.deptHeadId;
        }
        $.ajax($.extend({}, ajaxObj, { 
-     	context: $gridMain,
+     	context: grid,
    	    url: url, 
    	    type: 'POST', 
    	    data: JSON.stringify(jsonToBeSend),
    	    success: function(data) { 
    	    	if(data.serviceStatus=="SUCCESS"){
-       	    	var recIndx = $grid.pqGrid("option", "dataModel.recIndx");
-                rowData.flowId= data.flowId;
+       	    	var recIndx = grid.option("dataModel.recIndx");
+       	    	if (type == 'add') {
+                   rowData.flowId = data.flowId;
+                }
                 rowData.status=data.status;
              //$grid.pqGrid( "refreshRow", { rowIndx: recIndx} );
        	    	//$grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-       	    	$grid.pqGrid("commit");
+       	    	grid.commit();
    	    	}
    	    	else{
-   	    		
-   	    		$grid.pqGrid("rollback");
+   	    		grid.rollback();
    	    	}
    	    	$(".customMessage").text(data.message);
-   	    	
+   	    	grid.quitEditMode();
+	        grid.removeClass({ rowIndx: rowIndx, cls: 'pq-row-edit' });
+	        grid.refreshRow({ rowIndx: rowIndx });
    	    },
    	    error:function(data) { 
    	    	$(".customMessage").text(data.message);
@@ -990,9 +897,54 @@ function update(rowIndx, $grid, gridName) {
    	}));
    }
    else {
-	   
-       //$grid.pqGrid("quitEditMode");
-       $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-       $grid.pqGrid("refreshRow", { rowIndx: rowIndx });
+        grid.quitEditMode();
+        grid.removeClass({ rowIndx: rowIndx, cls: 'pq-row-edit' });
+        grid.refreshRow({ rowIndx: rowIndx });
    }
 } 
+
+function deleteRow(rowIndx, grid){
+	debugger;
+	var rowData = grid.getRowData({ rowIndx: rowIndx });
+	   $( "#dialog-confirm" ).dialog({
+		      resizable: false,
+		      height: "auto",
+		      width: 400,
+		      modal: true,
+		      text: "Are you sure to deactivate workflow? ",
+		      buttons: {
+		        "Deactivate": function() {
+		          $( this ).dialog( "close" );
+		          
+		          $.ajax($.extend({}, ajaxObj, { 
+		            	context: grid,
+		          	    url: "deactivateFlow", 
+		          	    type: 'POST', 
+		          	    data: "{\"flowId\":"+rowData.flowId+"}",
+		          	    success: function(response) {
+		          	    	var data=response.data;
+		          	    	if(data.serviceStatus=="SUCCESS"){
+			          	    	var recIndx = grid.option("dataModel.recIndx");
+			                    rowData.status= data.status;
+			          	    	grid.commit();
+		          	    	}
+		          	    	else{
+		          	    		grid.rollback();
+		          	    	}
+		          	    	$(".customMessage").text(data.message);
+		          	    	grid.quitEditMode();
+					        grid.removeClass({ rowIndx: rowIndx, cls: 'pq-row-edit' });
+					        grid.refreshRow({ rowIndx: rowIndx });
+		          	    },
+		          	    error:function(data) { 
+		          	    	$(".customMessage").text(data.message);
+		          	    }
+		          }));
+		        },
+		        Cancel: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		});
+		
+}

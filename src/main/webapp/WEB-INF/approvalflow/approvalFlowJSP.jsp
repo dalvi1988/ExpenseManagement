@@ -12,8 +12,6 @@
  	
  	<script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
  	<script type="text/javascript" src=<spring:url value="/scripts/approvalFlowGridJS.js"/> ></script>
-    <script type="text/javascript" src=<spring:url value="/grid/pqgrid.min.js"/> ></script>
-    <link rel="stylesheet" href=<spring:url value="/grid/pqgrid.min.css"/> />
     
    <script type="text/javascript">
    
@@ -65,9 +63,14 @@
        };
 
 
-       $gridMain = $("div#grid_md").pqGrid({
-           dataModel:{ 
-        	   location: "remote",
+     //initialize main grid
+      var gridMain = pq.grid("#grid_md",{            
+           width: '100%', height: '58%',
+           flexHeight: true,
+           virtualX: true, virtualY: true,
+           wrap: false,hwrap: false, 
+           dataModel: {
+               location: "remote",
                sorting: "local",            
                dataType: "JSON",
                method: "POST",
@@ -81,32 +84,26 @@
                    return { curPage: dataJSON.curPage, totalRecords: dataJSON.totalRecords, data: data };
                }
            },
-           virtualX: true, virtualY: true,
            editable: false,
+           collapsible:{ on : false,toggle: false },
            colModel: [
-                { title: "", minWidth: 27, width: 27, type: "detail", resizable: false, editable:false },
-                { title: "Branch Code", minWidth:300, width: 100, dataIndx: "branchCode" },
-                { title: "Branch Name", minWidth:300, width: 100, dataIndx: "branchName" },
-                { title: "Active/Inactive", width: 50, dataType: "bool", align: "center", dataIndx: "status",
-                    editor: { type: "checkbox", style: "margin:3px 5px;" },
-                    render: function (ui) {
-                        if(ui.cellData == true) return "Active";
-                        else return "Inactive";
-                     	
-                    }
-                }],
-           wrap: false,
-           hwrap: false,            
+				{ title: "", minWidth: 27, width: 27, type: "detail", resizable: false, editable:false },
+				{ title: "Branch Code", width: 100, dataIndx: "branchCode" },
+				{ title: "Branch Name", width: 100, dataIndx: "branchName"},
+				{ title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
+				    editor: { type: "checkbox", style: "margin:3px 5px;" },
+				    render: function (ui) {
+				        if(ui.cellData == true) return "Active";
+				        else return "Inactive";
+				     	
+				    }
+				}
+           ],
            numberCell: { show: false },
-           filterModel: { on: true, mode: "AND", header: true },
-           title: "<b>Approval Flow Cycle Details</b>",                        
-           width: '100%', height: '100%-5',
-           flexHeight: true,
-           freezeCols: 1,            
-           selectionModel: { type: 'cell' },
+           title: "<b>Approval Flow Cycle Details</b>",                
+           resizable: true,            
            detailModel: { init: initDetail }
        });
-
              
         
    });

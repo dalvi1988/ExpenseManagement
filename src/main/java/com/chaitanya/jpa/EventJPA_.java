@@ -5,7 +5,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2020-06-11T18:55:52.713+0530")
+@Generated(value="Dali", date="2024-05-22T20:40:41.377+0100")
 @StaticMetamodel(EventJPA.class)
 public class EventJPA_ {
 	public static volatile SingularAttribute<EventJPA, Long> eventId;
