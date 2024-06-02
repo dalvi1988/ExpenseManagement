@@ -10,7 +10,7 @@
     <script type="text/javascript" src=<spring:url value="/grid-3.5.1/pqgrid.min.js"/> ></script>
     <script type="text/javascript" src=<spring:url value="/scripts/commonJS.js"/> ></script>
     <link rel="Stylesheet" href=<spring:url value="/grid-3.5.1/select/pqselect.min.css"/> >
-<script type="text/javascript" src=<spring:url value="/grid-3.5.1/select/pqselect.min.js"/> ></script>
+    <script type="text/javascript" src=<spring:url value="/grid-3.5.1/select/pqselect.min.js"/> ></script>
 
    <script type="text/javascript">
    var logerBranchId=<sec:authentication property="principal.loginDTO.employeeDTO.branchDTO.branchId" />;

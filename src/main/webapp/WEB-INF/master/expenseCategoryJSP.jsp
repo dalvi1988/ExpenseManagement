@@ -231,18 +231,7 @@
                       },
                       { title: "Amount Limit Increased?", width: 130, dataType: "bool", align: "center", dataIndx: "limitIncrease",
                     	  filter: { type: "checkbox", subtype: 'triple', condition: "equal", listeners: ['click'] },
-                    	  editor: { type: "checkbox", style: "margin:3px 5px;"},
-                    	  editable: function(ui){
-    							if(typeof ui.rowData!= "undefined" && ui.rowData['amount'] != null )  
-    								return true;
-    							else 
-    								return false;
-    	                  },
-                          render: function (ui) {
-                              if(ui.cellData == true) return "Yes";
-                              else return "No";
-                           	
-                          }
+                    	  editor: false, type: 'checkbox'
                       },
                       { title: "Active/Inactive", width: 100, dataType: "bool", align: "center", dataIndx: "status",
                     	  filter: { type: "checkbox",  condition: "equal", listeners: ['click'] },

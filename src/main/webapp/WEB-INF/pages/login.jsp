@@ -35,7 +35,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="">Employee & Event Expense Management System</a>
+    <a href="">Employee Reimbursement & Advance Management System</a>
   </div>
  
   <!-- /.login-logo -->

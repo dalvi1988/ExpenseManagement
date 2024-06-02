@@ -366,7 +366,7 @@ $(function () {
 				    	 $('.pq-toolbar').append($('#headerToolbar').show());
 				    } 
 				},
-                { type: 'button', icon: 'ui-icon-plus', label: 'Add new Line', listeners: [
+                { type: 'button', icon: 'ui-icon-plus', label: 'Add New Expense', listeners: [
                     { "click": function (evt, ui) {
                         addNewRow();
                     }
